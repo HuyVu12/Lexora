@@ -19,3 +19,9 @@ tmp/
 *.sqlite
 *.sqlite3
 /models/
+
+# Local Jira backlog drafts and synchronization exports
+/docs/planning/jira-backlog-*.json
+/docs/planning/jira-backlog-*.md
+/docs/planning/jira-sync-*.json
+/docs/planning/jira-sync-*.md
