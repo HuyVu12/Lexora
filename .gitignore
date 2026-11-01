@@ -1,0 +1,21 @@
+# Secrets and environments
+.env
+.env.*
+!.env.example
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+.tools/
+tmp/
+# Research artifacts: retain documentation, keep bulk data out of Git
+/data/**/*
+!/data/**/
+!/data/**/README.md
+!/data/**/manifest.template.csv
+/experiments/runs/*
+!/experiments/runs/README.md
+*.sqlite
+*.sqlite3
+/models/

@@ -1,0 +1,8 @@
+{
+  "condition": "DK4",
+  "representation": "llm_kb_validated",
+  "automatic_validation": true,
+  "manual_review": false,
+  "shared_config": "configs/pilot.json",
+  "status": "draft"
+}

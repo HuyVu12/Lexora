@@ -1,0 +1,8 @@
+{
+  "condition": "DK2",
+  "representation": "structural_units",
+  "automatic_validation": false,
+  "manual_review": false,
+  "shared_config": "configs/pilot.json",
+  "status": "draft"
+}
