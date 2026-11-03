@@ -1,0 +1,133 @@
+{
+  "description": "Pilot draft on pinned original VBPL snapshots; not held-out, not legal gold; P11/P12 behavior not implemented by lexical retrieval",
+  "questions": [
+    {
+      "question_id": "P01",
+      "family_id": "P01",
+      "split": "pilot",
+      "question": "Tiền lương thử việc ít nhất bằng bao nhiêu phần trăm mức lương công việc?",
+      "relevant_unit_ids": [
+        "bll-45-2019/chapter-iii/section-1/article-26"
+      ],
+      "expected_status": "source_passages_only",
+      "annotation_status": "draft_needs_human_review"
+    },
+    {
+      "question_id": "P02",
+      "family_id": "P02",
+      "split": "pilot",
+      "question": "Hợp đồng dưới 01 tháng có áp dụng thử việc không?",
+      "relevant_unit_ids": [
+        "bll-45-2019/chapter-iii/section-1/article-24/clause-3"
+      ],
+      "expected_status": "source_passages_only",
+      "annotation_status": "draft_needs_human_review"
+    },
+    {
+      "question_id": "P03",
+      "family_id": "P03",
+      "split": "pilot",
+      "question": "Thời gian thử việc với công việc cần trình độ từ cao đẳng trở lên?",
+      "relevant_unit_ids": [
+        "bll-45-2019/chapter-iii/section-1/article-25/clause-2"
+      ],
+      "expected_status": "source_passages_only",
+      "annotation_status": "draft_needs_human_review"
+    },
+    {
+      "question_id": "P04",
+      "family_id": "P04",
+      "split": "pilot",
+      "question": "Thời gian thử việc công việc khác là bao nhiêu ngày làm việc?",
+      "relevant_unit_ids": [
+        "bll-45-2019/chapter-iii/section-1/article-25/clause-4"
+      ],
+      "expected_status": "source_passages_only",
+      "annotation_status": "draft_needs_human_review"
+    },
+    {
+      "question_id": "P05",
+      "family_id": "P05",
+      "split": "pilot",
+      "question": "Thử việc công nhân kỹ thuật hoặc nhân viên nghiệp vụ không quá bao nhiêu ngày?",
+      "relevant_unit_ids": [
+        "bll-45-2019/chapter-iii/section-1/article-25/clause-3"
+      ],
+      "expected_status": "source_passages_only",
+      "annotation_status": "draft_needs_human_review"
+    },
+    {
+      "question_id": "P06",
+      "family_id": "P06",
+      "split": "pilot",
+      "question": "Thử việc người quản lý doanh nghiệp tối đa bao nhiêu ngày?",
+      "relevant_unit_ids": [
+        "bll-45-2019/chapter-iii/section-1/article-25/clause-1"
+      ],
+      "expected_status": "source_passages_only",
+      "annotation_status": "draft_needs_human_review"
+    },
+    {
+      "question_id": "P07",
+      "family_id": "P07",
+      "split": "pilot",
+      "question": "Hủy bỏ hợp đồng trong thời gian thử việc có cần báo trước và bồi thường không?",
+      "relevant_unit_ids": [
+        "bll-45-2019/chapter-iii/section-1/article-27/clause-2"
+      ],
+      "expected_status": "source_passages_only",
+      "annotation_status": "draft_needs_human_review"
+    },
+    {
+      "question_id": "P08",
+      "family_id": "P08",
+      "split": "pilot",
+      "question": "Kết thúc thời gian thử việc người sử dụng lao động phải thông báo gì?",
+      "relevant_unit_ids": [
+        "bll-45-2019/chapter-iii/section-1/article-27/clause-1"
+      ],
+      "expected_status": "source_passages_only",
+      "annotation_status": "draft_needs_human_review"
+    },
+    {
+      "question_id": "P09",
+      "family_id": "P09",
+      "split": "pilot",
+      "question": "Có thể ghi thỏa thuận thử việc trong hợp đồng lao động hoặc giao kết hợp đồng thử việc không?",
+      "relevant_unit_ids": [
+        "bll-45-2019/chapter-iii/section-1/article-24/clause-1"
+      ],
+      "expected_status": "source_passages_only",
+      "annotation_status": "draft_needs_human_review"
+    },
+    {
+      "question_id": "P10",
+      "family_id": "P10",
+      "split": "pilot",
+      "question": "Hợp đồng thử việc có nội dung chủ yếu nào và dẫn chiếu Điều 21 ra sao?",
+      "relevant_unit_ids": [
+        "bll-45-2019/chapter-iii/section-1/article-24/clause-2"
+      ],
+      "expected_status": "source_passages_only",
+      "annotation_status": "draft_needs_human_review"
+    },
+    {
+      "question_id": "P11",
+      "family_id": "P11",
+      "split": "pilot",
+      "question": "Hiện nay văn bản này đã được sửa đổi và còn hiệu lực toàn bộ không?",
+      "relevant_unit_ids": [],
+      "expected_status": "insufficient_temporal_evidence",
+      "annotation_status": "draft_needs_human_review"
+    },
+    {
+      "question_id": "P12",
+      "family_id": "P12",
+      "split": "pilot",
+      "question": "Tranh chấp quyền sử dụng đất giải quyết ở đâu?",
+      "relevant_unit_ids": [],
+      "expected_status": "out_of_scope",
+      "annotation_status": "draft_needs_human_review"
+    }
+  ]
+}

@@ -1,0 +1,27 @@
+{
+  "topic": "hop-dong-thu-viec",
+  "legal_status": "unknown",
+  "sources": [
+    {
+      "document_id": "bll-45-2019",
+      "title": "Bộ luật Lao động 45/2019/QH14",
+      "url": "https://vbpl.vn/van-ban/chi-tiet/139264",
+      "marker": "45/2019/QH14",
+      "snapshot_sha256": "1dc5b362a39e8a1a5765a73c953bb224accbe3056195c737ac0e96fc3e1f2fcb",
+      "article_ids": [
+        "bll-45-2019/chapter-iii/section-1/article-24",
+        "bll-45-2019/chapter-iii/section-1/article-25",
+        "bll-45-2019/chapter-iii/section-1/article-26",
+        "bll-45-2019/chapter-iii/section-1/article-27"
+      ]
+    },
+    {
+      "document_id": "nd-145-2020",
+      "title": "Nghị định 145/2020/NĐ-CP",
+      "url": "https://vbpl.vn/van-ban/chi-tiet/152668",
+      "marker": "145/2020/NĐ-CP",
+      "snapshot_sha256": "118dbe704bd463c0c182b193f536991939cfb3d51fa90944471e6109b5a1c445",
+      "article_ids": ["nd-145-2020/chapter-iii/section-1/article-6"]
+    }
+  ]
+}
