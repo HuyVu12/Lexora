@@ -1,0 +1,8 @@
+{
+  "graph_version": "evidence-graph-v2",
+  "source_aliases": {
+    "Bộ luật Lao động": "bll-45-2019"
+  },
+  "include_review_candidates": true,
+  "notes": "Explicit aliases only. Pending references never create legal target nodes. Rule candidates are always needs_review."
+}
