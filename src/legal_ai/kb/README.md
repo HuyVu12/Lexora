@@ -2,4 +2,4 @@
 
 Đọc/ghi snapshot raw và validated; repository interface; không ghi đè dữ liệu đối chứng.
 
-Trạng thái: module dự kiến, chưa có implementation. Hợp đồng: `docs/data-contracts.md`. Khi triển khai, thêm unit tests và CLI tương ứng; không đưa logic sản phẩm vào notebook.
+Đã có `graph.py`, `references.py` và viewer local: graph versioned JSON/SQLite, cấu trúc, dẫn chiếu tường minh và evidence. Xem `docs/features/knowledge-graph-pilot.md`. Chưa có Neo4j, revision publication hoặc KB nhiều người dùng.

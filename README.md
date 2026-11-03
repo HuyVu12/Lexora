@@ -1,7 +1,11 @@
 # Legal AI — Hỏi đáp pháp luật lao động
 
 Khung triển khai đồ án RAG với Legal Knowledge Base có cấu trúc và kiểm chứng.
-**Trạng thái:** skeleton và kế hoạch; chưa có dữ liệu thật, mô hình, hoặc pipeline chạy được.
+**Trạng thái:** đã có pilot local cho snapshot VBPL → parser/schema → kiểm tra evidence → tra cứu nguồn bằng BM25. Chưa có LLM extraction/generation, giao diện hỏi đáp hoặc pipeline nghiên cứu ĐK1–ĐK4 hoàn chỉnh. Xem [gói review 02/11](docs/planning/local-pilot-review-2026-11-02.md).
+
+**Trọng tâm mới:** [Knowledge graph và evidence viewer local](docs/features/knowledge-graph-pilot.md). Đã có giao diện graph tự chứa dữ liệu, mở được bằng browser; quy phạm mới là ứng viên needs_review, chưa có chatbot/GraphRAG hoàn chỉnh.
+
+**Bản mới 03/11:** [Graph thực thể–quan hệ với quy phạm làm trung tâm](docs/features/entity-relation-graph.md), đã tách chủ thể/hành động/đối tượng/tính quy phạm và ràng buộc có quote riêng trên một phần pilot. Mở `data/kb/entity-relation-review/index.html` để review.
 
 ## Bắt đầu
 1. Đọc `docs/planning/implementation-plan.md` để xem lịch và tiêu chí bàn giao.
@@ -11,11 +15,11 @@ Khung triển khai đồ án RAG với Legal Knowledge Base có cấu trúc và 
 4. Hai thành viên cùng thu thập dữ liệu, gán nhãn chéo, đánh giá và viết báo cáo.
 
 ## Cấu trúc
-- `src/legal_ai/`: module Python theo các bước pipeline, hiện chỉ có mô tả trách nhiệm.
+- `src/legal_ai/`: module Python; schema, ingestion, normalization, validation kỹ thuật, provider boundary và BM25 đã có code.
 - `configs/`: cấu hình dự thảo, bốn điều kiện thực nghiệm riêng biệt.
-- `data/`: nguồn, bản chuẩn hóa, KB, tập đánh giá và chỉ mục; chưa có dữ liệu thật.
+- `data/`: hai snapshot VBPL và artifact pilot local; bulk data được loại khỏi Git.
 - `prompts/`: nơi quản lý phiên bản prompt extraction, answer và evaluation.
-- `tests/`: các nhóm kiểm thử cần xây; chưa có test tự động.
+- `tests/`: unittest offline, fixture tổng hợp và câu pilot nháp.
 - `experiments/`: manifest và kết quả thực nghiệm tái lập.
 - `apps/demo/`: giao diện demo tối thiểu, triển khai sau pipeline.
 - `scripts/`: các entry point CLI sẽ xây trong tuần đầu.
@@ -23,6 +27,14 @@ Khung triển khai đồ án RAG với Legal Knowledge Base có cấu trúc và 
 - `infra/lightning/`: quy trình vận hành máy tính toán.
 
 ## Chạy và kiểm tra
-Chưa có lệnh chạy ứng dụng hoặc dependency lockfile. Các lệnh CLI trong kế hoạch là giao diện dự kiến, chưa được triển khai. Có thể kiểm tra cây thư mục bằng `rg --files --hidden`.
+Yêu cầu Python 3.11+, runtime chỉ dùng thư viện chuẩn. Không cần cài package hoặc truy cập mạng để review trên artifact đã tải:
+
+```powershell
+$env:PYTHONPATH = 'src'
+python -m unittest discover -s tests -v
+python -m legal_ai.cli search data/normalized/pilot-v2 'Tiền lương thử việc ít nhất bao nhiêu phần trăm?' --top-k 2
+```
+
+Hướng dẫn build/validate/evaluate và giới hạn: [gói review local](docs/planning/local-pilot-review-2026-11-02.md). Các lệnh thí nghiệm LLM trong kế hoạch vẫn chưa được triển khai. `pyproject.toml` có metadata đóng gói; chưa kiểm chứng build/install và không cần dùng cho review.
 
 Dùng Python cho pipeline; lựa chọn thư viện, mô hình và nơi lưu vector được chốt sau pilot. Không cần dựng microservice hoặc graph database cho MVP. Giữ nguyên `AGENTS.md` đã có; thông tin cấu trúc mới nằm trong README này.

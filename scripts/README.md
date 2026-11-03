@@ -1,5 +1,5 @@
 # scripts
 
-CLI dự kiến: ingest, normalize, extract, validate, index, ask, evaluate. Chưa có lệnh thực thi. Mỗi lệnh nhận config/input/output/run-id và hỗ trợ resume khi có batch.
+Entry point đã có: `python scripts/build_fixture.py` tạo lại fixture tổng hợp; `python scripts/evaluate_pilot.py data/normalized/pilot-v2 --output docs/report/pilot-retrieval-smoke-2026-11-02.json` chạy kiểm tra retrieval pilot offline. CLI chính: đặt `PYTHONPATH=src`, chạy `python -m legal_ai.cli --help`. Xem `docs/planning/local-pilot-review-2026-11-02.md`.
 
-Trạng thái: khung thư mục; chưa có sản phẩm thực nghiệm.
+CLI hiện có: snapshot, parse, build-pilot, validate, search. Các lệnh extract/index/ask và batch resume trong kế hoạch vẫn chưa triển khai.

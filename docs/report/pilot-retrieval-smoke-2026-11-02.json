@@ -1,0 +1,173 @@
+{
+  "status": "draft_pilot_smoke_only",
+  "question_sha256": "56ee1060359d64b65dfd9e894cb0348693c5f9fade6a9b20a947bfe66728dff8",
+  "unit_artifact_sha256": "d1811e204eb11aa21af7ef7a36517da794839653cc2691005732055f472f7aa2",
+  "top_k": 5,
+  "scored_questions": 10,
+  "excluded_no_gold_questions": 2,
+  "mean_recall_at_5": 1.0,
+  "limitations": [
+    "Draft annotations not independent gold",
+    "Tiny topic-specific pilot, no generalization claim",
+    "Temporal refusal and out-of-scope behavior not implemented",
+    "No generation or legal correctness score"
+  ],
+  "rows": [
+    {
+      "question_id": "P01",
+      "expected_status": "source_passages_only",
+      "retrieved_unit_ids": [
+        "bll-45-2019/chapter-iii/section-1/article-26",
+        "bll-45-2019/chapter-iii/section-1/article-25/clause-4",
+        "bll-45-2019/chapter-iii/section-1/article-25/clause-3",
+        "bll-45-2019/chapter-iii/section-1/article-25/clause-2",
+        "nd-145-2020/chapter-iii/section-1/article-6"
+      ],
+      "recall_at_5": 1.0,
+      "behavior_evaluated": false
+    },
+    {
+      "question_id": "P02",
+      "expected_status": "source_passages_only",
+      "retrieved_unit_ids": [
+        "bll-45-2019/chapter-iii/section-1/article-24/clause-3",
+        "bll-45-2019/chapter-iii/section-1/article-24/clause-1",
+        "bll-45-2019/chapter-iii/section-1/article-27/clause-1",
+        "bll-45-2019/chapter-iii/section-1/article-27/clause-2",
+        "bll-45-2019/chapter-iii/section-1/article-25/clause-1"
+      ],
+      "recall_at_5": 1.0,
+      "behavior_evaluated": false
+    },
+    {
+      "question_id": "P03",
+      "expected_status": "source_passages_only",
+      "retrieved_unit_ids": [
+        "bll-45-2019/chapter-iii/section-1/article-25/clause-2",
+        "bll-45-2019/chapter-iii/section-1/article-25/clause-3",
+        "nd-145-2020/chapter-iii/section-1/article-6",
+        "bll-45-2019/chapter-iii/section-1/article-25/clause-4",
+        "bll-45-2019/chapter-iii/section-1/article-25/clause-1"
+      ],
+      "recall_at_5": 1.0,
+      "behavior_evaluated": false
+    },
+    {
+      "question_id": "P04",
+      "expected_status": "source_passages_only",
+      "retrieved_unit_ids": [
+        "bll-45-2019/chapter-iii/section-1/article-25/clause-4",
+        "bll-45-2019/chapter-iii/section-1/article-25/clause-3",
+        "bll-45-2019/chapter-iii/section-1/article-25/clause-2",
+        "bll-45-2019/chapter-iii/section-1/article-25/clause-1",
+        "nd-145-2020/chapter-iii/section-1/article-6"
+      ],
+      "recall_at_5": 1.0,
+      "behavior_evaluated": false
+    },
+    {
+      "question_id": "P05",
+      "expected_status": "source_passages_only",
+      "retrieved_unit_ids": [
+        "bll-45-2019/chapter-iii/section-1/article-25/clause-3",
+        "bll-45-2019/chapter-iii/section-1/article-25/clause-2",
+        "bll-45-2019/chapter-iii/section-1/article-25/clause-1",
+        "bll-45-2019/chapter-iii/section-1/article-25/clause-4",
+        "nd-145-2020/chapter-iii/section-1/article-6"
+      ],
+      "recall_at_5": 1.0,
+      "behavior_evaluated": false
+    },
+    {
+      "question_id": "P06",
+      "expected_status": "source_passages_only",
+      "retrieved_unit_ids": [
+        "bll-45-2019/chapter-iii/section-1/article-25/clause-1",
+        "nd-145-2020/chapter-iii/section-1/article-6",
+        "bll-45-2019/chapter-iii/section-1/article-25/clause-3",
+        "bll-45-2019/chapter-iii/section-1/article-25/clause-2",
+        "bll-45-2019/chapter-iii/section-1/article-25/clause-4"
+      ],
+      "recall_at_5": 1.0,
+      "behavior_evaluated": false
+    },
+    {
+      "question_id": "P07",
+      "expected_status": "source_passages_only",
+      "retrieved_unit_ids": [
+        "bll-45-2019/chapter-iii/section-1/article-27/clause-2",
+        "bll-45-2019/chapter-iii/section-1/article-25/clause-2",
+        "bll-45-2019/chapter-iii/section-1/article-25/clause-3",
+        "bll-45-2019/chapter-iii/section-1/article-27/clause-1",
+        "bll-45-2019/chapter-iii/section-1/article-24/clause-1"
+      ],
+      "recall_at_5": 1.0,
+      "behavior_evaluated": false
+    },
+    {
+      "question_id": "P08",
+      "expected_status": "source_passages_only",
+      "retrieved_unit_ids": [
+        "bll-45-2019/chapter-iii/section-1/article-27/clause-1",
+        "bll-45-2019/chapter-iii/section-1/article-27/clause-2",
+        "bll-45-2019/chapter-iii/section-1/article-24/clause-1",
+        "bll-45-2019/chapter-iii/section-1/article-25/clause-1",
+        "bll-45-2019/chapter-iii/section-1/article-26"
+      ],
+      "recall_at_5": 1.0,
+      "behavior_evaluated": false
+    },
+    {
+      "question_id": "P09",
+      "expected_status": "source_passages_only",
+      "retrieved_unit_ids": [
+        "bll-45-2019/chapter-iii/section-1/article-24/clause-1",
+        "bll-45-2019/chapter-iii/section-1/article-27/clause-2",
+        "bll-45-2019/chapter-iii/section-1/article-27/clause-1",
+        "nd-145-2020/chapter-iii/section-1/article-6",
+        "bll-45-2019/chapter-iii/section-1/article-26"
+      ],
+      "recall_at_5": 1.0,
+      "behavior_evaluated": false
+    },
+    {
+      "question_id": "P10",
+      "expected_status": "source_passages_only",
+      "retrieved_unit_ids": [
+        "bll-45-2019/chapter-iii/section-1/article-24/clause-2",
+        "nd-145-2020/chapter-iii/section-1/article-6",
+        "bll-45-2019/chapter-iii/section-1/article-24/clause-1",
+        "bll-45-2019/chapter-iii/section-1/article-27/clause-2",
+        "bll-45-2019/chapter-iii/section-1/article-25/clause-2"
+      ],
+      "recall_at_5": 1.0,
+      "behavior_evaluated": false
+    },
+    {
+      "question_id": "P11",
+      "expected_status": "insufficient_temporal_evidence",
+      "retrieved_unit_ids": [
+        "bll-45-2019/chapter-iii/section-1/article-24/clause-2",
+        "nd-145-2020/chapter-iii/section-1/article-6",
+        "bll-45-2019/chapter-iii/section-1/article-27/clause-1",
+        "bll-45-2019/chapter-iii/section-1/article-27/clause-2",
+        "bll-45-2019/chapter-iii/section-1/article-25/clause-4"
+      ],
+      "recall_at_5": null,
+      "behavior_evaluated": false
+    },
+    {
+      "question_id": "P12",
+      "expected_status": "out_of_scope",
+      "retrieved_unit_ids": [
+        "nd-145-2020/chapter-iii/section-1/article-6",
+        "bll-45-2019/chapter-iii/section-1/article-27/clause-1",
+        "bll-45-2019/chapter-iii/section-1/article-24/clause-1",
+        "bll-45-2019/chapter-iii/section-1/article-25/clause-1",
+        "bll-45-2019/chapter-iii/section-1/article-27/clause-2"
+      ],
+      "recall_at_5": null,
+      "behavior_evaluated": false
+    }
+  ]
+}

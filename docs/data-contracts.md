@@ -1,5 +1,7 @@
 # Hợp đồng dữ liệu v0 — dự thảo cần chốt 03/11
 
+Bản dưới giữ làm tham chiếu thiết kế v0. Code local hiện thực thi `1.0.0-pilot`; xem [schema v1 và migration](planning/schema-v1-migration.md) cùng `tests/fixtures/contract-v1/` trước khi trao đổi JSONL. Chưa có tự động migration dữ liệu v0 thật hoặc contract nghiên cứu hoàn chỉnh.
+
 | Đối tượng | Trường tối thiểu | Ràng buộc |
 |---|---|---|
 | Document | document_id, title, source_url, accessed_at, source_sha256, effective_from, effective_to, legal_status | ID ổn định; ngày ISO; không biết thì null, không tự đoán |

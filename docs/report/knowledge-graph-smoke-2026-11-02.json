@@ -1,0 +1,38 @@
+{
+  "graph_hash": "1e071451452a706e0115611cee5a53a82e8cd62ea882e8ed89a35f6765447a79",
+  "node_count": 98,
+  "edge_count": 115,
+  "summary": {
+    "nodes": {
+      "ClaimSlot": 12,
+      "Document": 2,
+      "Evidence": 36,
+      "LegalUnit": 34,
+      "NormClaim": 12,
+      "ReferenceMention": 2
+    },
+    "edges": {
+      "ANCHORED_IN": 36,
+      "EXTRACTED_FROM": 12,
+      "HAS_SLOT": 12,
+      "MENTIONS_REFERENCE": 2,
+      "PART_OF": 34,
+      "REFERENCES": 7,
+      "SUPPORTED_BY": 12
+    },
+    "reference_status": {
+      "resolved": 2
+    },
+    "claim_decisions": {
+      "needs_review": 12
+    },
+    "synthetic": false,
+    "legal_status": "unknown"
+  },
+  "unittest_count": 40,
+  "unittest_result": "passed",
+  "dom_smoke": "passed: initialization, evidence, cross-document edge, candidate layer, search, document filter, reset",
+  "visual_browser_qa": "not_run: browser access host unavailable",
+  "reproducibility": "manifest and all artifact hashes identical after rebuild",
+  "external_requests_in_this_task": 0
+}

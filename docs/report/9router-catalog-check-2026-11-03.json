@@ -1,0 +1,11 @@
+{
+  "status": 200,
+  "model_count": 618,
+  "configured_models_found": [
+    "ollama/gpt-oss:120b",
+    "ollama/nemotron-3-ultra:cloud",
+    "ollama/beam"
+  ],
+  "quota": "not established by catalog",
+  "inference_calls": 0
+}

@@ -1,5 +1,9 @@
 # Kế hoạch triển khai đến 20/12/2026
 
+## Điều chỉnh demo tuần 02–08/11 — 03/11/2026
+
+Theo yêu cầu mới, Vũ phụ trách luồng upload PDF có text/TXT → bóc tách thực thể/quy phạm và KB nháp → người dùng review/confirm → hỏi đáp trên published KB revision. Xem [kế hoạch cụ thể và provider/quota](demo-upload-review-chat-2026-11-03.md), [kết quả cập nhật Jira](https://vku-lexora.atlassian.net/browse/SCRUM-21). Khối này thay phân công/phạm vi demo tuần này trong lịch phục hồi bên dưới; lịch nghiên cứu tổng thể và hạn 20/12 vẫn giữ để review riêng. Không suy các task nghiên cứu đã xong từ việc hoàn thành demo subset.
+
 ## Thiết kế kỹ thuật bổ sung — 01/11/2026
 
 Xem [kế hoạch kiến trúc và kỹ thuật chi tiết](technical-design-plan.md) cho kiến trúc Mermaid, schema quy phạm, thuật toán extraction/validation/retrieval, luồng hỏi đáp, lựa chọn model, vận hành Lightning Free, đánh giá và backlog kỹ thuật. Người dùng xác nhận ưu tiên chất lượng demo, giữ hai thành viên và hạn 20/12; có thể mở rộng chủ đề theo năng lực dữ liệu. Cấu hình DEMO tối ưu riêng; ĐK1–ĐK4 tiếp tục giữ phép so sánh theo giao thức thực nghiệm. Reranker và mở rộng dẫn chiếu được ưu tiên thử cho DEMO sau khi luồng cốt lõi ổn định, không tự thêm vào riêng ĐK4.
