@@ -132,7 +132,7 @@ async function main() {
 
     // Reviewer: import a synthetic document into a new public base.
     await login('phapche', 'review password 1');
-    assert(await evaluate('document.body.innerText.includes("Nguyễn Pháp Chế")'), 'greeting with display name');
+    await waitFor('document.body.innerText.includes("Nguyễn Pháp Chế")', 'greeting with display name');
     await capture('home-empty');
     await open('/import');
     await waitFor('!!__q("label.choice", "Dán nội dung")', 'import form');
@@ -208,6 +208,48 @@ async function main() {
     assert(await evaluate('document.body.innerText.includes("Nguyễn Pháp Chế (phapche)")'), 'revision reviewer');
     await capture('kb');
 
+    // The knowledge graph opens inside the app: a norm, its parts, and their verbatim evidence.
+    const kbPath = await evaluate('location.pathname');
+    await evaluate('__click("a.btn", "Xem sơ đồ tri thức")');
+    await waitFor('location.pathname.endsWith("/graph") && document.querySelectorAll(".stage canvas").length > 0 && !!document.querySelector(".inspector .slots")', 'graph page');
+    await evaluate(helpers);
+    // First visit: the guide explains the page; it closes and stays closed.
+    await waitFor('!!document.getElementById("graph-guide")', 'graph guide on first visit');
+    await capture('graph-guide');
+    await evaluate('__click("#graph-guide .btn.primary"); true');
+    await waitFor('!document.getElementById("graph-guide")', 'guide closed');
+    await sleep(600);
+    await capture('graph-norm');
+    // Picking a part reads its evidence without moving the view.
+    const viewBefore = await evaluate('document.querySelector(".stage .canvas").dataset.view || ""');
+    const oneCount = Number(await evaluate('document.querySelector(".stage .canvas").dataset.nodes'));
+    await evaluate('document.querySelector(".inspector .slots .linkish").click(); true');
+    await waitFor('!!document.querySelector(".inspector blockquote mark:not(.plain)")', 'part evidence in its role colour');
+    await sleep(400);
+    assert.equal(await evaluate('document.querySelector(".stage .canvas").dataset.view || ""'), viewBefore, 'selecting a node keeps the viewport');
+    await capture('graph-part');
+    // All norms at once, one row each.
+    await evaluate('__click(".toolbar .segmented button", "Tất cả quy phạm"); true');
+    await waitFor(`Number(document.querySelector(".stage .canvas").dataset.nodes) > ${oneCount}`, 'all-norms graph shows more nodes');
+    await sleep(500);
+    assert.ok(Number((await evaluate('document.querySelector(".stage .canvas").dataset.bounds')).split(':')[0]) >= 0, 'all-norms rows start inside the canvas');
+    await capture('graph-all');
+    // Side columns hide and come back.
+    await evaluate('__click(".toolbar .btn", "Danh sách"); __click(".toolbar .btn", "Chi tiết"); true');
+    await waitFor('!document.querySelector(".graph-page aside")', 'side columns hidden');
+    await sleep(400);
+    await capture('graph-canvas-only');
+    await evaluate('__click(".toolbar .btn", "Danh sách"); __click(".toolbar .btn", "Chi tiết"); true');
+    await waitFor('document.querySelectorAll(".graph-page aside").length === 2', 'side columns back');
+    await evaluate('__click(".toolbar .segmented button", "Một quy phạm"); true');
+    await evaluate('__click(".toolbar .segmented button", "Cấu trúc văn bản")');
+    await waitFor('[...document.querySelectorAll(".segmented button")].some(b => b.getAttribute("aria-pressed") === "true" && b.textContent.includes("Cấu trúc"))', 'structure view');
+    await sleep(600);
+    assert.ok(Number((await evaluate('document.querySelector(".stage .canvas").dataset.bounds')).split(':')[0]) >= 0, 'structure tree starts inside the canvas');
+    await capture('graph-structure');
+    await open(kbPath);
+    await waitFor('!!document.querySelector(".page-head .facts")', 'knowledge base again');
+
     // Ask the base; citations open as statute slips.
     await evaluate('__click("button.btn.primary", "Hỏi đáp trên kho này")');
     await waitFor('location.pathname.startsWith("/chat/") && !!document.querySelector(".ask textarea")', 'chat');
@@ -229,7 +271,7 @@ async function main() {
     // Reader: published bases only, no authoring navigation, authoring pages refuse.
     await login('nhansu', 'reader password 1');
     assert(!(await evaluate('[...document.querySelectorAll(".topbar nav a")].some(a => a.getAttribute("href") === "/import")')), 'reader has no import link');
-    assert(await evaluate('document.body.innerText.includes("Hợp đồng lao động")'), 'reader sees the published base');
+    await waitFor('document.body.innerText.includes("Hợp đồng lao động")', 'reader sees the published base');
     await capture('reader-home');
     await open('/import');
     await waitFor('document.body.innerText.includes("không có quyền")', 'import forbidden for reader');
