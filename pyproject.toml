@@ -9,6 +9,12 @@ description = "Evidence-preserving legal document pilot"
 requires-python = ">=3.11"
 dependencies = []
 
+[project.optional-dependencies]
+# Web layer (FastAPI). The core pipeline stays standard-library only.
+web = ["fastapi==0.162.0", "uvicorn==0.54.0", "pydantic==2.14.3"]
+# TestClient for tests/test_web_api.py.
+web-test = ["httpx==0.28.1"]
+
 [project.scripts]
 lexora = "legal_ai.cli:main"
 
@@ -17,3 +23,4 @@ where = ["src"]
 
 [tool.setuptools.package-data]
 "legal_ai.kb" = ["viewer.html", "entity-viewer.html"]
+"legal_ai" = ["demo.html", "demo.css", "demo-app.js", "term-tip.js", "term-tip.css"]
