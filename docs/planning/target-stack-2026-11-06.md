@@ -51,7 +51,8 @@ Các bước này làm trước pipeline ĐK1–ĐK4 (đã chốt 06/11/2026).
 2. Chuyển lưu trữ: thêm lớp lưu trữ PostgreSQL bên cạnh SQLite, viết script chuyển dữ liệu, chạy cùng bộ test trên cả hai.
 3. **Xong 07/11/2026.** Frontend mới: dựng lại các màn hình hiện có bằng TypeScript + Vite, kèm song ngữ và WCAG AA ngay từ đầu.
    Kết quả: `frontend/` (SvelteKit 3, Svelte 5) với đăng nhập ba vai trò (`src/legal_ai/auth.py`), hướng thị giác "Bản luật đã đánh dấu", song ngữ Việt và Anh bằng từ điển có kiểm tra kiểu (không dùng Paraglide vì bản build của nó tải và chạy plugin từ CDN), thuật ngữ song ngữ từ máy chủ; `scripts/check_app_browser.cjs` là bài E2E mới; giao diện cũ (`demo.py`, `demo-app.js`) vẫn còn để đối chiếu, chờ quyết định gỡ bỏ.
-4. Sơ đồ: chuyển hai trang sơ đồ sang Cytoscape.js, vẫn xuất tệp HTML tự chứa; cập nhật hai smoke test DOM.
+4. **Xong 07/11/2026.** Sơ đồ: chuyển hai trang sơ đồ sang Cytoscape.js.
+   Kết quả: trang `/kb/:id/graph` trong app (chế độ Quy phạm và Cấu trúc văn bản, phóng to, kéo, cột bằng chứng nguyên văn, cùng hệ thiết kế, có đăng nhập và song ngữ) đọc `GET /api/kb/graph`; hai tệp HTML tự chứa (`kb/viewer.html`, `kb/entity-viewer.html`) vẫn được giữ cho bản xuất của `cli graph-build` và các smoke test DOM.
 5. Truy xuất và LLM: đo embedding, reranker và model trên tập dev rồi chốt.
 
 ## Đã chốt thêm (06/11/2026)

@@ -53,6 +53,7 @@ node scripts/check_app_browser.cjs http://127.0.0.1:<port> <screenshot-dir>   # 
 ```
 
 Kit 3 notes: options go to `sveltekit({...})` in `vite.config.ts` (no svelte.config.js); `$lib` is replaced by the `#lib` subpath import from `package.json`, and TypeScript modules are imported with a `.js` suffix (`#lib/api.js`). Interface strings live in `frontend/src/lib/i18n/vi.ts` (source of keys) and `en.ts` (typed `Record<MessageKey, string>`, so a missing key fails the build); Paraglide was rejected because its build fetches and runs a plugin from a CDN. A variable must not be named `state` in a component (it collides with the `$state` rune).
+The knowledge graph is the in-app route `frontend/src/routes/kb/[id]/graph` (Cytoscape.js via `lib/components/GraphCanvas.svelte`, element builders in `lib/graph.ts`, data from `GET /api/kb/graph`); in Cytoscape font strings, quote family names containing digits (`'Source Serif 4 Variable'`) or the canvas silently falls back to 10px. The standalone `kb/*viewer.html` pages remain only for `cli graph-build` exports.
 `legal_ai.web` without a build answers 503 with build instructions; `tests/test_web_api.py` skips without FastAPI.
 Test files insert `src/` into `sys.path` themselves, so tests run without `PYTHONPATH`.
 There is no linter or formatter.
