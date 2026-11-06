@@ -8,6 +8,12 @@ from legal_ai.common.io import digest, canonical
 VERSION = "1.0.0-pilot"
 NORMALIZATION_VERSION = "nfc-newlines-v1"
 MODALITIES = {"obligation", "permission", "prohibition", "entitlement", "definition", "procedure", "unknown"}
+# Exact source words (casefolded) accepted as evidence for a modality. A cue is
+# evidence of wording only; reviewers still confirm the legal reading.
+MODALITY_CUES = {"obligation": {"phải", "có trách nhiệm", "có nghĩa vụ", "bắt buộc"},
+                 "prohibition": {"không được", "nghiêm cấm", "cấm", "bị cấm"},
+                 "entitlement": {"có quyền", "được quyền"},
+                 "permission": {"có thể", "được"}}
 
 
 def text_hash(text):

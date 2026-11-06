@@ -8,6 +8,7 @@ import sqlite3
 
 from legal_ai.common.io import canonical, digest, read_jsonl, write_json
 from legal_ai.extraction.candidates import rule_candidates
+from legal_ai.extraction.norms import is_semantic
 from legal_ai.kb.references import detect_references
 from legal_ai.validation.bundle import validate_bundle
 from legal_ai.validation.evidence import align_quote, check_evidence, validate_record
@@ -15,15 +16,28 @@ from legal_ai.validation.evidence import align_quote, check_evidence, validate_r
 GRAPH_VERSION = "evidence-graph-v2"
 
 
-def make_graph(documents, units, evidence, claims, *, aliases=None, include_candidates=False, extraction_mode="unit-cues"):
+def claim_label(claim, semantic):
+    slots = claim["slots"]
+    if not semantic:
+        return "Ứng viên quy phạm"
+    if slots.get("action", {}).get("state") == "present":
+        return slots["action"]["text"]
+    if slots.get("quantities", {}).get("state") == "present":
+        return "Quy phạm giới hạn định lượng"
+    return "Câu có dấu hiệu quy phạm"
+
+
+def make_graph(documents, units, evidence, claims, *, aliases=None, include_candidates=False, extraction_mode="unit-cues", extraction_report=None):
     decisions = validate_bundle(documents, units, evidence, claims)
     if any(row["decision"] == "rejected" for row in decisions):
         raise ValueError("rejected claim cannot enter review graph")
     claims = list(claims)
     evidence_by_id = {row["evidence_id"]: row for row in evidence}
-    extraction_report = []
+    # A rebuilt draft passes its original report so the graph hash covers it.
+    extraction_report = list(extraction_report or [])
     if include_candidates:
-        if extraction_mode == "norm-rules-v1":
+        if extraction_mode in {"norm-rules-v1", "norm-rules-v2"}:
+            # Both names select the current rule set; claim run IDs record the version actually used.
             from legal_ai.extraction.norms import extract_norms
             candidates, anchors, extraction_report = extract_norms(units)
         elif extraction_mode == "unit-cues":
@@ -74,8 +88,8 @@ def make_graph(documents, units, evidence, claims, *, aliases=None, include_cand
         decision = validate_record(claim, list(evidence_by_id.values()), units)
         if decision["decision"] == "rejected":
             raise ValueError("candidate evidence invalid")
-        semantic = claim["extraction_run_id"].startswith("norm-rules-v1:")
-        claim_node = node("claim:" + digest(canonical([claim["extraction_run_id"], claim["claim_id"]])), "NormClaim", (claim["slots"]["action"]["text"] if semantic and claim["slots"].get("action", {}).get("state") == "present" else "Quy phạm giới hạn định lượng" if semantic else "Ứng viên quy phạm"), {**claim, "validation": decision, "semantic_extraction": semantic})
+        semantic = is_semantic(claim["extraction_run_id"])
+        claim_node = node("claim:" + digest(canonical([claim["extraction_run_id"], claim["claim_id"]])), "NormClaim", claim_label(claim, semantic), {**claim, "validation": decision, "semantic_extraction": semantic})
         for version in claim["source_unit_version_ids"]:
             proof = [eid for eid in claim["evidence_ids"] if evidence_by_id[eid]["unit_version_id"] == version]
             edge("EXTRACTED_FROM", claim_node, unit_nodes[version], proof)

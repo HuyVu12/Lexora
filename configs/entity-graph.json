@@ -2,6 +2,6 @@
   "graph_version": "evidence-graph-v2",
   "source_aliases": {"Bộ luật Lao động": "bll-45-2019"},
   "include_review_candidates": true,
-  "extraction_mode": "norm-rules-v1",
+  "extraction_mode": "norm-rules-v2",
   "notes": "Review-only typed entity/norm relation graph. No implicit global entity merges or paid/model calls."
 }
