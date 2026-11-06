@@ -1,7 +1,7 @@
 # F-KB-02 - Vòng đời kho tri thức: nhập, review, tạo mới hoặc gộp, hỏi đáp nhiều kho
 
 Ngày 06/11/2026.
-Trạng thái: thiết kế chi tiết, chưa triển khai đầy đủ.
+Trạng thái: thiết kế chi tiết; phần demo D1-D4 đã triển khai ngày 06/11 (mục 15.1); tách bằng LLM, độ phủ câu và tìm kết hợp embedding đã có bản đầu (mục 15.2); phần MVP còn lại chưa triển khai.
 Tài liệu này cụ thể hóa [F-KB-01](private-legal-knowledge-base.md) thành mô hình dữ liệu, luồng xử lý, API, màn hình và kế hoạch thực thi.
 Phần đã có trong code được mô tả ở [reviewed-kb-chat.md](reviewed-kb-chat.md); mục 15 liệt kê chênh lệch giữa thiết kế và code.
 Mọi kết quả bóc tách vẫn là ứng viên cần review, không phải sự thật pháp lý đã xác minh.
@@ -309,9 +309,9 @@ Nếu người dùng muốn diễn giải thêm, nội dung đó vào `reviewer_
 Bắt duyệt từng claim không mở rộng được khi tài liệu dài.
 Thiết kế dùng ba cơ chế, không cái nào bỏ qua được lỗi cứng về evidence:
 
-1. **Xếp hạng ưu tiên.**
-   Điểm cao hơn khi claim có slot `unknown`, có phủ định hoặc ngoại lệ, modality là `permission` hoặc `unknown`, hoặc trùng văn bản với claim đã có trong kho đích.
-   Danh sách review mặc định sắp theo điểm giảm dần.
+1. **Đánh dấu cần chú ý.**
+   Claim được đánh dấu khi chưa xác định chủ thể hoặc hành vi, có phủ định hoặc ngoại lệ, modality là `permission` hoặc `unknown`, hoặc trùng văn bản với claim đã có trong kho đích.
+   Danh sách giữ thứ tự trong văn bản để claim không nhảy chỗ khi đang sửa; bộ lọc "Cần chú ý" và "Chưa quyết định" thay cho việc sắp xếp lại.
 2. **Duyệt theo lô trong phạm vi một Điều.**
    Người dùng mở một Điều, xem mọi claim và nguyên văn, rồi bấm "Duyệt các claim còn lại trong Điều này".
    Mỗi claim ghi `decision_mode = batch`, để khi đánh giá có thể tách duyệt từng mục với duyệt theo lô.
@@ -342,7 +342,7 @@ Diff được tính giữa graph nháp (sau quyết định review) và revision
 | Thực thể gợi ý gộp | Nhãn chuẩn hóa trùng với thực thể cùng loại trong kho | Gợi ý; chỉ thành `REVIEWED_ENTITY_LINK` khi người dùng chọn |
 | Thực thể mới | Không có gợi ý hoặc người dùng chọn "khác nghĩa" | Thêm như đề cập mới |
 | Claim mới | Claim đã duyệt | Thêm |
-| Claim trùng nội dung | Evidence chính có cùng quote hash với claim đã duyệt trong kho | Cảnh báo, mặc định bỏ qua bản mới |
+| Claim trùng nội dung | Evidence chính có cùng nội dung với claim đã duyệt trong kho | Cảnh báo ở claim và màn hình xem trước; người dùng quyết định loại hay giữ |
 | Dẫn chiếu được giải quyết thêm | Dẫn chiếu trước đây `external/unresolved` nay trỏ được vào tài liệu mới | Hiển thị để người dùng biết; resolver vẫn theo alias có cấu hình |
 
 "Đánh dấu thay thế" không xóa claim cũ.
@@ -485,7 +485,7 @@ Các quy tắc:
 - Cùng một câu trích xuất hiện ở nhiều kho chỉ hiện một lần, ghi "có trong: Kho A, Kho B".
 - Hai kho chứa cùng mã văn bản nhưng khác hash: hiện cảnh báo "các kho dùng phiên bản khác nhau của văn bản X" và không tự chọn bên nào.
 - Claim gắn cờ `possibly_superseded` hiện kèm cảnh báo.
-- Chế độ LLM chỉ gửi bundle của các kho có `data_class = public` hoặc đã được người dùng đồng ý gửi trong lượt đó.
+- Chế độ LLM chỉ chạy khi mọi kho trong session có `data_class = public` và người dùng đồng ý gửi trong lượt đó; session có kho riêng tư nhận trạng thái `private_transfer_blocked`.
 
 ## 11. Quyền truy cập và dữ liệu
 
@@ -506,24 +506,23 @@ API giữ phong cách hiện tại (JSON, query string cho GET, token cho POST).
 
 | Phương thức | Đường dẫn | Body / query | Kết quả |
 |---|---|---|---|
-| GET | `/api/kbs` | | Danh sách kho, số tài liệu, revision active |
-| POST | `/api/kbs` | `{name, description, data_class}` | Chỉ dùng khi muốn tạo kho rỗng; luồng chính tạo kho lúc công bố |
-| GET | `/api/kb` | `?id=` | Chi tiết kho, danh sách revision, tài liệu |
-| POST | `/api/kb/archive` | `{kb_id}` | Lưu trữ kho; session mới không chọn được |
-| POST | `/api/drafts` | `{title, text, target: {mode: "new", name, data_class} \| {mode: "merge", kb_id}}` | Draft kèm graph nháp và diff (thay cho `/api/prepare`) |
-| POST | `/api/prepare-source` | `{source_id, target}` | Như trên, nguồn từ thư viện có checksum |
-| GET | `/api/draft` | `?id=` | Draft, quyết định đã lưu, tiến độ review |
-| POST | `/api/draft/review` | `{draft_id, item_id, decision, payload?, batch_scope?}` | Lưu một quyết định hoặc một lô |
-| POST | `/api/draft/metadata` | `{draft_id, document_metadata}` | Lưu metadata hiệu lực do người dùng khai báo |
-| GET | `/api/draft/diff` | `?id=` | Diff với revision gốc (mục 8.2) |
-| POST | `/api/draft/rebase` | `{draft_id}` | Tính lại diff trên revision active mới |
-| POST | `/api/draft/discard` | `{draft_id}` | Hủy draft |
-| POST | `/api/publish` | `{draft_id, reviewer, reason, confirmed: true}` | Revision mới; `409 base_changed` nếu kho đã đổi |
-| POST | `/api/chat/start` | `{kb_ids: [...]}` | Session với bindings đã ghim |
-| POST | `/api/chat/ask` | `{session_id, question, mode, allow_public_transfer}` | Như hiện tại, citation có thêm `kb_id`, `kb_name`, `revision` |
-| GET | `/api/chat/session` | `?id=` | Lịch sử và bindings |
+| GET | `/api/state` | | Danh sách kho, bản nháp, session (đã có) |
+| GET | `/api/kb` | `?id=` | Chi tiết kho, danh sách revision, tài liệu (đã có) |
+| POST | `/api/prepare` | `{title, text, synthetic, target: {mode: "new", name, description, data_class} \| {mode: "merge", kb_id}}` | Draft view kèm graph nháp và diff (đã có) |
+| POST | `/api/prepare-source` | `{source_id, target}` | Như trên, nguồn từ thư viện có checksum (đã có) |
+| GET | `/api/draft` | `?id=` | Draft view: Điều/đơn vị nguồn, claim, thực thể, quyết định đã lưu, tiến độ, diff (đã có) |
+| POST | `/api/draft/review` | `{draft_id, item_id, decision, payload?}` | Lưu một quyết định; `approve_article` duyệt các claim còn lại của một Điều (đã có) |
+| POST | `/api/draft/discard` | `{draft_id}` | Hủy draft (đã có) |
+| POST | `/api/publish` | `{draft_id, reviewer, reason}` | Revision mới; `409 base_changed` nếu kho đã đổi (đã có) |
+| POST | `/api/chat/start` | `{kb_ids: [...]}` | Session với bindings đã ghim (đã có) |
+| POST | `/api/chat/ask` | `{session_id, question, mode, allow_public_transfer}` | Citation có `sources` gồm kho, revision, claim (đã có) |
+| GET | `/api/chat/session` | `?id=` | Lịch sử và bindings (đã có) |
+| POST | `/api/kbs` | `{name, description, data_class}` | Tạo kho rỗng (MVP) |
+| POST | `/api/kb/archive` | `{kb_id}` | Lưu trữ kho; store đã có cột và kiểm tra `archived_at` (MVP) |
+| POST | `/api/draft/metadata` | `{draft_id, document_metadata}` | Metadata hiệu lực do người dùng khai báo (MVP) |
+| POST | `/api/draft/rebase` | `{draft_id}` | Tính lại diff trên revision mới, giữ quyết định (MVP) |
 
-Mã lỗi có cấu trúc: `duplicate_document`, `structure_not_recognized`, `evidence_integrity_error`, `undecided_claims`, `base_changed`, `kb_not_found`, `revision_not_in_kb`, `ambiguous_quote`, `quote_not_found`, `transfer_not_approved`, `provider_error`.
+Lỗi nghiệp vụ trả HTTP 400 với thông báo tiếng Việt hướng dẫn cách sửa; xung đột revision trả HTTP 409 với `code: base_changed`. Trạng thái hỏi đáp: `sources_found`, `insufficient_evidence`, `answered`, `provider_disabled`, `private_transfer_blocked`, `transfer_not_approved`, `provider_error`, `answer_rejected`.
 
 ## 13. Giao diện
 
@@ -598,6 +597,44 @@ Mỗi citation hiển thị: tên kho, tài liệu, đường dẫn Điều/Kho�
 | Job | Đồng bộ trong request | Worker nền, tiến độ, retry | MVP |
 | Quyền | Loopback, một người dùng | `owner_id`, kiểm tra scope mọi API | Scope kho: Demo; auth: sau MVP |
 | QA | 75 unittest, DOM smoke | E2E nhiều kho, browser visual QA | Demo |
+
+### 15.1 Trạng thái sau triển khai demo (06/11)
+
+Đã có:
+
+- D1: bảng `knowledge_bases`, `kb_id` trên revision, migration store và chat session cũ, kiểm tra revision thuộc kho.
+- D2: đích nhập tạo mới hoặc gộp, tên kho duy nhất, công bố nguyên tử (kho mới tạo cùng revision đầu), diff tài liệu/claim/thực thể, cảnh báo trùng nội dung và tài liệu cùng tên, `409 base_changed`.
+- D3: `review_decisions` lưu dần, duyệt cả Điều (`decision_mode = batch`), lớp `curated` với sửa slot/modality bằng câu trích, ghi chú người duyệt, khôi phục bản máy, quyết định thực thể "cùng một thực thể" hoặc "khác nhau".
+- D4: session 1-5 kho, khử trùng citation theo câu trích, nhãn kho và nhãn "đã chỉnh sửa", chặn LLM với kho riêng tư.
+- UI workspace: danh sách kho, chi tiết kho, nhập 3 bước, màn hình duyệt dạng văn bản có chú giải lề, xem trước, hỏi đáp chọn nhiều kho.
+- Kiểm thử: unittest/tích hợp mới và E2E trên browser thật `scripts/check_demo_browser.cjs`.
+
+Chưa có (MVP): rebase tự động, đánh dấu thay thế phiên bản, metadata hiệu lực, PDF, worker nền bền vững, lưu trữ kho qua UI, xác thực.
+
+### 15.2 Độ phủ câu, tách bằng LLM và tìm kết hợp (06/11)
+
+Lý do: khi thử trên NĐ 145/2020 Điều 3, khoản 3 ("... có trách nhiệm ...") không có ứng viên nào và giao diện không báo, nên người duyệt dễ hiểu nhầm là Điều chỉ có 2 quy phạm.
+Thay đổi theo ba lớp:
+
+1. Bộ quy tắc `norm-rules-v2`:
+   - Thêm "có trách nhiệm", "có nghĩa vụ" (nghĩa vụ) và vế mở đầu "Trong thời hạn ...", "Chậm nhất ..." (thời hạn), "Sau khi", "Trước khi" (điều kiện).
+   - Câu có từ tín hiệu nhưng không khớp mẫu trở thành ứng viên theo câu (`cue-sentence`), không còn lấy cả khoản kèm số thứ tự; loại quy phạm để `unknown` vì từ tín hiệu có thể bị phủ định ("không phải").
+   - Từ tình thái hợp lệ làm căn cứ loại quy phạm nằm trong `MODALITY_CUES` của `schemas/contract.py`.
+2. Độ phủ câu: mọi câu của đơn vị lá không có claim nào là một "câu chưa có quy phạm".
+   - Màn hình duyệt gạch chân chấm câu đó và có ghi chú lề với hai lựa chọn: "Thêm quy phạm" (claim `manual-v1:reviewer` neo đúng câu, sau đó bổ sung thành phần bằng Sửa) hoặc "Không phải quy phạm" (có bản theo cả Điều).
+   - Có nút "Thêm quy phạm từ đoạn bôi đen" để tách một câu thành nhiều quy phạm.
+   - Không công bố được khi còn câu chưa xử lý; revision ghi `dismissed_gaps`.
+3. Tách bằng LLM (`extraction/llm_norms.py`, run `norm-llm-v1:<model>`):
+   - Chỉ cho kho công khai; kho riêng tư bị chặn ở server.
+   - Chỉ gửi các câu bộ quy tắc chưa tách được, gom theo Điều, kèm ngữ cảnh đơn vị cha.
+   - Model phải chép nguyên văn từng thành phần; Lexora tự tìm vị trí trong câu, giá trị không khớp bị bỏ và ghi vào báo cáo; từ tình thái không khớp `MODALITY_CUES` thì loại quy phạm về `unknown`.
+   - Chạy nền trong tiến trình demo, có tiến độ; lỗi provider giữ kết quả quy tắc; khởi động lại server đánh dấu `interrupted`; chạy lại chỉ khi chưa có quyết định nào.
+   - Đã thử `ollama/gpt-oss:120b` (2-4 giây mỗi Điều, JSON đúng); `nemotron-3-ultra:cloud` chậm và sai định dạng; `gemma4:31b` bị router từ chối.
+4. Tìm kết hợp khi hỏi đáp (`rag/dense.py`):
+   - Embedding qua 9Router (`gemini/gemini-embedding-001`, 768 chiều), cache theo model, số chiều và SHA-256 của đoạn được nhúng trong bảng `embeddings`.
+   - Xếp hạng RRF giữa BM25 và độ tương đồng; đoạn chỉ tìm thấy nhờ ngữ nghĩa cần độ tương đồng ≥ 0.72, mọi đoạn bị loại nếu thấp hơn đoạn tốt nhất quá 0.10.
+   - Chỉ chạy khi người dùng bật trong lượt hỏi và mọi kho trong session là công khai; lỗi embedding quay về BM25.
+
 
 ## 16. Kế hoạch demo tuần này (07-08/11)
 
