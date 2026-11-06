@@ -1,5 +1,5 @@
 # providers
 
-Adapter LLM/embedding; timeout/retry/cache; không tự fallback trả phí.
+`pilot.py` cung cấp callable provider/cache dùng cho pilot và tests. `router.py` là transport 9Router tùy chọn, exact model/route approval/call budget, timeout và `stream=false`; không retry/fallback tự động.
 
-Đã có code pilot local cho một phần trách nhiệm module; xem `docs/planning/local-pilot-review-2026-11-02.md` và `docs/planning/schema-v1-migration.md` để biết phạm vi thực thi. Unit tests: `python -m unittest discover -s tests -v`. Chưa hoàn tất pipeline nghiên cứu hoặc LLM runtime.
+Python 3.11+, stdlib, không cần install. Xem `docs/features/reviewed-kb-chat.md` để chạy demo và bật provider theo phê duyệt; cấu hình chỉ đọc từ `.env` của Lexora, không in key. Unit tests offline: `python -m unittest discover -s tests -v`. Chưa có live embedding adapter hoặc pipeline nghiên cứu hoàn chỉnh.

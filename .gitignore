@@ -9,6 +9,8 @@ __pycache__/
 .ruff_cache/
 .tools/
 tmp/
+# Personal demo documents, source snapshots and session artifacts
+/.my_docs/
 # Research artifacts: retain documentation, keep bulk data out of Git
 /data/**/*
 !/data/**/

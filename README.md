@@ -1,9 +1,9 @@
 # Legal AI — Hỏi đáp pháp luật lao động
 
 Khung triển khai đồ án RAG với Legal Knowledge Base có cấu trúc và kiểm chứng.
-**Trạng thái:** đã có pilot local cho snapshot VBPL → parser/schema → kiểm tra evidence → tra cứu nguồn bằng BM25. Chưa có LLM extraction/generation, giao diện hỏi đáp hoặc pipeline nghiên cứu ĐK1–ĐK4 hoàn chỉnh. Xem [gói review 02/11](docs/planning/local-pilot-review-2026-11-02.md).
+**Trạng thái:** đã có pilot local cho snapshot VBPL → parser/schema → kiểm tra evidence → tra cứu nguồn bằng BM25. Bản demo mới có nhập TXT, duyệt gộp revision và hỏi đáp trên tri thức đã duyệt; generation qua 9Router là tùy chọn. Chưa có LLM extraction hoặc pipeline nghiên cứu ĐK1–ĐK4 hoàn chỉnh. Xem [luồng demo và chat](docs/features/reviewed-kb-chat.md).
 
-**Trọng tâm mới:** [Knowledge graph và evidence viewer local](docs/features/knowledge-graph-pilot.md). Đã có giao diện graph tự chứa dữ liệu, mở được bằng browser; quy phạm mới là ứng viên needs_review, chưa có chatbot/GraphRAG hoàn chỉnh.
+**Trọng tâm mới:** [Knowledge graph và evidence viewer local](docs/features/knowledge-graph-pilot.md). Đã có giao diện graph tự chứa dữ liệu, mở được bằng browser; quy phạm mới là ứng viên needs_review cho đến khi người dùng duyệt nhập. Chưa có GraphRAG nghiên cứu hoàn chỉnh.
 
 **Bản mới 03/11:** [Graph thực thể–quan hệ với quy phạm làm trung tâm](docs/features/entity-relation-graph.md), đã tách chủ thể/hành động/đối tượng/tính quy phạm và ràng buộc có quote riêng trên một phần pilot. Mở `data/kb/entity-relation-review/index.html` để review.
 
@@ -21,7 +21,7 @@ Khung triển khai đồ án RAG với Legal Knowledge Base có cấu trúc và 
 - `prompts/`: nơi quản lý phiên bản prompt extraction, answer và evaluation.
 - `tests/`: unittest offline, fixture tổng hợp và câu pilot nháp.
 - `experiments/`: manifest và kết quả thực nghiệm tái lập.
-- `apps/demo/`: giao diện demo tối thiểu, triển khai sau pipeline.
+- `apps/demo/`: hướng dẫn demo local; implementation UI/server nằm trong `src/legal_ai/demo*`.
 - `scripts/`: các entry point CLI sẽ xây trong tuần đầu.
 - `docs/`: đề cương gốc, thiết kế, kế hoạch, guideline và báo cáo.
 - `infra/lightning/`: quy trình vận hành máy tính toán.
