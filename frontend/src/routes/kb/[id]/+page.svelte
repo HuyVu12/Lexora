@@ -48,7 +48,7 @@
 				</p>
 			</div>
 			<div class="row">
-				<a class="btn" href="/viewer?revision={kb.current_revision}" target="_blank" rel="noopener"><Icon name="graph" />{t('kb.graph')}</a>
+				<a class="btn" href="/kb/{kb.id}/graph"><Icon name="graph" />{t('kb.graph')}</a>
 				{#if canReview(session.account)}<a class="btn" href="/import?kb={kb.id}"><Icon name="upload" />{t('kb.importInto')}</a>{/if}
 				<button type="button" class="btn primary" disabled={!kb.approved_claims} onclick={startChat}><Icon name="chat" />{t('kb.ask')}</button>
 			</div>
