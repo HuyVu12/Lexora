@@ -271,6 +271,13 @@ def create_app(store, port, *, provider=None, source_catalog=None, extractor=Non
     def knowledge_base(id: str = Query(), _=Depends(current)):
         return store.knowledge_base(id)
 
+    @app.get("/api/kb/graph")
+    def knowledge_base_graph(id: str = Query(), _=Depends(current)):
+        """The evidence graph of a base's current published revision (what readers may see)."""
+        kb = store.knowledge_base(id)
+        revision = store.revision(kb["current_revision"], kb["id"])
+        return {"kb_id": kb["id"], "revision": revision["id"], "graph": revision["graph"]}
+
     @app.get("/api/draft")
     def draft(id: str = Query(), _=Depends(reviewer)):
         return store.draft_view(id)

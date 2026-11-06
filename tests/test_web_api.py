@@ -140,6 +140,16 @@ class WebApiTests(unittest.TestCase):
         self.assertEqual(reader.get("/viewer", params={"revision": published["revision"]}).status_code, 200)
         self.assertEqual(self.client().get("/viewer", params={"revision": published["revision"]}, follow_redirects=False).status_code, 303)
 
+    def test_readers_get_the_published_graph_of_a_base(self):
+        published = self.publish(self.client("phapche", "review password 1"))
+        reader = self.client("nhansu", "reader password 1")
+        graph = reader.get("/api/kb/graph", params={"id": published["kb_id"]}).json()
+        self.assertEqual(graph["revision"], published["revision"])
+        kinds = {n["kind"] for n in graph["graph"]["nodes"]}
+        self.assertTrue({"NormClaim", "LegalUnit", "Evidence"} <= kinds)
+        self.assertEqual(self.client().get("/api/kb/graph", params={"id": published["kb_id"]}).status_code, 401)
+        self.assertEqual(reader.get("/api/kb/graph", params={"id": "missing"}).status_code, 400)
+
     def test_chats_are_private_to_their_account(self):
         published = self.publish(self.client("phapche", "review password 1"))
         reader = self.client("nhansu", "reader password 1")
