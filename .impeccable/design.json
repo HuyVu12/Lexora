@@ -1,0 +1,608 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-11-06T17:51:03+00:00",
+  "title": "Design System: Lexora",
+  "extensions": {
+    "colorMeta": {
+      "desk": {
+        "role": "neutral",
+        "displayName": "Desk",
+        "canonical": "oklch(93.0% 0.002 146)",
+        "tonalRamp": [
+          "oklch(15% 0.001 146)",
+          "oklch(25% 0.001 146)",
+          "oklch(35% 0.002 146)",
+          "oklch(45% 0.002 146)",
+          "oklch(58% 0.002 146)",
+          "oklch(70% 0.002 146)",
+          "oklch(82% 0.001 146)",
+          "oklch(95% 0.001 146)"
+        ]
+      },
+      "desk-deep": {
+        "role": "neutral",
+        "displayName": "Deep Desk",
+        "canonical": "oklch(90.8% 0.003 165)",
+        "tonalRamp": [
+          "oklch(15% 0.002 165)",
+          "oklch(25% 0.002 165)",
+          "oklch(35% 0.003 165)",
+          "oklch(45% 0.003 165)",
+          "oklch(58% 0.003 165)",
+          "oklch(70% 0.003 165)",
+          "oklch(82% 0.002 165)",
+          "oklch(95% 0.002 165)"
+        ]
+      },
+      "paper": {
+        "role": "neutral",
+        "displayName": "Paper",
+        "canonical": "oklch(100.0% 0.000 90)",
+        "tonalRamp": [
+          "oklch(15% 0.000 90)",
+          "oklch(25% 0.000 90)",
+          "oklch(35% 0.000 90)",
+          "oklch(45% 0.000 90)",
+          "oklch(58% 0.000 90)",
+          "oklch(70% 0.000 90)",
+          "oklch(82% 0.000 90)",
+          "oklch(95% 0.000 90)"
+        ]
+      },
+      "ink": {
+        "role": "neutral",
+        "displayName": "Ink",
+        "canonical": "oklch(25.9% 0.005 248)",
+        "tonalRamp": [
+          "oklch(15% 0.003 248)",
+          "oklch(25% 0.004 248)",
+          "oklch(35% 0.005 248)",
+          "oklch(45% 0.005 248)",
+          "oklch(58% 0.005 248)",
+          "oklch(70% 0.005 248)",
+          "oklch(82% 0.004 248)",
+          "oklch(95% 0.003 248)"
+        ]
+      },
+      "ink-soft": {
+        "role": "neutral",
+        "displayName": "Soft Ink",
+        "canonical": "oklch(38.1% 0.009 248)",
+        "tonalRamp": [
+          "oklch(15% 0.005 248)",
+          "oklch(25% 0.007 248)",
+          "oklch(35% 0.009 248)",
+          "oklch(45% 0.009 248)",
+          "oklch(58% 0.009 248)",
+          "oklch(70% 0.009 248)",
+          "oklch(82% 0.007 248)",
+          "oklch(95% 0.005 248)"
+        ]
+      },
+      "muted": {
+        "role": "neutral",
+        "displayName": "Pencil Grey",
+        "canonical": "oklch(47.9% 0.010 248)",
+        "tonalRamp": [
+          "oklch(15% 0.006 248)",
+          "oklch(25% 0.008 248)",
+          "oklch(35% 0.010 248)",
+          "oklch(45% 0.010 248)",
+          "oklch(58% 0.010 248)",
+          "oklch(70% 0.010 248)",
+          "oklch(82% 0.009 248)",
+          "oklch(95% 0.006 248)"
+        ]
+      },
+      "rule": {
+        "role": "neutral",
+        "displayName": "Rule",
+        "canonical": "oklch(88.1% 0.002 197)",
+        "tonalRamp": [
+          "oklch(15% 0.001 197)",
+          "oklch(25% 0.002 197)",
+          "oklch(35% 0.002 197)",
+          "oklch(45% 0.002 197)",
+          "oklch(58% 0.002 197)",
+          "oklch(70% 0.002 197)",
+          "oklch(82% 0.002 197)",
+          "oklch(95% 0.001 197)"
+        ]
+      },
+      "rule-strong": {
+        "role": "neutral",
+        "displayName": "Strong Rule",
+        "canonical": "oklch(78.6% 0.005 214)",
+        "tonalRamp": [
+          "oklch(15% 0.003 214)",
+          "oklch(25% 0.004 214)",
+          "oklch(35% 0.005 214)",
+          "oklch(45% 0.005 214)",
+          "oklch(58% 0.005 214)",
+          "oklch(70% 0.005 214)",
+          "oklch(82% 0.004 214)",
+          "oklch(95% 0.003 214)"
+        ]
+      },
+      "graphite": {
+        "role": "primary",
+        "displayName": "Graphite",
+        "canonical": "oklch(29.5% 0.007 248)",
+        "tonalRamp": [
+          "oklch(15% 0.004 248)",
+          "oklch(25% 0.006 248)",
+          "oklch(35% 0.007 248)",
+          "oklch(45% 0.007 248)",
+          "oklch(58% 0.007 248)",
+          "oklch(70% 0.007 248)",
+          "oklch(82% 0.006 248)",
+          "oklch(95% 0.004 248)"
+        ]
+      },
+      "graphite-hover": {
+        "role": "primary",
+        "displayName": "Pressed Graphite",
+        "canonical": "oklch(20.4% 0.007 258)",
+        "tonalRamp": [
+          "oklch(15% 0.004 258)",
+          "oklch(25% 0.005 258)",
+          "oklch(35% 0.007 258)",
+          "oklch(45% 0.007 258)",
+          "oklch(58% 0.007 258)",
+          "oklch(70% 0.007 258)",
+          "oklch(82% 0.006 258)",
+          "oklch(95% 0.004 258)"
+        ]
+      },
+      "focus-blue": {
+        "role": "secondary",
+        "displayName": "Ballpoint Blue",
+        "canonical": "oklch(51.0% 0.167 263)",
+        "tonalRamp": [
+          "oklch(15% 0.104 263)",
+          "oklch(25% 0.134 263)",
+          "oklch(35% 0.164 263)",
+          "oklch(45% 0.167 263)",
+          "oklch(58% 0.167 263)",
+          "oklch(70% 0.167 263)",
+          "oklch(82% 0.143 263)",
+          "oklch(95% 0.104 263)"
+        ]
+      },
+      "approve": {
+        "role": "tertiary",
+        "displayName": "Approved Green",
+        "canonical": "oklch(49.3% 0.111 153)",
+        "tonalRamp": [
+          "oklch(15% 0.069 153)",
+          "oklch(25% 0.089 153)",
+          "oklch(35% 0.110 153)",
+          "oklch(45% 0.111 153)",
+          "oklch(58% 0.111 153)",
+          "oklch(70% 0.111 153)",
+          "oklch(82% 0.095 153)",
+          "oklch(95% 0.069 153)"
+        ]
+      },
+      "approve-soft": {
+        "role": "tertiary",
+        "displayName": "Approved Green Wash",
+        "canonical": "oklch(94.7% 0.021 157)",
+        "tonalRamp": [
+          "oklch(15% 0.013 157)",
+          "oklch(25% 0.017 157)",
+          "oklch(35% 0.020 157)",
+          "oklch(45% 0.021 157)",
+          "oklch(58% 0.021 157)",
+          "oklch(70% 0.021 157)",
+          "oklch(82% 0.018 157)",
+          "oklch(95% 0.013 157)"
+        ]
+      },
+      "reject": {
+        "role": "tertiary",
+        "displayName": "Rejected Red",
+        "canonical": "oklch(50.1% 0.178 29)",
+        "tonalRamp": [
+          "oklch(15% 0.111 29)",
+          "oklch(25% 0.143 29)",
+          "oklch(35% 0.176 29)",
+          "oklch(45% 0.178 29)",
+          "oklch(58% 0.178 29)",
+          "oklch(70% 0.178 29)",
+          "oklch(82% 0.153 29)",
+          "oklch(95% 0.111 29)"
+        ]
+      },
+      "reject-soft": {
+        "role": "tertiary",
+        "displayName": "Rejected Red Wash",
+        "canonical": "oklch(94.8% 0.020 25)",
+        "tonalRamp": [
+          "oklch(15% 0.012 25)",
+          "oklch(25% 0.016 25)",
+          "oklch(35% 0.020 25)",
+          "oklch(45% 0.020 25)",
+          "oklch(58% 0.020 25)",
+          "oklch(70% 0.020 25)",
+          "oklch(82% 0.017 25)",
+          "oklch(95% 0.012 25)"
+        ]
+      },
+      "attention": {
+        "role": "tertiary",
+        "displayName": "Attention Ochre",
+        "canonical": "oklch(49.4% 0.109 67)",
+        "tonalRamp": [
+          "oklch(15% 0.068 67)",
+          "oklch(25% 0.088 67)",
+          "oklch(35% 0.108 67)",
+          "oklch(45% 0.109 67)",
+          "oklch(58% 0.109 67)",
+          "oklch(70% 0.109 67)",
+          "oklch(82% 0.094 67)",
+          "oklch(95% 0.068 67)"
+        ]
+      },
+      "attention-soft": {
+        "role": "tertiary",
+        "displayName": "Attention Ochre Wash",
+        "canonical": "oklch(96.3% 0.035 81)",
+        "tonalRamp": [
+          "oklch(15% 0.022 81)",
+          "oklch(25% 0.028 81)",
+          "oklch(35% 0.034 81)",
+          "oklch(45% 0.035 81)",
+          "oklch(58% 0.035 81)",
+          "oklch(70% 0.035 81)",
+          "oklch(82% 0.030 81)",
+          "oklch(95% 0.022 81)"
+        ]
+      },
+      "hl-actor": {
+        "role": "highlighter",
+        "displayName": "Actor Yellow",
+        "canonical": "oklch(91.6% 0.140 96)",
+        "tonalRamp": [
+          "oklch(15% 0.087 96)",
+          "oklch(25% 0.112 96)",
+          "oklch(35% 0.138 96)",
+          "oklch(45% 0.140 96)",
+          "oklch(58% 0.140 96)",
+          "oklch(70% 0.140 96)",
+          "oklch(82% 0.120 96)",
+          "oklch(95% 0.087 96)"
+        ]
+      },
+      "hl-action": {
+        "role": "highlighter",
+        "displayName": "Action Green",
+        "canonical": "oklch(89.3% 0.085 150)",
+        "tonalRamp": [
+          "oklch(15% 0.053 150)",
+          "oklch(25% 0.068 150)",
+          "oklch(35% 0.084 150)",
+          "oklch(45% 0.085 150)",
+          "oklch(58% 0.085 150)",
+          "oklch(70% 0.085 150)",
+          "oklch(82% 0.073 150)",
+          "oklch(95% 0.053 150)"
+        ]
+      },
+      "hl-object": {
+        "role": "highlighter",
+        "displayName": "Object Blue",
+        "canonical": "oklch(90.4% 0.046 263)",
+        "tonalRamp": [
+          "oklch(15% 0.029 263)",
+          "oklch(25% 0.037 263)",
+          "oklch(35% 0.046 263)",
+          "oklch(45% 0.046 263)",
+          "oklch(58% 0.046 263)",
+          "oklch(70% 0.046 263)",
+          "oklch(82% 0.040 263)",
+          "oklch(95% 0.029 263)"
+        ]
+      },
+      "hl-party": {
+        "role": "highlighter",
+        "displayName": "Party Pink",
+        "canonical": "oklch(88.3% 0.069 356)",
+        "tonalRamp": [
+          "oklch(15% 0.043 356)",
+          "oklch(25% 0.056 356)",
+          "oklch(35% 0.069 356)",
+          "oklch(45% 0.069 356)",
+          "oklch(58% 0.069 356)",
+          "oklch(70% 0.069 356)",
+          "oklch(82% 0.060 356)",
+          "oklch(95% 0.043 356)"
+        ]
+      },
+      "hl-condition": {
+        "role": "highlighter",
+        "displayName": "Condition Orange",
+        "canonical": "oklch(90.3% 0.081 75)",
+        "tonalRamp": [
+          "oklch(15% 0.050 75)",
+          "oklch(25% 0.065 75)",
+          "oklch(35% 0.080 75)",
+          "oklch(45% 0.081 75)",
+          "oklch(58% 0.081 75)",
+          "oklch(70% 0.081 75)",
+          "oklch(82% 0.069 75)",
+          "oklch(95% 0.050 75)"
+        ]
+      },
+      "hl-measure": {
+        "role": "highlighter",
+        "displayName": "Measure Mint",
+        "canonical": "oklch(91.9% 0.047 185)",
+        "tonalRamp": [
+          "oklch(15% 0.029 185)",
+          "oklch(25% 0.038 185)",
+          "oklch(35% 0.047 185)",
+          "oklch(45% 0.047 185)",
+          "oklch(58% 0.047 185)",
+          "oklch(70% 0.047 185)",
+          "oklch(82% 0.041 185)",
+          "oklch(95% 0.029 185)"
+        ]
+      },
+      "hl-other": {
+        "role": "highlighter",
+        "displayName": "Plain Grey",
+        "canonical": "oklch(92.3% 0.002 197)",
+        "tonalRamp": [
+          "oklch(15% 0.001 197)",
+          "oklch(25% 0.002 197)",
+          "oklch(35% 0.002 197)",
+          "oklch(45% 0.002 197)",
+          "oklch(58% 0.002 197)",
+          "oklch(70% 0.002 197)",
+          "oklch(82% 0.002 197)",
+          "oklch(95% 0.001 197)"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "title": {
+        "displayName": "Title",
+        "purpose": "Page titles; 24px under 760px."
+      },
+      "subtitle": {
+        "displayName": "Subtitle",
+        "purpose": "Section titles inside a page."
+      },
+      "statute": {
+        "displayName": "Statute",
+        "purpose": "The law on the sheet; article lines at 600."
+      },
+      "heading": {
+        "displayName": "Heading",
+        "purpose": "Panel, card and norm card headings."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "Interface text with tabular numerals; leads capped at 68ch."
+      },
+      "label": {
+        "displayName": "Label",
+        "purpose": "Field labels, table headers, legend captions, in muted grey."
+      },
+      "pencil": {
+        "displayName": "Pencil",
+        "purpose": "Italic marginalia and notes in muted grey."
+      }
+    },
+    "shadows": [
+      {
+        "name": "sheet",
+        "value": "0 1px 2px rgb(20 22 24 / 0.08), 0 8px 24px rgb(20 22 24 / 0.07)",
+        "purpose": "Paper objects: statute sheet, norm card."
+      },
+      {
+        "name": "pop",
+        "value": "0 2px 6px rgb(20 22 24 / 0.12), 0 14px 36px rgb(20 22 24 / 0.16)",
+        "purpose": "Floating layers: user menu, glossary tip, toast, sticky question box."
+      },
+      {
+        "name": "flag",
+        "value": "0 1px 2px rgb(20 22 24 / 0.2), 0 3px 8px rgb(20 22 24 / 0.12)",
+        "purpose": "Paper flags on the sheet edge."
+      },
+      {
+        "name": "focus-halo",
+        "value": "0 0 0 3px rgb(47 95 196 / 0.18)",
+        "purpose": "Focused inputs, together with a blue border."
+      }
+    ],
+    "motion": [
+      {
+        "name": "ease-out",
+        "value": "cubic-bezier(0.16, 1, 0.3, 1)",
+        "purpose": "All state transitions."
+      },
+      {
+        "name": "control",
+        "value": "0.15s",
+        "purpose": "Button colour and border changes; 0.12s press nudge."
+      },
+      {
+        "name": "flag-slide",
+        "value": "0.18s",
+        "purpose": "Flag slides 3px on hover, 6px when selected."
+      },
+      {
+        "name": "highlighter-swipe",
+        "value": "0.42s",
+        "purpose": "The focused norm's strokes swipe in left to right."
+      },
+      {
+        "name": "rise",
+        "value": "0.18s to 0.25s",
+        "purpose": "Tooltip and toast enter with a 4-8px rise and fade."
+      },
+      {
+        "name": "reduced-motion",
+        "value": "0.01ms",
+        "purpose": "prefers-reduced-motion collapses all transitions and animations."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "compact",
+        "value": "900px"
+      },
+      {
+        "name": "phone",
+        "value": "760px"
+      },
+      {
+        "name": "page-max",
+        "value": "1320px"
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Solid graphite; one per region, the main next step.",
+      "html": "<button class=\"ds-btn-primary\"><svg viewBox=\"0 0 24 24\" width=\"16\" height=\"16\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><path d=\"M5 12l5 5L20 7\"/></svg>Duyệt</button>",
+      "css": ".ds-btn-primary{display:inline-flex;align-items:center;gap:8px;min-height:38px;padding:7px 14px;border:1px solid #2a2d30;border-radius:6px;background:#2a2d30;color:#fff;font:500 15px/1.55 'Be Vietnam Pro',system-ui,sans-serif;cursor:pointer;transition:background-color .15s cubic-bezier(0.16,1,0.3,1),transform .12s cubic-bezier(0.16,1,0.3,1)}.ds-btn-primary:hover{background:#15171a}.ds-btn-primary:active{transform:translateY(1px)}.ds-btn-primary:focus-visible{outline:2px solid #2f5fc4;outline-offset:2px}"
+    },
+    {
+      "name": "Secondary Button",
+      "kind": "button",
+      "refersTo": "button-secondary",
+      "description": "Paper with a strong hairline border.",
+      "html": "<button class=\"ds-btn2\">Lưu ghi chú</button>",
+      "css": ".ds-btn2{display:inline-flex;align-items:center;gap:8px;min-height:38px;padding:7px 14px;border:1px solid #b6babb;border-radius:6px;background:#fff;color:#222426;font:500 15px/1.55 'Be Vietnam Pro',system-ui,sans-serif;cursor:pointer;transition:border-color .15s}.ds-btn2:hover{border-color:#3f4347}.ds-btn2:active{transform:translateY(1px)}.ds-btn2:focus-visible{outline:2px solid #2f5fc4;outline-offset:2px}"
+    },
+    {
+      "name": "Quiet Button",
+      "kind": "button",
+      "refersTo": "button-quiet",
+      "description": "Transparent, for secondary actions such as Reject before a decision, or Edit.",
+      "html": "<button class=\"ds-btn-quiet\">Loại</button>",
+      "css": ".ds-btn-quiet{display:inline-flex;align-items:center;gap:8px;min-height:38px;padding:7px 14px;border:1px solid transparent;border-radius:6px;background:transparent;color:#3f4347;font:500 15px/1.55 'Be Vietnam Pro',system-ui,sans-serif;cursor:pointer;transition:background-color .15s}.ds-btn-quiet:hover{background:#e7e8e7}.ds-btn-quiet:focus-visible{outline:2px solid #2f5fc4;outline-offset:2px}"
+    },
+    {
+      "name": "Decided Approve Button",
+      "kind": "button",
+      "refersTo": "button-approved",
+      "description": "Shown only after the reviewer approved; green marks a decision already taken.",
+      "html": "<button class=\"ds-btn-approved\" aria-pressed=\"true\">Đã duyệt</button>",
+      "css": ".ds-btn-approved{display:inline-flex;align-items:center;min-height:38px;padding:7px 14px;border:1px solid color-mix(in srgb,#1f7342 45%,white);border-radius:6px;background:#e3f2e8;color:#1f7342;font:600 15px/1.55 'Be Vietnam Pro',system-ui,sans-serif;cursor:pointer}.ds-btn-approved:focus-visible{outline:2px solid #2f5fc4;outline-offset:2px}"
+    },
+    {
+      "name": "Text Field",
+      "kind": "input",
+      "refersTo": "input",
+      "description": "Paper field with a hairline border and blue focus halo.",
+      "html": "<label class=\"ds-field\"><span>Ghi chú</span><input placeholder=\"Lý do sửa\"></label>",
+      "css": ".ds-field{display:grid;gap:6px;font:15px/1.55 'Be Vietnam Pro',system-ui,sans-serif;color:#222426}.ds-field span{font-size:14px;font-weight:500}.ds-field input{min-height:40px;padding:8px 11px;border:1px solid #b6babb;border-radius:6px;background:#fff;font:inherit;color:inherit}.ds-field input::placeholder{color:#6b7075}.ds-field input:focus{outline:none;border-color:#2f5fc4;box-shadow:0 0 0 3px rgb(47 95 196 / 0.18)}"
+    },
+    {
+      "name": "Top Bar",
+      "kind": "nav",
+      "refersTo": "topbar",
+      "description": "Sticky 56px paper bar; the current zone tab gets a desk fill and a graphite underline.",
+      "html": "<nav class=\"ds-nav\"><b>Lexora</b><a href=\"#\">Tổng quan</a><a href=\"#\" aria-current=\"page\">Nhập văn bản</a></nav>",
+      "css": ".ds-nav{display:flex;align-items:center;gap:4px;height:56px;padding:0 20px;background:#fff;border-bottom:1px solid #d6d8d8;font:500 15px/1 'Be Vietnam Pro',system-ui,sans-serif}.ds-nav b{font:600 19px/1 'Source Serif 4 Variable',Georgia,serif;margin-right:24px;color:#222426}.ds-nav a{position:relative;display:inline-flex;align-items:center;height:36px;padding:0 12px;border-radius:6px;color:#3f4347;text-decoration:none}.ds-nav a:hover{background:#e7e8e7;color:#222426}.ds-nav a:focus-visible{outline:2px solid #2f5fc4;outline-offset:2px}.ds-nav a[aria-current=page]{background:#e7e8e7;color:#222426}.ds-nav a[aria-current=page]::after{content:\"\";position:absolute;left:12px;right:12px;bottom:-10px;height:2px;border-radius:2px;background:#2a2d30}"
+    },
+    {
+      "name": "Chips",
+      "kind": "chip",
+      "refersTo": "chip",
+      "description": "Outline pill for origin and status; solid graphite pill for the modality.",
+      "html": "<span class=\"ds-chip ds-chip-dark\">Nghĩa vụ</span> <span class=\"ds-chip\">Do AI trích</span>",
+      "css": ".ds-chip{display:inline-flex;align-items:center;padding:1px 9px;border-radius:999px;border:1px solid #b6babb;background:#fff;color:#3f4347;font:500 12.5px/1.55 'Be Vietnam Pro',system-ui,sans-serif}.ds-chip-dark{background:#2a2d30;border-color:#2a2d30;color:#fff}"
+    },
+    {
+      "name": "Marked-Up Statute",
+      "kind": "custom",
+      "refersTo": "sheet",
+      "description": "Signature: highlighter strokes on exact characters, pencil ring on the modality cue, a paper flag overhanging the sheet edge.",
+      "html": "<div class=\"ds-sheet\"><p class=\"ds-law\"><span class=\"ds-hl\" style=\"--hl:#ffe36e\">Người sử dụng lao động</span> <span class=\"ds-cue\">phải</span> <span class=\"ds-hl\" style=\"--hl:#b4ecbe\">thông báo</span> <span class=\"ds-hl\" style=\"--hl:#cfe0ff\">kết quả thử việc</span> cho <span class=\"ds-hl\" style=\"--hl:#ffc6da\">người lao động</span>.</p><button class=\"ds-flag\">1</button></div>",
+      "css": ".ds-sheet{position:relative;max-width:560px;padding:32px 40px;background:#fff;border-radius:2px;box-shadow:0 1px 2px rgb(20 22 24 / 0.08),0 8px 24px rgb(20 22 24 / 0.07)}.ds-law{margin:0;font:17.5px/1.9 'Source Serif 4 Variable',Georgia,serif;color:#222426}.ds-hl{background:color-mix(in srgb,var(--hl) 62%,transparent);border-radius:2px;cursor:pointer;transition:background-color .2s}.ds-hl:hover{background:var(--hl)}.ds-cue{border-radius:999px;box-shadow:0 0 0 1.5px #3f4347;padding:0 2px}.ds-flag{position:absolute;top:38px;right:-14px;width:40px;height:26px;border:0;border-radius:0 4px 4px 0;background:#2f5fc4;color:#fff;font:600 13px/1 'Be Vietnam Pro',system-ui,sans-serif;cursor:pointer;box-shadow:0 1px 2px rgb(20 22 24 / 0.2),0 3px 8px rgb(20 22 24 / 0.12);transition:transform .18s cubic-bezier(0.16,1,0.3,1)}.ds-flag:hover{transform:translateX(3px)}.ds-flag:focus-visible{outline:2px solid #2f5fc4;outline-offset:2px}"
+    },
+    {
+      "name": "Citation Slip",
+      "kind": "card",
+      "refersTo": "panel",
+      "description": "Chat citation: the cited span in graphite pencil, never a highlighter.",
+      "html": "<figure class=\"ds-slip\"><figcaption><b>[1]</b> Điều 26, khoản 1</figcaption><blockquote>Tiền lương thử việc <mark>ít nhất bằng 85% mức lương</mark> của công việc đó.</blockquote></figure>",
+      "css": ".ds-slip{margin:0;padding:16px 20px;display:grid;gap:10px;background:#fff;border:1px solid #d6d8d8;border-radius:8px;font:15px/1.55 'Be Vietnam Pro',system-ui,sans-serif;color:#222426}.ds-slip b{color:#2f5fc4}.ds-slip blockquote{margin:0;font-size:17px;line-height:1.8}.ds-slip mark{background:rgb(42 45 48 / 0.06);box-shadow:inset 0 -1.5px 0 #3f4347;color:inherit;padding:1px 2px;border-radius:2px}"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Marked-Up Statute",
+    "overview": "The statute is the workspace. Every extracted part of a norm is a highlighter stroke laid on its exact characters, the modality cue word is circled in pencil, and every norm is a numbered paper flag stuck to the right edge of the sheet. The interface around the law is a quiet office: white printer paper resting on a pale graphite desk, graphite ink, graphite controls.\n\nColour belongs to the law, not to the software. The highlighter pens carry meaning (who, does what, to what, for whom, under which condition, how much), so they are spent only where that meaning is being shown. Everything else stays graphite and grey so that a reviewer on a projector or a reader at a desk sees the marked text first and the chrome last.\n\nDensity is a working desk, not a landing page: a sticky 56px top bar, an article index on the left, the sheet in the centre and a norm card on the right. Serif speaks for the law and for page titles; sans speaks for the interface.",
+    "keyCharacteristics": [
+      "White paper sheets with a soft, low shadow on a pale grey desk ground.",
+      "Six highlighter roles plus a neutral grey, always under ink-coloured text.",
+      "Paper flags that overhang the sheet edge and change colour with the review decision.",
+      "Pencil marginalia in italic serif, muted grey, rotated one degree.",
+      "Graphite buttons, graphite tooltips, graphite toasts.",
+      "Bilingual chrome (vi/en); statute text always Vietnamese."
+    ],
+    "rules": [
+      {
+        "name": "The Pens Belong To The Law Rule",
+        "body": "Highlighter colours appear only on statute text, the colour legend, role swatches and illustrative statute quotes. Never on chrome, navigation, avatars, buttons or citations.",
+        "section": "colors"
+      },
+      {
+        "name": "The Graphite Controls Rule",
+        "body": "Every control is graphite or paper. Green and red mark only a decision already taken (a pressed Approve or Reject, a decided flag), never an invitation to act.",
+        "section": "colors"
+      },
+      {
+        "name": "The Ink On Every Pen Rule",
+        "body": "Highlighted text keeps `ink`; colour is never the only signal, so every role also carries its name in the card, legend and glossary tip.",
+        "section": "colors"
+      },
+      {
+        "name": "The Two Voices Rule",
+        "body": "Serif is the voice of the law and of page titles; sans is the voice of the software. A control never sets in serif, and statute text never sets in sans.",
+        "section": "typography"
+      },
+      {
+        "name": "The No Eyebrow Rule",
+        "body": "Headings stand alone. No small label, kicker or uppercase tag sits above a title or heading.",
+        "section": "typography"
+      },
+      {
+        "name": "The Margin Earns Its Column Rule",
+        "body": "A statute unit gets a 150px margin-note column only when it carries a note; otherwise the text runs the full sheet width.",
+        "section": "layout"
+      },
+      {
+        "name": "The Paper Lifts, Chrome Lies Flat Rule",
+        "body": "Only paper objects and floating layers cast shadows; panels, chips, inputs and the top bar use 1px rules instead.",
+        "section": "elevation"
+      }
+    ],
+    "dos": [
+      "Do keep every control graphite or paper; primary is solid graphite.",
+      "Do use green and red only to show a decision already taken.",
+      "Do keep highlighted text in `ink` and name every role in words alongside its colour.",
+      "Do mark citations with the graphite pencil underline, never with a highlighter pen.",
+      "Do give a statute unit a margin column only when it carries a note.",
+      "Do let paper (sheet, norm card) cast the sheet shadow and keep panels flat with 1px rules.",
+      "Do translate toasts at render time and clear them on navigation.",
+      "Do set the law in Source Serif 4 at 17.5px / 1.9 and the interface in Be Vietnam Pro."
+    ],
+    "donts": [
+      "Don't put highlighter colours on chrome, nav, avatars, buttons or citations.",
+      "Don't place eyebrows, kickers or uppercase labels above headings.",
+      "Don't use coloured side stripes on cards, notices or quotes.",
+      "Don't colour an Approve or Reject button green or red before the reviewer has decided.",
+      "Don't add a seventh highlighter; new slot types share an existing pen (as party, condition and measure already do).",
+      "Don't cast shadows from panels, chips, inputs or the top bar."
+    ]
+  }
+}

@@ -19,9 +19,11 @@ Keep project documents in `docs/`. Avoid introducing empty scaffolding without a
 
 ## Build, Test, and Development Commands
 
-Runtime requires Python 3.11+ and uses the standard library only (verified on Python 3.14.8). No package install is required. From the workspace root in PowerShell:
+Runtime requires Python 3.11+ and uses the standard library only (verified on Python 3.14.8). No package install is required. On 2026-11-06 the user approved a target stack for real users (FastAPI, PostgreSQL, TypeScript + Vite, Cytoscape.js) while the core pipeline stays standard-library Python; it is not implemented yet, and adding any dependency still needs explicit user approval. See `docs/planning/target-stack-2026-11-06.md`. From the workspace root in PowerShell:
 
 - `python -m unittest discover -s tests -v`: offline tests, no network/model calls.
+- `.venv\Scripts\python -m pip install -e ".[web,web-test]"` then `.venv\Scripts\python -m legal_ai.web --store <new.sqlite> --port 8766`: FastAPI web layer (migration step 1); `tests/test_web_api.py` runs only inside `.venv`.
+- `cd frontend; npm install; npm run build` then `.venv\Scripts\python -m legal_ai.auth create-admin --store <store> --username admin`: SvelteKit frontend and the first admin account; `node scripts/check_app_browser.cjs http://127.0.0.1:<port> <dir>` is its real-browser E2E (new store with the three accounts the script header names).
 - `python scripts/build_fixture.py`: rebuild synthetic JSONL fixture.
 - `$env:PYTHONPATH = 'src'`: enable the source package for this shell.
 - `python -m legal_ai.cli --help`: list snapshot, parse, build-pilot, validate and search commands.

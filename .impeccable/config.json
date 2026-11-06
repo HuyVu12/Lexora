@@ -1,0 +1,62 @@
+{
+  "detector": {
+    "ignoreRules": [],
+    "ignoreFiles": [],
+    "ignoreValues": [
+      {
+        "rule": "cream-palette",
+        "value": "*",
+        "files": [
+          ".impeccable/mocks/decision/challenger-centre-rail.html"
+        ],
+        "createdAt": "2026-11-06T16:34:11.925Z",
+        "reason": "Agent: decision sketch of the dealt catalog world rw-centre-rail-reference-setting, whose own palette is unbleached bone; not shipping UI"
+      },
+      {
+        "rule": "repeating-stripes-gradient",
+        "value": "*",
+        "files": [
+          ".impeccable/mocks/decision/assigned.html"
+        ],
+        "createdAt": "2026-11-06T16:34:52.358Z",
+        "reason": "Agent: cross-hatch marks two overlapping evidence quotes without a second colour, the raise taken from the exposure-record challenger; functional, not decoration"
+      },
+      {
+        "rule": "design-system-color",
+        "value": "*",
+        "files": [
+          ".impeccable/mocks/decision/*.html"
+        ],
+        "createdAt": "2026-11-06T17:53:25.584Z",
+        "reason": "Agent: spent decision-round sketches; each shows its own unchosen direction's palette and type and predates DESIGN.md; not shipping UI"
+      },
+      {
+        "rule": "design-system-font",
+        "value": "*",
+        "files": [
+          ".impeccable/mocks/decision/*.html"
+        ],
+        "createdAt": "2026-11-06T17:53:25.905Z",
+        "reason": "Agent: spent decision-round sketches; each shows its own unchosen direction's palette and type and predates DESIGN.md; not shipping UI"
+      },
+      {
+        "rule": "design-system-font-size",
+        "value": "*",
+        "files": [
+          ".impeccable/mocks/decision/*.html"
+        ],
+        "createdAt": "2026-11-06T17:53:26.204Z",
+        "reason": "Agent: spent decision-round sketches; each shows its own unchosen direction's palette and type and predates DESIGN.md; not shipping UI"
+      },
+      {
+        "rule": "design-system-radius",
+        "value": "*",
+        "files": [
+          ".impeccable/mocks/decision/*.html"
+        ],
+        "createdAt": "2026-11-06T17:53:26.499Z",
+        "reason": "Agent: spent decision-round sketches; each shows its own unchosen direction's palette and type and predates DESIGN.md; not shipping UI"
+      }
+    ]
+  }
+}
