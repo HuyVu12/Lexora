@@ -301,6 +301,32 @@ async function main() {
     await evaluate('__q(".versions button[type=submit]").click(); true');
     await waitFor('document.querySelector(".versions")?.innerText.includes("Phiên bản 1")', 'frozen version');
     await capture('corpus-frozen');
+
+    // Question set on the frozen version: independent mode, add a question, label it with a unit found by search.
+    await open('/research/questions');
+    await waitFor('!!document.querySelector("form select")', 'question set form');
+    await evaluate(`__fill(document.querySelector('form input[maxlength="120"]'), 'Bộ câu hỏi minh họa'); document.querySelector('form button[type=submit]').click(); true`);
+    await waitFor('location.pathname.startsWith("/research/questions/q") && !!document.querySelector(".mode")', 'question set workspace');
+    await evaluate(helpers);
+    assert(await evaluate('__q(".segmented button", "Soạn nháp bằng model").disabled'), 'drafting stays off without --proposal-model');
+    await capture('questions-mode');
+    await evaluate('__q(".mode .choice input[value=hidden]").click(); __click(".mode .btn.primary"); true');
+    await waitFor('!document.querySelector(".mode")', 'mode chosen');
+    await evaluate('__click(".segmented button", "Thêm câu hỏi"); true');
+    await waitFor('!!document.querySelector(".fields textarea")', 'add question form');
+    await evaluate(`__fill(document.querySelector('.fields textarea'), 'Công ty phải trả lương thử việc tối thiểu bao nhiêu?'); document.querySelector('.fields button[type=submit]').click(); true`);
+    await waitFor('document.querySelectorAll(".questions li").length === 1', 'question added');
+    await evaluate('__click(".questions .q"); true');
+    await waitFor('!!document.querySelector(".label-form") && document.querySelectorAll(".found li").length > 0', 'label form with unit candidates');
+    await evaluate(`(() => { __q('.label-form input[value=lookup]').click(); __q('.label-form input[value=answer]').click();
+      __q('.found li', 'Tiền lương thử việc').querySelector('button').click(); return true; })()`);
+    await waitFor('document.querySelectorAll(".chosen li").length === 1', 'unit chosen');
+    await capture('questions-label', true);
+    await evaluate('__click(".actions .btn", "Lưu"); true');
+    await waitFor('document.body.innerText.includes("1/1 đã gán nhãn")', 'label saved');
+    await evaluate('__click(".segmented button", "Trao đổi"); true');
+    await waitFor('[...document.querySelectorAll("a")].some(a => (a.getAttribute("href") || "").startsWith("/api/question-set/pack"))', 'exchange tab');
+    await capture('questions-exchange');
     await logout();
 
     // Reader: published bases only, no authoring navigation, authoring pages refuse.

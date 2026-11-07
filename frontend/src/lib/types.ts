@@ -302,3 +302,111 @@ export interface CorpusDocumentDetail extends CorpusDocument {
 	audit: { code: string; offset: number; unit_id?: string }[];
 	unassigned_text: string;
 }
+
+export type QuestionType = 'lookup' | 'synthesis' | 'temporal' | 'out_of_scope';
+export type ExpectedStatus = 'answer' | 'refuse';
+
+export interface LabelFields {
+	question_type: QuestionType | null;
+	expected_status: ExpectedStatus | null;
+	relevant_unit_ids: string[];
+}
+
+export interface QuestionProposal {
+	id: string;
+	fields: LabelFields;
+	rationale: string;
+	candidates: string[];
+	created_at: string;
+}
+
+export interface QuestionItem {
+	id: string;
+	position: number;
+	text: string;
+	family_id: string;
+	origin: 'human' | 'model';
+	origin_detail: { edited?: boolean; call_id?: string; imported?: boolean };
+	created_by: string;
+	label: { fields: LabelFields; note: string; provenance: { proposals_shown: boolean; decisions: Record<string, string> }; updated_at: string } | null;
+	proposal: QuestionProposal | null;
+}
+
+export interface QuestionSetSummary {
+	id: string;
+	name: string;
+	corpus_version_id: string;
+	corpus_id: string;
+	corpus_version: number;
+	guideline: string;
+	created_by: string;
+	created_at: string;
+	imported: boolean;
+	frozen: FrozenQuestions | null;
+	questions: number | null;
+}
+
+export interface FrozenQuestions {
+	frozen_at: string;
+	frozen_by: string;
+	seed: string;
+	held_out_fraction: number;
+	bundle_sha256: string;
+	counts: Record<string, number>;
+	agreement: Record<string, number | null>;
+	questions_sha256: string;
+}
+
+export interface QuestionWorkspace extends QuestionSetSummary {
+	show_proposals: boolean | null;
+	items: QuestionItem[];
+	labelled: number;
+	annotators: { annotator: string; annotator_name: string; imported: number; labels: number }[];
+	calls: number;
+	proposal_model: string | null;
+	proposal_calls_left: number;
+}
+
+export interface FrozenVersionOption {
+	id: string;
+	corpus_id: string;
+	corpus_name: string;
+	number: number;
+	document_count: number;
+	unit_count: number;
+	frozen_at: string;
+}
+
+export interface UnitCandidate {
+	unit_id: string;
+	path: string;
+	text: string;
+}
+
+export interface QuestionDraft {
+	id: string;
+	unit_ids: string[];
+	drafts: { text: string; question_type: QuestionType; relevant_unit_ids: string[]; paraphrases: string[]; rationale: string }[];
+	accepted: number[];
+}
+
+export interface ComparedItem extends QuestionItem {
+	first: (LabelFields & { note: string }) | null;
+	second: (LabelFields & { note: string }) | null;
+	agree: boolean;
+	final: (LabelFields & { note: string; decided_by: string }) | null;
+}
+
+export interface Comparison {
+	first: { annotator: string; name: string | null; proposals_shown: boolean | null };
+	second: { annotator: string; name: string | null; proposals_shown: boolean | null };
+	questions: number;
+	labelled_by_both: number;
+	kappa_question_type: number | null;
+	kappa_expected_status: number | null;
+	mean_unit_dice: number | null;
+	exact_unit_match: number | null;
+	full_agreement: number | null;
+	adjudicated: number;
+	items: ComparedItem[];
+}

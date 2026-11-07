@@ -404,6 +404,14 @@ textarea {
 	color: var(--ink);
 	box-shadow: 0 1px 2px rgb(20 22 24 / 0.12);
 }
+.segmented button:not(:disabled):not([aria-pressed='true']):hover {
+	color: var(--ink);
+}
+.segmented button:disabled {
+	color: var(--muted);
+	opacity: 0.55;
+	cursor: not-allowed;
+}
 
 /* Small labels */
 .chip {
