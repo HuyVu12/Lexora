@@ -1,4 +1,6 @@
 <script lang="ts">
+	import PageGuide from '#lib/components/PageGuide.svelte';
+	import StepTag from '#lib/components/StepTag.svelte';
 	import { page } from '$app/state';
 	import Icon from '#lib/components/Icon.svelte';
 	import LabelForm from '#lib/components/LabelForm.svelte';
@@ -111,7 +113,9 @@
 				<p class="lead">{t('cmp.lead', { a: report.first.name ?? report.first.annotator, b: report.second.name ?? report.second.annotator })}</p>
 			</div>
 		</header>
+		<PageGuide name="compare" steps={3} />
 
+		<h2 class="heading section-title"><StepTag n={1} />{t('cmp.metrics')}</h2>
 		<section class="metrics" aria-label={t('cmp.metrics')}>
 			<div><span class="value">{report.labelled_by_both}/{report.questions}</span><span class="small muted">{t('cmp.both')}</span></div>
 			<div><span class="value">{fmt(report.kappa_question_type)}</span><span class="small muted">{t('cmp.kappaType')}</span></div>
@@ -134,6 +138,7 @@
 			<p class="notice info">{t('cmp.frozenNote', { dev: summary.frozen?.counts.dev ?? 0, held: summary.frozen?.counts.held_out ?? 0 })} <a href="/api/question-set/frozen?id={id}" download>{t('qs.exchange.frozen')}</a></p>
 		{/if}
 
+		<h2 class="heading section-title"><StepTag n={2} />{t('cmp.final')}</h2>
 		<div class="row between toolbar">
 			<div class="segmented" role="group" aria-label={t('cmp.filter')}>
 				<button type="button" aria-pressed={filter === 'disagree'} onclick={() => (filter = 'disagree')}>{t('cmp.filter.disagree')}</button>
@@ -177,7 +182,7 @@
 
 		{#if !frozen}
 			<section class="panel freeze">
-				<h2 class="heading">{t('cmp.freeze')}</h2>
+				<h2 class="heading"><StepTag n={3} />{t('cmp.freeze')}</h2>
 				<p class="small muted">{t('cmp.freezeLead')}</p>
 				<label class="field inline"><span>{t('cmp.heldOut')}</span><input type="number" min="10" max="50" step="5" bind:value={heldOut} />%</label>
 				<div><button type="button" class="btn primary" disabled={report.adjudicated < report.questions} onclick={freeze}><Icon name="lock" />{t('cmp.freezeGo')}</button></div>
@@ -188,6 +193,9 @@
 </div>
 
 <style>
+	.section-title {
+		margin: 0 0 10px;
+	}
 	.crumb {
 		margin: 0 0 8px;
 	}

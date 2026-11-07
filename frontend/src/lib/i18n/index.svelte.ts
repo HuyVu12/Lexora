@@ -51,7 +51,9 @@ export function unitLabel(unitId: string): string {
 		.map((part) => {
 			const [type, ...rest] = part.split('-');
 			const key = `unit.${type}` as MessageKey;
-			return `${key in vi ? t(key) : type} ${rest.join('-')}`;
+			// Unit IDs keep chapter numerals in lower case; statutes write them in capitals (Chương III).
+			const label = type === 'chapter' ? rest.join('-').toUpperCase() : rest.join('-');
+			return `${key in vi ? t(key) : type} ${label}`;
 		})
 		.join(', ');
 }

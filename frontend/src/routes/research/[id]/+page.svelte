@@ -1,11 +1,14 @@
 <script lang="ts">
+	import PageGuide from '#lib/components/PageGuide.svelte';
+	import StepTag from '#lib/components/StepTag.svelte';
 	import { page } from '$app/state';
 	import Icon from '#lib/components/Icon.svelte';
+	import CatalogSearch from '#lib/components/CatalogSearch.svelte';
 	import { api } from '#lib/api.js';
 	import { t, formatDate, formatDay } from '#lib/i18n/index.svelte.js';
 	import { session, canReview } from '#lib/session.svelte.js';
 	import { act, notify } from '#lib/toast.svelte.js';
-	import type { CatalogEntry, CorpusDetail, CorpusDocument, CorpusListing, CorpusVersion } from '#lib/types.js';
+	import type { CorpusDetail, CorpusDocument, CorpusListing, CorpusVersion } from '#lib/types.js';
 
 	const ACCEPT = '.txt,.html,.htm,.docx,.pdf';
 	const MAX_FILE = 20_000_000;
@@ -15,9 +18,6 @@
 	let listing = $state<CorpusListing | null>(null);
 	let error = $state('');
 	let mode = $state<'search' | 'link' | 'file'>('search');
-	let query = $state('');
-	let results = $state<CatalogEntry[]>([]);
-	let searching = $state(false);
 	let reference = $state('');
 	let documentId = $state('');
 	let fileTitle = $state('');
@@ -41,29 +41,6 @@
 			listing = v;
 			if (!v.catalog) mode = v.vbpl_enabled ? 'link' : 'file';
 		});
-	});
-
-	// Search the offline catalog as the reviewer types; the newest answer wins.
-	let ticket = 0;
-	$effect(() => {
-		const q = query.trim();
-		if (!listing?.catalog || q.length < 2) {
-			results = [];
-			return;
-		}
-		const mine = ++ticket;
-		const timer = setTimeout(async () => {
-			searching = true;
-			try {
-				const found = await api<{ results: CatalogEntry[] }>(`/api/catalog/search?limit=12&q=${encodeURIComponent(q)}`);
-				if (mine === ticket) results = found.results;
-			} catch (e) {
-				if (mine === ticket) notify((e as Error).message, true);
-			} finally {
-				if (mine === ticket) searching = false;
-			}
-		}, 250);
-		return () => clearTimeout(timer);
 	});
 
 	const articles = $derived(corpus?.documents.reduce((n, d) => n + d.article_count, 0) ?? 0);
@@ -169,11 +146,12 @@
 				</p>
 			</div>
 		</header>
+		<PageGuide name="corpus" steps={3} />
 
 		<div class="cols">
 			<div class="stack">
 				<section class="panel" aria-labelledby="add-heading">
-					<h2 class="heading" id="add-heading">{t('corpus.add')}</h2>
+					<h2 class="heading" id="add-heading"><StepTag n={1} />{t('corpus.add')}</h2>
 					<div class="segmented" role="group" aria-label={t('corpus.add')}>
 						<button type="button" aria-pressed={mode === 'search'} onclick={() => (mode = 'search')}><Icon name="search" size={16} />{t('corpus.add.search')}</button>
 						<button type="button" aria-pressed={mode === 'link'} onclick={() => (mode = 'link')}><Icon name="link" size={16} />{t('corpus.add.link')}</button>
@@ -186,33 +164,7 @@
 
 					{#if mode === 'search'}
 						{#if listing?.catalog}
-							<label class="field">
-								<span>{t('corpus.search.label')}</span>
-								<input type="search" bind:value={query} placeholder={t('corpus.search.ph')} autocomplete="off" />
-								<span class="hint">{t('corpus.search.hint')}</span>
-							</label>
-							{#if searching}<p class="small muted" aria-live="polite">{t('common.loading')}</p>{/if}
-							{#if results.length}
-								<ul class="results" aria-label={t('corpus.search.results')}>
-									{#each results as r (r.vbpl_id)}
-										<li>
-											<div class="result-main">
-												<span class="serif">{r.title}</span>
-												<span class="small muted">{[r.doc_type, r.doc_num, r.issue_date && formatDay(r.issue_date), r.agency].filter(Boolean).join(' · ')}</span>
-												{#if r.effect_status}<span class="status {statusTone(r.effect_status)}" title={t('corpus.search.statusNote')}>{r.effect_status}*</span>{/if}
-											</div>
-											{#if inCorpus.has(r.vbpl_id)}
-												<span class="small muted added"><Icon name="check" size={16} />{t('corpus.search.inCorpus')}</span>
-											{:else}
-												<button type="button" class="btn small" disabled={busy || !listing?.vbpl_enabled} onclick={() => askFetch(r.vbpl_id, r.title)}>{t('corpus.fetch')}</button>
-											{/if}
-										</li>
-									{/each}
-								</ul>
-								<p class="small muted">* {t('corpus.search.statusNote')}</p>
-							{:else if query.trim().length >= 2 && !searching}
-								<p class="small muted">{t('corpus.search.none')}</p>
-							{/if}
+							<CatalogSearch canFetch={!!listing?.vbpl_enabled} {busy} added={inCorpus} onpick={(r) => askFetch(r.vbpl_id, r.title)} />
 						{:else}
 							<p class="small muted">{t('research.catalog.missing')}</p>
 						{/if}
@@ -233,7 +185,7 @@
 				</section>
 
 				<section class="panel" aria-labelledby="docs-heading">
-					<h2 class="heading" id="docs-heading">{t('corpus.documents')}</h2>
+					<h2 class="heading" id="docs-heading"><StepTag n={2} />{t('corpus.documents')}</h2>
 					{#if corpus.documents.length}
 						<ul class="docs">
 							{#each corpus.documents as d (d.id)}
@@ -265,7 +217,7 @@
 			</div>
 
 			<section class="panel versions" aria-labelledby="versions-heading">
-				<h2 class="heading" id="versions-heading">{t('corpus.versions')}</h2>
+				<h2 class="heading" id="versions-heading"><StepTag n={3} />{t('corpus.versions')}</h2>
 				<p class="small muted">{t('corpus.versions.lead')}</p>
 				{#if corpus.changed_since_version && corpus.documents.length}
 					<form class="fields" onsubmit={freeze}>
@@ -339,13 +291,11 @@
 		gap: 14px;
 		max-width: 640px;
 	}
-	.results,
 	.docs {
 		list-style: none;
 		margin: 0;
 		padding: 0;
 	}
-	.results li,
 	.docs li {
 		display: flex;
 		align-items: flex-start;
@@ -354,22 +304,13 @@
 		padding: 12px 0;
 		border-top: 1px solid var(--rule);
 	}
-	.results li:first-child,
 	.docs li:first-child {
 		border-top: 0;
 	}
-	.result-main,
 	.doc-main {
 		display: grid;
 		gap: 3px;
 		min-width: 0;
-	}
-	.added {
-		display: inline-flex;
-		align-items: center;
-		gap: 4px;
-		white-space: nowrap;
-		color: var(--approve);
 	}
 	.tags {
 		display: flex;

@@ -1,4 +1,5 @@
 <script lang="ts">
+	import PageGuide from '#lib/components/PageGuide.svelte';
 	import { page } from '$app/state';
 	import Icon from '#lib/components/Icon.svelte';
 	import { api } from '#lib/api.js';
@@ -65,6 +66,7 @@
 				<p class="small muted">SHA-256 <code>{doc.source_sha256}</code></p>
 			</div>
 		</header>
+		<PageGuide name="document" steps={3} />
 
 		{#if doc.removed_at}<p class="notice warn">{t('corpus.doc.removed')}</p>{/if}
 

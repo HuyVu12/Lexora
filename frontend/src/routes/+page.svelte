@@ -1,4 +1,5 @@
 <script lang="ts">
+	import PageGuide from '#lib/components/PageGuide.svelte';
 	import Icon from '#lib/components/Icon.svelte';
 	import Term from '#lib/components/Term.svelte';
 	import { api } from '#lib/api.js';
@@ -28,6 +29,7 @@
 			{#if reviewer}<a class="btn primary" href="/import"><Icon name="upload" />{t('home.import')}</a>{/if}
 		</div>
 	</header>
+	{#if reviewer}<PageGuide name="homeReviewer" steps={3} />{:else}<PageGuide name="homeReader" steps={3} />{/if}
 
 	{#if error}<p class="notice error" role="alert">{error}</p>{/if}
 

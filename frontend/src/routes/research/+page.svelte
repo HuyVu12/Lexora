@@ -1,4 +1,6 @@
 <script lang="ts">
+	import PageGuide from '#lib/components/PageGuide.svelte';
+	import StepTag from '#lib/components/StepTag.svelte';
 	import { goto } from '$app/navigation';
 	import Icon from '#lib/components/Icon.svelte';
 	import { api } from '#lib/api.js';
@@ -43,6 +45,7 @@
 				<p class="lead">{t('research.lead')}</p>
 			</div>
 		</header>
+		<PageGuide name="corpora" steps={3} />
 
 		{#if listing}
 			<ul class="status">
@@ -86,7 +89,7 @@
 			</section>
 
 			<form class="panel create" onsubmit={create}>
-				<h2 class="heading">{t('research.create')}</h2>
+				<h2 class="heading"><StepTag n={1} />{t('research.create')}</h2>
 				<p class="small muted">{t('research.createLead')}</p>
 				<label class="field"><span>{t('research.name')}</span><input maxlength="120" required bind:value={name} placeholder={t('research.namePh')} /></label>
 				<label class="field"><span>{t('research.description')} <span class="hint">({t('common.optional')})</span></span><textarea maxlength="2000" rows="3" bind:value={description}></textarea></label>

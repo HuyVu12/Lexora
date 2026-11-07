@@ -143,3 +143,18 @@ def fetch_document(reference, destination, timeout=60):
                               "accessed_at": datetime.now(timezone.utc).isoformat(timespec="seconds"), "source_sha256": sha,
                               "local_path": target.as_posix(), "metadata": metadata(document), "review_status": "needs_manual_review"})
     return json.loads(manifest.read_text(encoding="utf-8"))
+
+
+def load_snapshot(destination, vbpl_id, sha256):
+    """(manifest, bytes) of a snapshot stored by `fetch_document`, checked against its hash; no network."""
+    if not _ID.fullmatch(vbpl_id or "") or not re.fullmatch(r"[0-9a-f]{64}", sha256 or ""):
+        raise ValueError("Mã bản chụp vbpl.vn không hợp lệ")
+    folder = Path(destination) / vbpl_id / sha256
+    try:
+        raw = (folder / "document.json").read_bytes()
+        manifest = json.loads((folder / "manifest.json").read_text(encoding="utf-8"))
+    except OSError as exc:
+        raise ValueError("Không tìm thấy bản chụp; hãy lấy lại văn bản từ vbpl.vn") from exc
+    if digest(raw) != sha256 or manifest.get("source_sha256") != sha256:
+        raise ValueError("Bản chụp vbpl.vn không khớp mã băm")
+    return manifest, raw

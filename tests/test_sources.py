@@ -97,7 +97,8 @@ class CatalogTests(unittest.TestCase):
                 ("3", "Nghị định số 145/2020/GD Hướng dẫn Bộ luật Giả định", "145/2020/GD", "14/12/2020", "Nghị định", "Còn hiệu lực"),
                 ("4", "Quyết định số 7/QĐ Về thuế và việc thu phí", "7/QĐ", "01/01/2020", "Quyết định", "Còn hiệu lực"),
                 ("5", "Quyết định số 8/QĐ Về thử việc giả định", "8/QĐ", "01/01/2010", "Quyết định", "Hết hiệu lực toàn bộ"),
-                ("vbpqta_9", "Code 45/2019/GD", "45/2019/GD", "20/11/2019", "Bản dịch văn bản", "Còn hiệu lực")]
+                ("vbpqta_9", "Code 45/2019/GD", "45/2019/GD", "20/11/2019", "Bản dịch văn bản", "Còn hiệu lực"),
+                ("6", "Lệnh số 6/L Về việc công bố Bộ luật Giả định", "6/L", "01/12/2019", "Lệnh", "Còn hiệu lực")]
         rows = [{name: None for name in fields} | {"id": i, "title": t, "so_ky_hieu": n, "ngay_ban_hanh": d, "loai_van_ban": k, "tinh_trang_hieu_luc": s, "pham_vi": "Trung ương"}
                 for i, t, n, d, k, s in docs]
         pq.write_table(pyarrow.Table.from_pylist(rows), raw / "th1nhng0-metadata.parquet")
@@ -115,7 +116,7 @@ class CatalogTests(unittest.TestCase):
         return [row["vbpl_id"] for row in self.catalog.search(query, **kwargs)]
 
     def test_build_merges_both_datasets_and_records_provenance(self):
-        self.assertEqual((self.meta["documents"], self.meta["relationships"]), (7, 1))
+        self.assertEqual((self.meta["documents"], self.meta["relationships"]), (8, 1))
         self.assertEqual(self.catalog.document("2")["sources"], ["th1nhng0/vietnamese-legal-documents", "undertheseanlp/UTS_VLC"])
         self.assertEqual(self.catalog.document("u-1")["sources"], ["undertheseanlp/UTS_VLC"])
         self.assertEqual(self.catalog.document("2")["issue_date"], "2019-11-20")
@@ -129,6 +130,9 @@ class CatalogTests(unittest.TestCase):
         self.assertIn("vbpqta_9", self.ids("45/2019/GD", include_translations=True))
         ranked = self.ids("bo luat gia dinh")
         self.assertEqual(ranked[0], "2")
+        self.assertLess(ranked.index("1"), ranked.index("6"), "a promulgation order ranks after the codes, even expired ones")
+        flags = {row["vbpl_id"]: row["usually_no_articles"] for row in self.catalog.search("bo luat gia dinh")}
+        self.assertEqual((flags["6"], flags["2"]), (True, False))
         self.assertLess(ranked.index("3"), ranked.index("1"), "in force before fully expired")
         self.assertEqual(self.ids("thu viec"), ["5", "4"], "the words as one phrase beat scattered matches (thuế ... việc)")
         self.assertEqual(self.ids("nghi dinh 145/20"), ["3"], "the last word may be a prefix")

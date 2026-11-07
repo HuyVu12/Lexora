@@ -121,14 +121,14 @@ class CorpusStore:
                 "document_count": len(manifest["documents"]), "unit_count": manifest["unit_count"]}
 
     # Documents -----------------------------------------------------------------------
-    def _add(self, corpus_id, document_id, title, kind, ref, url, raw, accessed_at, metadata, text, warnings, actor):
+    def _add(self, corpus_id, document_id, title, kind, ref, url, raw, accessed_at, metadata, text, warnings, actor, no_articles=None):
         document_id = document_id.strip().lower()
         if not _SLUG.fullmatch(document_id):
             raise ValueError("Mã văn bản chỉ gồm chữ thường không dấu, số và dấu gạch, tối đa 80 ký tự")
         normalized = normalize(text, f"{document_id}/source.txt")
         parsed = parse(normalized, document_id, normalized["normalized_sha256"])
         if not any(u["unit_type"] == "article" for u in parsed["units"]):
-            raise ValueError("Không tìm thấy Điều nào; mỗi Điều cần bắt đầu trên một dòng riêng bằng “Điều N.”")
+            raise ValueError(no_articles or "Không tìm thấy Điều nào; mỗi Điều cần bắt đầu trên một dòng riêng bằng “Điều N.”")
         for unit in parsed["units"]:
             validate_unit(unit)
         report = {"audit": parsed["audit"], "unassigned_text": parsed["unassigned_text"], "warnings": warnings}
@@ -157,8 +157,11 @@ class CorpusStore:
         if meta.get("is_translation"):
             raise ValueError("Đây là bản dịch; hãy thêm bản gốc tiếng Việt")
         text = document_text(document)["text"]
+        kind = (meta.get("doc_type") or "văn bản").lower()
+        no_articles = (f"Văn bản này ({kind} {meta.get('doc_num') or ''}) không chia thành Điều nên không đưa vào corpus được. "
+                       "Lệnh công bố, chỉ thị và công văn thường như vậy; hãy chọn chính văn bản luật, nghị định hoặc thông tư.")
         return self._add(corpus_id, document_id or slug(meta.get("doc_num") or meta["vbpl_id"]), meta.get("title") or meta["vbpl_id"], "vbpl",
-                         meta["vbpl_id"], manifest["site_url"], raw, manifest["accessed_at"], meta, text, [], actor)
+                         meta["vbpl_id"], manifest["site_url"], raw, manifest["accessed_at"], meta, text, [], actor, no_articles)
 
     def add_file(self, corpus_id, filename, data, actor, title=None, document_id=None):
         extracted = extract_text(filename, data)

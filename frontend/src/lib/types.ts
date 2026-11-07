@@ -56,6 +56,8 @@ export interface AppState {
 	account: Account;
 	router_enabled: boolean;
 	extraction_model: string | null;
+	extraction_via?: 'claude' | '9router' | null;
+	extraction_calls_left?: number;
 	embedding_model: string | null;
 }
 
@@ -283,6 +285,7 @@ export interface CatalogEntry {
 	effect_status: string | null;
 	agency: string | null;
 	in_force: boolean;
+	usually_no_articles: boolean;
 	sources: string[];
 }
 
@@ -409,4 +412,22 @@ export interface Comparison {
 	full_agreement: number | null;
 	adjudicated: number;
 	items: ComparedItem[];
+}
+
+export interface OutlineArticle {
+	id: string;
+	heading: string;
+	chapter: string | null;
+	section: string | null;
+	blocked: boolean;
+	reason: string | null;
+}
+
+export interface VbplImport {
+	vbpl_id: string;
+	source_sha256: string;
+	site_url: string;
+	accessed_at: string;
+	metadata: { title?: string; doc_num?: string; doc_type?: string; effect_status?: EffectStatus | null; issue_date?: string | null };
+	articles: OutlineArticle[];
 }

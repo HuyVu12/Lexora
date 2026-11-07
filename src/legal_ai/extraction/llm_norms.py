@@ -41,6 +41,16 @@ Chỉ trả về một đối tượng JSON, không giải thích:
 {"results":[{"sentence":"S1","norms":[{"actor":"...","action":"...","object":null,"beneficiary":null,"recipient":null,"conditions":null,"exceptions":null,"deadlines":null,"quantities":null,"outcome":null,"modality":"obligation","modality_cue":"phải"}]}]}"""
 
 
+_TEXT = {"type": ["string", "null"], "maxLength": 1000}
+# Answer schema for providers that validate structured output (Claude Code); the same shape SYSTEM describes.
+SCHEMA = {"type": "object", "additionalProperties": False, "required": ["results"], "properties": {"results": {"type": "array", "items": {
+    "type": "object", "additionalProperties": False, "required": ["sentence", "norms"], "properties": {
+        "sentence": {"type": "string"},
+        "norms": {"type": "array", "maxItems": MAX_NORMS_PER_SENTENCE, "items": {
+            "type": "object", "additionalProperties": False, "required": list(LLM_SLOTS) + ["modality", "modality_cue"],
+            "properties": {**{name: _TEXT for name in LLM_SLOTS}, "modality": {"type": "string", "enum": list(MODALITIES)}, "modality_cue": _TEXT}}}}}}}}
+
+
 def _article_of(unit, by_id):
     current = unit
     while current["parent_id"] and current["unit_type"] != "article":
@@ -179,7 +189,13 @@ def extract(units, targets, provider, *, workers=3, progress=None):
     def run(batch):
         article_id, rows = batch
         try:
-            result = provider.complete(SYSTEM, request_text(units, article_id, rows), max_tokens=4000)
+            text = request_text(units, article_id, rows)
+            if hasattr(provider, "structured"):  # Schema-validated JSON, e.g. Claude Code.
+                value = provider.structured(SYSTEM, text, SCHEMA, purpose="norm-extraction")["output"]
+                if not isinstance(value.get("results"), list):
+                    raise ValueError("invalid_extraction_schema")
+                return rows, value, None
+            result = provider.complete(SYSTEM, text, max_tokens=4000)
             return rows, parse_json(result["content"]), None
         except ProviderError as exc:
             return rows, None, exc.code
