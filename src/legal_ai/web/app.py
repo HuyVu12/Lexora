@@ -32,6 +32,9 @@ from legal_ai.ingestion.vbpl_api import fetch_document
 from legal_ai.kb.import_review import MAX_BYTES, Conflict
 from legal_ai.rag.review_chat import ChatService
 from legal_ai.research.corpus import CorpusStore
+from legal_ai.research import proposals as question_proposals
+from legal_ai.research.questions import QuestionStore
+from legal_ai.providers.claude_code import ProviderError
 from legal_ai.web.setup import run_extraction
 
 PACKAGE = Path(__file__).resolve().parents[1]
@@ -45,6 +48,9 @@ NO_VBPL = "Chưa bật lấy văn bản từ vbpl.vn cho phiên chạy này (kh�
 NO_CATALOG = "Chưa có danh mục văn bản (khởi động với --catalog)"
 # A base64 upload of the largest accepted file, plus the JSON around it.
 UPLOAD_PATH, UPLOAD_LIMIT = "/api/corpus/file", MAX_FILE_BYTES * 4 // 3 + 100_000
+# Question packs carry a corpus version; they get the same large limit as file uploads.
+LARGE_PATHS = {UPLOAD_PATH, "/api/question-sets/import-pack", "/api/question-set/import-labels"}
+NO_PROPOSER = "Chưa bật đề xuất bằng model cho phiên chạy này (khởi động với --proposal-model và --approve-claude)"
 
 
 class Denied(Exception):
@@ -148,16 +154,84 @@ class CorpusFreezeBody(Body):
     note: str = ""
 
 
+class QuestionSetCreateBody(Body):
+    name: str
+    corpus_version_id: str
+    guideline: str = ""
+
+
+class QuestionSetBody(Body):
+    set_id: str
+
+
+class QuestionModeBody(Body):
+    set_id: str
+    show_proposals: bool
+
+
+class QuestionAddBody(Body):
+    set_id: str
+    text: str
+    family_id: str | None = None
+
+
+class QuestionRefBody(Body):
+    set_id: str
+    question_id: str
+
+
+class QuestionLabelBody(Body):
+    set_id: str
+    question_id: str
+    fields: dict
+    note: str = ""
+
+
+class QuestionProposeBody(Body):
+    set_id: str
+    question_id: str
+    confirm: bool = False
+
+
+class QuestionDraftBody(Body):
+    set_id: str
+    unit_ids: list[str]
+    count: int = 4
+    confirm: bool = False
+
+
+class QuestionAcceptBody(Body):
+    set_id: str
+    draft_id: str
+    index: int
+    texts: list[str]
+
+
+class PackBody(Body):
+    pack: dict
+
+
+class LabelsBody(Body):
+    labels: dict
+
+
+class FreezeQuestionsBody(Body):
+    set_id: str
+    other: str
+    held_out: float = 0.3
+
+
 def error(message, status, **extra):
     return JSONResponse({"error": message, **extra}, status_code=status)
 
 
 def create_app(store, port, *, provider=None, source_catalog=None, extractor=None, embedder=None, token=None, frontend_dir=None,
-               catalog_path=None, vbpl_dir=None):
+               catalog_path=None, vbpl_dir=None, proposer=None):
     """Build the app for one loopback port and one workspace store; `frontend_dir` is the SvelteKit static build.
 
     `catalog_path` enables the offline document catalog. `vbpl_dir` (only with --allow-vbpl) lets reviewers fetch
-    one vbpl.vn document per confirmed request into that snapshot directory."""
+    one vbpl.vn document per confirmed request into that snapshot directory. `proposer` (only with --approve-claude)
+    is the structured model provider for question proposals and drafts; each call needs a confirmation."""
     token = token or secrets.token_urlsafe(32)
     hosts = {f"127.0.0.1:{port}", f"localhost:{port}"}
     accounts = AccountStore(store.path)
@@ -165,6 +239,7 @@ def create_app(store, port, *, provider=None, source_catalog=None, extractor=Non
     library = SourceLibrary(source_catalog)
     corpora = CorpusStore(store.path)
     catalog = Catalog(catalog_path) if catalog_path else None
+    questions = QuestionStore(store.path, corpora)
     store.interrupt_extractions()
     frontend = Path(frontend_dir).resolve() if frontend_dir else None
     app = FastAPI(title="Lexora", docs_url=None, redoc_url=None, openapi_url="/api/openapi.json")
@@ -208,7 +283,7 @@ def create_app(store, port, *, provider=None, source_catalog=None, extractor=Non
                 size = int(request.headers.get("content-length", "0"))
             except ValueError:
                 size = -1
-            if not 0 < size <= (UPLOAD_LIMIT if request.url.path == UPLOAD_PATH else MAX_BYTES * 7):
+            if not 0 < size <= (UPLOAD_LIMIT if request.url.path in LARGE_PATHS else MAX_BYTES * 7):
                 response = error("Request exceeds local upload limit", 400)
             elif host not in hosts or request.headers.get("x-lexora-token") != token:
                 response = error("Invalid local request token", 403)
@@ -440,6 +515,127 @@ def create_app(store, port, *, provider=None, source_catalog=None, extractor=Non
         if document is None:
             raise ValueError("Không có văn bản này trong danh mục")
         return document | {"relationships": catalog.relationships(id)}
+
+    # Question sets (reviewers; the signed-in account is the annotator) ------------------
+    def frozen_versions():
+        listing = []
+        for c in corpora.corpora():
+            for v in corpora.corpus(c["id"])["versions"]:
+                listing.append({"id": v["id"], "corpus_id": c["id"], "corpus_name": c["name"], "number": v["number"],
+                                "document_count": v["document_count"], "unit_count": v["unit_count"], "frozen_at": v["frozen_at"]})
+        return listing
+
+    def model_call(fn):
+        if proposer is None:
+            raise ValueError(NO_PROPOSER)
+        try:
+            return fn()
+        except ProviderError as exc:
+            raise ValueError(f"Model không trả lời được ({exc.code}); lần gọi đã được ghi lại") from exc
+
+    def download(body, filename):
+        return JSONResponse(body, headers={"Content-Disposition": f'attachment; filename="{filename}"'})
+
+    @app.get("/api/question-sets")
+    def question_sets(_=Depends(reviewer)):
+        return {"sets": questions.sets(), "versions": frozen_versions(), "proposal_model": proposer.model if proposer else None,
+                "proposal_effort": proposer.effort if proposer else None}
+
+    @app.post("/api/question-sets")
+    def question_set_create(body: QuestionSetCreateBody, account=Depends(reviewer)):
+        return questions.create(body.name, body.corpus_version_id, body.guideline, account["username"])
+
+    @app.get("/api/question-set")
+    def question_set(id: str = Query(), account=Depends(reviewer)):
+        view = questions.workspace(id, account["username"])
+        return view | {"annotators": questions.annotators(id), "calls": len(questions.calls(id)),
+                       "proposal_model": proposer.model if proposer else None,
+                       "proposal_calls_left": proposer.max_calls - proposer.calls if proposer else 0}
+
+    @app.post("/api/question-set/mode")
+    def question_set_mode(body: QuestionModeBody, account=Depends(reviewer)):
+        questions.set_mode(body.set_id, account["username"], body.show_proposals)
+        return {"show_proposals": body.show_proposals}
+
+    @app.post("/api/question-set/question")
+    def question_add(body: QuestionAddBody, account=Depends(reviewer)):
+        return questions.add_question(body.set_id, body.text, account["username"], body.family_id or None)
+
+    @app.post("/api/question-set/question/remove")
+    def question_remove(body: QuestionRefBody, _=Depends(reviewer)):
+        questions.remove_question(body.set_id, body.question_id)
+        return {"removed": body.question_id}
+
+    @app.post("/api/question-set/label")
+    def question_label(body: QuestionLabelBody, account=Depends(reviewer)):
+        return questions.save_label(body.set_id, body.question_id, account["username"], account["display_name"], body.fields, body.note)
+
+    @app.get("/api/question-set/candidates")
+    def question_candidates(set_id: str = Query(), q: str = Query(), k: int = Query(8), _=Depends(reviewer)):
+        version = questions.summary(set_id)["corpus_version_id"]
+        return {"candidates": question_proposals.candidates(corpora, version, q, max(1, min(k, 20)))}
+
+    @app.get("/api/question-set/outline")
+    def question_outline(set_id: str = Query(), _=Depends(reviewer)):
+        """The articles of the set's corpus version (ID, document, heading line), for picking draft sources."""
+        documents, units, _ = corpora.bundle(questions.summary(set_id)["corpus_version_id"])
+        titles = {d["document_id"]: d["title"] for d in documents}
+        return {"articles": [{"unit_id": u["unit_id"], "document_id": u["document_id"], "document_title": titles[u["document_id"]],
+                              "heading": u["text"].strip().split("\n")[0][:200]} for u in units if u["unit_type"] == "article"]}
+
+    @app.get("/api/question-set/units")
+    def question_units(set_id: str = Query(), ids: str = Query(), _=Depends(reviewer)):
+        _, units, _ = corpora.bundle(questions.summary(set_id)["corpus_version_id"])
+        wanted = set(ids.split(","))
+        return {"units": [{"unit_id": u["unit_id"], "unit_type": u["unit_type"], "text": u["text"]} for u in units if u["unit_id"] in wanted]}
+
+    @app.post("/api/question-set/propose")
+    def question_propose(body: QuestionProposeBody, _=Depends(reviewer)):
+        if not body.confirm:
+            raise ValueError("Hãy xác nhận trước khi Lexora gọi model")
+        return model_call(lambda: question_proposals.propose_label(proposer, questions, body.set_id, body.question_id))
+
+    @app.post("/api/question-set/draft")
+    def question_draft(body: QuestionDraftBody, _=Depends(reviewer)):
+        if not body.confirm:
+            raise ValueError("Hãy xác nhận trước khi Lexora gọi model")
+        return model_call(lambda: question_proposals.draft_questions(proposer, questions, body.set_id, body.unit_ids, body.count))
+
+    @app.post("/api/question-set/draft/accept")
+    def question_draft_accept(body: QuestionAcceptBody, account=Depends(reviewer)):
+        return {"added": questions.accept_draft(body.set_id, body.draft_id, body.index, body.texts, account["username"])}
+
+    @app.get("/api/question-set/pack")
+    def question_pack(id: str = Query(), _=Depends(reviewer)):
+        return download(questions.export_pack(id), f"lexora-question-pack-{id}.json")
+
+    @app.post("/api/question-sets/import-pack")
+    def question_import_pack(body: PackBody, account=Depends(reviewer)):
+        return questions.import_pack(body.pack, account["username"])
+
+    @app.get("/api/question-set/labels")
+    def question_labels(id: str = Query(), account=Depends(reviewer)):
+        return download(questions.export_labels(id, account["username"]), f"lexora-labels-{id}-{account['username']}.json")
+
+    @app.post("/api/question-set/import-labels")
+    def question_import_labels(body: LabelsBody, account=Depends(reviewer)):
+        return questions.import_labels(body.labels, account["username"])
+
+    @app.get("/api/question-set/compare")
+    def question_compare(id: str = Query(), other: str = Query(), account=Depends(reviewer)):
+        return questions.comparison(id, account["username"], other)
+
+    @app.post("/api/question-set/adjudicate")
+    def question_adjudicate(body: QuestionLabelBody, account=Depends(reviewer)):
+        return questions.adjudicate(body.set_id, body.question_id, body.fields, body.note, account["username"])
+
+    @app.post("/api/question-set/freeze")
+    def question_freeze(body: FreezeQuestionsBody, account=Depends(reviewer)):
+        return questions.freeze(body.set_id, account["username"], body.other, account["username"], body.held_out)
+
+    @app.get("/api/question-set/frozen")
+    def question_frozen(id: str = Query(), _=Depends(reviewer)):
+        return download(questions.frozen_file(id), f"lexora-questions-{id}.json")
 
     # Graph viewers (self-contained pages of published revisions) --------------------------
     def viewer_page(request, revision_id, structure):

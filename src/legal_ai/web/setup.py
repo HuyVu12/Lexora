@@ -22,6 +22,10 @@ def add_arguments(parser, default_port):
     parser.add_argument("--catalog", help="Offline document catalog (catalog-v1 SQLite); default data/catalog/catalog-v1.sqlite when present")
     parser.add_argument("--allow-vbpl", action="store_true", help="Let reviewers fetch one vbpl.vn document per confirmed request")
     parser.add_argument("--vbpl-dir", default="data/raw/vbpl", help="Snapshot directory for fetched vbpl.vn documents")
+    parser.add_argument("--proposal-model", help="Model for question proposals and drafts through the local claude CLI, e.g. claude-opus-5-5")
+    parser.add_argument("--proposal-effort", default="medium", choices=["low", "medium", "high", "xhigh", "max"])
+    parser.add_argument("--proposal-max-calls", type=int, default=40, help="Call budget of this run for proposals and drafts")
+    parser.add_argument("--approve-claude", action="store_true", help="Explicitly authorize model calls through Claude Code for this run")
 
 
 def providers(args, parser):
@@ -64,3 +68,15 @@ def sources(args):
     default = Path("data/catalog/catalog-v1.sqlite")
     catalog = args.catalog or (str(default) if default.is_file() else None)
     return catalog, (args.vbpl_dir if args.allow_vbpl else None)
+
+
+def proposer(args, parser):
+    """The Claude Code provider for question proposals, or None; it needs both --proposal-model and --approve-claude."""
+    if not args.proposal_model:
+        if args.approve_claude:
+            parser.error("--approve-claude requires --proposal-model")
+        return None
+    if not args.approve_claude:
+        parser.error("--proposal-model requires --approve-claude")
+    from legal_ai.providers.claude_code import ClaudeCodeProvider
+    return ClaudeCodeProvider(model=args.proposal_model, effort=args.proposal_effort, max_calls=args.proposal_max_calls, approved=True)

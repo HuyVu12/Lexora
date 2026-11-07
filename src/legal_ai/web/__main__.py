@@ -3,7 +3,7 @@
 import argparse
 
 from legal_ai.kb.import_review import ReviewStore
-from legal_ai.web.setup import add_arguments, providers, sources
+from legal_ai.web.setup import add_arguments, proposer, providers, sources
 
 
 def main():
@@ -19,8 +19,12 @@ def main():
     if AccountStore(store.path).count() == 0:
         print(f"Chưa có tài khoản. Tạo quản trị đầu tiên: python -m legal_ai.auth create-admin --store {args.store} --username <tên>", flush=True)
     catalog_path, vbpl_dir = sources(args)
+    question_model = proposer(args, parser)
     app = create_app(store, args.port, provider=provider, source_catalog=args.source_catalog, extractor=extractor,
-                     embedder=embedder, frontend_dir=args.frontend, catalog_path=catalog_path, vbpl_dir=vbpl_dir)
+                     embedder=embedder, frontend_dir=args.frontend, catalog_path=catalog_path, vbpl_dir=vbpl_dir,
+                     proposer=question_model)
+    if question_model:
+        print(f"Claude Code: up to {question_model.max_calls} proposal calls with {question_model.model} ({question_model.effort})", flush=True)
     if vbpl_dir:
         print("vbpl.vn: reviewers may fetch one document per confirmed request", flush=True)
     print(f"Lexora: http://127.0.0.1:{args.port} (Ctrl+C to stop)", flush=True)

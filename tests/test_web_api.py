@@ -253,6 +253,81 @@ class WebApiTests(unittest.TestCase):
         self.assertEqual((added.json()["document_id"], added.json()["source_kind"]), ("45-2019-gd", "vbpl"))
         fetch.assert_called_once()
 
+    def _frozen_corpus(self, client):
+        corpus = self.post(client, "/api/corpora", {"name": "Câu hỏi"}).json()
+        self.post(client, "/api/corpus/file", {"corpus_id": corpus["id"], "filename": "luat.txt", "content_base64": base64.b64encode(SOURCE.encode("utf-8")).decode()})
+        return self.post(client, "/api/corpus/freeze", {"corpus_id": corpus["id"]}).json()
+
+    def test_question_sets_flow_across_two_machines(self):
+        reader = self.client("nhansu", "reader password 1")
+        self.assertEqual(reader.get("/api/question-sets").status_code, 403)
+        vu = self.client("phapche", "review password 1")
+        version = self._frozen_corpus(vu)
+        listing = vu.get("/api/question-sets").json()
+        self.assertEqual(([v["id"] for v in listing["versions"]], listing["proposal_model"]), ([version["id"]], None))
+        qset = self.post(vu, "/api/question-sets", {"name": "Bộ 1", "corpus_version_id": version["id"]}).json()
+        question = self.post(vu, "/api/question-set/question", {"set_id": qset["id"], "text": "Người lao động phải thông báo gì?"}).json()
+        refused = self.post(vu, "/api/question-set/propose", {"set_id": qset["id"], "question_id": question["id"], "confirm": True})
+        self.assertIn("--approve-claude", refused.json()["error"])
+        unit = "luat/article-1/clause-1"
+        self.assertEqual(vu.get("/api/question-set/candidates", params={"set_id": qset["id"], "q": "thông báo kết quả thử việc"}).json()["candidates"][0]["unit_id"], unit)
+        self.assertEqual(vu.get("/api/question-set/outline", params={"set_id": qset["id"]}).json()["articles"][0]["heading"], "Điều 1. Ví dụ tổng hợp, không phải luật thật")
+        label = {"set_id": qset["id"], "question_id": question["id"], "fields": {"question_type": "lookup", "expected_status": "answer", "relevant_unit_ids": [unit]}}
+        self.assertEqual(self.post(vu, "/api/question-set/label", label).status_code, 400, "mode first")
+        self.post(vu, "/api/question-set/mode", {"set_id": qset["id"], "show_proposals": False})
+        self.assertEqual(self.post(vu, "/api/question-set/label", label).status_code, 200)
+        pack = vu.get("/api/question-set/pack", params={"id": qset["id"]})
+        self.assertIn("attachment", pack.headers["content-disposition"])
+
+        # Kha's machine: a separate store and app.
+        other = ReviewStore(Path(self.temp.name) / "kha.sqlite")
+        AccountStore(other.path).create("kha", "Kha", "reviewer", "review password 2")
+        self.app = create_app(other, PORT, token="t0ken", frontend_dir=self.build)
+        kha = self.client("kha", "review password 2")
+        self.assertEqual(self.post(kha, "/api/question-sets/import-pack", {"pack": pack.json()}).json()["questions"], 1)
+        self.post(kha, "/api/question-set/mode", {"set_id": qset["id"], "show_proposals": False})
+        self.assertEqual(self.post(kha, "/api/question-set/label", label).status_code, 200)
+        labels = kha.get("/api/question-set/labels", params={"id": qset["id"]}).json()
+
+        # Back on Vũ's machine: compare, adjudicate, freeze, download.
+        self.app = create_app(self.store, PORT, token="t0ken", frontend_dir=self.build)
+        vu = self.client("phapche", "review password 1")
+        self.assertEqual(self.post(vu, "/api/question-set/import-labels", {"labels": labels}).json()["labels"], 1)
+        report = vu.get("/api/question-set/compare", params={"id": qset["id"], "other": "kha"}).json()
+        self.assertEqual((report["labelled_by_both"], report["items"][0]["agree"]), (1, True))
+        freeze = {"set_id": qset["id"], "other": "kha", "held_out": 0.5}
+        self.assertIn("chưa chốt", self.post(vu, "/api/question-set/freeze", freeze).json()["error"])
+        self.post(vu, "/api/question-set/adjudicate", label | {"note": ""})
+        self.assertEqual(self.post(vu, "/api/question-set/freeze", freeze).status_code, 200)
+        frozen = vu.get("/api/question-set/frozen", params={"id": qset["id"]}).json()
+        self.assertEqual(frozen["questions"][0]["relevant_unit_ids"], [unit])
+
+    def test_model_calls_need_the_run_provider_and_a_confirmation(self):
+        class Proposer:
+            model, effort, max_calls, calls = "stand-in", "low", 3, 0
+
+            def __init__(self):
+                self.ledger = []
+
+            def structured(self, system, prompt, schema, purpose="structured"):
+                self.calls += 1
+                output = {"question_type": "lookup", "expected_status": "answer", "relevant_unit_ids": schema["properties"]["relevant_unit_ids"]["items"]["enum"][:1], "rationale": "r"}
+                self.ledger.append({"purpose": purpose, "status": "ok", "output": output})
+                return {"output": output}
+
+        proposer = Proposer()
+        self.app = create_app(self.store, PORT, token="t0ken", frontend_dir=self.build, proposer=proposer)
+        vu = self.client("phapche", "review password 1")
+        version = self._frozen_corpus(vu)
+        qset = self.post(vu, "/api/question-sets", {"name": "Bộ 2", "corpus_version_id": version["id"]}).json()
+        question = self.post(vu, "/api/question-set/question", {"set_id": qset["id"], "text": "Người lao động phải thông báo gì?"}).json()
+        body = {"set_id": qset["id"], "question_id": question["id"]}
+        self.assertEqual((self.post(vu, "/api/question-set/propose", body).status_code, proposer.calls), (400, 0))
+        proposal = self.post(vu, "/api/question-set/propose", body | {"confirm": True}).json()
+        self.assertEqual((proposal["fields"]["question_type"], proposer.calls), ("lookup", 1))
+        view = vu.get("/api/question-set", params={"id": qset["id"]}).json()
+        self.assertEqual((view["calls"], view["proposal_calls_left"], view["proposal_model"]), (1, 2, "stand-in"))
+
 
 if __name__ == "__main__":
     unittest.main()
