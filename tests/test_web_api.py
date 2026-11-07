@@ -137,7 +137,14 @@ class WebApiTests(unittest.TestCase):
             self.assertEqual(self.post(reader, path, body).status_code, 403, path)
         self.assertEqual(reader.get("/api/sources").status_code, 403)
         self.assertEqual(reader.get("/api/users").status_code, 403)
-        self.assertEqual(reader.get("/viewer", params={"revision": published["revision"]}).status_code, 200)
+        viewer = reader.get("/viewer", params={"revision": published["revision"]})
+        self.assertEqual(viewer.status_code, 200)
+        self.assertNotIn("</script><script>alert(1)</script>", viewer.text)
+        self.assertIn('id="lexora-glossary"', viewer.text)
+        structure = reader.get("/structure.html", params={"revision": published["revision"]})
+        self.assertEqual(structure.status_code, 200)
+        self.assertIn(f'href="/viewer?revision={published["revision"]}"', structure.text)
+        self.assertNotIn("<!--LEXORA_TERMS-->", structure.text)
         self.assertEqual(self.client().get("/viewer", params={"revision": published["revision"]}, follow_redirects=False).status_code, 303)
 
     def test_readers_get_the_published_graph_of_a_base(self):

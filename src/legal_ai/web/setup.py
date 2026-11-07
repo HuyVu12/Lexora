@@ -1,7 +1,5 @@
-"""Standard-library pieces shared by the FastAPI app and the legacy demo server.
-
-Command-line options, opt-in 9Router providers and the background extraction job live here so
-both servers behave identically while the migration is in progress.
+"""Standard-library pieces of the web app: command-line options, opt-in 9Router providers and
+the background extraction job. Kept free of FastAPI so they import without the `web` extra.
 """
 
 from pathlib import Path

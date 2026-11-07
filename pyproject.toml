@@ -23,4 +23,4 @@ where = ["src"]
 
 [tool.setuptools.package-data]
 "legal_ai.kb" = ["viewer.html", "entity-viewer.html"]
-"legal_ai" = ["demo.html", "demo.css", "demo-app.js", "term-tip.js", "term-tip.css"]
+"legal_ai" = ["term-tip.js", "term-tip.css"]

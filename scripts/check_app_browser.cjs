@@ -3,7 +3,8 @@
  * restrictions and account management, captures screenshots and fails on any console error.
  * Usage: node scripts/check_app_browser.cjs http://127.0.0.1:8790 <screenshot-dir> [chrome-path]
  * The store must be NEW and hold three accounts: admin/"admin password 1", phapche/"review password 1"
- * (reviewer), nhansu/"reader password 1" (reader). Only loopback URLs are allowed. Node 22+, no npm deps.
+ * (reviewer, display name "Nguyễn Pháp Chế"), nhansu/"reader password 1" (reader). Only loopback URLs are allowed.
+ * Node 22+, no npm deps.
  */
 const { spawn } = require('node:child_process');
 const fs = require('node:fs');

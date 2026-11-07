@@ -40,7 +40,7 @@ Không tìm thấy căn cứ thì hệ thống nói rõ là không có, thay vì
 
 ## Operating Context
 
-Chạy cục bộ trên một máy, server loopback một người dùng (`python -m legal_ai.demo`).
+Chạy cục bộ trên một máy, server loopback có đăng nhập ba vai trò (`python -m legal_ai.web`, giao diện SvelteKit).
 Luồng chính trên giao diện: nhập văn bản (thư viện có checksum, tệp TXT, dán nội dung), duyệt quy phạm cạnh nguyên văn, xem trước và công bố thành phiên bản mới của kho, hỏi đáp trên một đến năm kho, xem sơ đồ quy phạm và sơ đồ cấu trúc văn bản.
 Thiết kế thực nghiệm gồm bốn cấu hình ĐK1 đến ĐK4 (đoạn cắt cố định, đoạn theo cấu trúc, kho quy phạm do mô hình ngôn ngữ trích xuất trước và sau kiểm chứng).
 

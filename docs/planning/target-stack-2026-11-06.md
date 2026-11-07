@@ -22,9 +22,9 @@ Người dùng quyết định chuyển định hướng sang người dùng th�
 | Lớp | Hiện trạng | Mục tiêu |
 |---|---|---|
 | Lõi pipeline | Python 3.11+, thư viện chuẩn | Giữ nguyên |
-| Lớp web | `ThreadingHTTPServer` loopback, một người dùng (`src/legal_ai/demo.py`) | FastAPI + Pydantic, chạy bằng Uvicorn; API có kiểu dữ liệu và tài liệu OpenAPI |
+| Lớp web | Đã chuyển: FastAPI (`src/legal_ai/web/`); server cũ `demo.py` đã gỡ 07/11 | FastAPI + Pydantic, chạy bằng Uvicorn; API có kiểu dữ liệu và tài liệu OpenAPI |
 | Lưu trữ | SQLite (`kb-store-v1`) | Giữ SQLite ở các bước đầu; sau đó PostgreSQL, thêm pgvector khi kho đủ lớn |
-| Frontend | HTML, CSS, JS thuần (`demo.html`, `demo.css`, `demo-app.js`) | Svelte 5 + SvelteKit (xuất tĩnh), TypeScript, Vite |
+| Frontend | Đã chuyển: SvelteKit (`frontend/`); giao diện cũ đã gỡ 07/11 | Svelte 5 + SvelteKit (xuất tĩnh), TypeScript, Vite |
 | Sơ đồ | SVG vẽ tay trong `kb/entity-viewer.html`, `kb/viewer.html` | Cytoscape.js; vẫn xuất được một tệp HTML tự chứa (ví dụ `vite-plugin-singlefile`) |
 | Ngôn ngữ giao diện | Chỉ tiếng Việt | Song ngữ Việt và Anh; văn bản luật và trích dẫn luôn giữ tiếng Việt |
 | Truy cập | Chưa kiểm tra | WCAG 2.2 AA, đọc được trên máy chiếu |
@@ -49,8 +49,9 @@ Các bước này làm trước pipeline ĐK1–ĐK4 (đã chốt 06/11/2026).
 1. **Xong 06/11/2026.** Tách lớp API: viết FastAPI bọc các hàm hiện có của `ReviewStore`, `ChatService`, `SourceLibrary`; giữ nguyên hành vi, token và kiểm tra Host/Origin; giữ server cũ cho đến khi bộ test và E2E chạy được trên API mới.
    Kết quả: `src/legal_ai/web/app.py` (`create_app`), `src/legal_ai/web/setup.py` (phần dùng chung với `demo.py`), `python -m legal_ai.web`; `tests/test_web_api.py` đạt 5/5 và `scripts/check_demo_browser.cjs` chạy hết luồng trên Uvicorn với giao diện cũ. Phiên bản gói ghi trong `pyproject.toml` (extra `web`, `web-test`).
 2. Chuyển lưu trữ: thêm lớp lưu trữ PostgreSQL bên cạnh SQLite, viết script chuyển dữ liệu, chạy cùng bộ test trên cả hai.
+   **Lùi lại (07/11/2026):** làm sau khi đóng băng MVP (27/11); từ 09/11 ưu tiên dữ liệu nghiên cứu và pipeline ĐK1-ĐK4.
 3. **Xong 07/11/2026.** Frontend mới: dựng lại các màn hình hiện có bằng TypeScript + Vite, kèm song ngữ và WCAG AA ngay từ đầu.
-   Kết quả: `frontend/` (SvelteKit 3, Svelte 5) với đăng nhập ba vai trò (`src/legal_ai/auth.py`), hướng thị giác "Bản luật đã đánh dấu", song ngữ Việt và Anh bằng từ điển có kiểm tra kiểu (không dùng Paraglide vì bản build của nó tải và chạy plugin từ CDN), thuật ngữ song ngữ từ máy chủ; `scripts/check_app_browser.cjs` là bài E2E mới; giao diện cũ (`demo.py`, `demo-app.js`) vẫn còn để đối chiếu, chờ quyết định gỡ bỏ.
+   Kết quả: `frontend/` (SvelteKit 3, Svelte 5) với đăng nhập ba vai trò (`src/legal_ai/auth.py`), hướng thị giác "Bản luật đã đánh dấu", song ngữ Việt và Anh bằng từ điển có kiểm tra kiểu (không dùng Paraglide vì bản build của nó tải và chạy plugin từ CDN), thuật ngữ song ngữ từ máy chủ; `scripts/check_app_browser.cjs` là bài E2E mới; giao diện cũ (`demo.py`, `demo.html`, `demo.css`, `demo-app.js`, `scripts/check_demo_browser.cjs`) đã gỡ ngày 07/11/2026 theo quyết định của người dùng; kiểm thử HTTP của nó chuyển sang `tests/test_web_api.py`.
 4. **Xong 07/11/2026.** Sơ đồ: chuyển hai trang sơ đồ sang Cytoscape.js.
    Kết quả: trang `/kb/:id/graph` trong app (chế độ Quy phạm và Cấu trúc văn bản, phóng to, kéo, cột bằng chứng nguyên văn, cùng hệ thiết kế, có đăng nhập và song ngữ) đọc `GET /api/kb/graph`; hai tệp HTML tự chứa (`kb/viewer.html`, `kb/entity-viewer.html`) vẫn được giữ cho bản xuất của `cli graph-build` và các smoke test DOM.
 5. Truy xuất và LLM: đo embedding, reranker và model trên tập dev rồi chốt.
@@ -74,5 +75,5 @@ Các bước này làm trước pipeline ĐK1–ĐK4 (đã chốt 06/11/2026).
 ## Chưa chốt
 
 - Model LLM cho ĐK3/ĐK4 và cho sinh câu trả lời.
-- Thời điểm chuyển sang PostgreSQL và cách chạy (Docker hay cài trực tiếp).
+- Cách chạy PostgreSQL (Docker hay cài trực tiếp); thời điểm đã chốt là sau 27/11.
 - Nơi triển khai sau giai đoạn cục bộ và chính sách dữ liệu cho kho riêng tư khi có nhiều người dùng.

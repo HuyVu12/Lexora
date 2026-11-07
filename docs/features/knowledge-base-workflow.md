@@ -607,7 +607,7 @@ Mỗi citation hiển thị: tên kho, tài liệu, đường dẫn Điều/Kho�
 - D3: `review_decisions` lưu dần, duyệt cả Điều (`decision_mode = batch`), lớp `curated` với sửa slot/modality bằng câu trích, ghi chú người duyệt, khôi phục bản máy, quyết định thực thể "cùng một thực thể" hoặc "khác nhau".
 - D4: session 1-5 kho, khử trùng citation theo câu trích, nhãn kho và nhãn "đã chỉnh sửa", chặn LLM với kho riêng tư.
 - UI workspace: danh sách kho, chi tiết kho, nhập 3 bước, màn hình duyệt dạng văn bản có chú giải lề, xem trước, hỏi đáp chọn nhiều kho.
-- Kiểm thử: unittest/tích hợp mới và E2E trên browser thật `scripts/check_demo_browser.cjs`.
+- Kiểm thử: unittest/tích hợp mới và E2E trên browser thật (lúc đó là `scripts/check_demo_browser.cjs`; từ 07/11 thay bằng `scripts/check_app_browser.cjs` khi gỡ giao diện cũ).
 
 Chưa có (MVP): rebase tự động, đánh dấu thay thế phiên bản, metadata hiệu lực, PDF, worker nền bền vững, lưu trữ kho qua UI, xác thực.
 

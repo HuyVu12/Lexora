@@ -1,20 +1,17 @@
-"""Offline multi-KB import/review invariants and actual loopback HTTP round trips."""
+"""Offline multi-KB import/review invariants (HTTP behaviour lives in test_web_api.py)."""
 
 from contextlib import closing
 from copy import deepcopy
-import http.client
 import json
 from pathlib import Path
 import sqlite3
 import sys
 import tempfile
-import threading
 import unittest
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
 from legal_ai.common.io import canonical, digest
-from legal_ai.demo import make_server
 from legal_ai.kb.import_review import Conflict, ReviewStore, empty_graph
 from legal_ai.validation.evidence import check_evidence
 
@@ -258,69 +255,6 @@ class ImportReviewTests(unittest.TestCase):
         with closing(sqlite3.connect(path)) as db, db:
             self.assertEqual(json.loads(db.execute("SELECT body FROM revisions").fetchone()[0]), legacy)
         self.assertEqual(len(ReviewStore(path).knowledge_bases()), 1)
-
-    def test_http_gate_upload_review_publish_and_safe_viewer_embedding(self):
-        server = make_server(self.store, 0)
-        thread = threading.Thread(target=server.serve_forever, daemon=True)
-        thread.start()
-        connection = http.client.HTTPConnection("127.0.0.1", server.server_port, timeout=5)
-
-        def call(method, path, body=None, headers=None):
-            connection.request(method, path, json.dumps(body) if body is not None else None, headers or {})
-            response = connection.getresponse()
-            data = response.read()
-            return response.status, (json.loads(data) if response.getheader("Content-Type", "").startswith("application/json") else data.decode())
-
-        try:
-            status, page = call("GET", "/")
-            self.assertEqual(status, 200)
-            token = page.split('name="lexora-token" content="')[1].split('"')[0]
-            self.assertIn('id="lexora-glossary"', page)
-            self.assertNotIn("<!--LEXORA_TERMS-->", page)
-            for asset in ("/demo-app.js", "/demo.css"):
-                self.assertEqual(call("GET", asset)[0], 200)
-            target = {"mode": "new", "name": "Kho HTTP", "data_class": "public"}
-            body = {"title": "</script><script>alert(1)</script>", "text": SOURCE, "synthetic": True, "target": target}
-            self.assertEqual(call("POST", "/api/prepare", body, {"Content-Type": "application/json"})[0], 403)
-            headers = {"Content-Type": "application/json", "X-Lexora-Token": token}
-            status, draft = call("POST", "/api/prepare", body, headers)
-            self.assertEqual(status, 200)
-            self.assertEqual(call("POST", "/api/publish", {"draft_id": draft["id"], "reviewer": "t", "reason": "t"}, headers)[0], 400)
-            status, view = call("POST", "/api/draft/review", {"draft_id": draft["id"], "decision": "approve_article",
-                                                               "payload": {"article_id": draft["articles"][0]["id"]}}, headers)
-            self.assertEqual((status, view["progress"]["undecided"]), (200, 0))
-            status, published = call("POST", "/api/publish", {"draft_id": draft["id"], "reviewer": "test", "reason": "test"}, headers)
-            self.assertEqual(status, 200)
-            status, state = call("GET", "/api/state")
-            self.assertEqual([k["name"] for k in state["knowledge_bases"]], ["Kho HTTP"])
-            status, session = call("POST", "/api/chat/start", {"kb_ids": [published["kb_id"]]}, headers)
-            self.assertEqual(status, 200)
-            status, answer = call("POST", "/api/chat/ask", {"session_id": session["id"], "question": "thông báo kết quả thử việc"}, headers)
-            self.assertEqual((status, answer["status"]), (200, "sources_found"))
-            self.assertEqual(answer["citations"][0]["sources"][0]["kb_name"], "Kho HTTP")
-            status, viewer = call("GET", "/viewer?revision=" + published["revision"])
-            self.assertEqual(status, 200)
-            self.assertNotIn("</script><script>alert(1)</script>", viewer)
-            self.assertIn('id="lexora-glossary"', viewer)
-            status, structure = call("GET", "/structure.html?revision=" + published["revision"])
-            self.assertEqual(status, 200)
-            self.assertIn('href="/viewer?revision=' + published["revision"] + '"', structure)
-            self.assertNotIn("<!--LEXORA_TERMS-->", structure)
-            merge = {"title": "x", "text": OTHER, "target": {"mode": "merge", "kb_id": published["kb_id"]}}
-            status, stale = call("POST", "/api/prepare", merge, headers)
-            other = {"title": "y", "text": SOURCE.replace("Điều 1.", "Điều 3."), "target": merge["target"]}
-            status, fresh = call("POST", "/api/prepare", other, headers)
-            for d in (stale, fresh):
-                call("POST", "/api/draft/review", {"draft_id": d["id"], "decision": "approve_article", "payload": {"article_id": d["articles"][0]["id"]}}, headers)
-            self.assertEqual(call("POST", "/api/publish", {"draft_id": fresh["id"], "reviewer": "t", "reason": "t"}, headers)[0], 200)
-            status, error = call("POST", "/api/publish", {"draft_id": stale["id"], "reviewer": "t", "reason": "t"}, headers)
-            self.assertEqual((status, error["code"]), (409, "base_changed"))
-            self.assertEqual(call("POST", "/api/prepare", body, {**headers, "Origin": "https://example.invalid"})[0], 403)
-        finally:
-            connection.close()
-            server.shutdown()
-            server.server_close()
-            thread.join()
 
 
 if __name__ == "__main__":

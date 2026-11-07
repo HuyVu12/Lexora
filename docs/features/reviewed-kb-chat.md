@@ -15,25 +15,24 @@ Thiết kế vòng đời kho (tạo mới, gộp, chỉnh sửa, hỏi nhiều 
 
 ## Chạy
 
-Python 3.11+, standard library only. Không cài package. Node chỉ cần cho DOM smoke. Chạy từ workspace root:
+Lõi Python 3.11+ chỉ dùng thư viện chuẩn; lớp web cần virtualenv `.venv` có extra `web` và bản build `frontend/build` (xem [hướng dẫn chạy](../../apps/demo/README.md)). Chạy từ workspace root:
 
 ```powershell
-$env:PYTHONPATH = 'src'
-python -m legal_ai.demo --store data/kb/demo-new.sqlite --seed data/kb/entity-relation-review/graph.json --port 8766
+.venv\Scripts\python -m legal_ai.web --store data/kb/demo-new.sqlite --seed data/kb/entity-relation-review/graph.json --port 8766
 ```
 
-Seed là artifact local cần phục hồi từ nguồn pilot khi clone mới; với store mới, seed tạo "Kho mặc định". Bỏ `--seed` để bắt đầu không có kho nào; kho được tạo khi công bố bản nháp đầu tiên. Server chỉ bind `127.0.0.1`; lưu SQLite local, có token cho POST và kiểm tra Host/Origin.
+Seed là artifact local cần phục hồi từ nguồn pilot khi clone mới; với store mới, seed tạo "Kho mặc định". Bỏ `--seed` để bắt đầu không có kho nào; kho được tạo khi công bố bản nháp đầu tiên. Server chỉ bind `127.0.0.1`; lưu SQLite local, có đăng nhập ba vai trò, token cho POST và kiểm tra Host/Origin.
 
 Nếu có catalog local đã chuẩn bị, thêm:
 
 ```powershell
-python -m legal_ai.demo --store data/kb/demo-sources-new.sqlite --seed data/kb/entity-relation-review/graph.json --source-catalog .my_docs/sources-online/catalog.json --port 8766
+.venv\Scripts\python -m legal_ai.web --store data/kb/demo-sources-new.sqlite --seed data/kb/entity-relation-review/graph.json --source-catalog .my_docs/sources-online/catalog.json --port 8766
 ```
 
 Chế độ provider chỉ chạy sau phê duyệt người dùng về endpoint/model/dữ liệu/phạm vi gọi. Không coi quyền mạng là phê duyệt. Lệnh opt-in cụ thể:
 
 ```powershell
-python -m legal_ai.demo --store data/kb/demo-sources-new.sqlite --source-catalog .my_docs/sources-online/catalog.json --router-model ollama/beam --approve-router --router-max-calls 3 --port 8766
+.venv\Scripts\python -m legal_ai.web --store data/kb/demo-sources-new.sqlite --source-catalog .my_docs/sources-online/catalog.json --router-model ollama/beam --approve-router --router-max-calls 3 --port 8766
 ```
 
 Flag `--approve-router` là opt-in kỹ thuật, không khẳng định model miễn phí. UI yêu cầu xác nhận dữ liệu công khai và duyệt gửi từng lượt. Không dùng lịch sử session khác hoặc nguyên draft làm prompt. Không gửi tên reviewer hoặc key. Lỗi dịch vụ/quota/schema có status riêng, không phải kết luận pháp lý.
@@ -53,16 +52,15 @@ Flag `--approve-router` là opt-in kỹ thuật, không khẳng định model mi
 - `POST /api/chat/ask`: `{session_id, question, mode, allow_public_transfer, semantic}`; mode `extractive` mặc định, `llm` opt-in; `semantic: true` bật tìm kết hợp. Phản hồi có `retrieval: {mode: hybrid|lexical, reason}`.
 - `GET /api/chat/session?id=...`: lịch sử và bindings.
 
-Demo một người dùng, không phải production auth/SSO. Kho công bố revision mới thì session hiện có vẫn dùng revision cũ; tạo session mới để dùng revision mới. Từng câu hỏi cần đủ ngữ cảnh, chưa rewrite follow-up bằng model.
+Tài khoản cục bộ với ba vai trò (`legal_ai.auth`), không phải SSO. Kho công bố revision mới thì session hiện có vẫn dùng revision cũ; tạo session mới để dùng revision mới. Từng câu hỏi cần đủ ngữ cảnh, chưa rewrite follow-up bằng model.
 
 ## Kiểm tra
 
 ```powershell
-python -m unittest discover -s tests -q
-python -m legal_ai.demo --store data/kb/browser-check-new.sqlite --port 8770
-node scripts/check_demo_browser.cjs http://127.0.0.1:8770 data/interim/browser-check
+.venv\Scripts\python -m unittest discover -s tests -q
+node scripts/check_app_browser.cjs http://127.0.0.1:8790 data/interim/app-check
 ```
 
-Script thứ ba điều khiển Chrome hoặc Edge headless qua DevTools protocol, chạy kịch bản tạo kho, sửa claim, loại claim, duyệt cả Điều, công bố, gộp tài liệu có liên kết thực thể và hỏi đáp bằng dữ liệu minh họa; chụp màn hình từng bước và thất bại nếu console có lỗi. Cần store mới và không gọi model.
+Script thứ hai điều khiển Chrome hoặc Edge headless qua DevTools protocol, chạy kịch bản đăng nhập, tạo kho, duyệt, công bố, hỏi đáp và sơ đồ bằng dữ liệu minh họa; chụp màn hình từng bước và thất bại nếu console có lỗi. Cần `legal_ai.web` chạy trên store mới có ba tài khoản ghi trong đầu script; không gọi model.
 
 Regression tests kiểm tra publication gate, rejected-sentence exclusion, revision isolation qua publish/restart, phạm vi kho, tên kho trùng, draft stale (409), lưu quyết định dần, duyệt cả Điều, chỉnh sửa claim với câu trích không hợp lệ, migration store/session cũ, khử trùng citation đa kho, chặn LLM với kho riêng tư, evidence tampering, no-accent retrieval, consent/provider errors, citation ngoài bundle, source checksum/path và transport call budget. Chưa có gold độc lập hoặc benchmark retrieval/answer. Bộ ĐK1–ĐK4 chưa được hoàn tất bởi thay đổi này.
