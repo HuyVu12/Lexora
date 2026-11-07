@@ -16,7 +16,7 @@ web = ["fastapi==0.162.0", "uvicorn==0.54.0", "pydantic==2.14.3", "pypdf==7.0.0"
 # One-off conversion of the th1nhng0 Parquet metadata into the local SQLite catalog (approved 2026-11-07).
 catalog = ["pyarrow==26.0.1"]
 # TestClient for tests/test_web_api.py.
-web-test = ["httpx==0.28.1"]
+web-test = ["httpx2==2.16.0"]
 
 [project.scripts]
 lexora = "legal_ai.cli:main"
