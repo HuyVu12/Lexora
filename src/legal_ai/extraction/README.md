@@ -1,7 +1,9 @@
 # extraction
 
-Baseline rule-based và LLM structured output; lưu output thô, retry và run ID.
+Đề xuất quy phạm để người duyệt quyết định; mọi kết quả ở trạng thái cần duyệt.
 
-Đã có `candidates.py`: phát hiện ứng viên ở mức đơn vị nguồn bằng dấu hiệu từ ngữ; tất cả needs_review, chưa phải trích quy phạm nguyên tử hoặc LLM extraction. Xem `docs/features/knowledge-graph-pilot.md`.
+- `candidates.py`: ứng viên mức đơn vị theo dấu hiệu từ ngữ.
+- `norms.py` (`norm-rules-v2`): tách thành phần quy phạm (chủ thể, hành vi, đối tượng, điều kiện, ngoại lệ, thời hạn, con số…), mỗi thành phần có bằng chứng riêng; câu có từ tình thái mà chưa tách đủ thành ứng viên `cue-sentence`.
+- `llm_norms.py` (`norm-llm-v1`): gửi các câu quy tắc chưa tách được cho model (9Router, hoặc Claude Code với JSON schema), chỉ giữ giá trị tìm thấy đúng nguyên văn trong câu.
 
-`norms.py` bổ sung grammar có giới hạn để tách thành phần semantic và evidence riêng. Không khớp grammar thì giữ fallback và unparsed report; xem `docs/features/entity-relation-graph.md`.
+Test: `tests/test_norms.py`, `tests/test_ai_extraction.py`.

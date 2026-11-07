@@ -1,6 +1,7 @@
 # Guideline bổ sung cho pilot hợp đồng/thử việc
 
-Phiên bản nháp 02/11/2026, bổ sung [guideline gốc](../annotation-guidelines.md). Chưa thay freeze 150 câu hoặc tập held-out.
+Phiên bản nháp 02/11/2026, giữ làm lịch sử của pilot.
+**Đã được thay bằng [hướng dẫn gán nhãn bộ câu hỏi v1](../annotation-guidelines.md) ngày 07/11/2026.**
 
 ## Gán nhãn nguồn
 

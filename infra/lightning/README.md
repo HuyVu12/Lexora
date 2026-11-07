@@ -1,4 +1,7 @@
-# Vận hành Lightning AI — kế hoạch, chưa triển khai
+# Vận hành Lightning AI: kế hoạch, chưa dùng
+
+> Cập nhật 07/11/2026: mô hình ngôn ngữ cho ĐK3/ĐK4 và sinh câu trả lời đã chốt là Opus 5.5 qua Claude Code (xem `docs/decisions.md`), nên chưa cần GPU cho phần này.
+> GPU Lightning chỉ còn dự kiến cho embedding, reranker hoặc model mã nguồn mở nếu nhóm đo và chọn chúng ở bước truy xuất; các nguyên tắc dưới đây vẫn áp dụng khi đó.
 
 Người dùng dự định dùng Lightning AI và tài nguyên miễn phí; chưa duyệt ngân sách. Không dựa vào giả định GPU miễn phí liên tục.
 

@@ -41,24 +41,23 @@ Không tìm thấy căn cứ thì hệ thống nói rõ là không có, thay vì
 ## Operating Context
 
 Chạy cục bộ trên một máy, server loopback có đăng nhập ba vai trò (`python -m legal_ai.web`, giao diện SvelteKit).
-Luồng chính trên giao diện: nhập văn bản (thư viện có checksum, tệp TXT, dán nội dung), duyệt quy phạm cạnh nguyên văn, xem trước và công bố thành phiên bản mới của kho, hỏi đáp trên một đến năm kho, xem sơ đồ quy phạm và sơ đồ cấu trúc văn bản.
-Thiết kế thực nghiệm gồm bốn cấu hình ĐK1 đến ĐK4 (đoạn cắt cố định, đoạn theo cấu trúc, kho quy phạm do mô hình ngôn ngữ trích xuất trước và sau kiểm chứng).
+Luồng chính trên giao diện: nhập văn bản (tìm trong danh mục hoặc dán link vbpl.vn rồi chọn các Điều, tải tệp TXT/HTML/DOCX/PDF có lớp chữ, dán nội dung), duyệt quy phạm cạnh nguyên văn, xem trước và công bố thành phiên bản mới của kho, hỏi đáp trên một đến năm kho, xem sơ đồ quy phạm và sơ đồ cấu trúc văn bản.
+Khu vực Nghiên cứu cho người duyệt: corpus có phiên bản khóa bằng mã băm và bộ câu hỏi do hai người gán nhãn độc lập rồi đối soát.
+Mỗi trang có khung hướng dẫn "Trang này là gì?" với các bước, ẩn được.
+Thiết kế thực nghiệm gồm bốn cấu hình ĐK1 đến ĐK4 (đoạn cắt cố định, đoạn theo cấu trúc, kho quy phạm do mô hình ngôn ngữ trích xuất trước và sau kiểm chứng); ĐK1 và ĐK2 đã chạy được, ĐK3 và ĐK4 chưa làm.
 
 ## Capabilities and Constraints
 
-Hiện tại: backend Python 3.11+, chỉ dùng thư viện chuẩn; không có bước build, không có phụ thuộc npm.
-Giao diện là HTML, CSS và JavaScript thuần do server phục vụ; hai trang sơ đồ là tệp HTML tự chứa với CSP chặt.
-
-Công nghệ mục tiêu (đã chốt 06/11/2026, chưa triển khai; chi tiết trong `docs/planning/target-stack-2026-11-06.md`):
-lõi pipeline giữ Python thuần để tái lập thực nghiệm; lớp web FastAPI + Pydantic; PostgreSQL (pgvector khi cần) ở bước sau; frontend Svelte 5 + SvelteKit (xuất tĩnh) với TypeScript; giữ SQLite ở bước đầu; sơ đồ bằng Cytoscape.js; LLM tiếp tục qua 9Router.
-Mặc định không gọi mạng; gọi mô hình ngôn ngữ qua 9Router là tùy chọn, phải được bật rõ ràng và chỉ dùng cho kho công khai.
+Lõi pipeline là Python 3.11+ chỉ dùng thư viện chuẩn, để tái lập thực nghiệm.
+Lớp web FastAPI + Pydantic chạy trong virtualenv `.venv`; giao diện Svelte 5 + SvelteKit (TypeScript) build tĩnh và được FastAPI phục vụ; sơ đồ dùng Cytoscape.js; lưu trữ SQLite, PostgreSQL để sau khi đóng băng MVP (chi tiết trong `docs/planning/target-stack-2026-11-06.md`).
+Giao diện song ngữ Việt và Anh bằng từ điển có kiểm tra kiểu; văn bản luật và trích dẫn luôn giữ nguyên tiếng Việt.
+Mặc định không gọi mạng.
+Lấy văn bản từ vbpl.vn, tách quy phạm bằng AI và đề xuất nhãn câu hỏi chỉ chạy khi bật cờ khởi động tương ứng, và mỗi lần gọi đều hỏi xác nhận.
+Mô hình ngôn ngữ được gọi qua Claude Code (Opus 5.5) hoặc 9Router; tách quy phạm bằng AI chỉ dùng cho kho công khai.
 
 Thuật ngữ cốt lõi có định nghĩa kèm ví dụ hiện khi rê chuột, nguồn duy nhất là `src/legal_ai/glossary.py`.
 Quy phạm trích xuất luôn ở trạng thái cần duyệt cho đến khi người duyệt chấp nhận; không được trình bày như sự thật pháp lý đã xác minh.
-Hiệu lực pháp luật của văn bản chưa được xác minh.
-
-Yêu cầu đã chốt nhưng chưa hiện thực: giao diện song ngữ Việt và Anh.
-Cách chọn ngôn ngữ và phạm vi dịch (giao diện, thuật ngữ, nội dung trang giới thiệu) chưa quyết định; văn bản luật và trích dẫn luôn giữ nguyên tiếng Việt.
+Hiệu lực pháp luật của văn bản chưa được xác minh; trạng thái hiệu lực hiển thị là do vbpl.vn hoặc bộ dữ liệu danh mục ghi nhận.
 
 ## Brand Commitments
 

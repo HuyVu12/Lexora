@@ -2,6 +2,9 @@
 
 Bản dưới giữ làm tham chiếu thiết kế v0. Code local hiện thực thi `1.0.0-pilot`; xem [schema v1 và migration](planning/schema-v1-migration.md) cùng `tests/fixtures/contract-v1/` trước khi trao đổi JSONL. Chưa có tự động migration dữ liệu v0 thật hoặc contract nghiên cứu hoàn chỉnh.
 
+Cập nhật 07/11/2026: bộ câu hỏi đã khóa dùng định dạng `lexora-questions-v1` (`src/legal_ai/research/questions.py`): mỗi câu có `question_id`, `family_id`, `split` (`dev`/`held_out`), `question`, `question_type` (`lookup`, `synthesis`, `temporal`, `out_of_scope`), `expected_status` (`answer`/`refuse`), `relevant_unit_ids` và `origin` (`human`/`model`), kèm mã băm phiên bản corpus và độ đồng thuận.
+Bản ghi chỉ mục ĐK1/ĐK2 dùng `index-record-v1` (`src/legal_ai/indexing/records.py`). Hai định dạng này thay các dòng Question trong bảng dưới; định dạng Answer sẽ chốt khi làm phần sinh câu trả lời.
+
 | Đối tượng | Trường tối thiểu | Ràng buộc |
 |---|---|---|
 | Document | document_id, title, source_url, accessed_at, source_sha256, effective_from, effective_to, legal_status | ID ổn định; ngày ISO; không biết thì null, không tự đoán |

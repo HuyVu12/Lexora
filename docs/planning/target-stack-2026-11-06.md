@@ -1,7 +1,7 @@
 # Công nghệ mục tiêu: hướng tới người dùng thật
 
 Ngày quyết định: 06/11/2026.
-Trạng thái: đã chốt định hướng, **chưa triển khai**.
+Trạng thái (07/11/2026): bước 1 (lớp API), bước 3 (frontend) và bước 4 (sơ đồ) **đã xong**; bước 2 (PostgreSQL) lùi đến sau khi đóng băng MVP; bước 5 (truy xuất và LLM) làm cùng ĐK1-ĐK4.
 Nhật ký: `docs/decisions.md`.
 
 ## Bối cảnh
@@ -31,7 +31,7 @@ Người dùng quyết định chuyển định hướng sang người dùng th�
 | Font | Font hệ thống | Tự host font có đủ dấu tiếng Việt (ví dụ Be Vietnam Pro, Noto Serif), không gọi Google Fonts lúc chạy |
 | Thuật ngữ | `src/legal_ai/glossary.py` | Giữ một nguồn duy nhất, thêm bản tiếng Anh |
 | Truy xuất | BM25 không phân biệt dấu, dense RRF tùy chọn (`rag/dense.py`) | BM25 làm mốc; thử tách từ tiếng Việt (`underthesea` hoặc `pyvi`); embedding (BGE-M3, multilingual-e5-large, `bkai-foundation-models/vietnamese-bi-encoder`) và reranker (bge-reranker-v2-m3) chọn bằng số đo trên tập dev |
-| LLM | Qua 9Router (`providers/router.py`) | Giữ lớp 9Router; mỗi lần chạy cố định một model, ghi phiên bản, temperature và seed vào manifest trong `experiments/` |
+| LLM | Qua Claude Code (`providers/claude_code.py`, Opus 5.5) hoặc 9Router (`providers/router.py`) | Mỗi lần chạy cố định một model, ghi phiên bản, effort và mã băm prompt vào manifest; Opus 5.5 không đặt được temperature hay seed nên lưu toàn bộ đầu ra |
 | Đánh giá | Giao thức trong `docs/evaluation-protocol.md`, chưa có script | Tự viết các chỉ số đã định nghĩa; LLM làm giám khảo chỉ bổ sung cho người chấm |
 
 Thư viện nặng như torch và sentence-transformers chỉ cài trong môi trường thực nghiệm (máy GPU), không đưa vào lõi hay lớp web.
