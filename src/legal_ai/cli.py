@@ -93,6 +93,28 @@ def main():
     command.add_argument("--config", default="configs/experiments/answer.json")
     command.add_argument("--max-calls", type=int, required=True)
     command.add_argument("--approve-claude", action="store_true")
+    command = commands.add_parser("kb-inject", help="RQ2: plant errors of each type in DK4 claims and measure what the validator catches; offline")
+    command.add_argument("run", help="knowledge-base run directory")
+    command.add_argument("--output", required=True, help="new, empty directory")
+    command.add_argument("--per-type", type=int, default=30)
+    command.add_argument("--seed", default="lexora-inject-v1")
+    command = commands.add_parser("gold-template", help="RQ1: empty extraction gold rows for every sentence of the chosen articles; offline")
+    command.add_argument("bundle")
+    command.add_argument("--output", required=True, help="JSONL file to write")
+    group = command.add_mutually_exclusive_group(required=True)
+    group.add_argument("--article", action="append", help="article unit ID, e.g. 45-2019-qh14/chapter-iii/section-1/article-24 (repeatable)")
+    group.add_argument("--sample", type=int, help="seeded sample of this many articles, spread over documents")
+    command.add_argument("--seed", default="lexora-gold-v1")
+    command = commands.add_parser("gold-check", help="RQ1: check a filled gold file (exact quotes, offsets); offline")
+    command.add_argument("gold")
+    command.add_argument("--bundle", required=True)
+    command = commands.add_parser("gold-agreement", help="RQ1: agreement of two annotators on the same gold template; offline")
+    command.add_argument("first")
+    command.add_argument("second")
+    command = commands.add_parser("gold-score", help="RQ1: P/R/F1 of the rule baseline or a knowledge-base run against the gold file; offline")
+    command.add_argument("gold")
+    command.add_argument("--bundle", required=True)
+    command.add_argument("--predictions", required=True, help="'rules', or a dk3.jsonl / dk4.jsonl of a knowledge-base run")
     command = commands.add_parser("run-retrieval", help="DK1/DK2 retrieval run with Recall@K into a new run directory; no network")
     command.add_argument("bundle")
     command.add_argument("--condition", required=True, help="configs/experiments/dk1.json or dk2.json")
@@ -171,6 +193,33 @@ def main():
             if args.compare:
                 report["agreement"] = agreement(args.sheet, args.compare)
             print(json.dumps(report, ensure_ascii=False, indent=2))
+        elif args.command == "kb-inject":
+            from legal_ai.common.io import read_jsonl
+            from legal_ai.evaluation.error_injection import run as inject_run
+            bundle = json.loads((Path(args.run) / "manifest.json").read_text(encoding="utf-8"))["bundle"]
+            print(json.dumps(inject_run(args.run, read_jsonl(Path(bundle) / "units.jsonl"), args.output, args.per_type, args.seed), ensure_ascii=False, indent=2))
+        elif args.command.startswith("gold-"):
+            from legal_ai.common.io import read_jsonl, write_jsonl
+            from legal_ai.evaluation import extraction_gold as gold
+            if args.command == "gold-agreement":
+                print(json.dumps(gold.agreement(read_jsonl(args.first), read_jsonl(args.second)), ensure_ascii=False, indent=2))
+            else:
+                units = read_jsonl(Path(args.bundle) / "units.jsonl")
+                if args.command == "gold-template":
+                    articles = args.article or gold.sample_articles(units, args.sample, args.seed)
+                    rows = gold.template(units, articles)
+                    write_jsonl(args.output, rows)
+                    print(json.dumps({"articles": articles, "sentences": len(rows)}, ensure_ascii=False, indent=2))
+                else:
+                    rows = read_jsonl(args.gold)
+                    problems = gold.check(rows, units)
+                    if args.command == "gold-check" or problems:
+                        print(json.dumps({"rows": len(rows), "problems": problems}, ensure_ascii=False, indent=2))
+                        if problems:
+                            raise ValueError(f"{len(problems)} problems in the gold file")
+                    else:
+                        predicted = gold.rule_predictions(units, rows) if args.predictions == "rules" else gold.claim_predictions(read_jsonl(args.predictions), rows)
+                        print(json.dumps(gold.score(rows, predicted), ensure_ascii=False, indent=2))
         elif args.command == "run-retrieval":
             from legal_ai.evaluation.retrieval_run import run
             print(json.dumps(run(args.bundle, args.questions, args.condition, args.shared, args.output), ensure_ascii=False, indent=2))
