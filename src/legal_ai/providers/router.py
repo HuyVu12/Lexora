@@ -58,7 +58,7 @@ class _Transport:
             raise ValueError("Explicit route approval and model are required")
         if type(max_calls) is not int or not 1 <= max_calls <= 500:
             raise ValueError("Invalid provider call budget")
-        if type(timeout) is not int or not 5 <= timeout <= 120:
+        if type(timeout) is not int or not 5 <= timeout <= 600:  # Batch experiment runs on a busy router need more than the app's 25 s.
             raise ValueError("Invalid provider timeout")
         if not settings.get("9ROUTER_KEY"):
             raise ValueError("Missing Lexora provider key")

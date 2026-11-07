@@ -65,7 +65,7 @@ def main():
     command.add_argument("--approve-claude", action="store_true", help="explicit approval of the model calls")
     command.add_argument("--router-model", help="extract with one approved 9Router model instead (a MODEL_* alias from .env or a model name)")
     command.add_argument("--approve-router", action="store_true", help="explicit approval of the 9Router endpoint, model and data")
-    command.add_argument("--timeout", type=int, default=120, help="seconds per 9Router call (5-120)")
+    command.add_argument("--timeout", type=int, default=300, help="seconds per 9Router call (5-600)")
     command.add_argument("--max-tokens", type=int, default=16000, help="output token limit per 9Router call, the same for every compared model")
     command.add_argument("--dry-run", action="store_true", help="only count batches and characters; no model call")
     command = commands.add_parser("kb-materialize", help="rebuild dk3/dk4 and the validation report of a knowledge-base run from raw.jsonl; offline")
