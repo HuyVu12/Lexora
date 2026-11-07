@@ -222,7 +222,13 @@ def main():
                         print(json.dumps(gold.score(rows, predicted), ensure_ascii=False, indent=2))
         elif args.command == "run-retrieval":
             from legal_ai.evaluation.retrieval_run import run
-            print(json.dumps(run(args.bundle, args.questions, args.condition, args.shared, args.output), ensure_ascii=False, indent=2))
+            shared = json.loads(Path(args.shared).read_text(encoding="utf-8"))
+            embedder = None
+            if shared["retrieval"].get("method") in ("dense", "hybrid"):
+                from legal_ai.retrieval.embeddings import LocalEmbedder
+                model = shared["embedding_model"]
+                embedder = LocalEmbedder(model["path"], model["name"], model["revision"], model.get("max_seq_length", 1024))
+            print(json.dumps(run(args.bundle, args.questions, args.condition, args.shared, args.output, embedder), ensure_ascii=False, indent=2))
         elif args.command == "graph-build":
             from legal_ai.kb.graph import GRAPH_VERSION, build_graph
             config = json.loads(Path(args.config).read_text(encoding="utf-8"))

@@ -189,3 +189,57 @@ class RetrievalRunTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class FakeEmbedder:
+    """Bag-of-syllables vectors over a fixed vocabulary, normalized: deterministic and offline."""
+
+    def __init__(self):
+        self.vocabulary = {}
+
+    def describe(self):
+        return {"dense_version": "dense-v1", "model": "fake", "revision": "0"}
+
+    def encode(self, texts):
+        import math
+        rows = []
+        for text in texts:
+            counts = {}
+            for token in tokens(text):
+                index = self.vocabulary.setdefault(token, len(self.vocabulary) % 64)
+                counts[index] = counts.get(index, 0) + 1
+            vector = [counts.get(i, 0.0) for i in range(64)]
+            norm = math.sqrt(sum(v * v for v in vector)) or 1.0
+            rows.append([v / norm for v in vector])
+        return rows
+
+
+try:
+    import numpy  # noqa: F401  (the embeddings extra)
+except ImportError:
+    numpy = None
+
+
+@unittest.skipIf(numpy is None, "dense retrieval needs the embeddings extra (.venv)")
+class DenseRunTests(unittest.TestCase):
+    def test_dense_and_hybrid_runs_record_the_model_and_fuse_with_rrf(self):
+        from legal_ai.retrieval.embeddings import rrf
+        self.assertEqual(rrf([[(0, 9.0), (1, 5.0)], [(1, 0.9), (2, 0.8)]], c=60), [(1, 1 / 62 + 1 / 61), (0, 1 / 61), (2, 1 / 62)])
+        with tempfile.TemporaryDirectory() as folder:
+            root = Path(folder)
+            bundle(root / "bundle", {"syn-a": SYNTHETIC})
+            questions = root / "q.json"
+            questions.write_text(json.dumps({"questions": [{"question_id": "q1", "question": "Tiền lương thử nghiệm ít nhất bằng bao nhiêu?",
+                                                            "relevant_unit_ids": ["syn-a/chapter-i/article-2/clause-1"]}]}, ensure_ascii=False), encoding="utf-8")
+            condition = root / "dk2.json"
+            condition.write_text(json.dumps({"condition": "DK2", "representation": "structural_units", "max_tokens": 384}), encoding="utf-8")
+            for method in ("dense", "hybrid"):
+                shared = root / f"{method}.json"
+                shared.write_text(json.dumps({"top_k": 3, "retrieval": {"method": method, "tokenizer": "lexora-syllable-v1", "k1": 1.2, "b": 0.75,
+                                                                       "recall_k": [1, 3]}}), encoding="utf-8")
+                with self.assertRaisesRegex(ValueError, "need an embedder"):
+                    run(root / "bundle", questions, condition, shared, root / f"none-{method}")
+                metrics = run(root / "bundle", questions, condition, shared, root / method, FakeEmbedder())
+                self.assertEqual(metrics["mean_recall"]["3"], 1.0)
+                manifest = json.loads((root / method / "manifest.json").read_text(encoding="utf-8"))
+                self.assertEqual((manifest["method"], manifest["dense"]["model"]), (method, "fake"))
