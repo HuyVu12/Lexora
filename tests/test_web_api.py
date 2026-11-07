@@ -253,6 +253,45 @@ class WebApiTests(unittest.TestCase):
         self.assertEqual((added.json()["document_id"], added.json()["source_kind"]), ("45-2019-gd", "vbpl"))
         fetch.assert_called_once()
 
+    def test_import_chosen_articles_from_vbpl_and_files_into_a_base(self):
+        law = ("Chương I\nCHUNG\nĐiều 1. Phạm vi\nVăn bản giả định quy định về thử việc.\n"
+               "Chương II\nTHỬ VIỆC\nĐiều 2. Thử việc\n1. Người lao động phải thông báo kết quả thử việc cho người sử dụng lao động.\n"
+               "Điều 3. Sửa đổi luật giả định\n1. Sửa khoản 1:\n1. Nội dung mới.\n1. Nội dung khác.\n")
+        content = "".join(f"<p>{line}</p>" for line in law.splitlines())
+        raw = json.dumps({"success": True, "data": {"id": "139264", "documentContent": {"content": content}}}, ensure_ascii=False).encode("utf-8")
+        folder = Path(self.temp.name) / "vbpl" / "139264" / digest(raw)
+        folder.mkdir(parents=True)
+        (folder / "document.json").write_bytes(raw)
+        manifest = {"vbpl_id": "139264", "source_sha256": digest(raw), "site_url": "https://vbpl.vn/van-ban/chi-tiet/139264", "accessed_at": "2026-11-07T00:00:00+00:00",
+                    "local_path": str(folder / "document.json"), "metadata": {"vbpl_id": "139264", "doc_num": "45/2019/GD", "title": "Bộ luật Giả định", "is_translation": False}}
+        (folder / "manifest.json").write_text(json.dumps(manifest, ensure_ascii=False), encoding="utf-8")
+        reviewer = self.client("phapche", "review password 1")
+        refused = self.post(reviewer, "/api/import/vbpl", {"reference": "139264", "confirm": True})
+        self.assertIn("--allow-vbpl", refused.json()["error"])
+        self.app = create_app(self.store, PORT, token="t0ken", frontend_dir=self.build, vbpl_dir=Path(self.temp.name) / "vbpl")
+        reviewer = self.client("phapche", "review password 1")
+        with mock.patch("legal_ai.web.app.fetch_document", return_value=manifest) as fetch:
+            self.assertEqual((self.post(reviewer, "/api/import/vbpl", {"reference": "139264"}).status_code, fetch.call_count), (400, 0))
+            found = self.post(reviewer, "/api/import/vbpl", {"reference": "139264", "confirm": True}).json()
+        self.assertEqual([(a["heading"], a["blocked"]) for a in found["articles"]], [("Điều 1. Phạm vi", False), ("Điều 2. Thử việc", False), ("Điều 3. Sửa đổi luật giả định", True)])
+        target = {"mode": "new", "name": "Kho vbpl", "data_class": "public"}
+        body = {"vbpl_id": "139264", "source_sha256": found["source_sha256"], "article_ids": [found["articles"][1]["id"]], "target": target}
+        draft = self.post(reviewer, "/api/prepare-vbpl", body)
+        self.assertEqual(draft.status_code, 200, draft.text)
+        self.assertEqual((draft.json()["title"], draft.json()["document"]["source_url"]), ("Bộ luật Giả định (Điều 2)", "https://vbpl.vn/van-ban/chi-tiet/139264"))
+        self.assertIn("lồng nhau", self.post(reviewer, "/api/prepare-vbpl", body | {"article_ids": [found["articles"][2]["id"]]}).json()["error"])
+        self.assertIn("Không tìm thấy bản chụp", self.post(reviewer, "/api/prepare-vbpl", body | {"source_sha256": "0" * 64}).json()["error"])
+        import io, zipfile
+        buffer = io.BytesIO()
+        with zipfile.ZipFile(buffer, "w") as archive:
+            paragraphs = "".join(f"<w:p><w:r><w:t>{line}</w:t></w:r></w:p>" for line in SOURCE.splitlines())
+            archive.writestr("word/document.xml", f'<w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"><w:body>{paragraphs}</w:body></w:document>')
+        upload = {"filename": "luat.docx", "content_base64": base64.b64encode(buffer.getvalue()).decode(), "title": "Tệp DOCX", "synthetic": True,
+                  "target": {"mode": "new", "name": "Kho tệp", "data_class": "private"}}
+        made = self.post(reviewer, "/api/prepare-file", upload)
+        self.assertEqual(made.status_code, 200, made.text)
+        self.assertEqual(made.json()["title"], "Tệp DOCX")
+
     def _frozen_corpus(self, client):
         corpus = self.post(client, "/api/corpora", {"name": "Câu hỏi"}).json()
         self.post(client, "/api/corpus/file", {"corpus_id": corpus["id"], "filename": "luat.txt", "content_base64": base64.b64encode(SOURCE.encode("utf-8")).decode()})

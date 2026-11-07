@@ -26,9 +26,10 @@ from starlette.exceptions import HTTPException as StarletteHTTPException
 from legal_ai.auth import SESSION_HOURS, AccountStore, AuthError
 from legal_ai.glossary import bilingual, embed_terms
 from legal_ai.ingestion.catalog import Catalog
-from legal_ai.ingestion.files import MAX_FILE_BYTES
+from legal_ai.ingestion.excerpt import excerpt as cut_excerpt, outline as article_outline
+from legal_ai.ingestion.files import MAX_FILE_BYTES, extract_text
 from legal_ai.ingestion.source_library import SourceLibrary
-from legal_ai.ingestion.vbpl_api import fetch_document
+from legal_ai.ingestion.vbpl_api import document_text, fetch_document, load_snapshot, unwrap
 from legal_ai.kb.import_review import MAX_BYTES, Conflict
 from legal_ai.rag.review_chat import ChatService
 from legal_ai.research.corpus import CorpusStore
@@ -49,7 +50,7 @@ NO_CATALOG = "Chưa có danh mục văn bản (khởi động với --catalog)"
 # A base64 upload of the largest accepted file, plus the JSON around it.
 UPLOAD_PATH, UPLOAD_LIMIT = "/api/corpus/file", MAX_FILE_BYTES * 4 // 3 + 100_000
 # Question packs carry a corpus version; they get the same large limit as file uploads.
-LARGE_PATHS = {UPLOAD_PATH, "/api/question-sets/import-pack", "/api/question-set/import-labels"}
+LARGE_PATHS = {UPLOAD_PATH, "/api/prepare-file", "/api/question-sets/import-pack", "/api/question-set/import-labels"}
 NO_PROPOSER = "Chưa bật đề xuất bằng model cho phiên chạy này (khởi động với --proposal-model và --approve-claude)"
 
 
@@ -122,6 +123,28 @@ class AccountUpdateBody(Body):
     role: Literal["admin", "reviewer", "reader"] | None = None
     active: bool | None = None
     password: str | None = None
+
+
+class ImportVbplBody(Body):
+    reference: str
+    confirm: bool = False
+
+
+class PrepareVbplBody(Body):
+    vbpl_id: str
+    source_sha256: str
+    article_ids: list[str]
+    target: dict | None = None
+    extraction: Literal["rules", "llm"] = "rules"
+
+
+class PrepareFileBody(Body):
+    filename: str
+    content_base64: str
+    title: str
+    synthetic: bool = False
+    target: dict | None = None
+    extraction: Literal["rules", "llm"] = "rules"
 
 
 class CorpusCreateBody(Body):
@@ -412,6 +435,58 @@ def create_app(store, port, *, provider=None, source_catalog=None, extractor=Non
     @app.post("/api/prepare-source")
     def prepare_source(body: PrepareSourceBody, _=Depends(reviewer)):
         made = library.prepare(store, body.source_id, body.target, **options(body))
+        launch(made)
+        return store.draft_view(made["id"])
+
+    # Importing official documents and files into a knowledge base ------------------------
+    def vbpl_text(manifest, raw):
+        meta = manifest["metadata"]
+        if meta.get("is_translation"):
+            raise ValueError("Đây là bản dịch; hãy chọn bản gốc tiếng Việt")
+        return document_text(unwrap(raw))["text"]
+
+    @app.post("/api/import/vbpl")
+    def import_vbpl(body: ImportVbplBody, _=Depends(reviewer)):
+        """One confirmed vbpl.vn fetch; returns the document and its article outline for choosing what to import."""
+        if vbpl_dir is None:
+            raise ValueError(NO_VBPL)
+        if not body.confirm:
+            raise ValueError("Hãy xác nhận trước khi Lexora gọi vbpl.vn")
+        try:
+            manifest = fetch_document(body.reference, vbpl_dir)
+        except OSError as exc:
+            raise ValueError(f"Không kết nối được vbpl.vn ({exc.__class__.__name__})") from exc
+        articles = article_outline(vbpl_text(manifest, Path(manifest["local_path"]).read_bytes()))
+        if not articles:
+            meta = manifest["metadata"]
+            raise ValueError(f"Văn bản này ({(meta.get('doc_type') or 'văn bản').lower()} {meta.get('doc_num') or ''}) không chia thành Điều nên không nhập được. "
+                             "Lệnh công bố, chỉ thị và công văn thường như vậy; hãy chọn chính văn bản luật, nghị định hoặc thông tư.")
+        return {"vbpl_id": manifest["vbpl_id"], "source_sha256": manifest["source_sha256"], "site_url": manifest["site_url"],
+                "metadata": manifest["metadata"], "accessed_at": manifest["accessed_at"], "articles": articles}
+
+    @app.post("/api/prepare-vbpl")
+    def prepare_vbpl(body: PrepareVbplBody, _=Depends(reviewer)):
+        """A draft from chosen articles of a stored vbpl.vn snapshot (no new network call)."""
+        if vbpl_dir is None:
+            raise ValueError(NO_VBPL)
+        manifest, raw = load_snapshot(vbpl_dir, body.vbpl_id, body.source_sha256)
+        meta = manifest["metadata"]
+        text = cut_excerpt(vbpl_text(manifest, raw), body.article_ids)
+        headings = [a["heading"].split(".")[0] for a in article_outline(text)]
+        span = headings[0] if len(headings) == 1 else f"{headings[0]} - {headings[-1]}"
+        title = f"{meta.get('title') or meta.get('doc_num')} ({span})"[:200]
+        made = store.prepare(title, text, False, manifest["site_url"], target=body.target, **options(body))
+        launch(made)
+        return store.draft_view(made["id"])
+
+    @app.post("/api/prepare-file")
+    def prepare_file(body: PrepareFileBody, _=Depends(reviewer)):
+        try:
+            data = base64.b64decode(body.content_base64, validate=True)
+        except (binascii.Error, ValueError) as exc:
+            raise ValueError("Nội dung tệp không hợp lệ") from exc
+        text = extract_text(body.filename, data)["text"]
+        made = store.prepare(body.title, text, body.synthetic, target=body.target, **options(body))
         launch(made)
         return store.draft_view(made["id"])
 
