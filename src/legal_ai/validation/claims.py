@@ -1,13 +1,17 @@
-"""Automatic validation of LLM knowledge-base claims (`kb-validator-v2`): what turns DK3 into DK4.
+"""Automatic validation of LLM knowledge-base claims (`kb-validator-v3`): what turns DK3 into DK4.
 
 A DK3 claim is one norm the model reported for one source sentence, with the model's slot strings as given.
 Each check records `pass`, `fail` or `not_applicable` with reason codes, so "not checked" never reads as "passed":
 
-- V1 schema: modality in the enum, a non-empty action, slot values strings or null within length limits.
+- V1 schema: modality in the enum, slot values strings or null within length limits, and at least one content slot
+  (action, object, conditions, exceptions, quantities, deadlines or outcome; a party alone is not a norm). Points of
+  a list often carry only an object, an amount or a condition while the action sits in the lead text ("Ít nhất 120
+  ngày đối với ...", "Bị quấy rối tình dục tại nơi làm việc"), so the action itself is not required.
 - V2 integrity: the source unit exists in this corpus version and the sentence span is inside it.
 - V3 evidence: every non-null slot is an exact quote of its source sentence (case folded only when lengths match).
-- V4 modality: a cue word the model gives must be an exact quote of the sentence and belong to the modality it
-  claims (`fail` otherwise: a made-up or contradicting cue). Statutes often state a norm without a cue in the
+- V4 modality: a cue word the model gives must be an exact quote of the sentence (`fail` otherwise: made up) and
+  must not be a cue of only other modalities (`fail`: contradicting). A verbatim cue outside the cue lexicon
+  ("chỉ được", "không phải") cannot be checked and is `unverified`. Statutes often state a norm without a cue in the
   sentence itself (points of a list whose lead carries the sanction, "... thì áp dụng ..."); a modality given
   without any cue cannot be checked and is recorded as `unverified`, which is not a failure (design 7.2: what
   cannot be decided is not rejected automatically). Reports count `unverified` separately.
@@ -20,7 +24,8 @@ the norm is legally right: a verbatim quote can still be read the wrong way, whi
 from legal_ai.extraction.llm_norms import LLM_SLOTS, MODALITIES, locate
 from legal_ai.schemas.contract import MODALITY_CUES
 
-VALIDATOR_VERSION = "kb-validator-v2"
+VALIDATOR_VERSION = "kb-validator-v3"
+CONTENT_SLOTS = ("action", "object", "conditions", "exceptions", "quantities", "deadlines", "outcome")
 CHECKS = ("V1_schema", "V2_integrity", "V3_evidence", "V4_modality", "V7_duplicate")
 MAX_SLOT_CHARS = 1000
 
@@ -35,8 +40,8 @@ def _schema(claim):
     for name, value in slots.items():
         if value is not None and (not isinstance(value, str) or len(value) > MAX_SLOT_CHARS):
             reasons.append(f"{name}_not_text")
-    if not isinstance(slots.get("action"), str) or not slots["action"].strip():
-        reasons.append("action_missing")
+    if not any(isinstance(slots.get(name), str) and slots[name].strip() for name in CONTENT_SLOTS):
+        reasons.append("content_missing")
     cue = claim.get("modality_cue")
     if cue is not None and not isinstance(cue, str):
         reasons.append("modality_cue_not_text")
@@ -85,8 +90,11 @@ def _modality(claim, unit):
     cue = locate(unit["text"], start, end, claim.get("modality_cue"))
     if cue is None:
         return None, ["modality_cue_not_verbatim"], False
-    if unit["text"][cue[0]:cue[1]].casefold() not in MODALITY_CUES.get(claim.get("modality"), set()):
-        return None, ["modality_cue_mismatch"], False
+    word = unit["text"][cue[0]:cue[1]].casefold()
+    if word not in MODALITY_CUES.get(claim.get("modality"), set()):
+        if any(word in cues for cues in MODALITY_CUES.values()):
+            return None, ["modality_cue_mismatch"], False
+        return None, [], False  # A real word of the sentence that the lexicon does not know: unverifiable.
     return [unit["source_start"] + cue[0], unit["source_start"] + cue[1]], [], True
 
 

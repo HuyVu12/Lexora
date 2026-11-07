@@ -7,9 +7,9 @@ definition and the cue description are translated.
 GLOSSARY_EN = {
     "norm": {"term": "Norm", "definition": "A rule of conduct drawn from one sentence of the statute: who must, may or must not do what, and under which conditions. Lexora splits each norm into parts you check against the exact text."},
     "modality": {"term": "Modality", "definition": "Whether the sentence obliges, forbids, permits or grants a right. Lexora recognises it from cue words such as “phải”, “không được”, “có quyền”."},
-    "obligation": {"term": "Obligation", "definition": "Something the subject is required to do. Not doing it is a breach.", "cues": "phải, có nghĩa vụ, có trách nhiệm, bắt buộc, buộc"},
+    "obligation": {"term": "Obligation", "definition": "Something the subject is required to do. Not doing it is a breach.", "cues": "phải, có nghĩa vụ, có trách nhiệm, bắt buộc, buộc, chịu trách nhiệm"},
     "prohibition": {"term": "Prohibition", "definition": "Something the subject must not do.", "cues": "không được, cấm, nghiêm cấm, bị cấm"},
-    "entitlement": {"term": "Right", "definition": "Something the subject is entitled to or may demand; the other side must respect or meet it.", "cues": "có quyền, được quyền"},
+    "entitlement": {"term": "Right", "definition": "Something the subject is entitled to or may demand; the other side must respect or meet it.", "cues": "có quyền, được quyền, được"},
     "permission": {"term": "Permission", "definition": "The subject may do it but is not required to.", "cues": "có thể, được"},
     "definition": {"term": "Definition", "definition": "A sentence that explains a term used in the statute. It does not require anyone to act.", "cues": "là, được hiểu là"},
     "procedure": {"term": "Procedure", "definition": "The steps, form or documents needed to carry out something."},

@@ -28,7 +28,7 @@ GLOSSARY = {
     "obligation": {
         "term": "Nghĩa vụ",
         "definition": "Việc chủ thể bắt buộc phải làm. Không làm là vi phạm.",
-        "cues": "phải, có nghĩa vụ, có trách nhiệm, bắt buộc, buộc",
+        "cues": "phải, có nghĩa vụ, có trách nhiệm, bắt buộc, buộc, chịu trách nhiệm",
         "example": "Người sử dụng lao động phải trả lương cho người lao động đúng hạn.",
         "highlight": "phải",
     },
@@ -42,7 +42,7 @@ GLOSSARY = {
     "entitlement": {
         "term": "Quyền",
         "definition": "Điều chủ thể được hưởng hoặc được đòi hỏi; bên kia phải tôn trọng hoặc đáp ứng.",
-        "cues": "có quyền, được quyền",
+        "cues": "có quyền, được quyền, được",
         "example": "Người lao động có quyền đơn phương chấm dứt hợp đồng lao động.",
         "highlight": "có quyền",
     },

@@ -114,6 +114,12 @@ class KbRunTests(unittest.TestCase):
         self.assertEqual([r["decision"] for r in results], ["accepted", "rejected", "rejected", "accepted", "rejected"])
         self.assertEqual(results[3]["checks"]["V4_modality"], "unverified", "a modality without any cue cannot be checked, so it is not rejected")
         self.assertEqual(results[4]["reasons"], ["modality_cue_not_verbatim"], "a cue the sentence does not contain is made up")
+        more = validate([base | {"claim_id": "c6", "modality": "obligation", "modality_cue": "ít nhất"},
+                         base | {"claim_id": "c7", "slots": {"actor": "Tiền lương"}},
+                         base | {"claim_id": "c8", "modality": "prohibition", "modality_cue": None, "slots": {"conditions": "thử việc"}}], self.units)
+        self.assertEqual((more[0]["decision"], more[0]["checks"]["V4_modality"]), ("accepted", "unverified"), "a real word outside the lexicon cannot be checked")
+        self.assertEqual(more[1]["reasons"], ["content_missing"], "a party alone is not a norm")
+        self.assertEqual(more[2]["decision"], "accepted", "a list point may carry only a condition")
         self.assertEqual(results[1]["checks"]["V3_evidence"], "not_applicable")
         self.assertIn("modality_not_in_enum", results[2]["reasons"])
 

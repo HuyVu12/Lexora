@@ -10,9 +10,9 @@ NORMALIZATION_VERSION = "nfc-newlines-v1"
 MODALITIES = {"obligation", "permission", "prohibition", "entitlement", "definition", "procedure", "unknown"}
 # Exact source words (casefolded) accepted as evidence for a modality. A cue is
 # evidence of wording only; reviewers still confirm the legal reading.
-MODALITY_CUES = {"obligation": {"phải", "có trách nhiệm", "có nghĩa vụ", "bắt buộc", "buộc"},
+MODALITY_CUES = {"obligation": {"phải", "có trách nhiệm", "có nghĩa vụ", "bắt buộc", "buộc", "chịu trách nhiệm"},
                  "prohibition": {"không được", "nghiêm cấm", "cấm", "bị cấm"},
-                 "entitlement": {"có quyền", "được quyền"},
+                 "entitlement": {"có quyền", "được quyền", "được"},
                  "permission": {"có thể", "được"}}
 
 
