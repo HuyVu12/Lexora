@@ -44,6 +44,10 @@ CREATE TABLE IF NOT EXISTS question_labels (
   fields TEXT NOT NULL, note TEXT NOT NULL, provenance TEXT NOT NULL, updated_at TEXT NOT NULL, PRIMARY KEY (set_id, question_id, annotator));
 CREATE TABLE IF NOT EXISTS question_annotators (
   set_id TEXT NOT NULL, annotator TEXT NOT NULL, show_proposals INTEGER NOT NULL, PRIMARY KEY (set_id, annotator));
+CREATE TABLE IF NOT EXISTS question_calls (
+  id TEXT PRIMARY KEY, set_id TEXT NOT NULL, purpose TEXT NOT NULL, record TEXT NOT NULL, created_at TEXT NOT NULL);
+CREATE TABLE IF NOT EXISTS question_drafts (
+  id TEXT PRIMARY KEY, set_id TEXT NOT NULL, call_id TEXT NOT NULL, unit_ids TEXT NOT NULL, drafts TEXT NOT NULL, accepted TEXT NOT NULL, created_at TEXT NOT NULL);
 CREATE TABLE IF NOT EXISTS question_adjudications (
   set_id TEXT NOT NULL, question_id TEXT NOT NULL, fields TEXT NOT NULL, note TEXT NOT NULL, decided_by TEXT NOT NULL,
   decided_at TEXT NOT NULL, PRIMARY KEY (set_id, question_id));
@@ -266,6 +270,61 @@ class QuestionStore:
                                   "proposal": self._latest_proposal(db, set_id, q["id"]) if shown else None})
         return self._set_summary(dict(row) | {"questions": len(questions)}) | {"show_proposals": shown, "items": items,
                                                                               "labelled": sum(1 for i in items if i["label"])}
+
+    # Model calls and drafts -----------------------------------------------------------
+    def log_call(self, set_id, record):
+        """Keep one model call (successful or not) of this set; returns its ID."""
+        call_id = "m" + secrets.token_hex(6)
+        with self._lock, closing(self._connect()) as db, db:
+            self._set_row(db, set_id)
+            db.execute("INSERT INTO question_calls VALUES (?,?,?,?,?)", (call_id, set_id, record.get("purpose", ""), canonical(record), _now()))
+        return call_id
+
+    def calls(self, set_id):
+        with closing(self._connect()) as db:
+            return [{"id": r["id"], "purpose": r["purpose"], "created_at": r["created_at"]} | json.loads(r["record"])
+                    for r in db.execute("SELECT * FROM question_calls WHERE set_id = ? ORDER BY created_at, rowid", (set_id,))]
+
+    def save_drafts(self, set_id, call_id, unit_ids, drafts):
+        draft_id = "dr" + secrets.token_hex(6)
+        with self._lock, closing(self._connect()) as db, db:
+            self._open(self._set_row(db, set_id))
+            db.execute("INSERT INTO question_drafts VALUES (?,?,?,?,?,?,?)", (draft_id, set_id, call_id, canonical(unit_ids), canonical(drafts), "[]", _now()))
+        return self.draft(draft_id)
+
+    def draft(self, draft_id):
+        with closing(self._connect()) as db:
+            row = db.execute("SELECT * FROM question_drafts WHERE id = ?", (draft_id,)).fetchone()
+        if row is None:
+            raise ValueError("Không tìm thấy bản nháp câu hỏi")
+        return {"id": row["id"], "set_id": row["set_id"], "call_id": row["call_id"], "unit_ids": json.loads(row["unit_ids"]),
+                "drafts": json.loads(row["drafts"]), "accepted": json.loads(row["accepted"]), "created_at": row["created_at"]}
+
+    def accept_draft(self, set_id, draft_id, index, texts, actor):
+        """Add draft `index` as model-origin questions (the first text, then paraphrases in the same family), each with
+        the draft's labels as its proposal. `texts` are the reviewer's final wording; edits are recorded."""
+        draft = self.draft(draft_id)
+        if draft["set_id"] != set_id:
+            raise ValueError("Bản nháp thuộc bộ câu hỏi khác")
+        if not 0 <= index < len(draft["drafts"]) or index in draft["accepted"]:
+            raise ValueError("Câu nháp không tồn tại hoặc đã được thêm")
+        item = draft["drafts"][index]
+        offered = [item["text"]] + item.get("paraphrases", [])
+        texts = [t.strip() for t in texts if t and t.strip()]
+        if not texts:
+            raise ValueError("Cần ít nhất một câu hỏi")
+        added, family = [], None
+        for n, text in enumerate(texts):
+            detail = {"call_id": draft["call_id"], "draft_id": draft_id, "draft_index": index, "edited": text not in offered}
+            question = self.add_question(set_id, text, actor, family_id=family, origin="model", origin_detail=detail)
+            family = question["family_id"]
+            self.add_proposal(set_id, question["id"], {"question_type": item["question_type"], "expected_status": "answer",
+                                                       "relevant_unit_ids": item["relevant_unit_ids"]}, item.get("rationale", ""),
+                              draft["unit_ids"], {"call_id": draft["call_id"], "source": "draft"})
+            added.append(question)
+        with self._lock, closing(self._connect()) as db, db:
+            db.execute("UPDATE question_drafts SET accepted = ? WHERE id = ?", (canonical(sorted(draft["accepted"] + [index])), draft_id))
+        return added
 
     # Moving work between machines ------------------------------------------------------
     def export_pack(self, set_id):
