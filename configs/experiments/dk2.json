@@ -1,6 +1,7 @@
 {
   "condition": "DK2",
   "representation": "structural_units",
+  "max_tokens": 384,
   "automatic_validation": false,
   "manual_review": false,
   "shared_config": "configs/pilot.json",

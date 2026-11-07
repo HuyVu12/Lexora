@@ -1,6 +1,8 @@
 {
   "condition": "DK1",
   "representation": "fixed_chunks",
+  "chunk_tokens": 384,
+  "overlap_tokens": 64,
   "automatic_validation": false,
   "manual_review": false,
   "shared_config": "configs/pilot.json",

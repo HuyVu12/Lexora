@@ -37,6 +37,12 @@ def main():
     command.add_argument("bundle")
     command.add_argument("question")
     command.add_argument("--top-k", type=int, default=5)
+    command = commands.add_parser("run-retrieval", help="DK1/DK2 retrieval run with Recall@K into a new run directory; no network")
+    command.add_argument("bundle")
+    command.add_argument("--condition", required=True, help="configs/experiments/dk1.json or dk2.json")
+    command.add_argument("--questions", default="tests/fixtures/pilot-questions.json")
+    command.add_argument("--shared", default="configs/pilot.json")
+    command.add_argument("--output", required=True, help="new, empty directory, e.g. experiments/runs/<run-id>")
     command = commands.add_parser("graph-build", help="build a local knowledge graph and evidence viewer")
     command.add_argument("bundle")
     command.add_argument("--output", required=True)
@@ -48,6 +54,9 @@ def main():
         elif args.command == "build-pilot":
             from legal_ai.ingestion.pilot import build_pilot
             print(json.dumps(build_pilot(args.config, args.raw_root, args.output), ensure_ascii=False, indent=2))
+        elif args.command == "run-retrieval":
+            from legal_ai.evaluation.retrieval_run import run
+            print(json.dumps(run(args.bundle, args.questions, args.condition, args.shared, args.output), ensure_ascii=False, indent=2))
         elif args.command == "graph-build":
             from legal_ai.kb.graph import GRAPH_VERSION, build_graph
             config = json.loads(Path(args.config).read_text(encoding="utf-8"))

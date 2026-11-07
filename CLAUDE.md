@@ -11,7 +11,7 @@ Most project docs (`README.md`, `docs/`) are written in Vietnamese.
 Lexora is a thesis-scale RAG pilot for Vietnamese labor law built on an evidence-backed legal knowledge base.
 Every claim must be traceable to an exact quote with Unicode character offsets and a SHA-256 of the normalized source text.
 Extracted norms and candidates are review-only (`needs_review`) until a human approves them; never present outputs as verified legal facts.
-The planned four-condition research pipeline (DK1-DK4: fixed chunks, structural chunks, LLM KB before validation, LLM KB after validation) is not implemented yet; the only LLM extraction today is the web app's opt-in `norm-llm-v1` (`extraction/llm_norms.py`).
+The four-condition research pipeline (DK1-DK4: fixed chunks, structural chunks, LLM KB before validation, LLM KB after validation) has its DK1/DK2 retrieval runs (`run-retrieval`, see `docs/planning/dk1-dk2-retrieval-2026-11-07.md`); DK3/DK4, generation and answer scoring are not implemented yet; the only LLM extraction today is the web app's opt-in `norm-llm-v1` (`extraction/llm_norms.py`).
 
 Direction since 2026-11-06 (decided, migration in progress): the product targets real users (corporate legal and HR staff: reviewers and readers), runs on a local machine first, and the tech migration comes before the DK1-DK4 pipeline.
 Target stack: the core pipeline stays standard-library Python for reproducibility; the web layer moves to FastAPI + Pydantic, storage stays SQLite for the first steps, PostgreSQL (pgvector when needed) later, the UI to Svelte 5 + SvelteKit (static SPA served by FastAPI, TypeScript, Paraglide i18n), graphs to Cytoscape.js; LLM calls stay behind the 9Router provider; no LangChain, LlamaIndex or graph database.
@@ -28,7 +28,9 @@ $env:PYTHONPATH = 'src'                                   # needed for the CLI
 python -m unittest discover -s tests -v                   # all offline tests
 python -m unittest tests.test_review_chat -v              # one module
 python -m unittest tests.test_review_chat.ReviewChatTests.test_only_approved_sentence_not_full_unit_retrieved   # one test
-python -m legal_ai.cli --help                             # snapshot, parse, validate, build-pilot, search, graph-build
+python -m legal_ai.cli --help                             # snapshot, parse, validate, build-pilot, search, graph-build, run-retrieval
+python -m legal_ai.cli build-pilot --config configs/sources-full-v1.json --output data/normalized/<new>   # whole-document corpus from pinned snapshots
+python -m legal_ai.cli run-retrieval data/normalized/full-v1 --condition configs/experiments/dk2.json --output experiments/runs/<new>   # DK1/DK2 Recall@K
 python -m legal_ai.cli search data/normalized/pilot-v2 'Tiền lương thử việc ít nhất bao nhiêu phần trăm?' --top-k 2
 python -m legal_ai.cli graph-build data/normalized/graph-pilot-v1 --config configs/entity-graph.json --output data/kb/new-entity-graph
 ```
@@ -70,7 +72,7 @@ Pipeline (all in `src/legal_ai/`):
 1. `ingestion/snapshot.py` fetches immutable VBPL HTML snapshots with checksums; `vbpl_html.py` + `parser.py` split text into Chapter/Article/Clause/Point units; `pilot.py` builds the pilot bundle from `configs/sources-pilot.json` (pinned snapshots and scoped articles).
 2. `normalization/text.py` produces the normalized text that all evidence offsets anchor to. Any normalization change invalidates old offsets and must create a new version.
 3. `schemas/contract.py` defines the `1.0.0-pilot` JSONL contract (documents, units, evidence, claims). `validation/` checks schema, references and evidence (quote must equal `unit.text[start:end]`, hash must match). Synthetic examples live in `tests/fixtures/contract-v1/`; see `docs/data-contracts.md` and `docs/planning/schema-v1-migration.md`.
-4. `retrieval/bm25.py` is CPU lexical retrieval returning exact source passages, not generated answers.
+4. `retrieval/bm25.py` holds the shared `BM25` ranker (k1/b explicit, ties broken by document order) and the review `search` over leaf units; it returns exact source passages, not generated answers. `indexing/records.py` builds DK1 fixed-token chunks and DK2 leaf-unit records, each an exact source span mapped to canonical unit IDs (`index-record-v1`, tokenizer `lexora-syllable-v1`); `evaluation/retrieval_run.py` ranks them per question and writes manifest, records, predictions, Recall@K and context-token metrics to a new run directory. `pilot.py` accepts `"article_ids": "all"` for a whole-document corpus (`configs/sources-full-v1.json`).
 5. `extraction/candidates.py` (unit cues) and `extraction/norms.py` (`norm-rules-v2`: typed norm components, each slot with its own evidence; unmatched sentences with a normative cue become `cue-sentence` candidates) produce review-only candidates. `extraction/llm_norms.py` (`norm-llm-v1`) asks a model for verbatim slot values on sentences the rules did not structure and keeps only values it can locate exactly in the sentence. Modality cue words accepted as evidence live in `schemas/contract.py` `MODALITY_CUES`.
 6. `kb/graph.py` builds JSON + SQLite graphs and embeds them into self-contained HTML viewers (`viewer.html`, `entity-viewer.html` via `viewer.py`). `kb/references.py` resolves cross-references using document aliases in `configs/knowledge-graph.json`; unresolved/external references stay explicit, never invented. `configs/entity-graph.json` selects the `evidence-graph-v2` norm-centered export.
 
