@@ -411,3 +411,21 @@ export interface Comparison {
 	adjudicated: number;
 	items: ComparedItem[];
 }
+
+export interface OutlineArticle {
+	id: string;
+	heading: string;
+	chapter: string | null;
+	section: string | null;
+	blocked: boolean;
+	reason: string | null;
+}
+
+export interface VbplImport {
+	vbpl_id: string;
+	source_sha256: string;
+	site_url: string;
+	accessed_at: string;
+	metadata: { title?: string; doc_num?: string; doc_type?: string; effect_status?: EffectStatus | null; issue_date?: string | null };
+	articles: OutlineArticle[];
+}
