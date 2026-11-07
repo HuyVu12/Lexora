@@ -1,10 +1,12 @@
 # Chạy ứng dụng local
 
-Workspace nhiều kho tri thức: nhập TXT hoặc văn bản từ thư viện nguồn → duyệt quy phạm trên nguyên văn (duyệt, loại, sửa bằng câu trích, duyệt cả Điều) → xem trước rồi tạo kho mới hoặc gộp vào kho có sẵn → hỏi đáp trên một hoặc nhiều kho → xem sơ đồ tri thức của kho.
+Workspace nhiều kho tri thức: nhập văn bản (tìm trong danh mục hoặc dán link vbpl.vn rồi chọn các Điều, tải tệp TXT/HTML/DOCX/PDF có lớp chữ, dán nội dung, hoặc thư viện nguồn) → duyệt quy phạm trên nguyên văn (duyệt, loại, sửa bằng câu trích, duyệt cả Điều) → xem trước rồi tạo kho mới hoặc gộp vào kho có sẵn → hỏi đáp trên một hoặc nhiều kho → xem sơ đồ tri thức của kho.
 Lớp web ở `src/legal_ai/web/` (FastAPI), giao diện ở `frontend/` (SvelteKit, xuất tĩnh).
 Giao diện cũ (`src/legal_ai/demo.py`, `demo-app.js`) đã được gỡ ngày 07/11/2026.
 
-Cần Python 3.11+, virtualenv `.venv` có extra `web` và Node để build frontend.
+Khu vực Nghiên cứu (corpus, bộ câu hỏi) dành cho người duyệt; xem `docs/features/question-annotation.md`.
+
+Cần Python 3.11+, virtualenv `.venv` có extra `web` (thêm `catalog` nếu tự dựng danh mục) và Node để build frontend.
 Từ workspace root:
 
 ```powershell
@@ -31,6 +33,25 @@ Script chạy toàn bộ luồng bằng dữ liệu minh họa, chụp màn hìn
 
 Câu không có quy phạm nào được gạch chân chấm trên màn hình duyệt; mỗi câu phải được thêm quy phạm hoặc đánh dấu "Không phải quy phạm" trước khi công bố.
 
+## Danh mục và vbpl.vn
+
+- Danh mục tìm kiếm (171.547 văn bản) được nhận tự động khi có `data/catalog/catalog-v1.sqlite`; dựng bằng `python -m legal_ai.cli catalog-build --output data/catalog/catalog-v1.sqlite` từ các tệp trong `data/catalog/raw/` (cần phần `catalog`).
+- `--allow-vbpl` cho phép lấy văn bản từ vbpl.vn, mỗi lần một văn bản và luôn hỏi xác nhận; bản chụp lưu ở `data/raw/vbpl/` (đổi bằng `--vbpl-dir`).
+- Ở màn Nhập văn bản, sau khi lấy văn bản, tích các Điều cần nhập (tối đa 60 mỗi lần); Điều có trích dẫn lồng nhau bị khóa kèm lý do.
+
+## Tùy chọn AI qua Claude Code
+
+Gọi `claude -p` trên máy với đăng nhập Claude của người chạy; dùng hạn mức gói Claude và mỗi đợt gọi đều hỏi xác nhận.
+
+```powershell
+.venv\Scripts\python -m legal_ai.web --store data/kb/app.sqlite --port 8766 --allow-vbpl `
+  --extract-claude-model claude-opus-5-5 --extract-claude-max-calls 30 `
+  --proposal-model claude-opus-5-5 --proposal-max-calls 20 --approve-claude
+```
+
+- `--extract-claude-model`: lựa chọn "Bằng AI" ở bước nhập dùng Opus qua Claude Code (chỉ kho công khai; không dùng chung với `--extract-model` của 9Router); `--extract-claude-effort` (mặc định `medium`), `--extract-claude-max-calls` (mặc định 40).
+- `--proposal-model`: đề xuất nhãn và soạn nháp câu hỏi trong bộ câu hỏi; `--proposal-effort`, `--proposal-max-calls`.
+
 ## Tùy chọn AI qua 9Router
 
 Mặc định ứng dụng không gọi mạng.
@@ -47,4 +68,4 @@ Endpoint và key đọc từ `9ROUTER_URL`, `9ROUTER_KEY` trong `.env` của Lex
 - `--router-model`: trả lời bằng model có kiểm tra citation.
 
 Xem [thiết kế F-KB-02](../../docs/features/knowledge-base-workflow.md) và [chat theo revision đã duyệt](../../docs/features/reviewed-kb-chat.md).
-Chưa có PDF/OCR, worker nền bền vững hoặc xác minh pháp lý đầy đủ.
+Chưa có OCR cho PDF scan, worker nền bền vững hoặc xác minh pháp lý đầy đủ.

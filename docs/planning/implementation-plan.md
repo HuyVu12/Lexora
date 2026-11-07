@@ -1,5 +1,8 @@
 # Kế hoạch triển khai đến 20/12/2026
 
+> Cập nhật 07/11/2026: đây là lịch gốc lập ngày 31/10 và điều chỉnh 03/11; nhiều mốc đã qua hoặc đã đổi phạm vi (chuyển sang người dùng thật, chuyển công nghệ trước ĐK1-ĐK4).
+> Tiến độ thực tế và việc tiếp theo: [progress-2026-11-07](progress-2026-11-07.md); các quyết định: [decisions](../decisions.md).
+
 ## Điều chỉnh demo tuần 02–08/11 — 03/11/2026
 
 Theo yêu cầu mới, Vũ phụ trách luồng upload PDF có text/TXT → bóc tách thực thể/quy phạm và KB nháp → người dùng review/confirm → hỏi đáp trên published KB revision. Xem [kế hoạch cụ thể và provider/quota](demo-upload-review-chat-2026-11-03.md), [kết quả cập nhật Jira](https://vku-lexora.atlassian.net/browse/SCRUM-21). Khối này thay phân công/phạm vi demo tuần này trong lịch phục hồi bên dưới; lịch nghiên cứu tổng thể và hạn 20/12 vẫn giữ để review riêng. Không suy các task nghiên cứu đã xong từ việc hoàn thành demo subset.

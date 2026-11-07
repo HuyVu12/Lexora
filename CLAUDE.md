@@ -13,14 +13,13 @@ Every claim must be traceable to an exact quote with Unicode character offsets a
 Extracted norms and candidates are review-only (`needs_review`) until a human approves them; never present outputs as verified legal facts.
 The four-condition research pipeline (DK1-DK4: fixed chunks, structural chunks, LLM KB before validation, LLM KB after validation) has its DK1/DK2 retrieval runs (`run-retrieval`, see `docs/planning/dk1-dk2-retrieval-2026-11-07.md`); DK3/DK4, generation and answer scoring are not implemented yet; the only LLM extraction today is the web app's opt-in `norm-llm-v1` (`extraction/llm_norms.py`).
 
-Direction since 2026-11-06 (decided, migration in progress): the product targets real users (corporate legal and HR staff: reviewers and readers), runs on a local machine first, and the tech migration comes before the DK1-DK4 pipeline.
-Target stack: the core pipeline stays standard-library Python for reproducibility; the web layer moves to FastAPI + Pydantic, storage stays SQLite for the first steps, PostgreSQL (pgvector when needed) later, the UI to Svelte 5 + SvelteKit (static SPA served by FastAPI, TypeScript, Paraglide i18n), graphs to Cytoscape.js; LLM calls stay behind the 9Router provider; no LangChain, LlamaIndex or graph database.
-Read `docs/planning/target-stack-2026-11-06.md` (layers, migration steps, open decisions) before starting migration work, and get user approval before installing any dependency.
-Until a migration step lands, the current code below is the truth: standard library only, nothing to install.
+Direction since 2026-11-06 (decided; web, UI and graph migration done 07/11, PostgreSQL deferred until after the MVP freeze on 27/11): the product targets real users (corporate legal and HR staff: reviewers and readers), runs on a local machine first, and the tech migration comes before the DK1-DK4 pipeline.
+Target stack: the core pipeline stays standard-library Python for reproducibility; the web layer moves to FastAPI + Pydantic, storage stays SQLite for the first steps, PostgreSQL (pgvector when needed) later, the UI to Svelte 5 + SvelteKit (static SPA served by FastAPI, TypeScript, typed dictionaries for i18n), graphs to Cytoscape.js; LLM calls go through Claude Code (Opus 5.5 for DK3 extraction and answers, Sonnet 5.5 as the supplementary judge) or the 9Router provider, one fixed model per run; no LangChain, LlamaIndex or graph database.
+Read `docs/planning/target-stack-2026-11-06.md` (layers, migration steps, open decisions) and `docs/planning/progress-2026-11-07.md` (what is done, what comes next) before larger work, and get user approval before installing any dependency.
 
 ## Commands
 
-Python 3.11+, standard library only; nothing to install.
+The core runs on Python 3.11+ with the standard library only; the web layer, PDF reader and catalog builder need `.venv` (below).
 Run from the workspace root in PowerShell:
 
 ```powershell
@@ -63,8 +62,8 @@ There is no linter or formatter.
 Optional Node DOM smokes (no npm deps): `scripts/check_graph_viewer.cjs`, `scripts/check_entity_graph_viewer.cjs`.
 Always write graph/app outputs to a new directory or new SQLite store; an existing store keeps its data and ignores `--seed`.
 
-Network rules: only `cli snapshot` and the web app's opt-in 9Router flags (`--router-model`, `--extract-model`, `--embedding-model`, each requiring `--approve-router`) touch the network.
-Both require explicit user approval of endpoint, model, data and scope first, per `AGENTS.md`.
+Network rules: only `cli snapshot`, `cli vbpl-fetch`, the web flag `--allow-vbpl` (one confirmed vbpl.vn document per request), the opt-in 9Router flags (`--router-model`, `--extract-model`, `--embedding-model`, each requiring `--approve-router`) and the Claude Code flags (`--extract-claude-model`, `--proposal-model`, each requiring `--approve-claude`) touch the network or a model.
+All require explicit user approval of endpoint, model, data and scope first, per `AGENTS.md`; vbpl.vn's own search pages are never automated.
 Router settings (`9ROUTER_URL`, `9ROUTER_KEY`, `MODEL_*` aliases) are read only from Lexora's `.env` (see `.env.example`), never from the shell environment; only HTTPS or loopback endpoints are accepted.
 
 ## Architecture

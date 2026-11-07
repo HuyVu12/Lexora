@@ -9,30 +9,37 @@
 
 ## Project Structure & Module Organization
 
-This workspace contains a Python pilot and project documentation. `src/legal_ai/` holds schema contracts, ingestion, normalization, technical validation, provider boundary and CPU lexical retrieval. `tests/` contains offline tests; `tests/fixtures/` contains synthetic contract data and draft pilot questions. `configs/sources-pilot.json` pins two VBPL snapshots and scoped articles. `data/raw/` and `data/normalized/` hold local artifacts excluded from Git. `docs/` holds the original proposal, plans, migration notes and review reports.
+This workspace holds Lexora, a thesis-scale RAG system for Vietnamese labour law built on an evidence-backed knowledge base, and its documentation.
+`src/legal_ai/` holds the standard-library core: ingestion (pinned VBPL snapshots, vbpl.vn gateway fetches, the offline catalog, file readers, article excerpts), normalization, parsing, the `1.0.0-pilot` contract, validation, rule and LLM norm extraction, BM25 retrieval, graph building and the reviewed-KB chat.
+`src/legal_ai/web/` is the FastAPI layer with accounts and roles; `frontend/` is the SvelteKit UI it serves; `src/legal_ai/research/` keeps research corpora, question sets and model proposals; `src/legal_ai/indexing/` and `src/legal_ai/evaluation/` run the DK1/DK2 retrieval experiments.
+`tests/` contains offline tests; `tests/fixtures/` contains synthetic contract data and draft pilot questions.
+`configs/` pins sources, graph settings and the DK1-DK4 conditions; `prompts/` holds versioned prompts.
+`data/`, `experiments/runs/` and `.my_docs/` hold local artifacts excluded from Git.
+`docs/` holds the proposal, design, plans, decisions, guidelines and dated review reports; start with `docs/planning/progress-2026-11-07.md`.
 
-Current focus is the evidence-backed knowledge graph. `src/legal_ai/kb/` builds JSON/SQLite graphs and a self-contained viewer; `src/legal_ai/extraction/candidates.py` produces review-only unit candidates. `configs/sources-graph.json` adds Article 21 from the existing snapshot for reference resolution; `configs/knowledge-graph.json` pins explicit document aliases. Graph outputs live in `data/kb/` and remain excluded from Git.
+Extracted norms and question proposals are review-only until a person accepts them; never present outputs as independently verified legal facts or legal validity.
 
-The current entity/relation view uses `src/legal_ai/extraction/norms.py` and `configs/entity-graph.json`. It extracts review-only typed norm components with per-slot evidence, exports `evidence-graph-v2`, and opens a norm-centered viewer plus a separate structure view. Unsupported source text stays in the extraction report; do not treat these outputs as independently verified legal facts.
-
-Keep project documents in `docs/`. Avoid introducing empty scaffolding without a concrete need. Keep draft research configurations separate from the CPU retrieval pilot; the full RAG/model pipeline is not implemented yet.
+Keep project documents in `docs/`. Avoid introducing empty scaffolding without a concrete need. Keep research configurations separate from the product knowledge bases; DK3/DK4, answer generation and answer scoring are not implemented yet.
 
 ## Build, Test, and Development Commands
 
-Runtime requires Python 3.11+ and uses the standard library only (verified on Python 3.14.8). No package install is required. On 2026-11-06 the user approved a target stack for real users (FastAPI, PostgreSQL, TypeScript + Vite, Cytoscape.js) while the core pipeline stays standard-library Python; it is not implemented yet, and adding any dependency still needs explicit user approval. See `docs/planning/target-stack-2026-11-06.md`. From the workspace root in PowerShell:
+The core pipeline runs on Python 3.11+ with the standard library only (verified on Python 3.14.8).
+The web layer, the PDF reader and the catalog builder need the project virtualenv (`.venv`, extras `web`, `web-test`, `catalog`), and the UI needs Node; packages approved so far are recorded in `pyproject.toml`, `frontend/package.json` and `docs/decisions.md`.
+Adding any other dependency still needs explicit user approval. From the workspace root in PowerShell:
 
-- `python -m unittest discover -s tests -v`: offline tests, no network/model calls.
-- `.venv\Scripts\python -m pip install -e ".[web,web-test]"` then `.venv\Scripts\python -m legal_ai.web --store <new.sqlite> --port 8766`: FastAPI web layer (migration step 1); `tests/test_web_api.py` runs only inside `.venv`.
-- `cd frontend; npm install; npm run build` then `.venv\Scripts\python -m legal_ai.auth create-admin --store <store> --username admin`: SvelteKit frontend and the first admin account; `node scripts/check_app_browser.cjs http://127.0.0.1:<port> <dir>` is its real-browser E2E (new store with the three accounts the script header names).
-- `python scripts/build_fixture.py`: rebuild synthetic JSONL fixture.
-- `$env:PYTHONPATH = 'src'`: enable the source package for this shell.
-- `python -m legal_ai.cli --help`: list snapshot, parse, build-pilot, validate and search commands.
-- `python -m legal_ai.cli graph-build data/normalized/graph-pilot-v1 --output data/kb/new-graph`: build graph and viewer into a new output directory.
-- `node scripts/check_graph_viewer.cjs data/kb/knowledge-graph-review/index.html`: optional DOM unit smoke (Node 24 verified, no npm dependencies); does not replace real-browser visual QA.
-- `python -m legal_ai.cli graph-build data/normalized/graph-pilot-v1 --config configs/entity-graph.json --output data/kb/new-entity-graph`: build the entity/relation view in a new output directory.
-- `node scripts/check_entity_graph_viewer.cjs data/kb/entity-relation-review/index.html`: optional DOM unit smoke for the norm-centered view.
+- `python -m unittest discover -s tests -v`: offline tests, no network/model calls; web, catalog and PDF tests skip without their packages.
+- `.venv\Scripts\python -m pip install -e ".[web,web-test,catalog]"`: the virtualenv for the web layer and the full test suite (`.venv\Scripts\python -m unittest discover -s tests -v`).
+- `cd frontend; npm install; npm run build` then `.venv\Scripts\python -m legal_ai.auth create-admin --store <store> --username admin` and `.venv\Scripts\python -m legal_ai.web --store <store> --port 8766`: build the UI, create the first admin, run the app.
+- `node scripts/check_app_browser.cjs http://127.0.0.1:<port> <dir>`: real-browser E2E on a NEW store with the three accounts the script header names; it makes no network or model calls.
+- `cd frontend; npx svelte-check --tsconfig ./tsconfig.json`: types and accessibility warnings of the UI.
+- `$env:PYTHONPATH = 'src'` then `python -m legal_ai.cli --help`: snapshot, parse, validate, build-pilot, search, graph-build, catalog-build, catalog-search, vbpl-fetch, corpus-export, run-retrieval.
+- `python -m legal_ai.cli run-retrieval <bundle> --condition configs/experiments/dk2.json --output experiments/runs/<new>`: a DK1/DK2 retrieval run into a new directory.
+- `python scripts/build_fixture.py`: rebuild the synthetic JSONL fixture.
+- `node scripts/check_graph_viewer.cjs data/kb/knowledge-graph-review/index.html` and `node scripts/check_entity_graph_viewer.cjs data/kb/entity-relation-review/index.html`: optional DOM smokes of the standalone graph exports.
 
-See `docs/planning/local-pilot-review-2026-11-02.md` for verified review commands and artifact paths. Only the explicit `snapshot` command contacts the network; follow the external-system approval rules before using it. The setuptools build backend is optional packaging metadata; installation/build is unverified and not required for review.
+Network and model calls happen only through explicit commands or run flags, each needing the user's approval of endpoint, model, data and scope first:
+`cli snapshot` and `cli vbpl-fetch`; the web flag `--allow-vbpl` (one confirmed vbpl.vn document per request); the 9Router flags (`--router-model`, `--extract-model`, `--embedding-model`, each with `--approve-router`); and the Claude Code flags (`--extract-claude-model`, `--proposal-model`, each with `--approve-claude`), which run the local `claude -p` on the user's own plan.
+Never automate vbpl.vn's own search pages; they sit behind bot protection.
 
 Useful inspection commands from the workspace root:
 

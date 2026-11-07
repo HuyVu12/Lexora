@@ -1,23 +1,47 @@
-# Kiến trúc MVP
+# Kiến trúc Lexora
+
+Cập nhật 07/11/2026; thay bản dự thảo MVP ngày 01/11.
+Sơ đồ chi tiết và thuật toán: `docs/planning/technical-design-plan.md`; công nghệ và các bước chuyển đổi: `docs/planning/target-stack-2026-11-06.md`.
 
 ## Phạm vi theo đề cương
-Pháp luật lao động Việt Nam: dự kiến 8–12 văn bản, 60–100 điều khoản; gold extraction 40–60 điều khoản; bộ RAG khoảng 150 câu, giữ lại 30% held-out. Đây là mục tiêu cần xác nhận sau pilot, không phải dữ liệu đã có.
 
-## Luồng xử lý
-Nguồn chính thống → snapshot bất biến + checksum → chuẩn hóa → phân cấp Chương/Điều/Khoản/Điểm → extraction rule-based hoặc LLM → KB ứng viên → validation tự động → KB hợp lệ → index → retrieval → context → answer + evidence.
+Pháp luật lao động Việt Nam: dự kiến 8-12 văn bản; gold extraction 40-60 điều khoản; bộ câu hỏi khoảng 150 câu, giữ khoảng 30% held-out.
+Đây là mục tiêu; hiện corpus nghiên cứu có 2 văn bản và chưa có bộ câu hỏi thật.
 
-Nhánh ĐK1 chia đoạn cố định từ bản chuẩn hóa; ĐK2 chia theo cấu trúc; ĐK3 dùng KB LLM trước validation; ĐK4 dùng chính KB đó sau validation. Lưu riêng từng nhánh, không ghi đè KB trước kiểm chứng. Review thủ công không nhập ngầm vào ĐK4; nếu có thì ghi thành biến thể riêng.
+## Các lớp
 
-## Quyết định thiết kế dự thảo
-- Một codebase Python, chạy batch bằng CLI; giao diện mỏng gọi cùng service.
-- JSONL làm định dạng trao đổi ban đầu; chọn SQLite hoặc kho khác sau pilot. Không bắt buộc database server.
-- Adapter cho embedding, LLM và vector index; không khóa nhà cung cấp API miễn phí.
-- Metadata hiệu lực là thông tin có nguồn, không suy diễn pháp luật tại một thời điểm bất kỳ.
-- Chỉ dùng evidence hợp lệ trong câu trả lời; dẫn chiếu chưa giải quyết được phải có trạng thái rõ ràng.
-- Không đủ nguồn hoặc câu hỏi vượt phạm vi thời gian: yêu cầu làm rõ hoặc từ chối có lý do.
+| Lớp | Vị trí | Vai trò |
+|---|---|---|
+| Lõi pipeline | `src/legal_ai/` (trừ `web/`, `research/`) | Python thư viện chuẩn, tái lập được: lấy văn bản, chuẩn hóa, tách cấu trúc, lược đồ `1.0.0-pilot`, kiểm chứng bằng chứng, trích xuất quy phạm, truy xuất BM25, đồ thị, hỏi đáp có dẫn nguồn |
+| Nghiên cứu | `src/legal_ai/research/`, `indexing/`, `evaluation/` | Corpus có phiên bản khóa, bộ câu hỏi và đề xuất của model, chạy truy xuất ĐK1/ĐK2 |
+| Lớp web | `src/legal_ai/web/` | FastAPI + Pydantic: tài khoản ba vai trò, phiên HttpOnly, token POST, kiểm tra Host/Origin, giới hạn kích thước, CSP, không ghi log request |
+| Giao diện | `frontend/` | Svelte 5 + SvelteKit (TypeScript), build tĩnh và được lớp web phục vụ; song ngữ Việt/Anh |
+| Lưu trữ | Tệp SQLite của workspace | Kho tri thức (`kb-store-v1`), tài khoản, corpus (`corpus-store-v1`), bộ câu hỏi (`questions-store-v1`); danh mục văn bản là tệp SQLite riêng (`catalog-v1`) |
+| Model | `src/legal_ai/providers/` | Claude Code (`claude -p`, Opus 5.5) hoặc 9Router; mỗi provider một model, ngân sách gọi, không thử lại, ghi nhật ký |
 
-## Hợp đồng giữa hai thành viên
-Kha bàn giao `documents.jsonl`, `units.jsonl`, `claims.raw.jsonl`, `claims.validated.jsonl`, `validation-report.jsonl` và manifest phiên bản. Vũ nhận qua schema chung, không đọc cấu trúc nội bộ của extractor. Ngày 08/11 cần một lát cắt end-to-end nhỏ, không yêu cầu toàn bộ corpus hoàn chỉnh.
+## Luồng sản phẩm: kho tri thức
 
-## MVP và mở rộng
-MVP bắt buộc schema/ref/evidence validation, retrieval, dẫn nguồn và bốn điều kiện đánh giá. Graph traversal nâng cao, semantic conflict detection và review UI chỉ làm sau mốc MVP 27/11; không đánh đổi bộ đánh giá lấy giao diện đẹp.
+1. Nguồn: danh mục cục bộ hoặc link vbpl.vn (bản chụp JSON bất biến kèm SHA-256), tệp TXT/HTML/DOCX/PDF, hoặc văn bản dán.
+2. Với văn bản dài, người duyệt chọn các Điều; Lexora cắt đúng nguyên văn kèm tiêu đề Chương/Mục.
+3. Chuẩn hóa và tách Chương/Mục/Điều/Khoản/Điểm; mọi bằng chứng neo vào bản đã chuẩn hóa.
+4. Tách quy phạm theo quy tắc (`norm-rules-v2`); câu quy tắc chưa tách được có thể gửi model (`norm-llm-v1`, chỉ kho công khai), mọi cụm model đề xuất phải khớp nguyên văn.
+5. Người duyệt quyết định từng quy phạm và từng câu chưa có quy phạm, xem trước thay đổi, công bố thành phiên bản mới; phiên bản cũ không đổi.
+6. Hỏi đáp chỉ dùng bằng chứng của quy phạm đã duyệt, trên các phiên bản kho được ghim vào cuộc trò chuyện.
+
+## Luồng nghiên cứu: ĐK1-ĐK4
+
+1. Corpus: thêm văn bản, xem cảnh báo parser, khóa phiên bản (mã băm bundle).
+2. Bộ câu hỏi trên phiên bản đã khóa: hai người gán nhãn độc lập (loại câu, hành vi trả lời/từ chối, đơn vị liên quan), trao đổi bằng tệp, đối soát, khóa với chia dev/held-out theo nhóm diễn đạt.
+3. ĐK1 cắt đoạn cố định, ĐK2 theo đơn vị pháp lý; cùng truy xuất BM25 và cùng cách tính Recall@K trên đơn vị chuẩn.
+4. ĐK3 dùng kho quy phạm do model trích xuất trước kiểm chứng, ĐK4 dùng chính kho đó sau kiểm chứng (chưa làm).
+5. Sinh câu trả lời bằng Opus 5.5 cho cả bốn điều kiện và chấm theo `docs/evaluation-protocol.md` (chưa làm).
+
+Mỗi nhánh lưu riêng, không ghi đè; người duyệt không sửa ngầm dữ liệu của ĐK3/ĐK4.
+
+## Nguyên tắc
+
+- Mọi khẳng định truy được về đúng câu trong nguồn (vị trí ký tự Unicode, SHA-256); trích dẫn sai vị trí hoặc mã băm bị chặn.
+- Metadata hiệu lực là thông tin có nguồn; không suy diễn hiệu lực pháp luật tại một thời điểm.
+- Dẫn chiếu chưa giải quyết được giữ trạng thái rõ ràng, không tự tạo đích.
+- Thiếu căn cứ hoặc câu hỏi vượt phạm vi thì từ chối có lý do.
+- Không dùng LangChain, LlamaIndex hay graph database; không chia microservice.
