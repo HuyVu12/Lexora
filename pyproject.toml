@@ -11,7 +11,10 @@ dependencies = []
 
 [project.optional-dependencies]
 # Web layer (FastAPI). The core pipeline stays standard-library only.
-web = ["fastapi==0.162.0", "uvicorn==0.54.0", "pydantic==2.14.3"]
+# pypdf reads PDFs with a text layer on import (approved 2026-11-07).
+web = ["fastapi==0.162.0", "uvicorn==0.54.0", "pydantic==2.14.3", "pypdf==7.0.0"]
+# One-off conversion of the th1nhng0 Parquet metadata into the local SQLite catalog (approved 2026-11-07).
+catalog = ["pyarrow==26.0.1"]
 # TestClient for tests/test_web_api.py.
 web-test = ["httpx==0.28.1"]
 

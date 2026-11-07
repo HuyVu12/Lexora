@@ -30,6 +30,8 @@ python -m unittest tests.test_review_chat -v              # one module
 python -m unittest tests.test_review_chat.ReviewChatTests.test_only_approved_sentence_not_full_unit_retrieved   # one test
 python -m legal_ai.cli --help                             # snapshot, parse, validate, build-pilot, search, graph-build, run-retrieval
 python -m legal_ai.cli build-pilot --config configs/sources-full-v1.json --output data/normalized/<new>   # whole-document corpus from pinned snapshots
+python -m legal_ai.cli catalog-search data/catalog/catalog-v1.sqlite 'bo luat lao dong'   # offline, accents ignored; build with catalog-build (needs .venv catalog extra)
+python -m legal_ai.cli vbpl-fetch <vbpl.vn link or ID>      # ONE approved vbpl.vn document -> data/raw/vbpl/<id>/<sha>/
 python -m legal_ai.cli run-retrieval data/normalized/full-v1 --condition configs/experiments/dk2.json --output experiments/runs/<new>   # DK1/DK2 Recall@K
 python -m legal_ai.cli search data/normalized/pilot-v2 'Tiền lương thử việc ít nhất bao nhiêu phần trăm?' --top-k 2
 python -m legal_ai.cli graph-build data/normalized/graph-pilot-v1 --config configs/entity-graph.json --output data/kb/new-entity-graph
@@ -38,7 +40,7 @@ python -m legal_ai.cli graph-build data/normalized/graph-pilot-v1 --config confi
 Web app (FastAPI + SvelteKit; needs the project virtualenv):
 
 ```powershell
-python -m venv .venv; .venv\Scripts\python -m pip install -e ".[web,web-test]"   # once; installs from PyPI (approved 2026-11-06)
+python -m venv .venv; .venv\Scripts\python -m pip install -e ".[web,web-test,catalog]"   # once; installs from PyPI (approved 2026-11-06, pypdf/pyarrow 2026-11-07)
 .venv\Scripts\python -m unittest discover -s tests -v                          # full suite incl. tests/test_web_api.py
 .venv\Scripts\python -m legal_ai.web --store data/kb/app-new.sqlite --seed data/kb/entity-relation-review/graph.json --port 8766  # --frontend <build dir>, --source-catalog, opt-in 9Router flags
 ```
@@ -69,7 +71,7 @@ Router settings (`9ROUTER_URL`, `9ROUTER_KEY`, `MODEL_*` aliases) are read only 
 
 Pipeline (all in `src/legal_ai/`):
 
-1. `ingestion/snapshot.py` fetches immutable VBPL HTML snapshots with checksums; `vbpl_html.py` + `parser.py` split text into Chapter/Article/Clause/Point units; `pilot.py` builds the pilot bundle from `configs/sources-pilot.json` (pinned snapshots and scoped articles).
+1. `ingestion/vbpl_api.py` fetches one explicitly requested vbpl.vn document from the public JSON gateway the site uses (`/api/qtdc/public/doc/{id}`, undocumented; links or IDs, HTTPS gateway host only, no redirects, 2 s between calls) as an immutable `document.json` snapshot with official metadata incl. effect status; the site's search is behind bot protection and must never be automated. `ingestion/catalog.py` is the offline search catalog (`catalog-v1`, SQLite FTS5 over accent-folded titles and numbers, in-force first) built from th1nhng0/vietnamese-legal-documents (CC BY 4.0) and undertheseanlp/UTS_VLC (MIT), whose IDs are vbpl.vn IDs; its effect status is the dataset's, so prefer the fetched one. `ingestion/files.py` reads TXT, HTML, DOCX and text-layer PDF (pypdf) uploads. `ingestion/snapshot.py` fetches immutable VBPL HTML snapshots with checksums; `vbpl_html.py` + `parser.py` split text into Chapter/Article/Clause/Point units; `pilot.py` builds the pilot bundle from `configs/sources-pilot.json` (pinned snapshots and scoped articles).
 2. `normalization/text.py` produces the normalized text that all evidence offsets anchor to. Any normalization change invalidates old offsets and must create a new version.
 3. `schemas/contract.py` defines the `1.0.0-pilot` JSONL contract (documents, units, evidence, claims). `validation/` checks schema, references and evidence (quote must equal `unit.text[start:end]`, hash must match). Synthetic examples live in `tests/fixtures/contract-v1/`; see `docs/data-contracts.md` and `docs/planning/schema-v1-migration.md`.
 4. `retrieval/bm25.py` holds the shared `BM25` ranker (k1/b explicit, ties broken by document order) and the review `search` over leaf units; it returns exact source passages, not generated answers. `indexing/records.py` builds DK1 fixed-token chunks and DK2 leaf-unit records, each an exact source span mapped to canonical unit IDs (`index-record-v1`, tokenizer `lexora-syllable-v1`); `evaluation/retrieval_run.py` ranks them per question and writes manifest, records, predictions, Recall@K and context-token metrics to a new run directory. `pilot.py` accepts `"article_ids": "all"` for a whole-document corpus (`configs/sources-full-v1.json`).

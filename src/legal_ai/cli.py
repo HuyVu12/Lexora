@@ -1,4 +1,4 @@
-"""Local CLI. Network access only via the explicit snapshot subcommand."""
+"""Local CLI. Network access only via the explicit snapshot and vbpl-fetch subcommands."""
 
 import argparse
 import json
@@ -37,6 +37,17 @@ def main():
     command.add_argument("bundle")
     command.add_argument("question")
     command.add_argument("--top-k", type=int, default=5)
+    command = commands.add_parser("catalog-build", help="build the local document catalog from downloaded dataset files; no network")
+    command.add_argument("--raw", default="data/catalog/raw")
+    command.add_argument("--output", required=True, help="new catalog file, e.g. data/catalog/catalog-v1.sqlite")
+    command = commands.add_parser("catalog-search", help="search the local catalog by title or number, accents ignored; no network")
+    command.add_argument("catalog")
+    command.add_argument("query")
+    command.add_argument("--limit", type=int, default=10)
+    command.add_argument("--include-translations", action="store_true")
+    command = commands.add_parser("vbpl-fetch", help="fetch ONE explicitly approved vbpl.vn document (link or ID) as an immutable snapshot")
+    command.add_argument("reference", help="vbpl.vn document link or ID")
+    command.add_argument("--output", default="data/raw/vbpl")
     command = commands.add_parser("run-retrieval", help="DK1/DK2 retrieval run with Recall@K into a new run directory; no network")
     command.add_argument("bundle")
     command.add_argument("--condition", required=True, help="configs/experiments/dk1.json or dk2.json")
@@ -54,6 +65,15 @@ def main():
         elif args.command == "build-pilot":
             from legal_ai.ingestion.pilot import build_pilot
             print(json.dumps(build_pilot(args.config, args.raw_root, args.output), ensure_ascii=False, indent=2))
+        elif args.command == "catalog-build":
+            from legal_ai.ingestion.catalog import build_catalog
+            print(json.dumps(build_catalog(args.raw, args.output), ensure_ascii=False, indent=2))
+        elif args.command == "catalog-search":
+            from legal_ai.ingestion.catalog import Catalog
+            print(json.dumps(Catalog(args.catalog).search(args.query, args.limit, args.include_translations), ensure_ascii=False, indent=2))
+        elif args.command == "vbpl-fetch":
+            from legal_ai.ingestion.vbpl_api import fetch_document
+            print(json.dumps(fetch_document(args.reference, args.output), ensure_ascii=False, indent=2))
         elif args.command == "run-retrieval":
             from legal_ai.evaluation.retrieval_run import run
             print(json.dumps(run(args.bundle, args.questions, args.condition, args.shared, args.output), ensure_ascii=False, indent=2))
