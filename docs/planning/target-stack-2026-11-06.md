@@ -74,6 +74,6 @@ Các bước này làm trước pipeline ĐK1–ĐK4 (đã chốt 06/11/2026).
 
 ## Chưa chốt
 
-- Model LLM cho ĐK3/ĐK4 và cho sinh câu trả lời.
+- Đã chốt 07/11/2026: Opus 5.5 qua Claude Code cho trích xuất ĐK3/ĐK4 và sinh câu trả lời; Sonnet 5.5 làm giám khảo bổ sung (xem `docs/decisions.md`).
 - Cách chạy PostgreSQL (Docker hay cài trực tiếp); thời điểm đã chốt là sau 27/11.
 - Nơi triển khai sau giai đoạn cục bộ và chính sách dữ liệu cho kho riêng tư khi có nhiều người dùng.
