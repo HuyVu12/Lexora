@@ -20,7 +20,7 @@ from typing import Literal
 from fastapi import Depends, FastAPI, Query, Request
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import HTMLResponse, JSONResponse, RedirectResponse, Response
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, Field
 from starlette.exceptions import HTTPException as StarletteHTTPException
 
 from legal_ai.auth import SESSION_HOURS, AccountStore, AuthError
@@ -156,6 +156,7 @@ class CorpusVbplBody(Body):
     corpus_id: str
     reference: str
     document_id: str | None = None
+    article_ids: list[str] | None = Field(default=None, max_length=400)
     confirm: bool = False
 
 
@@ -560,7 +561,7 @@ def create_app(store, port, *, provider=None, source_catalog=None, extractor=Non
         except OSError as exc:  # Network failures are not storage failures.
             raise ValueError(f"Không kết nối được vbpl.vn ({exc.__class__.__name__})") from exc
         raw = Path(manifest["local_path"]).read_bytes()
-        return corpora.add_vbpl(body.corpus_id, manifest, raw, account["username"], body.document_id or None)
+        return corpora.add_vbpl(body.corpus_id, manifest, raw, account["username"], body.document_id or None, body.article_ids)
 
     @app.post(UPLOAD_PATH)
     def corpus_file(body: CorpusFileBody, account=Depends(reviewer)):

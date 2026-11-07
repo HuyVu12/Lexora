@@ -1,0 +1,42 @@
+{
+  "scope_version": "experiment-scope-v1",
+  "name": "Phạm vi thực nghiệm v1",
+  "description": "94 Điều của 5 chủ đề cốt lõi trong đề cương (hợp đồng lao động, thời giờ làm việc và nghỉ ngơi, tiền lương, kỷ luật lao động và trách nhiệm vật chất, chấm dứt hợp đồng) cùng các Điều về hiệu lực thi hành; dùng chung cho ĐK1-ĐK4",
+  "documents": [
+    {
+      "document_id": "45-2019-qh14",
+      "vbpl_id": "139264",
+      "snapshot_sha256": "1447d581ca484d6715100e5e3e2e6e07a4ad8de78da25dbec25649e63ec9a396",
+      "articles": ["3", "13-48", "90-91", "93-99", "101-104", "105-115", "117-118", "121-131", "220"],
+      "topics": "giải thích từ ngữ; hợp đồng lao động (giao kết, thực hiện, chấm dứt); tiền lương; thời giờ làm việc, nghỉ ngơi; kỷ luật lao động, trách nhiệm vật chất; hiệu lực"
+    },
+    {
+      "document_id": "145-2020-nd-cp",
+      "vbpl_id": "152668",
+      "snapshot_sha256": "5c6f988e4c8c9798392e748e1835e2c57528e911e0b2fb8336800acf7c15274d",
+      "articles": ["7-8", "54-57", "59-60", "69-72", "114"],
+      "topics": "báo trước, trợ cấp thôi việc và mất việc; hình thức trả lương, lương làm thêm giờ và ban đêm; làm thêm giờ; nội quy, kỷ luật, bồi thường; hiệu lực"
+    },
+    {
+      "document_id": "293-2025-nd-cp",
+      "vbpl_id": "183939",
+      "snapshot_sha256": "702f6615777526b31eb78d5dc58dc54702c6d3d555040109edaf38d605e3deee",
+      "articles": ["3-5"],
+      "topics": "mức lương tối thiểu, áp dụng, hiệu lực"
+    },
+    {
+      "document_id": "10-2020-tt-bldtbxh",
+      "vbpl_id": "146696",
+      "snapshot_sha256": "cd7f2cfd75f4930624b76b54059b69536538d9f21f48369718f311b7b35f4f65",
+      "articles": ["3"],
+      "topics": "nội dung chủ yếu của hợp đồng lao động"
+    },
+    {
+      "document_id": "12-2022-nd-cp",
+      "vbpl_id": "153913",
+      "snapshot_sha256": "21942c0f03b896a3304a10fbae05e294f372e55c07d1ab15b1c78834d899a2de",
+      "articles": ["10", "17"],
+      "topics": "xử phạt vi phạm về thử việc và tiền lương; văn bản đã hết hiệu lực toàn bộ từ 10/09/2026, dùng cho câu hỏi hiệu lực"
+    }
+  ]
+}

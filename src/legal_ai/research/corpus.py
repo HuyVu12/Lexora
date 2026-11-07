@@ -19,6 +19,7 @@ import threading
 
 from legal_ai.common.io import canonical, digest, write_json, write_jsonl
 from legal_ai.ingestion.catalog import fold
+from legal_ai.ingestion.excerpt import excerpt, outline
 from legal_ai.ingestion.files import extract_text
 from legal_ai.ingestion.parser import parse
 from legal_ai.ingestion.vbpl_api import document_text, unwrap
@@ -150,8 +151,10 @@ class CorpusStore:
                 canonical(normalized), canonical(parsed["units"]), canonical(report), _now(), actor, None))
         return self.document(row_id)
 
-    def add_vbpl(self, corpus_id, manifest, raw, actor, document_id=None):
-        """Add a vbpl.vn snapshot fetched by `vbpl_api.fetch_document` (its manifest and stored bytes)."""
+    def add_vbpl(self, corpus_id, manifest, raw, actor, document_id=None, article_ids=None):
+        """Add a vbpl.vn snapshot fetched by `vbpl_api.fetch_document` (its manifest and stored bytes).
+        With `article_ids` (outline IDs) only those articles and their chapter/section headings are kept, verbatim;
+        the row still stores the whole snapshot, and the metadata records the chosen articles."""
         if digest(raw) != manifest["source_sha256"]:
             raise ValueError("Nội dung bản chụp không khớp manifest")
         document = unwrap(raw)
@@ -159,6 +162,11 @@ class CorpusStore:
         if meta.get("is_translation"):
             raise ValueError("Đây là bản dịch; hãy thêm bản gốc tiếng Việt")
         text = document_text(document)["text"]
+        if article_ids is not None:
+            chosen = set(article_ids)
+            order = [a["id"] for a in outline(text) if a["id"] in chosen]
+            text = excerpt(text, article_ids, limit=None)
+            meta = meta | {"excerpt": {"article_ids": order, "count": len(order)}}
         kind = (meta.get("doc_type") or "văn bản").lower()
         no_articles = (f"Văn bản này ({kind} {meta.get('doc_num') or ''}) không chia thành Điều nên không đưa vào corpus được. "
                        "Lệnh công bố, chỉ thị và công văn thường như vậy; hãy chọn chính văn bản luật, nghị định hoặc thông tư.")

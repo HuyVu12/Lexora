@@ -71,13 +71,14 @@ def outline(text):
     return articles
 
 
-def excerpt(text, article_ids):
-    """The chosen articles (outline IDs) with their chapter/section headings, verbatim, in document order."""
+def excerpt(text, article_ids, limit=MAX_ARTICLES):
+    """The chosen articles (outline IDs) with their chapter/section headings, verbatim, in document order.
+    `limit` caps one knowledge-base import; research scopes pass None."""
     chosen = set(article_ids)
     if not chosen:
         raise ValueError("Chọn ít nhất một Điều")
-    if len(chosen) > MAX_ARTICLES:
-        raise ValueError(f"Mỗi lần nhập tối đa {MAX_ARTICLES} Điều; nhập phần còn lại ở lần sau và gộp vào kho")
+    if limit is not None and len(chosen) > limit:
+        raise ValueError(f"Mỗi lần nhập tối đa {limit} Điều; nhập phần còn lại ở lần sau và gộp vào kho")
     source, parsed = _parsed(text)
     units = parsed["units"]
     by_id = {u["unit_id"]: u for u in units}

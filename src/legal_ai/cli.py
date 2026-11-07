@@ -52,6 +52,10 @@ def main():
     command.add_argument("--store", required=True, help="workspace SQLite store of the web app")
     command.add_argument("--version", required=True, help="corpus version ID (shown in the app)")
     command.add_argument("--output", required=True, help="new, empty directory")
+    command = commands.add_parser("corpus-scope", help="create a research corpus from the chosen articles of pinned local vbpl.vn snapshots; no network")
+    command.add_argument("--store", required=True, help="workspace SQLite store of the web app")
+    command.add_argument("--config", default="configs/experiment-scope-v1.json")
+    command.add_argument("--actor", required=True, help="account name recorded as the creator")
     command = commands.add_parser("run-retrieval", help="DK1/DK2 retrieval run with Recall@K into a new run directory; no network")
     command.add_argument("bundle")
     command.add_argument("--condition", required=True, help="configs/experiments/dk1.json or dk2.json")
@@ -81,6 +85,13 @@ def main():
         elif args.command == "corpus-export":
             from legal_ai.research.corpus import CorpusStore
             print(json.dumps(CorpusStore(args.store).export_version(args.version, args.output), ensure_ascii=False, indent=2))
+        elif args.command == "corpus-scope":
+            from legal_ai.research.corpus import CorpusStore
+            from legal_ai.research.scope import build_scope
+            corpus = build_scope(CorpusStore(args.store), args.config, args.actor)
+            print(json.dumps({"corpus_id": corpus["id"], "name": corpus["name"],
+                              "documents": [{"document_id": d["document_id"], "articles": d["article_count"], "audit": d["audit_count"]} for d in corpus["documents"]]},
+                             ensure_ascii=False, indent=2))
         elif args.command == "run-retrieval":
             from legal_ai.evaluation.retrieval_run import run
             print(json.dumps(run(args.bundle, args.questions, args.condition, args.shared, args.output), ensure_ascii=False, indent=2))
