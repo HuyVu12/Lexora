@@ -1,4 +1,5 @@
 <script lang="ts">
+	import PageGuide from '#lib/components/PageGuide.svelte';
 	import { page } from '$app/state';
 	import ChatView from '#lib/components/ChatView.svelte';
 	import { t } from '#lib/i18n/index.svelte.js';
@@ -13,5 +14,6 @@
 			<p class="lead">{t('chat.lead')}</p>
 		</div>
 	</header>
+	<PageGuide name="chat" steps={3} />
 	<ChatView preselect={page.url.searchParams.getAll('kb')} />
 </div>

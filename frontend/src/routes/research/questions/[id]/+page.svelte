@@ -1,4 +1,6 @@
 <script lang="ts">
+	import PageGuide from '#lib/components/PageGuide.svelte';
+	import StepTag from '#lib/components/StepTag.svelte';
 	import { page } from '$app/state';
 	import Icon from '#lib/components/Icon.svelte';
 	import LabelForm from '#lib/components/LabelForm.svelte';
@@ -199,11 +201,12 @@
 				{#if ws.guideline}<details class="guideline"><summary>{t('qs.guideline')}</summary><p class="small">{ws.guideline}</p></details>{/if}
 			</div>
 		</header>
+		<PageGuide name="qset" steps={5} />
 		{#if frozen}<p class="notice info">{t('qs.frozenNote')}</p>{/if}
 
 		{#if ws.show_proposals === null && !frozen}
 			<section class="panel mode">
-				<h2 class="heading">{t('qs.mode.title')}</h2>
+				<h2 class="heading"><StepTag n={1} />{t('qs.mode.title')}</h2>
 				<p class="small">{t('qs.mode.lead')}</p>
 				<div class="choices">
 					<label class="choice"><input type="radio" name="mode" value="hidden" bind:group={mode} /><strong>{t('qs.mode.hidden')}</strong><span>{t('qs.mode.hiddenHint')}</span></label>
@@ -249,11 +252,11 @@
 			</section>
 
 			<section class="panel work">
-				<div class="segmented" role="group" aria-label={t('qs.tools')}>
-					<button type="button" aria-pressed={tab === 'label'} onclick={() => (tab = 'label')}>{t('qs.tab.label')}</button>
-					<button type="button" aria-pressed={tab === 'add'} disabled={frozen} onclick={() => (tab = 'add')}>{t('qs.tab.add')}</button>
-					<button type="button" aria-pressed={tab === 'draft'} disabled={frozen || !ws.proposal_model} title={ws.proposal_model ? '' : t('qs.model.off')} onclick={() => (tab = 'draft')}>{t('qs.tab.draft')}</button>
-					<button type="button" aria-pressed={tab === 'exchange'} onclick={() => (tab = 'exchange')}>{t('qs.tab.exchange')}</button>
+				<div class="segmented tabs" role="group" aria-label={t('qs.tools')}>
+					<button type="button" aria-pressed={tab === 'add'} disabled={frozen} onclick={() => (tab = 'add')}><StepTag n={2} compact />{t('qs.tab.add')}</button>
+					<button type="button" aria-pressed={tab === 'draft'} disabled={frozen || !ws.proposal_model} title={ws.proposal_model ? '' : t('qs.model.off')} onclick={() => (tab = 'draft')}><StepTag n={2} compact />{t('qs.tab.draft')}</button>
+					<button type="button" aria-pressed={tab === 'label'} onclick={() => (tab = 'label')}><StepTag n={3} compact />{t('qs.tab.label')}</button>
+					<button type="button" aria-pressed={tab === 'exchange'} onclick={() => (tab = 'exchange')}><StepTag n={4} compact />{t('qs.tab.exchange')}</button>
 				</div>
 
 				{#if tab === 'label'}
@@ -369,7 +372,7 @@
 							<p class="small muted">{t('qs.exchange.noAnnotators')}</p>
 						{/if}
 						{#each others as o (o.annotator)}
-							<a class="btn primary compare" href="/research/questions/{id}/compare?other={encodeURIComponent(o.annotator)}">{t('qs.exchange.compare', { name: o.annotator_name })}<Icon name="arrow" /></a>
+							<a class="btn primary compare" href="/research/questions/{id}/compare?other={encodeURIComponent(o.annotator)}"><StepTag n={5} compact />{t('qs.exchange.compare', { name: o.annotator_name })}<Icon name="arrow" /></a>
 						{/each}
 						{#if ws.frozen}<a class="btn" href="/api/question-set/frozen?id={id}" download><Icon name="lock" />{t('qs.exchange.frozen')}</a>{/if}
 					</div>
@@ -428,6 +431,15 @@
 	.panel {
 		display: grid;
 		gap: 12px;
+	}
+	.tabs {
+		flex-wrap: wrap;
+		justify-self: start;
+	}
+	.tabs button {
+		display: inline-flex;
+		align-items: center;
+		white-space: nowrap;
 	}
 	.list {
 		position: sticky;

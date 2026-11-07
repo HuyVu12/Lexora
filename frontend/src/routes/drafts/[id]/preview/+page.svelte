@@ -1,4 +1,5 @@
 <script lang="ts">
+	import PageGuide from '#lib/components/PageGuide.svelte';
 	import { page } from '$app/state';
 	import { goto } from '$app/navigation';
 	import Steps from '#lib/components/Steps.svelte';
@@ -60,6 +61,7 @@
 				<p class="lead serif">{draft.title}</p>
 			</div>
 		</header>
+		<PageGuide name="preview" steps={3} />
 
 		<section class="sheet summary">
 			<p class="headline serif">{t('preview.summary', { n: draft.diff.approved, target })}</p>

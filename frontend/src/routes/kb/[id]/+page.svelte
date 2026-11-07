@@ -1,4 +1,5 @@
 <script lang="ts">
+	import PageGuide from '#lib/components/PageGuide.svelte';
 	import { page } from '$app/state';
 	import { goto } from '$app/navigation';
 	import Icon from '#lib/components/Icon.svelte';
@@ -53,6 +54,7 @@
 				<button type="button" class="btn primary" disabled={!kb.approved_claims} onclick={startChat}><Icon name="chat" />{t('kb.ask')}</button>
 			</div>
 		</header>
+		<PageGuide name="kb" steps={3} />
 
 
 

@@ -272,6 +272,11 @@ async function main() {
     await open('/research');
     await waitFor('document.querySelector("h1")?.textContent.includes("Corpus nghiên cứu")', 'research page');
     await capture('research-empty');
+    // Page guides open on the first visit; hiding one is remembered across reloads.
+    assert(await evaluate('document.querySelector(".guide")?.classList.contains("open")'), 'guide open on first visit');
+    await evaluate('__click(".guide .btn", "Ẩn hướng dẫn"); true');
+    await open('/research');
+    await waitFor('!!document.querySelector(".guide") && !document.querySelector(".guide").classList.contains("open")', 'guide stays hidden after reload');
     await evaluate(`__fill(document.querySelector('.create input'), 'Corpus minh họa E2E'); document.querySelector('.create button[type=submit]').click(); true`);
     await waitFor('location.pathname.startsWith("/research/c") && !!document.querySelector(".segmented")', 'corpus page');
     await evaluate(helpers);

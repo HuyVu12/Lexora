@@ -1,4 +1,6 @@
 <script lang="ts">
+	import PageGuide from '#lib/components/PageGuide.svelte';
+	import StepTag from '#lib/components/StepTag.svelte';
 	import { goto } from '$app/navigation';
 	import Icon from '#lib/components/Icon.svelte';
 	import { api } from '#lib/api.js';
@@ -68,11 +70,12 @@
 				<p class="lead">{t('qs.lead')}</p>
 			</div>
 		</header>
+		<PageGuide name="qsets" steps={2} />
 		<p class="status"><Icon name="info" />{model ? t('qs.model.on', { model }) : t('qs.model.off')}</p>
 
 		<div class="cols">
 			<section class="panel" aria-labelledby="sets-heading">
-				<h2 class="heading" id="sets-heading">{t('qs.list')}</h2>
+				<h2 class="heading" id="sets-heading"><StepTag n={2} />{t('qs.list')}</h2>
 				{#if !sets}
 					<p class="muted">{t('common.loading')}</p>
 				{:else if sets.length}
@@ -95,7 +98,7 @@
 
 			<div class="stack">
 				<form class="panel" onsubmit={create}>
-					<h2 class="heading">{t('qs.create')}</h2>
+					<h2 class="heading"><StepTag n={1} />{t('qs.create')}</h2>
 					{#if versions.length}
 						<label class="field"><span>{t('qs.name')}</span><input maxlength="120" required bind:value={name} placeholder={t('qs.namePh')} /></label>
 						<label class="field"><span>{t('qs.version')}</span>
@@ -112,7 +115,7 @@
 				</form>
 
 				<section class="panel">
-					<h2 class="heading">{t('qs.importPack')}</h2>
+					<h2 class="heading"><StepTag n={1} />{t('qs.importPack')}</h2>
 					<p class="small muted">{t('qs.importPackLead')}</p>
 					<label class="field"><span>{t('qs.packFile')}</span><input type="file" accept=".json,application/json" disabled={busy} onchange={importPack} /></label>
 				</section>

@@ -1,4 +1,5 @@
 <script lang="ts">
+	import PageGuide from '#lib/components/PageGuide.svelte';
 	import Icon from '#lib/components/Icon.svelte';
 	import { api } from '#lib/api.js';
 	import { t, formatDay } from '#lib/i18n/index.svelte.js';
@@ -64,6 +65,7 @@
 				<p class="lead">{t('users.lead')}</p>
 			</div>
 		</header>
+		<PageGuide name="users" steps={3} />
 		<div class="layout">
 			<section class="sheet list">
 				<table class="table">

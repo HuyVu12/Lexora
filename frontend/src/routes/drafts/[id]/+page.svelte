@@ -1,4 +1,5 @@
 <script lang="ts">
+	import PageGuide from '#lib/components/PageGuide.svelte';
 	import { onDestroy } from 'svelte';
 	import { page } from '$app/state';
 	import { goto } from '$app/navigation';
@@ -194,6 +195,7 @@
 				</div>
 			{/if}
 		</header>
+		<PageGuide name="review" steps={4} />
 
 		<div class="grid">
 			<aside class="index" aria-label={t('review.index')}>

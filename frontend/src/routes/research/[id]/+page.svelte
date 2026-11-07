@@ -1,4 +1,6 @@
 <script lang="ts">
+	import PageGuide from '#lib/components/PageGuide.svelte';
+	import StepTag from '#lib/components/StepTag.svelte';
 	import { page } from '$app/state';
 	import Icon from '#lib/components/Icon.svelte';
 	import { api } from '#lib/api.js';
@@ -169,11 +171,12 @@
 				</p>
 			</div>
 		</header>
+		<PageGuide name="corpus" steps={3} />
 
 		<div class="cols">
 			<div class="stack">
 				<section class="panel" aria-labelledby="add-heading">
-					<h2 class="heading" id="add-heading">{t('corpus.add')}</h2>
+					<h2 class="heading" id="add-heading"><StepTag n={1} />{t('corpus.add')}</h2>
 					<div class="segmented" role="group" aria-label={t('corpus.add')}>
 						<button type="button" aria-pressed={mode === 'search'} onclick={() => (mode = 'search')}><Icon name="search" size={16} />{t('corpus.add.search')}</button>
 						<button type="button" aria-pressed={mode === 'link'} onclick={() => (mode = 'link')}><Icon name="link" size={16} />{t('corpus.add.link')}</button>
@@ -234,7 +237,7 @@
 				</section>
 
 				<section class="panel" aria-labelledby="docs-heading">
-					<h2 class="heading" id="docs-heading">{t('corpus.documents')}</h2>
+					<h2 class="heading" id="docs-heading"><StepTag n={2} />{t('corpus.documents')}</h2>
 					{#if corpus.documents.length}
 						<ul class="docs">
 							{#each corpus.documents as d (d.id)}
@@ -266,7 +269,7 @@
 			</div>
 
 			<section class="panel versions" aria-labelledby="versions-heading">
-				<h2 class="heading" id="versions-heading">{t('corpus.versions')}</h2>
+				<h2 class="heading" id="versions-heading"><StepTag n={3} />{t('corpus.versions')}</h2>
 				<p class="small muted">{t('corpus.versions.lead')}</p>
 				{#if corpus.changed_since_version && corpus.documents.length}
 					<form class="fields" onsubmit={freeze}>

@@ -1,4 +1,6 @@
 <script lang="ts">
+	import PageGuide from '#lib/components/PageGuide.svelte';
+	import StepTag from '#lib/components/StepTag.svelte';
 	import { page } from '$app/state';
 	import { goto } from '$app/navigation';
 	import Steps from '#lib/components/Steps.svelte';
@@ -92,10 +94,11 @@
 				<p class="lead">{t('import.lead')}</p>
 			</div>
 		</header>
+		<PageGuide name="import" steps={4} />
 
 		<form class="stack" onsubmit={submit}>
 			<fieldset class="panel">
-				<legend class="heading">{t('import.source.title')}</legend>
+				<legend class="heading"><StepTag n={1} />{t('import.source.title')}</legend>
 				<p class="small muted">{t('import.source.lead')}</p>
 				<div class="choices">
 					{#if sources.length}
@@ -125,7 +128,7 @@
 			</fieldset>
 
 			<fieldset class="panel">
-				<legend class="heading">{t('import.target.title')}</legend>
+				<legend class="heading"><StepTag n={2} />{t('import.target.title')}</legend>
 				<p class="small muted">{t('import.target.lead')}</p>
 				<div class="choices">
 					<label class="choice"><input type="radio" name="target" value="new" bind:group={mode} /><strong>{t('import.target.new')}</strong><span>{t('import.target.newHint')}</span></label>
@@ -149,7 +152,7 @@
 			</fieldset>
 
 			<fieldset class="panel">
-				<legend class="heading">{t('import.method.title')}</legend>
+				<legend class="heading"><StepTag n={3} />{t('import.method.title')}</legend>
 				<p class="small muted">{t('import.method.lead')}</p>
 				<div class="choices">
 					<label class="choice"><input type="radio" name="method" value="rules" bind:group={extraction} /><strong>{t('import.method.rules')}</strong><span>{t('import.method.rulesHint')}</span></label>
@@ -160,7 +163,7 @@
 			</fieldset>
 
 			<div class="row submit">
-				<button class="btn primary" type="submit" disabled={busy}>{t('import.submit')}</button>
+				<button class="btn primary" type="submit" disabled={busy}><StepTag n={4} compact />{t('import.submit')}</button>
 				<span class="small muted">{extraction === 'llm' ? t('import.method.aiNote') : t('import.method.rulesNote')}</span>
 			</div>
 		</form>
