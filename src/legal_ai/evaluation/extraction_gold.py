@@ -87,8 +87,8 @@ def check(rows, units):
                     problems.append(f"row {number} norm {index}: unknown slot {name}")
                 elif value not in (None, "") and locate(unit["text"], start, end, value) is None:
                     problems.append(f"row {number} norm {index}: {name} is not an exact quote")
-            if not (norm.get("slots") or {}).get("action"):
-                problems.append(f"row {number} norm {index}: action missing")
+            if not any((norm.get("slots") or {}).get(name) for name in ("action", "object", "conditions", "exceptions", "quantities", "deadlines", "outcome")):
+                problems.append(f"row {number} norm {index}: no content slot")
     return problems
 
 
