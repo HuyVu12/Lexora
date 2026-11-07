@@ -238,17 +238,7 @@
 		padding: 16px 18px;
 		background: var(--paper);
 		border: 1px solid var(--rule);
-		border-left: 4px solid var(--attention);
 		border-radius: var(--r-panel);
-	}
-	.items > li.agree {
-		border-left-color: var(--approve);
-	}
-	.items > li.done {
-		border-left-color: var(--graphite);
-	}
-	.items > li.empty {
-		border-left-color: var(--rule);
 	}
 	.qhead {
 		display: grid;
@@ -264,9 +254,24 @@
 	.num {
 		color: var(--muted);
 	}
+	/* State as a labelled chip: attention for a disagreement, green for a match, graphite once settled. */
 	.state {
-		color: var(--ink-2);
 		white-space: nowrap;
+		padding: 1px 9px;
+		border-radius: 999px;
+		border: 1px solid #f0d3a1;
+		background: var(--attention-soft);
+		color: var(--attention);
+	}
+	.agree .state {
+		border-color: #b9dcc5;
+		background: var(--approve-soft);
+		color: var(--approve);
+	}
+	.done .state {
+		border-color: var(--graphite);
+		background: var(--graphite);
+		color: var(--paper);
 	}
 	.sides {
 		display: grid;
