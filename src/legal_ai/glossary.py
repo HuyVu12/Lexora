@@ -198,6 +198,40 @@ GLOSSARY = {
         "term": "Kho công khai",
         "definition": "Cho phép gửi nội dung kho tới dịch vụ AI khi bạn chủ động chọn dùng AI cho một lượt.",
     },
+    "audit_duplicate_heading": {
+        "term": "Tiêu đề trùng số",
+        "definition": "Parser gặp lại một số Điều, khoản hoặc điểm đã có trong cùng cấp cha. Chữ vẫn được giữ nhưng gộp vào đơn vị trước đó, nên cần đối chiếu văn bản gốc. Thường do văn bản gốc gõ lặp, ví dụ hai điểm “d)” liền nhau hoặc hai dòng “Chương XI”.",
+        "example": "d) Quyết định việc cho phép nhà thầu tuyển dụng; d) Chấp thuận vị trí công việc.",
+        "highlight": "d)",
+    },
+    "audit_orphan_heading": {
+        "term": "Tiêu đề không có cấp cha",
+        "definition": "Một dòng trông như khoản (“1.”) hoặc điểm (“a)”) nhưng không nằm trong Điều hoặc khoản nào. Dòng đó được giữ là chữ của đơn vị đứng trước, không thành đơn vị riêng.",
+    },
+    "audit_sequence_gap": {
+        "term": "Số thứ tự bị nhảy",
+        "definition": "Số Điều hoặc khoản không liền nhau, ví dụ sau Điều 91 là Điều 93. Có thể văn bản gốc thiếu một tiêu đề; nếu corpus chỉ lấy một số Điều được chọn thì chỗ nhảy là bình thường.",
+    },
+    "audit_heading_variant": {
+        "term": "Tiêu đề Điều viết sai chính tả",
+        "definition": "Văn bản gốc viết sai chữ “Điều”. Lexora vẫn tách đúng Điều đó và ghi lại để bạn biết nguồn có lỗi gõ; nguyên văn không bị sửa.",
+        "example": "Điêu 38. Chậm đóng bảo hiểm xã hội bắt buộc, bảo hiểm thất nghiệp",
+        "highlight": "Điêu",
+    },
+    "audit_quoted_text": {
+        "term": "Trích dẫn sửa đổi",
+        "definition": "Điều này sửa đổi một văn bản khác và trích nội dung mới trong dấu ngoặc kép. Các Điều, khoản, điểm bên trong trích dẫn thuộc văn bản bị sửa, nên Lexora giữ chúng là chữ của khoản đang trích dẫn và không tách thành đơn vị con. Kho tri thức chưa nhập loại Điều này.",
+        "example": "Sửa đổi, bổ sung khoản 5 Điều 3 như sau: “5. Giám đốc điều hành là người đứng đầu chi nhánh.”",
+        "highlight": "“5. Giám đốc điều hành là người đứng đầu chi nhánh.”",
+    },
+    "audit_unclosed_quote": {
+        "term": "Dấu ngoặc kép không đóng",
+        "definition": "Một dòng mở ngoặc kép nhưng đến hết văn bản không có dấu đóng. Lexora bỏ qua dấu này và tách bình thường; nên xem văn bản gốc có thiếu dấu không.",
+    },
+    "audit_appendix_start": {
+        "term": "Bắt đầu phụ lục",
+        "definition": "Từ dòng “Phụ lục” trở đi là biểu mẫu kèm theo văn bản. Các dòng “Điều 1.” trong mẫu quyết định không phải Điều của văn bản, nên Lexora không tách phần này và không đưa vào bản ghi truy xuất; nội dung vẫn xem được ở mục Phụ lục.",
+    },
     "context": {
         "term": "Ngữ cảnh",
         "definition": "Câu dẫn của Điều hoặc khoản chứa đoạn trích. Đọc cùng để hiểu đúng phạm vi áp dụng.",

@@ -2,6 +2,7 @@
 	import PageGuide from '#lib/components/PageGuide.svelte';
 	import { page } from '$app/state';
 	import Icon from '#lib/components/Icon.svelte';
+	import Term from '#lib/components/Term.svelte';
 	import { api } from '#lib/api.js';
 	import { t, formatDay } from '#lib/i18n/index.svelte.js';
 	import { session, canReview } from '#lib/session.svelte.js';
@@ -98,7 +99,7 @@
 							<li>
 								<Icon name="warn" size={16} />
 								<span>
-									<strong>{auditLabel(a.code)}</strong>
+									<strong>{#if AUDIT_CODES.has(a.code)}<Term key={`audit_${a.code}`}>{auditLabel(a.code)}</Term>{:else}{a.code}{/if}</strong>
 									{#if a.unit_id}<a class="small" href="#{'u-' + a.unit_id.replace(/[^a-z0-9-]/gi, '_')}" onclick={() => (filter = 'all')}><code>{a.unit_id.slice(doc.document_id.length + 1)}</code></a>{/if}
 									<span class="small muted">{t('corpus.doc.offset', { n: a.offset })}</span>
 								</span>

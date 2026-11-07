@@ -52,6 +52,17 @@ class GlossaryTests(unittest.TestCase):
             if "highlight" in entry:
                 self.assertIn(entry["highlight"], entry["example"], key)
 
+    def test_every_parser_audit_code_has_an_explanation(self):
+        import re
+        parser = (ROOT / "src" / "legal_ai" / "ingestion" / "parser.py").read_text(encoding="utf-8")
+        codes = set(re.findall(r'"code": "(\w+)"', parser)) | set(re.findall(r'\("(\w+_(?:quote|text))", index', parser))
+        page = (ROOT / "frontend" / "src" / "routes" / "research" / "[id]" / "document" / "[row]" / "+page.svelte").read_text(encoding="utf-8")
+        shown = set(re.findall(r"'(\w+)'", page.split("AUDIT_CODES = new Set([", 1)[1].split("]", 1)[0]))
+        self.assertTrue({"duplicate_heading", "quoted_text", "appendix_start"} <= codes)
+        self.assertEqual(codes, shown, "the document page lists every audit code the parser emits")
+        for code in shown:
+            self.assertIn(f"audit_{code}", GLOSSARY, code)
+
     def test_modality_cues_named_in_glossary_are_cues_lexora_accepts(self):
         for modality, cues in MODALITY_CUES.items():
             named = {cue.strip() for cue in GLOSSARY[modality]["cues"].split(",")}
