@@ -107,8 +107,21 @@
 				: true
 	);
 
+	// AI extraction sends text out, so it waits for one confirmation naming the model and what is sent.
+	let aiConfirmOpen = $state(false);
+	let aiConfirmed = false;
+	const confirmAi = () => {
+		aiConfirmed = true;
+		(document.getElementById('import-form') as HTMLFormElement | null)?.requestSubmit();
+	};
+
 	async function submit(event: SubmitEvent) {
 		event.preventDefault();
+		if (extraction === 'llm' && !aiConfirmed) {
+			aiConfirmOpen = true;
+			return;
+		}
+		aiConfirmed = false;
 		busy = true;
 		await act(async () => {
 			const target = mode === 'new' ? { mode: 'new', name, description, data_class: dataClass } : { mode: 'merge', kb_id: kbId };
@@ -141,7 +154,7 @@
 		</header>
 		<PageGuide name="import" steps={4} />
 
-		<form class="stack" onsubmit={submit}>
+		<form class="stack" id="import-form" onsubmit={submit}>
 			<fieldset class="panel">
 				<legend class="heading"><StepTag n={1} />{t('import.source.title')}</legend>
 				<p class="small muted">{t('import.source.lead')}</p>
@@ -243,6 +256,12 @@
 		</form>
 	{/if}
 </div>
+
+<ConfirmDialog bind:open={aiConfirmOpen} title={t('import.ai.confirmTitle')} confirmLabel={t('import.ai.confirmGo')} onconfirm={confirmAi}>
+	<p>{app?.extraction_via === 'claude' ? t('import.ai.confirmClaude', { model: app?.extraction_model ?? '' }) : t('import.ai.confirmRouter', { model: app?.extraction_model ?? '' })}</p>
+	<p class="small muted">{t('import.ai.confirmData')}</p>
+	<p class="small muted">{t('import.ai.confirmBudget', { left: app?.extraction_calls_left ?? 0 })}</p>
+</ConfirmDialog>
 
 <ConfirmDialog bind:open={confirmOpen} title={t('corpus.confirm.title')} confirmLabel={t('corpus.confirm.go')} onconfirm={fetchDocument}>
 	<p>{t('corpus.confirm.body')}</p>

@@ -19,6 +19,9 @@ def add_arguments(parser, default_port):
     parser.add_argument("--embedding-dimensions", type=int, default=768)
     parser.add_argument("--embedding-max-calls", type=int, default=200)
     parser.add_argument("--approve-router", action="store_true", help="Explicitly authorize the exact selected routes; does not assert pricing")
+    parser.add_argument("--extract-claude-model", help="Norm extraction of public KBs through the local claude CLI instead of 9Router, e.g. claude-opus-5-5")
+    parser.add_argument("--extract-claude-effort", default="medium", choices=["low", "medium", "high", "xhigh", "max"])
+    parser.add_argument("--extract-claude-max-calls", type=int, default=40, help="Call budget of this run for Claude Code extraction")
     parser.add_argument("--catalog", help="Offline document catalog (catalog-v1 SQLite); default data/catalog/catalog-v1.sqlite when present")
     parser.add_argument("--allow-vbpl", action="store_true", help="Let reviewers fetch one vbpl.vn document per confirmed request")
     parser.add_argument("--vbpl-dir", default="data/raw/vbpl", help="Snapshot directory for fetched vbpl.vn documents")
@@ -49,6 +52,14 @@ def providers(args, parser):
                                         max_calls=args.embedding_max_calls, dimensions=args.embedding_dimensions)
     elif args.approve_router:
         parser.error("--approve-router requires --router-model, --extract-model or --embedding-model")
+    if args.extract_claude_model:
+        if args.extract_model:
+            parser.error("choose one extractor: --extract-model (9Router) or --extract-claude-model (Claude Code)")
+        if not args.approve_claude:
+            parser.error("--extract-claude-model requires --approve-claude")
+        from legal_ai.providers.claude_code import ClaudeCodeProvider
+        extractor = ClaudeCodeProvider(model=args.extract_claude_model, effort=args.extract_claude_effort,
+                                       max_calls=args.extract_claude_max_calls, approved=True)
     return provider, extractor, embedder
 
 
@@ -73,8 +84,8 @@ def sources(args):
 def proposer(args, parser):
     """The Claude Code provider for question proposals, or None; it needs both --proposal-model and --approve-claude."""
     if not args.proposal_model:
-        if args.approve_claude:
-            parser.error("--approve-claude requires --proposal-model")
+        if args.approve_claude and not args.extract_claude_model:
+            parser.error("--approve-claude requires --proposal-model or --extract-claude-model")
         return None
     if not args.approve_claude:
         parser.error("--proposal-model requires --approve-claude")

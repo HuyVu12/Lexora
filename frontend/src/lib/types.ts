@@ -56,6 +56,8 @@ export interface AppState {
 	account: Account;
 	router_enabled: boolean;
 	extraction_model: string | null;
+	extraction_via?: 'claude' | '9router' | null;
+	extraction_calls_left?: number;
 	embedding_model: string | null;
 }
 

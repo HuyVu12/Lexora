@@ -819,7 +819,13 @@ const en: Record<MessageKey, string> = {
 	'import.pick.blocked': 'Cannot be imported: nested quotations the parser cannot split correctly.',
 	'import.pick.none': 'No article matches the filter.',
 	'import.pick.noChapter': 'Outside any chapter',
-	'import.pick.other': 'Choose another document'
+	'import.pick.other': 'Choose another document',
+	'import.ai.confirmTitle': 'Extract norms with AI?',
+	'import.ai.confirmGo': 'Create the draft and call the model',
+	'import.ai.confirmClaude': 'Lexora will call {model} through your Claude Code, about one call per article (long articles may take two), in the background after the draft is created.',
+	'import.ai.confirmRouter': 'Lexora will call {model} through 9Router, about one call per article, in the background after the draft is created.',
+	'import.ai.confirmData': 'Only sentences the rules could not structure are sent, with their article or clause lead. Every proposed span is checked as an exact quote; you still review every norm.',
+	'import.ai.confirmBudget': 'Calls left in this run: {left}; when they run out, the remaining sentences keep the rule results.'
 };
 
 export default en;

@@ -18,14 +18,17 @@ import tempfile
 import threading
 
 from legal_ai.common.io import digest
+from legal_ai.providers import pilot
 
 EFFORTS = {"low", "medium", "high", "xhigh", "max"}
 
 
-class ProviderError(Exception):
+class ProviderError(pilot.ProviderError):
+    """The shared provider error (a `code` callers branch on) with a short `detail` for logs."""
+
     def __init__(self, code, detail=""):
-        super().__init__(f"{code}: {detail}" if detail else code)
-        self.code, self.detail = code, detail
+        super().__init__(code)
+        self.detail = detail
 
 
 class ClaudeCodeProvider:

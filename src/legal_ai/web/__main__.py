@@ -23,6 +23,8 @@ def main():
     app = create_app(store, args.port, provider=provider, source_catalog=args.source_catalog, extractor=extractor,
                      embedder=embedder, frontend_dir=args.frontend, catalog_path=catalog_path, vbpl_dir=vbpl_dir,
                      proposer=question_model)
+    if extractor is not None and hasattr(extractor, "structured"):
+        print(f"Claude Code: up to {extractor.max_calls} extraction calls with {extractor.model} ({extractor.effort})", flush=True)
     if question_model:
         print(f"Claude Code: up to {question_model.max_calls} proposal calls with {question_model.model} ({question_model.effort})", flush=True)
     if vbpl_dir:

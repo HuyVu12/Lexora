@@ -397,6 +397,8 @@ def create_app(store, port, *, provider=None, source_catalog=None, extractor=Non
         value = {**store.state(), "chat_sessions": [s for s in chat.sessions() if s["id"] in mine],
                  "router_enabled": provider is not None, "account": account,
                  "extraction_model": extractor.model if extractor else None,
+                 "extraction_via": ("claude" if hasattr(extractor, "structured") else "9router") if extractor else None,
+                 "extraction_calls_left": extractor.max_calls - extractor.calls if extractor else 0,
                  "embedding_model": embedder.model if embedder else None}
         if account["role"] not in REVIEW_ROLES:
             value["drafts"] = []

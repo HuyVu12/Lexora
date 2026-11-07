@@ -83,5 +83,25 @@ class ClaudeCodeProviderTests(unittest.TestCase):
             self.provider(effort="turbo")
 
 
+class ExtractionFlagTests(unittest.TestCase):
+    def parse(self, *argv):
+        import argparse
+        from legal_ai.web.setup import add_arguments, providers
+        parser = argparse.ArgumentParser()
+        add_arguments(parser, 8765)
+        parser.error = lambda message: (_ for _ in ()).throw(ValueError(message))
+        with mock.patch("legal_ai.providers.claude_code.shutil.which", return_value="claude"):
+            return providers(parser.parse_args(list(argv)), parser)
+
+    def test_claude_extraction_needs_approval_and_excludes_9router(self):
+        _, extractor, _ = self.parse("--extract-claude-model", "claude-opus-5-5", "--approve-claude", "--extract-claude-max-calls", "7")
+        self.assertEqual((extractor.model, extractor.effort, extractor.max_calls), ("claude-opus-5-5", "medium", 7))
+        with self.assertRaisesRegex(ValueError, "--approve-claude"):
+            self.parse("--extract-claude-model", "claude-opus-5-5")
+        with self.assertRaisesRegex(ValueError, "choose one extractor"):
+            self.parse("--extract-claude-model", "claude-opus-5-5", "--approve-claude", "--extract-model", "x", "--approve-router")
+        self.assertEqual(self.parse(), (None, None, None))
+
+
 if __name__ == "__main__":
     unittest.main()

@@ -153,6 +153,34 @@ class AiExtractionTests(unittest.TestCase):
         self.assertTrue(any(c["origin"] == "cue" for c in view["claims"]))
         self.assertEqual(view["extraction"]["errors"], ["provider_unavailable"])
 
+    def test_structured_providers_get_the_schema_and_their_errors_keep_rule_results(self):
+        from legal_ai.extraction.llm_norms import SCHEMA, LLM_SLOTS
+        from legal_ai.providers.claude_code import ProviderError as ClaudeError
+
+        class Structured:
+            model, max_calls, calls = "claude-opus-5-5", 5, 0
+
+            def __init__(self, error=None):
+                self.error, self.seen = error, []
+
+            def structured(self, system, prompt, schema, purpose="structured"):
+                self.seen.append((schema, purpose, json.loads(prompt)))
+                if self.error:
+                    raise ClaudeError(self.error, "detail")
+                request = self.seen[-1][2]
+                norm = {name: None for name in LLM_SLOTS} | {"action": "bảo đảm", "object": "các thông tin cơ bản", "modality": "obligation", "modality_cue": "phải"}
+                return {"output": {"results": [{"sentence": s["id"], "norms": [norm] if "bảo đảm" in s["text"] else []} for s in request["sentences"]]}}
+
+        provider = Structured()
+        view = self.run_job(self.prepare(), provider)
+        self.assertIs(provider.seen[0][0], SCHEMA)
+        self.assertEqual(provider.seen[0][1], "norm-extraction")
+        ai = [c for c in view["claims"] if c["origin"] == "ai"]
+        self.assertEqual([slot_texts(c) for c in ai], [{"action": "bảo đảm", "object": "các thông tin cơ bản"}])
+        failed = self.run_job(self.prepare(), Structured(error="budget_exhausted"))
+        self.assertEqual((failed["extraction"]["state"], failed["extraction"]["errors"]), ("failed", ["budget_exhausted"]))
+        self.assertTrue(any(c["origin"] == "cue" for c in failed["claims"]), "rule results stay when Claude Code fails")
+
     def test_garbage_output_is_rejected_not_parsed_loosely(self):
         view = self.run_job(self.prepare(), FakeExtractor("Tôi nghĩ câu này là nghĩa vụ."))
         self.assertEqual(view["extraction"]["errors"], ["invalid_extraction_output"])

@@ -817,7 +817,13 @@ const vi = {
 	'import.pick.blocked': 'Không nhập được: có trích dẫn lồng nhau mà parser không tách đúng.',
 	'import.pick.none': 'Không có Điều nào khớp bộ lọc.',
 	'import.pick.noChapter': 'Không thuộc Chương nào',
-	'import.pick.other': 'Chọn văn bản khác'
+	'import.pick.other': 'Chọn văn bản khác',
+	'import.ai.confirmTitle': 'Tách quy phạm bằng AI?',
+	'import.ai.confirmGo': 'Tạo bản nháp và gọi model',
+	'import.ai.confirmClaude': 'Lexora sẽ gọi {model} qua Claude Code của bạn, mỗi Điều khoảng một lượt (Điều dài có thể hai lượt), chạy nền sau khi tạo bản nháp.',
+	'import.ai.confirmRouter': 'Lexora sẽ gọi {model} qua 9Router, mỗi Điều khoảng một lượt, chạy nền sau khi tạo bản nháp.',
+	'import.ai.confirmData': 'Chỉ gửi các câu bộ quy tắc chưa tách được, kèm câu dẫn của Điều/Khoản. Mọi đoạn model đề xuất đều được đối chiếu đúng nguyên văn; bạn vẫn duyệt từng quy phạm.',
+	'import.ai.confirmBudget': 'Ngân sách còn lại của phiên chạy: {left} lượt gọi; khi hết, các câu còn lại giữ kết quả theo quy tắc.'
 } satisfies Record<string, string>;
 
 export default vi;
