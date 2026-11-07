@@ -493,3 +493,40 @@ export interface GoldComparison {
 	adjudicated: number;
 	items: { key: string; unit_id: string; text: string; first: GoldNorm[] | null; second: GoldNorm[] | null; agree: boolean; final: { norms: GoldNorm[]; decided_by: string } | null }[];
 }
+
+export interface KbInjection {
+	run: string;
+	validator_version: string;
+	clean_claims: number;
+	false_reject_rate: number | null;
+	detectable_rate: number | null;
+	semantic_rate: number | null;
+	by_type: Record<string, { injected: number; detection_rate: number | null; expected_detectable: boolean }>;
+}
+
+export interface KbRunSummary {
+	run: string;
+	run_id: string;
+	created_at: string;
+	provider: string;
+	model: string;
+	effort: string | null;
+	max_tokens: number | null;
+	validator_version: string | null;
+	batches_attempted: number;
+	batches_ok: number;
+	batch_errors: Record<string, number>;
+	calls_made: number;
+	sentences_attempted: number;
+	sentences_without_answer: number | null;
+	dk3_claims: number;
+	dk4_claims: number;
+	rejected: number;
+	rejected_rate: number | null;
+	reasons: Record<string, number>;
+	modality_unverified_rate: number | null;
+	prompt_tokens: number;
+	completion_tokens: number;
+	cost_usd: number | null;
+	injection: KbInjection | null;
+}

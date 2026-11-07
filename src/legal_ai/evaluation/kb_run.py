@@ -1,7 +1,9 @@
 """LLM knowledge base for DK3/DK4 (`llm-kb-run-v1`): one extraction snapshot, two conditions.
 
-`extract` sends every sentence of every leaf unit of a frozen corpus bundle to one structured model (Claude Code,
-fixed model and effort) in article-sized batches, with the `norm-llm-v1` prompt and schema. Every answer is
+`extract` sends every sentence of every leaf unit of a frozen corpus bundle to one model in article-sized batches,
+with the `norm-llm-v1` prompt: a structured provider (Claude Code, fixed model and effort) answers under the JSON
+schema; a chat provider (9Router, one fixed model, temperature 0) answers in text that Lexora parses as JSON, and
+its raw text is stored too, so unparseable answers stay on record as errors. Every answer is
 appended to `raw.jsonl` as soon as it arrives, keyed by the hash of its request, so an interrupted run resumes
 without paying twice; model answers cannot be reproduced by re-running (no seed), so `raw.jsonl` is the record.
 
@@ -17,13 +19,14 @@ import json
 from pathlib import Path
 
 from legal_ai.common.io import canonical, digest, read_jsonl, write_json, write_jsonl
-from legal_ai.extraction.llm_norms import LLM_SLOTS, MAX_NORMS_PER_SENTENCE, RUN as PROMPT_RUN, SCHEMA, SYSTEM, plan, request_text
+from legal_ai.extraction.llm_norms import LLM_SLOTS, MAX_NORMS_PER_SENTENCE, RUN as PROMPT_RUN, SCHEMA, SYSTEM, parse_json, plan, request_text
 from legal_ai.extraction.norms import leaf_units, sentences
 from legal_ai.providers.pilot import ProviderError
 from legal_ai.validation.claims import VALIDATOR_VERSION, validate
 
 RUN_VERSION = "llm-kb-run-v1"
 KB_VERSION = "llm-kb-v1"
+CHAT_MAX_TOKENS = 16000  # Reasoning models spend part of the budget before answering.
 
 
 def targets(units):
@@ -49,7 +52,7 @@ def estimate(units):
             "request_characters": sum(len(request) for *_, request in planned), "system_characters": len(SYSTEM)}
 
 
-def extract(bundle_units, provider, output, *, log=None):
+def extract(bundle_units, provider, output, *, log=None, max_tokens=CHAT_MAX_TOKENS):
     """Call the model for every batch not yet in `output/raw.jsonl`. Returns counts; never retries a failed call."""
     output = Path(output)
     output.mkdir(parents=True, exist_ok=True)
@@ -65,10 +68,18 @@ def extract(bundle_units, provider, output, *, log=None):
             entry = {"key": key, "article_id": article_id, "rows": rows, "request_sha256": digest(request),
                      "at": datetime.now(timezone.utc).isoformat(timespec="seconds")}
             try:
-                answer = provider.structured(SYSTEM, request, SCHEMA, purpose="kb-extraction")
-                entry |= {"status": "ok", "output": answer["output"], "usage": answer.get("usage"), "cost_usd": answer.get("cost_usd"),
-                          "served_by": answer.get("model")}
-                counts["called"] += 1
+                if hasattr(provider, "structured"):
+                    answer = provider.structured(SYSTEM, request, SCHEMA, purpose="kb-extraction")
+                    entry |= {"status": "ok", "output": answer["output"], "usage": answer.get("usage"), "cost_usd": answer.get("cost_usd"),
+                              "served_by": answer.get("model")}
+                else:
+                    answer = provider.complete(SYSTEM, request, max_tokens=max_tokens)
+                    entry |= {"raw_content": answer["content"], "usage": answer.get("usage"), "served_by": provider.model}
+                    try:
+                        entry |= {"status": "ok", "output": parse_json(answer["content"])}
+                    except ValueError:
+                        entry |= {"status": "error", "code": "invalid_output"}
+                counts["called" if entry["status"] == "ok" else "failed"] += 1
             except ProviderError as exc:
                 entry |= {"status": "error", "code": exc.code}
                 counts["failed"] += 1
@@ -76,7 +87,7 @@ def extract(bundle_units, provider, output, *, log=None):
             handle.flush()
             if log:
                 log(f"{number}/{len(planned)} {article_id}: {entry['status']}")
-            if entry["status"] == "error" and entry["code"] == "budget_exhausted":
+            if entry["status"] == "error" and entry["code"] in ("budget_exhausted", "quota_exhausted"):
                 break
     write_jsonl(output / "ledger.jsonl", getattr(provider, "ledger", []))  # Calls of this session, with hashes and usage.
     return counts
@@ -153,7 +164,7 @@ def materialize(bundle_units, output):
     return report
 
 
-def start(bundle, output, model, effort):
+def start(bundle, output, model, effort, provider="claude-code", max_tokens=None):
     """Write the run manifest of a new run directory (or check it matches when resuming)."""
     output = Path(output)
     bundle = Path(bundle)
@@ -161,14 +172,14 @@ def start(bundle, output, model, effort):
     manifest_path = output / "manifest.json"
     if manifest_path.exists():
         manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
-        if (manifest["units_sha256"], manifest["model"], manifest["effort"]) != (units_sha, model, effort):
-            raise ValueError("this run directory belongs to another bundle, model or effort; use a new directory")
+        if (manifest["units_sha256"], manifest["model"], manifest["effort"], manifest.get("max_tokens")) != (units_sha, model, effort, max_tokens):
+            raise ValueError("this run directory belongs to another bundle, model, effort or token limit; use a new directory")
         return manifest
     if output.exists() and any(output.iterdir()):
         raise ValueError("output must be empty or an earlier run of the same bundle")
     manifest = {"run_version": RUN_VERSION, "run_id": f"kb-{datetime.now(timezone.utc).strftime('%Y%m%dT%H%M%SZ')}",
                 "created_at": datetime.now(timezone.utc).isoformat(timespec="seconds"), "bundle": bundle.as_posix(), "units_sha256": units_sha,
-                "model": model, "effort": effort, "prompt": PROMPT_RUN, "system_sha256": digest(SYSTEM),
+                "provider": provider, "model": model, "effort": effort, "max_tokens": max_tokens, "prompt": PROMPT_RUN, "system_sha256": digest(SYSTEM),
                 "schema_sha256": digest(canonical(SCHEMA)),
                 "limitations": ["Model answers are not reproducible by re-running; raw.jsonl is the record",
                                 "Only norms (obligation, prohibition, entitlement, permission) are extracted; definitions without a modal cue are left out",

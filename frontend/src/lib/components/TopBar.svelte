@@ -15,9 +15,10 @@
 	];
 	const author: Item[] = [{ href: '/import', key: 'nav.import', match: (p) => p.startsWith('/import') || p.startsWith('/drafts') }];
 	const research: Item[] = [
-		{ href: '/research', key: 'nav.corpora', match: (p) => p.startsWith('/research') && !p.startsWith('/research/questions') && !p.startsWith('/research/gold') },
+		{ href: '/research', key: 'nav.corpora', match: (p) => p.startsWith('/research') && !/^\/research\/(questions|gold|results)/.test(p) },
 		{ href: '/research/questions', key: 'nav.questions', match: (p) => p.startsWith('/research/questions') },
-		{ href: '/research/gold', key: 'nav.gold', match: (p) => p.startsWith('/research/gold') }
+		{ href: '/research/gold', key: 'nav.gold', match: (p) => p.startsWith('/research/gold') },
+		{ href: '/research/results', key: 'nav.results', match: (p) => p.startsWith('/research/results') }
 	];
 	const admin: Item[] = [{ href: '/admin/users', key: 'nav.users', match: (p) => p.startsWith('/admin') }];
 	const groups = $derived([
@@ -252,12 +253,12 @@
 	.end {
 		flex-shrink: 0;
 	}
-	@media (max-width: 1360px) {
+	@media (max-width: 1480px) {
 		.name {
 			display: none;
 		}
 	}
-	@media (max-width: 1240px) {
+	@media (max-width: 1320px) {
 		.topbar {
 			gap: 16px;
 		}
@@ -275,12 +276,12 @@
 			display: none;
 		}
 	}
-	@media (max-width: 1180px) {
+	@media (max-width: 1260px) {
 		.brand span {
 			display: none;
 		}
 	}
-	@media (max-width: 1060px) {
+	@media (max-width: 1140px) {
 		.about {
 			display: none;
 		}

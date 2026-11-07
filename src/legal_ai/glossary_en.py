@@ -67,5 +67,10 @@ GLOSSARY_EN = {
     "unassigned_text": {"term": "Text outside articles", "definition": "The start of the document before the first article: state heading, number, legal bases. Kept as is but part of no unit."},
     "f1_strict": {"term": "F1, strict match", "definition": "The harmonic mean of precision and recall. Strict: two phrases must be equal after ignoring case, spacing and edge punctuation."},
     "f1_lenient": {"term": "F1, lenient match", "definition": "Like strict F1 but tolerant of boundaries: one phrase contains the other, or at least half of the syllables overlap."},
+    "dk3": {"term": "DK3", "definition": "The knowledge base an LLM extracted under the schema, with every value as the model gave it, before validation."},
+    "dk4": {"term": "DK4", "definition": "DK3 after the automatic validator drops violating claims (bad schema, wrong unit, non-verbatim phrases, made-up or contradicting cues, duplicates)."},
+    "modality_unverified": {"term": "Modality unverified", "definition": "The model gave a modality but the sentence has no cue word to check it against, common in list points. The claim is kept."},
+    "planted_errors": {"term": "Planted errors", "definition": "Clean DK4 claims are corrupted on purpose, one error type at a time, to see how many the validator catches. Technical errors should be caught; semantic ones such as a dropped negation are not, a limit to report."},
+    "rejected_claims": {"term": "Rejected", "definition": "DK3 claims that did not make it into DK4, and their share; the reasons are in the details."},
     "context": {"term": "Context", "definition": "The lead-in of the article or clause that holds the quote. Read it with the quote to understand where it applies."},
 }

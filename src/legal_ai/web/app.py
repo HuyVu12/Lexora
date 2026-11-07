@@ -266,7 +266,7 @@ def error(message, status, **extra):
 
 
 def create_app(store, port, *, provider=None, source_catalog=None, extractor=None, embedder=None, token=None, frontend_dir=None,
-               catalog_path=None, vbpl_dir=None, proposer=None):
+               catalog_path=None, vbpl_dir=None, proposer=None, experiments_dir="experiments/runs"):
     """Build the app for one loopback port and one workspace store; `frontend_dir` is the SvelteKit static build.
 
     `catalog_path` enables the offline document catalog. `vbpl_dir` (only with --allow-vbpl) lets reviewers fetch
@@ -731,6 +731,15 @@ def create_app(store, port, *, provider=None, source_catalog=None, extractor=Non
     @app.get("/api/question-set/frozen")
     def question_frozen(id: str = Query(), _=Depends(reviewer)):
         return download(questions.frozen_file(id), f"lexora-questions-{id}.json")
+
+    # Experiment results (read-only view of run directories) -----------------------------------
+    @app.get("/api/experiments/kb")
+    def experiment_kb_runs(_=Depends(reviewer)):
+        from legal_ai.evaluation.kb_compare import kb_runs, summarize
+        from legal_ai.validation.claims import VALIDATOR_VERSION
+        folder = Path(experiments_dir)
+        runs = [summarize(path) for path in kb_runs(folder)] if folder.exists() else []
+        return {"runs": runs, "validator_version": VALIDATOR_VERSION, "folder": folder.as_posix()}
 
     # Extraction gold sets (RQ1) --------------------------------------------------------------
     @app.get("/api/gold")

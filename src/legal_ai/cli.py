@@ -63,6 +63,10 @@ def main():
     command.add_argument("--effort", default="medium")
     command.add_argument("--max-calls", type=int, default=0, help="call budget of this session (required unless --dry-run)")
     command.add_argument("--approve-claude", action="store_true", help="explicit approval of the model calls")
+    command.add_argument("--router-model", help="extract with one approved 9Router model instead (a MODEL_* alias from .env or a model name)")
+    command.add_argument("--approve-router", action="store_true", help="explicit approval of the 9Router endpoint, model and data")
+    command.add_argument("--timeout", type=int, default=120, help="seconds per 9Router call (5-120)")
+    command.add_argument("--max-tokens", type=int, default=16000, help="output token limit per 9Router call, the same for every compared model")
     command.add_argument("--dry-run", action="store_true", help="only count batches and characters; no model call")
     command = commands.add_parser("kb-materialize", help="rebuild dk3/dk4 and the validation report of a knowledge-base run from raw.jsonl; offline")
     command.add_argument("run", help="knowledge-base run directory")
@@ -93,6 +97,10 @@ def main():
     command.add_argument("--config", default="configs/experiments/answer.json")
     command.add_argument("--max-calls", type=int, required=True)
     command.add_argument("--approve-claude", action="store_true")
+    command = commands.add_parser("kb-compare", help="re-validate knowledge-base runs with the current validator and write a side-by-side report; offline")
+    command.add_argument("runs", nargs="*", help="run directories (default: every knowledge-base run under experiments/runs)")
+    command.add_argument("--json", default="docs/results/extraction-models.json")
+    command.add_argument("--markdown", default="docs/results/extraction-models.md")
     command = commands.add_parser("kb-inject", help="RQ2: plant errors of each type in DK4 claims and measure what the validator catches; offline")
     command.add_argument("run", help="knowledge-base run directory")
     command.add_argument("--output", required=True, help="new, empty directory")
@@ -162,12 +170,19 @@ def main():
                 if args.dry_run:
                     print(json.dumps(kb_run.estimate(units), ensure_ascii=False, indent=2))
                 else:
-                    from legal_ai.providers.claude_code import ClaudeCodeProvider
                     if args.max_calls < 1:
                         raise ValueError("--max-calls must be a positive call budget")
-                    provider = ClaudeCodeProvider(args.model, args.effort, args.max_calls, approved=args.approve_claude)
-                    kb_run.start(args.bundle, args.output, args.model, args.effort)
-                    counts = kb_run.extract(units, provider, args.output, log=lambda line: print(line, flush=True))
+                    if args.router_model:
+                        from legal_ai.providers.router import RouterProvider, read_settings
+                        settings = read_settings(Path.cwd() / ".env")
+                        name = settings[args.router_model] if args.router_model.startswith("MODEL_") and settings.get(args.router_model) else args.router_model
+                        provider = RouterProvider(settings, model=name, approved_route=args.approve_router, max_calls=args.max_calls, timeout=args.timeout)
+                        kb_run.start(args.bundle, args.output, name, "temperature-0", provider="9router", max_tokens=args.max_tokens)
+                    else:
+                        from legal_ai.providers.claude_code import ClaudeCodeProvider
+                        provider = ClaudeCodeProvider(args.model, args.effort, args.max_calls, approved=args.approve_claude)
+                        kb_run.start(args.bundle, args.output, args.model, args.effort)
+                    counts = kb_run.extract(units, provider, args.output, log=lambda line: print(line, flush=True), max_tokens=args.max_tokens)
                     print(json.dumps({"calls": counts, "report": kb_run.materialize(units, args.output)}, ensure_ascii=False, indent=2))
         elif args.command in ("answer-run", "answer-judge"):
             from legal_ai.providers.claude_code import ClaudeCodeProvider
@@ -193,6 +208,12 @@ def main():
             if args.compare:
                 report["agreement"] = agreement(args.sheet, args.compare)
             print(json.dumps(report, ensure_ascii=False, indent=2))
+        elif args.command == "kb-compare":
+            from legal_ai.evaluation.kb_compare import compare, kb_runs
+            runs = args.runs or kb_runs("experiments/runs")
+            summaries = compare(runs, args.json, args.markdown)
+            print(json.dumps([{k: s[k] for k in ("model", "batches_ok", "batches_attempted", "dk3_claims", "dk4_claims", "rejected")} for s in summaries],
+                             ensure_ascii=False, indent=2))
         elif args.command == "kb-inject":
             from legal_ai.common.io import read_jsonl
             from legal_ai.evaluation.error_injection import run as inject_run

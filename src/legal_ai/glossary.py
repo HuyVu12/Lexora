@@ -319,6 +319,26 @@ GLOSSARY = {
         "term": "F1, khớp lỏng",
         "definition": "Như F1 khớp chặt nhưng chấp nhận lệch ranh giới: một cụm chứa cụm kia, hoặc trùng ít nhất một nửa số tiếng.",
     },
+    "dk3": {
+        "term": "ĐK3",
+        "definition": "Kho tri thức do LLM trích xuất theo schema, giữ nguyên mọi giá trị model trả về, chưa qua kiểm chứng.",
+    },
+    "dk4": {
+        "term": "ĐK4",
+        "definition": "Chính ĐK3 sau khi bộ kiểm chứng tự động loại các bản ghi vi phạm (sai schema, sai đơn vị, cụm không nguyên văn, từ tình thái bịa hoặc mâu thuẫn, trùng lặp).",
+    },
+    "modality_unverified": {
+        "term": "Tính quy phạm chưa xác minh",
+        "definition": "Model nêu tính quy phạm nhưng không có từ tình thái nào trong câu để kiểm, thường gặp ở các điểm liệt kê. Bản ghi vẫn được giữ.",
+    },
+    "planted_errors": {
+        "term": "Chèn lỗi có chủ đích",
+        "definition": "Lấy bản ghi sạch của ĐK4, cố ý làm hỏng theo từng loại lỗi rồi xem bộ kiểm chứng bắt được bao nhiêu. Lỗi kỹ thuật nên bị bắt; lỗi ngữ nghĩa như bỏ phủ định thì không, đó là giới hạn cần báo cáo.",
+    },
+    "rejected_claims": {
+        "term": "Bị loại",
+        "definition": "Số bản ghi của ĐK3 không vào được ĐK4 và tỉ lệ trên tổng số; lý do nằm trong phần chi tiết.",
+    },
     "context": {
         "term": "Ngữ cảnh",
         "definition": "Câu dẫn của Điều hoặc khoản chứa đoạn trích. Đọc cùng để hiểu đúng phạm vi áp dụng.",

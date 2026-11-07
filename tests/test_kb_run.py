@@ -99,8 +99,30 @@ class KbRunTests(unittest.TestCase):
         counts, report = self.run_kb(provider)
         self.assertEqual((counts["already_done"], counts["called"], provider.calls), (1, 1, 1))
         self.assertEqual((report["sentences_without_answer"], report["dk3_claims"]), (0, 6))
-        with self.assertRaisesRegex(ValueError, "another bundle, model or effort"):
+        with self.assertRaisesRegex(ValueError, "another bundle, model, effort or token limit"):
             kb_run.start(self.bundle, self.output, "other-model", "medium")
+
+    def test_chat_providers_answer_in_text_that_is_parsed_and_kept(self):
+        class Chat:
+            model = "chat-stand-in"
+
+            def __init__(self):
+                self.inner = StandIn()
+
+            def complete(self, system, user, max_tokens=900):
+                answer = self.inner.structured(system, user, None)
+                if "Tiền lương" in json.loads(user)["article_heading"]:
+                    return {"content": "Xin lỗi, tôi không chắc.", "usage": {}}
+                return {"content": "```json\n" + json.dumps(answer["output"], ensure_ascii=False) + "\n```", "usage": {}}
+
+        kb_run.start(self.bundle, self.output, "chat-stand-in", "temperature-0", provider="9router")
+        counts = kb_run.extract(self.units, Chat(), self.output)
+        self.assertEqual((counts["called"], counts["failed"]), (1, 1))
+        rows = read_jsonl(self.output / "raw.jsonl")
+        self.assertEqual([r["status"] for r in rows], ["ok", "error"])
+        self.assertEqual(rows[1]["raw_content"], "Xin lỗi, tôi không chắc.", "an unparseable answer stays on record")
+        report = kb_run.materialize(self.units, self.output)
+        self.assertEqual((report["dk3_claims"], report["sentences_without_answer"]), (5, 1))
 
     def test_validator_reports_schema_and_integrity_failures_as_not_applicable_downstream(self):
         unit = next(u for u in self.units if u["unit_id"] == "syn/article-2")
@@ -145,3 +167,28 @@ class KbRunTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class KbCompareTests(unittest.TestCase):
+    def test_compare_revalidates_runs_and_links_their_planted_error_report(self):
+        from legal_ai.evaluation import error_injection
+        from legal_ai.evaluation.kb_compare import compare, kb_runs
+        with tempfile.TemporaryDirectory() as folder:
+            root = Path(folder)
+            _, units, _ = bundle(root / "bundle", {"syn": LAW})
+            runs = root / "runs"
+            kb_run.start(root / "bundle", runs / "kb-a", "stand-in", "medium")
+            kb_run.extract(units, StandIn(), runs / "kb-a")
+            kb_run.materialize(units, runs / "kb-a")
+            error_injection.run(runs / "kb-a", units, runs / "inject-a", per_type=2)
+            (runs / "not-a-run").mkdir()
+            self.assertEqual([p.name for p in kb_runs(runs)], ["kb-a"])
+            summaries = compare(kb_runs(runs), root / "out" / "models.json", root / "out" / "models.md")
+            row = summaries[0]
+            self.assertEqual((row["model"], row["dk3_claims"], row["dk4_claims"], row["batches_ok"]), ("stand-in", 6, 3, 2))
+            self.assertEqual(row["reasons"], {"actor_not_verbatim": 1, "duplicate_of": 1, "modality_cue_mismatch": 1})
+            self.assertEqual(row["injection"]["false_reject_rate"], 0.0)
+            text = (root / "out" / "models.md").read_text(encoding="utf-8")
+            self.assertIn("| `stand-in` | claude-code | 2/2 |", text)
+            self.assertIn("chủ thể không nguyên văn: 1", text)
+            self.assertNotIn("—", text)
