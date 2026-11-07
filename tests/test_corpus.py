@@ -55,7 +55,7 @@ class CorpusTests(unittest.TestCase):
             self.store.add_file(cid, "d.txt", "Chỉ là ghi chú, không có điều khoản.".encode("utf-8"), "phapche")
         manifest, raw = vbpl_snapshot(vbpl_id="27614", content="<p>LỆNH</p><p>Nay công bố Bộ luật giả định.</p>")
         manifest["metadata"] |= {"doc_type": "Lệnh", "doc_num": "08/2012/L-GD"}
-        with self.assertRaisesRegex(ValueError, "lệnh 08/2012/L-GD\) không chia thành Điều"):
+        with self.assertRaisesRegex(ValueError, r"lệnh 08/2012/L-GD\) không chia thành Điều"):
             self.store.add_vbpl(cid, manifest, raw, "phapche")
         manifest, raw = vbpl_snapshot(translation=True)
         with self.assertRaisesRegex(ValueError, "bản dịch"):

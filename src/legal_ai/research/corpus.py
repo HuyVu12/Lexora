@@ -111,7 +111,8 @@ class CorpusStore:
                 "accessed_at": row["accessed_at"], "metadata": json.loads(row["metadata"]), "added_at": row["added_at"], "added_by": row["added_by"],
                 "unit_count": len(units), "article_count": sum(u["unit_type"] == "article" for u in units),
                 "leaf_count": sum(u["unit_id"] not in parents for u in units), "audit_count": len(report["audit"]),
-                "unassigned_characters": len(report["unassigned_text"]), "warnings": report.get("warnings", [])}
+                "unassigned_characters": len(report["unassigned_text"]), "trailing_characters": len(report.get("trailing_text", "")),
+                "parser_version": report.get("parser_version", "lexora-parser-v1"), "warnings": report.get("warnings", [])}
 
     @staticmethod
     def _version_summary(row):
@@ -131,7 +132,8 @@ class CorpusStore:
             raise ValueError(no_articles or "Không tìm thấy Điều nào; mỗi Điều cần bắt đầu trên một dòng riêng bằng “Điều N.”")
         for unit in parsed["units"]:
             validate_unit(unit)
-        report = {"audit": parsed["audit"], "unassigned_text": parsed["unassigned_text"], "warnings": warnings}
+        report = {"parser_version": parsed["parser_version"], "audit": parsed["audit"], "unassigned_text": parsed["unassigned_text"],
+                  "trailing_text": parsed["trailing_text"], "warnings": warnings}
         row_id = "d" + secrets.token_hex(8)
         with self._lock, closing(self._connect()) as db, db:
             if db.execute("SELECT 1 FROM corpora WHERE id = ?", (corpus_id,)).fetchone() is None:
@@ -179,7 +181,7 @@ class CorpusStore:
             raise ValueError("Không tìm thấy văn bản")
         report = json.loads(row["report"])
         return self._summary(row) | {"corpus_id": row["corpus_id"], "removed_at": row["removed_at"], "units": json.loads(row["units"]),
-                                     "audit": report["audit"], "unassigned_text": report["unassigned_text"]}
+                                     "audit": report["audit"], "unassigned_text": report["unassigned_text"], "trailing_text": report.get("trailing_text", "")}
 
     def remove(self, corpus_id, row_id):
         with self._lock, closing(self._connect()) as db, db:
@@ -227,7 +229,8 @@ class CorpusStore:
                                 "source_ref": row["source_ref"], "source_url": row["source_url"], "source_sha256": row["source_sha256"],
                                 "accessed_at": row["accessed_at"], "normalized_sha256": normalized["normalized_sha256"],
                                 "effect_status": json.loads(row["metadata"]).get("effect_status"), "units": len(doc_units),
-                                "audit_count": len(json.loads(row["report"])["audit"])})
+                                "audit_count": len(json.loads(row["report"])["audit"]),
+                                "parser_version": json.loads(row["report"]).get("parser_version", "lexora-parser-v1")})
             validate_bundle(documents, units, [], [])
             number = (latest["number"] if latest else 0) + 1
             manifest = {"store_version": STORE_VERSION, "schema_version": VERSION, "corpus_id": corpus_id, "number": number,

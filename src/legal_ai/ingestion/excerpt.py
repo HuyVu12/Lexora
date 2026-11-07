@@ -1,8 +1,8 @@
 """Choose articles of a long statute and cut them out as one verbatim excerpt.
 
 `outline` lists the articles of a document with their chapter and section, and marks the ones a knowledge base
-cannot take: an article holding a heading the parser could not place (a duplicate or orphan heading, typical of
-articles that amend other laws and quote their clauses). `excerpt` joins the chosen articles in document order,
+cannot take: an article holding a heading the parser could not place (a duplicate or orphan heading) or a quotation
+that hides headings (`quoted_text`, typical of articles that amend other laws and quote their clauses). `excerpt` joins the chosen articles in document order,
 each with all its clauses and points, and repeats the chapter and section headings above them, so the excerpt
 parses into the same structure. Every character of the excerpt is copied from the normalized source text.
 """
@@ -10,7 +10,7 @@ parses into the same structure. Every character of the excerpt is copied from th
 from legal_ai.ingestion.parser import parse
 from legal_ai.normalization.text import normalize
 
-BLOCKING = {"duplicate_heading", "orphan_heading"}
+BLOCKING = {"duplicate_heading", "orphan_heading", "quoted_text"}
 MAX_ARTICLES = 60
 
 

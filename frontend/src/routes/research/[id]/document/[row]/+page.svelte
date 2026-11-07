@@ -34,7 +34,7 @@
 	};
 	const flagged = $derived(new Set(doc?.audit.map((a) => a.unit_id).filter(Boolean) ?? []));
 	const shown = $derived(doc ? (filter === 'audit' ? doc.units.filter((u) => flagged.has(u.unit_id)) : doc.units) : []);
-	const AUDIT_CODES = new Set(['duplicate_heading', 'orphan_heading', 'sequence_gap']);
+	const AUDIT_CODES = new Set(['duplicate_heading', 'orphan_heading', 'sequence_gap', 'heading_variant', 'quoted_text', 'unclosed_quote', 'appendix_start']);
 	const auditLabel = (code: string) => (AUDIT_CODES.has(code) ? t(`corpus.audit.${code}` as MessageKey) : code);
 	const anchor = (u: ParsedUnit) => 'u-' + u.unit_id.replace(/[^a-z0-9-]/gi, '_');
 </script>
@@ -111,6 +111,11 @@
 				{#if doc.unassigned_text.trim()}
 					<h3 class="label">{t('corpus.doc.unassigned', { n: doc.unassigned_characters })}</h3>
 					<pre class="unassigned">{doc.unassigned_text.trim()}</pre>
+				{/if}
+				{#if doc.trailing_text.trim()}
+					<h3 class="label">{t('corpus.doc.trailing', { n: doc.trailing_characters })}</h3>
+					<p class="small muted">{t('corpus.doc.trailingLead')}</p>
+					<pre class="unassigned">{doc.trailing_text.trim()}</pre>
 				{/if}
 			</aside>
 		</div>

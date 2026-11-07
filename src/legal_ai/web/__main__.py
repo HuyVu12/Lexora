@@ -1,12 +1,17 @@
 """Run the Lexora web app on loopback: python -m legal_ai.web (needs the `web` extra in .venv)."""
 
 import argparse
+import sys
 
 from legal_ai.kb.import_review import ReviewStore
 from legal_ai.web.setup import add_arguments, proposer, providers, sources
 
 
 def main():
+    # Vietnamese notices must not crash the launcher when stdout is a pipe or file in a legacy Windows code page.
+    for stream in (sys.stdout, sys.stderr):
+        if hasattr(stream, "reconfigure"):
+            stream.reconfigure(encoding="utf-8", errors="replace")
     parser = argparse.ArgumentParser(description=__doc__)
     add_arguments(parser, 8765)
     parser.add_argument("--frontend", default="frontend/build", help="SvelteKit static build to serve (default: frontend/build)")

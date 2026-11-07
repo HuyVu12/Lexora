@@ -85,6 +85,12 @@ class ImportReviewTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "đã có"):
             self.prepare(OTHER, {"mode": "merge", "kb_id": kb["id"]})
 
+    def test_structure_problems_are_rejected_before_a_draft(self):
+        with self.assertRaisesRegex(ValueError, "heading trùng"):
+            self.prepare("Điều 1. Một\n1. Khoản.\n1. Khoản lặp.\n")
+        with self.assertRaisesRegex(ValueError, "sửa đổi văn bản khác"):
+            self.prepare("Điều 1. Sửa đổi\n1. Sửa đổi khoản 2 Điều 3 như sau:\n“2. Nội dung mới.”\n")
+
     def test_kb_names_unique_and_revisions_scoped_to_their_kb(self):
         a = self.publish(self.prepare())
         with self.assertRaisesRegex(ValueError, "cùng tên"):

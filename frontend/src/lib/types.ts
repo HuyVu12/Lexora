@@ -239,6 +239,8 @@ export interface CorpusDocument {
 	leaf_count: number;
 	audit_count: number;
 	unassigned_characters: number;
+	trailing_characters: number;
+	parser_version: string;
 	warnings: string[];
 }
 
@@ -304,6 +306,7 @@ export interface CorpusDocumentDetail extends CorpusDocument {
 	units: ParsedUnit[];
 	audit: { code: string; offset: number; unit_id?: string }[];
 	unassigned_text: string;
+	trailing_text: string;
 }
 
 export type QuestionType = 'lookup' | 'synthesis' | 'temporal' | 'out_of_scope';
