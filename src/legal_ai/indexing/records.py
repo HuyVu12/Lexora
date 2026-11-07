@@ -159,7 +159,7 @@ def structural_records(documents, units, texts, max_tokens=384):
 
 
 SLOT_LABELS = {"actor": "Chủ thể", "action": "Hành vi", "object": "Đối tượng", "beneficiary": "Bên thụ hưởng", "recipient": "Bên nhận",
-               "conditions": "Điều kiện", "exceptions": "Ngoại lệ", "deadlines": "Thời hạn", "quantities": "Định lượng", "outcome": "Hệ quả"}
+               "conditions": "Điều kiện", "exceptions": "Ngoại lệ", "deadlines": "Thời hạn", "quantities": "Định lượng", "outcome": "Kết quả"}
 MODALITY_LABELS = {"obligation": "nghĩa vụ", "prohibition": "điều cấm", "entitlement": "quyền", "permission": "được phép", "unknown": "chưa xác định"}
 
 
