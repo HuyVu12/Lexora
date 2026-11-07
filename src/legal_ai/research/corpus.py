@@ -279,3 +279,67 @@ class CorpusStore:
         write_jsonl(output / "claims.jsonl", [])
         write_json(output / "manifest.json", version["manifest"] | {"version_id": version_id, "exported_at": _now()})
         return {"output": output.as_posix(), "version": version["number"], "documents": len(documents), "units": len(units)}
+
+    # Moving a frozen version between machines --------------------------------------------
+    _ROW_FIELDS = ("id", "document_id", "title", "source_kind", "source_ref", "source_url", "source_sha256", "accessed_at",
+                   "metadata", "normalized", "units", "report", "added_at", "added_by")
+
+    def version_payload(self, version_id):
+        """A frozen version with its corpus name and full document rows (source bytes in base64), for a question pack."""
+        import base64
+        version = self.version(version_id)
+        corpus = self.corpus(version["corpus_id"])
+        with closing(self._connect()) as db:
+            rows = self._rows(db, version["document_rows"])
+        return {"corpus": {"id": corpus["id"], "name": corpus["name"], "description": corpus["description"]},
+                "version": {key: version[key] for key in ("id", "number", "note", "frozen_at", "frozen_by", "document_rows", "manifest")},
+                "documents": [{field: row[field] for field in self._ROW_FIELDS} | {"raw": base64.b64encode(row["raw"]).decode("ascii")} for row in rows]}
+
+    def import_version(self, payload, actor):
+        """Recreate a version exported by `version_payload` (another machine's) with the same ID, rows and bundle hash.
+        Importing a version that already exists here returns it after checking it is identical."""
+        import base64
+        version = payload["version"]
+        try:
+            existing = self.version(version["id"])
+        except ValueError:
+            existing = None
+        if existing:
+            if existing["bundle_sha256"] != version["manifest"]["bundle_sha256"]:
+                raise ValueError("Mã phiên bản corpus trùng nhưng nội dung khác")
+            return existing
+        rows = payload["documents"]
+        if sorted(r["id"] for r in rows) != sorted(version["document_rows"]):
+            raise ValueError("Gói không chứa đủ văn bản của phiên bản corpus")
+        documents, units = [], []
+        for row in rows:
+            raw = base64.b64decode(row["raw"], validate=True)
+            if digest(raw) != row["source_sha256"]:
+                raise ValueError("Nội dung văn bản trong gói không khớp mã băm")
+            document, doc_units, _ = self._contract(row)
+            documents.append(document)
+            units.extend(doc_units)
+        order = {row_id: n for n, row_id in enumerate(version["document_rows"])}
+        documents_sorted = [d for _, d in sorted(zip([order[r["id"]] for r in rows], documents))]
+        units_sorted = [u for row in sorted(rows, key=lambda r: order[r["id"]]) for u in json.loads(row["units"])]
+        if digest(canonical({"documents": documents_sorted, "units": units_sorted})) != version["manifest"]["bundle_sha256"]:
+            raise ValueError("Phiên bản corpus trong gói không khớp mã băm")
+        corpus = payload["corpus"]
+        with self._lock, closing(self._connect()) as db, db:
+            created = db.execute("SELECT 1 FROM corpora WHERE id = ?", (corpus["id"],)).fetchone() is None
+            if created:
+                name = corpus["name"]
+                if db.execute("SELECT 1 FROM corpora WHERE name = ?", (name,)).fetchone():
+                    name = f"{name} (nhập {corpus['id']})"
+                db.execute("INSERT INTO corpora VALUES (?,?,?,?,?)", (corpus["id"], name, corpus["description"], _now(), actor))
+            for row in rows:
+                if db.execute("SELECT 1 FROM corpus_documents WHERE id = ?", (row["id"],)).fetchone() is None:
+                    db.execute("INSERT INTO corpus_documents VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)", (
+                        row["id"], corpus["id"], row["document_id"], row["title"], row["source_kind"], row["source_ref"], row["source_url"],
+                        row["source_sha256"], row["accessed_at"], row["metadata"], base64.b64decode(row["raw"]), row["normalized"], row["units"],
+                        row["report"], row["added_at"], row["added_by"], None if created else _now()))
+                    # A corpus created by this import lists the documents; in an existing corpus they only back the version.
+            db.execute("INSERT INTO corpus_versions VALUES (?,?,?,?,?,?,?,?)", (
+                version["id"], corpus["id"], version["number"], version["note"], version["frozen_at"], version["frozen_by"],
+                json.dumps(version["document_rows"]), canonical(version["manifest"])))
+        return self.version(version["id"])
