@@ -1,6 +1,7 @@
 <script lang="ts">
 	import Icon from './Icon.svelte';
 	import { t } from '#lib/i18n/index.svelte.js';
+	import { guide } from '#lib/guide.svelte.js';
 	import type { MessageKey } from '#lib/i18n/vi.js';
 
 	// "What is this page?": open on the first visit, collapsible to one line, remembered per page on this machine.
@@ -22,6 +23,10 @@
 		} catch {
 			open = true;
 		}
+	});
+	// The page's step badges follow the guide: hidden guide, hidden badges.
+	$effect(() => {
+		guide.open = open;
 	});
 
 	function toggle() {

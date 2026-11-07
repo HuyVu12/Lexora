@@ -1,12 +1,16 @@
 <script lang="ts">
 	import { t } from '#lib/i18n/index.svelte.js';
+	import { guide } from '#lib/guide.svelte.js';
 
 	// "Step N" on a page section, numbered like the steps of the page's PageGuide.
 	// `compact` shows only the number (for tabs and buttons); screen readers still hear "Step N".
+	// Badges show only while the page guide is open.
 	let { n, compact = false }: { n: number; compact?: boolean } = $props();
 </script>
 
-{#if compact}
+{#if !guide.open}
+	<!-- Guide hidden: no badge. -->
+{:else if compact}
 	<span class="step-tag compact" aria-label={t('guide.step', { n })} role="img">{n}</span>
 {:else}
 	<span class="step-tag">{t('guide.step', { n })}</span>
