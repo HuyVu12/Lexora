@@ -98,6 +98,8 @@ def _claims(units, raw_rows, run_id):
     claims, gaps = [], []
     latest = {}
     for row in raw_rows:  # The last answer per batch wins; a later success replaces an earlier error.
+        if row.get("code") in ("budget_exhausted", "quota_exhausted"):
+            continue  # Lexora's own budget stop: the batch was never sent.
         if row["key"] not in latest or row.get("status") == "ok":
             latest[row["key"]] = row
     for row in sorted(latest.values(), key=lambda r: (by_version[r["rows"][0]["unit_version_id"]]["document_id"],

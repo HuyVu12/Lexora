@@ -25,8 +25,9 @@
 	const stale = $derived(data ? data.runs.filter((r) => r.validator_version && r.validator_version !== data!.validator_version) : []);
 
 	function reason(code: string) {
-		const slot = code.replace(/_not_verbatim$/, '');
-		if (slot !== code && SLOTS.includes(slot)) return t('results.reason.notVerbatim', { slot: t(`slot.${slot}` as MessageKey) });
+		const slot = code.replace(/_not_(verbatim|text)$/, '');
+		if (slot !== code && SLOTS.includes(slot))
+			return t(code.endsWith('_not_text') ? 'results.reason.notText' : 'results.reason.notVerbatim', { slot: t(`slot.${slot}` as MessageKey) });
 		return t(`results.reason.${code}` as MessageKey) ?? code;
 	}
 	function failure(code: string) {
@@ -86,7 +87,7 @@
 											<code>{r.model}</code>
 											<span class="small muted">{t('results.settings', { provider: r.provider, effort: r.effort ?? '-', tokens: r.max_tokens ? t('results.maxTokens', { n: num(r.max_tokens) }) : '' })}</span>
 										</th>
-										<td class="n">{r.batches_ok}/{r.batches_attempted}</td>
+										<td class="n">{r.batches_ok}/{r.batches_attempted}{#if r.batches_planned && r.batches_attempted < r.batches_planned}<span class="small muted sample">{t('results.sample', { n: r.batches_planned })}</span>{/if}</td>
 										<td class="n">{r.sentences_without_answer ?? '-'}</td>
 										<td class="n">{num(r.dk3_claims)}</td>
 										<td class="n">{num(r.dk4_claims)}</td>
@@ -185,7 +186,18 @@
 	.n {
 		text-align: right;
 		font-variant-numeric: tabular-nums;
+	}
+	td.n {
 		white-space: nowrap;
+	}
+	thead th {
+		vertical-align: bottom;
+	}
+	.sample {
+		display: block;
+		max-width: 9rem;
+		margin-left: auto;
+		white-space: normal;
 	}
 	.details {
 		display: grid;

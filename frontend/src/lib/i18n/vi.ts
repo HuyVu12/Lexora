@@ -962,6 +962,8 @@ const vi = {
 	'results.injection.summary': 'Bắt {detect} lỗi thuộc loại phát hiện được, {semantic} lỗi ngữ nghĩa; loại nhầm {fr} trên {n} bản ghi sạch.',
 	'results.injection.type': '{name}: {rate} ({n} bản)',
 	'results.reason.notVerbatim': '{slot} không nguyên văn',
+	'results.reason.notText': '{slot} sai kiểu dữ liệu',
+	'results.sample': 'mẫu, kế hoạch {n} lượt',
 	'results.reason.modality_cue_not_verbatim': 'Từ tình thái bịa',
 	'results.reason.modality_cue_mismatch': 'Từ tình thái mâu thuẫn',
 	'results.reason.modality_not_in_enum': 'Tính quy phạm sai kiểu',

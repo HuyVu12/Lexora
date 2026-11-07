@@ -964,6 +964,8 @@ const en: Record<MessageKey, string> = {
 	'results.injection.summary': 'Caught {detect} of detectable errors, {semantic} of semantic ones; {fr} false rejects on {n} clean claims.',
 	'results.injection.type': '{name}: {rate} ({n} planted)',
 	'results.reason.notVerbatim': '{slot} not verbatim',
+	'results.reason.notText': '{slot} of the wrong type',
+	'results.sample': 'sample of {n} planned',
 	'results.reason.modality_cue_not_verbatim': 'Made-up modal cue',
 	'results.reason.modality_cue_mismatch': 'Contradicting modal cue',
 	'results.reason.modality_not_in_enum': 'Invalid modality',

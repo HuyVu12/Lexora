@@ -513,6 +513,7 @@ export interface KbRunSummary {
 	effort: string | null;
 	max_tokens: number | null;
 	validator_version: string | null;
+	batches_planned: number | null;
 	batches_attempted: number;
 	batches_ok: number;
 	batch_errors: Record<string, number>;

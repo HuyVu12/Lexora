@@ -13,7 +13,10 @@ from pathlib import Path
 from legal_ai.common.io import read_jsonl, write_json
 
 COMPARE_VERSION = "kb-compare-v1"
+STOP_CODES = ("quota_exhausted", "budget_exhausted")  # Lexora's own budget stop: no call was made.
 KB_RUN = "llm-kb-run-v1"
+SLOT_VI = {"actor": "chủ thể", "action": "hành vi", "object": "đối tượng", "beneficiary": "bên thụ hưởng", "recipient": "bên nhận",
+           "conditions": "điều kiện", "exceptions": "ngoại lệ", "deadlines": "thời hạn", "quantities": "định lượng", "outcome": "kết quả"}
 REASON_LABELS = {"actor_not_verbatim": "chủ thể không nguyên văn", "action_not_verbatim": "hành vi không nguyên văn",
                  "object_not_verbatim": "đối tượng không nguyên văn", "outcome_not_verbatim": "kết quả không nguyên văn",
                  "conditions_not_verbatim": "điều kiện không nguyên văn", "exceptions_not_verbatim": "ngoại lệ không nguyên văn",
@@ -60,7 +63,10 @@ def summarize(run_dir):
     run_dir = Path(run_dir)
     manifest = json.loads((run_dir / "manifest.json").read_text(encoding="utf-8"))
     report = json.loads((run_dir / "report.json").read_text(encoding="utf-8")) if (run_dir / "report.json").exists() else {}
-    raw = read_jsonl(run_dir / "raw.jsonl")
+    raw = [row for row in read_jsonl(run_dir / "raw.jsonl") if row.get("code") not in STOP_CODES]
+    bundle = Path(manifest["bundle"])
+    from legal_ai.evaluation.kb_run import batches
+    planned = len(batches(read_jsonl(bundle / "units.jsonl"))) if (bundle / "units.jsonl").exists() else None
     latest = {}
     for row in raw:
         if row["key"] not in latest or row.get("status") == "ok":
@@ -75,7 +81,7 @@ def summarize(run_dir):
     return {"run": run_dir.name, "run_id": manifest.get("run_id"), "created_at": manifest.get("created_at"),
             "provider": manifest.get("provider", "claude-code"), "model": manifest.get("model"), "effort": manifest.get("effort"),
             "max_tokens": manifest.get("max_tokens"), "validator_version": report.get("validator_version"),
-            "batches_attempted": len(latest), "batches_ok": sum(row.get("status") == "ok" for row in latest.values()),
+            "batches_planned": planned, "batches_attempted": len(latest), "batches_ok": sum(row.get("status") == "ok" for row in latest.values()),
             "batch_errors": errors, "calls_made": len(raw), "sentences_attempted": sentences,
             "sentences_without_answer": report.get("sentences_without_answer"),
             "dk3_claims": dk3, "dk4_claims": dk4, "rejected": dk3 - dk4, "rejected_rate": (dk3 - dk4) / dk3 if dk3 else None,
@@ -85,6 +91,13 @@ def summarize(run_dir):
             "prompt_tokens": usage("prompt_tokens", "input_tokens", "cache_creation_input_tokens", "cache_read_input_tokens"),
             "completion_tokens": usage("completion_tokens", "output_tokens"),
             "cost_usd": report.get("cost_usd"), "injection": _injection(run_dir)}
+
+
+def reason_label(code):
+    slot = code.replace("_not_verbatim", "").replace("_not_text", "")
+    if code.endswith("_not_text"):
+        return f"{SLOT_VI.get(slot, slot)} sai kiểu"
+    return REASON_LABELS.get(code, code)
 
 
 def _cost(value):
@@ -105,9 +118,14 @@ def markdown(summaries, generated_at):
         lines.append(f"| `{s['model']}` | {s['provider']} | {s['batches_ok']}/{s['batches_attempted']} | {s['sentences_without_answer']} | "
                      f"{s['dk3_claims']} | {s['dk4_claims']} | {s['rejected']} ({_pct(s['rejected_rate'])}) | {_pct(s['modality_unverified_rate'])} | "
                      f"{_cost(s['cost_usd'])} |")
+    sampled = [s for s in summaries if s["batches_planned"] and s["batches_attempted"] < s["batches_planned"]]
+    if sampled:
+        lines.append("")
+    for s in sampled:
+        lines.append(f"`{s['model']}` chỉ chạy mẫu {s['batches_attempted']}/{s['batches_planned']} lượt; số ĐK3/ĐK4 của dòng này không so trực tiếp được với các lượt đầy đủ.")
     lines += ["", "## Lý do bị loại", ""]
     for s in summaries:
-        reasons = ", ".join(f"{REASON_LABELS.get(k, k)}: {v}" for k, v in sorted(s["reasons"].items(), key=lambda kv: -kv[1])) or "không có"
+        reasons = ", ".join(f"{reason_label(k)}: {v}" for k, v in sorted(s["reasons"].items(), key=lambda kv: -kv[1])) or "không có"
         errors = ", ".join(f"{k}: {v}" for k, v in s["batch_errors"].items()) or "không có"
         lines.append(f"- `{s['model']}`: {reasons}. Lượt lỗi: {errors}.")
     lines += ["", "## Chèn lỗi có chủ đích (RQ2)", ""]

@@ -1,0 +1,434 @@
+{
+  "compare_version": "kb-compare-v1",
+  "generated_at": "2026-11-07T18:29:56+00:00",
+  "runs": [
+    {
+      "run": "kb-scope-v1-opus-medium",
+      "run_id": "kb-20261107T170703Z",
+      "created_at": "2026-11-07T17:07:03+00:00",
+      "provider": "claude-code",
+      "model": "claude-opus-5-5",
+      "effort": "medium",
+      "max_tokens": null,
+      "validator_version": "kb-validator-v3",
+      "batches_planned": 95,
+      "batches_attempted": 95,
+      "batches_ok": 95,
+      "batch_errors": {},
+      "calls_made": 95,
+      "sentences_attempted": 577,
+      "sentences_without_answer": 0,
+      "dk3_claims": 450,
+      "dk4_claims": 450,
+      "rejected": 0,
+      "rejected_rate": 0.0,
+      "reasons": {},
+      "checks": {
+        "V1_schema": {
+          "pass": 450
+        },
+        "V2_integrity": {
+          "pass": 450
+        },
+        "V3_evidence": {
+          "pass": 450
+        },
+        "V4_modality": {
+          "unverified": 219,
+          "pass": 207,
+          "not_applicable": 24
+        },
+        "V7_duplicate": {
+          "pass": 450
+        }
+      },
+      "modality_unverified_rate": 0.4866666666666667,
+      "prompt_tokens": 334129,
+      "completion_tokens": 136506,
+      "cost_usd": 4.0034,
+      "injection": {
+        "run": "inject-scope-v1-opus-medium",
+        "validator_version": "kb-validator-v3",
+        "clean_claims": 450,
+        "false_reject_rate": 0.0,
+        "detectable_rate": 0.9888888888888889,
+        "semantic_rate": 0.01282051282051282,
+        "by_type": {
+          "action_from_other_sentence": {
+            "injected": 30,
+            "detection_rate": 1.0,
+            "expected_detectable": true
+          },
+          "condition_dropped": {
+            "injected": 30,
+            "detection_rate": 0.03333333333333333,
+            "expected_detectable": false
+          },
+          "exception_dropped": {
+            "injected": 30,
+            "detection_rate": 0.0,
+            "expected_detectable": false
+          },
+          "fabricated_actor": {
+            "injected": 30,
+            "detection_rate": 1.0,
+            "expected_detectable": true
+          },
+          "invalid_modality": {
+            "injected": 30,
+            "detection_rate": 1.0,
+            "expected_detectable": true
+          },
+          "modality_cue_fabricated": {
+            "injected": 30,
+            "detection_rate": 1.0,
+            "expected_detectable": true
+          },
+          "modality_flipped": {
+            "injected": 30,
+            "detection_rate": 0.9,
+            "expected_detectable": true
+          },
+          "negation_dropped": {
+            "injected": 18,
+            "detection_rate": 0.0,
+            "expected_detectable": false
+          },
+          "number_changed": {
+            "injected": 30,
+            "detection_rate": 1.0,
+            "expected_detectable": true
+          },
+          "quote_altered": {
+            "injected": 30,
+            "detection_rate": 1.0,
+            "expected_detectable": true
+          },
+          "stale_unit_version": {
+            "injected": 30,
+            "detection_rate": 1.0,
+            "expected_detectable": true
+          },
+          "wrong_unit": {
+            "injected": 30,
+            "detection_rate": 1.0,
+            "expected_detectable": true
+          }
+        }
+      }
+    },
+    {
+      "run": "kb-scope-v1-nemotron-nano-30b",
+      "run_id": "kb-20261107T181538Z",
+      "created_at": "2026-11-07T18:15:38+00:00",
+      "provider": "9router",
+      "model": "ollama/nemotron-3-nano:30b",
+      "effort": "temperature-0",
+      "max_tokens": 16000,
+      "validator_version": "kb-validator-v3",
+      "batches_planned": 95,
+      "batches_attempted": 8,
+      "batches_ok": 3,
+      "batch_errors": {
+        "invalid_output": 5
+      },
+      "calls_made": 10,
+      "sentences_attempted": 114,
+      "sentences_without_answer": 80,
+      "dk3_claims": 5,
+      "dk4_claims": 3,
+      "rejected": 2,
+      "rejected_rate": 0.4,
+      "reasons": {
+        "action_not_verbatim": 1,
+        "quantities_not_verbatim": 1
+      },
+      "checks": {
+        "V1_schema": {
+          "pass": 5
+        },
+        "V2_integrity": {
+          "pass": 5
+        },
+        "V3_evidence": {
+          "pass": 3,
+          "fail": 2
+        },
+        "V4_modality": {
+          "pass": 3,
+          "unverified": 2
+        },
+        "V7_duplicate": {
+          "pass": 3,
+          "not_applicable": 2
+        }
+      },
+      "modality_unverified_rate": 0.4,
+      "prompt_tokens": 41297,
+      "completion_tokens": 153304,
+      "cost_usd": 0,
+      "injection": null
+    },
+    {
+      "run": "kb-scope-v1-gemma4-31b",
+      "run_id": "kb-20261107T182002Z",
+      "created_at": "2026-11-07T18:20:02+00:00",
+      "provider": "9router",
+      "model": "ollama/gemma4:31b",
+      "effort": "temperature-0",
+      "max_tokens": 16000,
+      "validator_version": "kb-validator-v3",
+      "batches_planned": 95,
+      "batches_attempted": 95,
+      "batches_ok": 93,
+      "batch_errors": {
+        "invalid_output": 2
+      },
+      "calls_made": 95,
+      "sentences_attempted": 577,
+      "sentences_without_answer": 37,
+      "dk3_claims": 446,
+      "dk4_claims": 304,
+      "rejected": 142,
+      "rejected_rate": 0.3183856502242152,
+      "reasons": {
+        "action_not_verbatim": 88,
+        "actor_not_verbatim": 68,
+        "beneficiary_not_verbatim": 1,
+        "conditions_not_verbatim": 41,
+        "deadlines_not_verbatim": 9,
+        "exceptions_not_verbatim": 3,
+        "modality_cue_mismatch": 17,
+        "modality_cue_not_verbatim": 74,
+        "object_not_verbatim": 20,
+        "outcome_not_verbatim": 24,
+        "quantities_not_verbatim": 7,
+        "recipient_not_verbatim": 12
+      },
+      "checks": {
+        "V1_schema": {
+          "pass": 446
+        },
+        "V2_integrity": {
+          "pass": 446
+        },
+        "V3_evidence": {
+          "pass": 323,
+          "fail": 123
+        },
+        "V4_modality": {
+          "pass": 203,
+          "unverified": 144,
+          "fail": 91,
+          "not_applicable": 8
+        },
+        "V7_duplicate": {
+          "pass": 304,
+          "not_applicable": 142
+        }
+      },
+      "modality_unverified_rate": 0.32286995515695066,
+      "prompt_tokens": 289303,
+      "completion_tokens": 78813,
+      "cost_usd": 0,
+      "injection": {
+        "run": "inject-scope-v1-gemma4-31b",
+        "validator_version": "kb-validator-v3",
+        "clean_claims": 304,
+        "false_reject_rate": 0.0,
+        "detectable_rate": 0.9814814814814815,
+        "semantic_rate": 0.0,
+        "by_type": {
+          "action_from_other_sentence": {
+            "injected": 30,
+            "detection_rate": 0.9333333333333333,
+            "expected_detectable": true
+          },
+          "condition_dropped": {
+            "injected": 30,
+            "detection_rate": 0.0,
+            "expected_detectable": false
+          },
+          "exception_dropped": {
+            "injected": 18,
+            "detection_rate": 0.0,
+            "expected_detectable": false
+          },
+          "fabricated_actor": {
+            "injected": 30,
+            "detection_rate": 1.0,
+            "expected_detectable": true
+          },
+          "invalid_modality": {
+            "injected": 30,
+            "detection_rate": 1.0,
+            "expected_detectable": true
+          },
+          "modality_cue_fabricated": {
+            "injected": 30,
+            "detection_rate": 1.0,
+            "expected_detectable": true
+          },
+          "modality_flipped": {
+            "injected": 30,
+            "detection_rate": 0.9,
+            "expected_detectable": true
+          },
+          "negation_dropped": {
+            "injected": 18,
+            "detection_rate": 0.0,
+            "expected_detectable": false
+          },
+          "number_changed": {
+            "injected": 30,
+            "detection_rate": 1.0,
+            "expected_detectable": true
+          },
+          "quote_altered": {
+            "injected": 30,
+            "detection_rate": 1.0,
+            "expected_detectable": true
+          },
+          "stale_unit_version": {
+            "injected": 30,
+            "detection_rate": 1.0,
+            "expected_detectable": true
+          },
+          "wrong_unit": {
+            "injected": 30,
+            "detection_rate": 1.0,
+            "expected_detectable": true
+          }
+        }
+      }
+    },
+    {
+      "run": "kb-scope-v1-gpt-oss-120b",
+      "run_id": "kb-20261107T182003Z",
+      "created_at": "2026-11-07T18:20:03+00:00",
+      "provider": "9router",
+      "model": "ollama/gpt-oss:120b",
+      "effort": "temperature-0",
+      "max_tokens": 16000,
+      "validator_version": "kb-validator-v3",
+      "batches_planned": 95,
+      "batches_attempted": 95,
+      "batches_ok": 95,
+      "batch_errors": {},
+      "calls_made": 95,
+      "sentences_attempted": 577,
+      "sentences_without_answer": 0,
+      "dk3_claims": 416,
+      "dk4_claims": 385,
+      "rejected": 31,
+      "rejected_rate": 0.07451923076923077,
+      "reasons": {
+        "action_not_verbatim": 12,
+        "beneficiary_not_verbatim": 1,
+        "conditions_not_verbatim": 9,
+        "duplicate_of": 1,
+        "modality_cue_mismatch": 9,
+        "modality_cue_not_verbatim": 10,
+        "object_not_text": 1
+      },
+      "checks": {
+        "V1_schema": {
+          "pass": 415,
+          "fail": 1
+        },
+        "V2_integrity": {
+          "pass": 416
+        },
+        "V3_evidence": {
+          "pass": 394,
+          "fail": 22
+        },
+        "V4_modality": {
+          "not_applicable": 104,
+          "unverified": 56,
+          "pass": 237,
+          "fail": 19
+        },
+        "V7_duplicate": {
+          "pass": 385,
+          "not_applicable": 30,
+          "fail": 1
+        }
+      },
+      "modality_unverified_rate": 0.1346153846153846,
+      "prompt_tokens": 296509,
+      "completion_tokens": 193725,
+      "cost_usd": 0,
+      "injection": {
+        "run": "inject-scope-v1-gpt-oss-120b",
+        "validator_version": "kb-validator-v3",
+        "clean_claims": 385,
+        "false_reject_rate": 0.0,
+        "detectable_rate": 1.0,
+        "semantic_rate": 0.013333333333333334,
+        "by_type": {
+          "action_from_other_sentence": {
+            "injected": 30,
+            "detection_rate": 1.0,
+            "expected_detectable": true
+          },
+          "condition_dropped": {
+            "injected": 30,
+            "detection_rate": 0.0,
+            "expected_detectable": false
+          },
+          "exception_dropped": {
+            "injected": 21,
+            "detection_rate": 0.0,
+            "expected_detectable": false
+          },
+          "fabricated_actor": {
+            "injected": 30,
+            "detection_rate": 1.0,
+            "expected_detectable": true
+          },
+          "invalid_modality": {
+            "injected": 30,
+            "detection_rate": 1.0,
+            "expected_detectable": true
+          },
+          "modality_cue_fabricated": {
+            "injected": 19,
+            "detection_rate": 1.0,
+            "expected_detectable": true
+          },
+          "modality_flipped": {
+            "injected": 30,
+            "detection_rate": 1.0,
+            "expected_detectable": true
+          },
+          "negation_dropped": {
+            "injected": 24,
+            "detection_rate": 0.041666666666666664,
+            "expected_detectable": false
+          },
+          "number_changed": {
+            "injected": 30,
+            "detection_rate": 1.0,
+            "expected_detectable": true
+          },
+          "quote_altered": {
+            "injected": 30,
+            "detection_rate": 1.0,
+            "expected_detectable": true
+          },
+          "stale_unit_version": {
+            "injected": 30,
+            "detection_rate": 1.0,
+            "expected_detectable": true
+          },
+          "wrong_unit": {
+            "injected": 30,
+            "detection_rate": 1.0,
+            "expected_detectable": true
+          }
+        }
+      }
+    }
+  ]
+}
