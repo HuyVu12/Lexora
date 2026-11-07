@@ -1,4 +1,4 @@
-"""Index records for the retrieval conditions DK1 (fixed chunks) and DK2 (structural units).
+"""Index records for the retrieval conditions DK1 (fixed chunks), DK2 (structural units) and DK3/DK4 (LLM claims).
 
 Every record carries the exact source span it was cut from (`text == document_text[source_start:source_end]`,
 Unicode code point offsets into the normalized document text) and the canonical unit IDs it overlaps, so
@@ -108,6 +108,16 @@ def _path_label(unit):
     return f"{names[unit['unit_type']]} {label}"
 
 
+def unit_path(unit, by_id):
+    """("Chương III > Mục 1 > Điều 24 > Khoản 1", ancestors) of a unit."""
+    chain, current = [], by_id.get(unit["parent_id"])
+    while current:
+        chain.append(current)
+        current = by_id.get(current["parent_id"])
+    chain.reverse()
+    return " > ".join(_path_label(u) for u in chain + [unit]), chain
+
+
 def _sentence_parts(text, max_tokens):
     """Split `text` into consecutive (start, end) parts at sentence ends, each at most `max_tokens` tokens
     unless one sentence alone is longer. The parts cover the text without gaps."""
@@ -136,12 +146,7 @@ def structural_records(documents, units, texts, max_tokens=384):
     records = []
     for leaf in sorted((u for u in units if u["unit_id"] not in parents), key=lambda u: (u["document_id"], u["source_start"])):
         document = by_doc[leaf["document_id"]]
-        chain, current = [], by_id.get(leaf["parent_id"])
-        while current:
-            chain.append(current)
-            current = by_id.get(current["parent_id"])
-        chain.reverse()
-        path = " > ".join(_path_label(u) for u in chain + [leaf])
+        path, chain = unit_path(leaf, by_id)
         context = "".join(u["text"] for u in chain if u["unit_type"] in {"article", "clause"})
         parts = _sentence_parts(leaf["text"], max_tokens) if len(token_spans(leaf["text"])) > max_tokens else [(0, len(leaf["text"]))]
         for number, (start, end) in enumerate(parts, 1):
@@ -150,6 +155,48 @@ def structural_records(documents, units, texts, max_tokens=384):
             part = {"number": number, "of": len(parts)} if len(parts) > 1 else None
             records.append(_record("DK2", document, leaf["source_start"] + start, leaf["source_start"] + end, text, index_text,
                                    [leaf["unit_id"]], len(token_spans(text)), part))
+    return records
+
+
+SLOT_LABELS = {"actor": "Chủ thể", "action": "Hành vi", "object": "Đối tượng", "beneficiary": "Bên thụ hưởng", "recipient": "Bên nhận",
+               "conditions": "Điều kiện", "exceptions": "Ngoại lệ", "deadlines": "Thời hạn", "quantities": "Định lượng", "outcome": "Hệ quả"}
+MODALITY_LABELS = {"obligation": "nghĩa vụ", "prohibition": "điều cấm", "entitlement": "quyền", "permission": "được phép", "unknown": "chưa xác định"}
+
+
+def serialize_claim(claim):
+    """The fixed-order text of a knowledge-base claim: what DK3/DK4 retrieve and hand to the generator.
+    Slot strings are shown as the model gave them (DK3) or as validated quotes (DK4); nothing is rephrased."""
+    slots = claim.get("slots") if isinstance(claim.get("slots"), dict) else {}
+    modality = MODALITY_LABELS.get(claim.get("modality"), str(claim.get("modality")))
+    cue = claim.get("modality_cue")
+    lines = [f"Tính quy phạm: {modality}" + (f" ({cue})" if isinstance(cue, str) and cue else "")]
+    for name, label in SLOT_LABELS.items():
+        value = slots.get(name)
+        if value not in (None, ""):
+            lines.append(f"{label}: {value if isinstance(value, str) else canonical(value)}")
+    return "\n".join(lines)
+
+
+def claim_records(condition, documents, units, texts, claims):
+    """DK3/DK4: one record per knowledge-base claim. The source span is the claim's sentence (so Recall@K maps
+    to the same units as DK1/DK2); `index_text` and `context_text` carry the serialized claim, not the sentence."""
+    by_doc = _check_texts(documents, units, texts)
+    by_id = {u["unit_id"]: u for u in units}
+    records = []
+    for claim in claims:
+        unit = by_id.get(claim.get("unit_id"))
+        sentence = claim.get("sentence") or {}
+        if unit is None or not unit["source_start"] <= sentence.get("start", -1) < sentence.get("end", -1) <= unit["source_end"]:
+            raise ValueError(f"claim outside the corpus: {claim.get('claim_id')}")
+        document = by_doc[unit["document_id"]]
+        path, _ = unit_path(unit, by_id)
+        body = serialize_claim(claim)
+        start, end = sentence["start"], sentence["end"]
+        row = _record(condition, document, start, end, texts[document["document_id"]][start:end], f"{document['title']}\n{path}\n{body}",
+                      [unit["unit_id"]], len(token_spans(body)))
+        key = [condition, document["document_version_id"], claim["claim_id"]]
+        row.update(record_id=f"{condition.lower()}:{digest(canonical(key))[:16]}", claim_id=claim["claim_id"], context_text=body)
+        records.append(row)
     return records
 
 

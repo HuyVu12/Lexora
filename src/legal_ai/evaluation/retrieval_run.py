@@ -1,4 +1,4 @@
-"""Retrieval run for one condition (DK1 or DK2): build its index records, rank them with BM25 for every
+"""Retrieval run for one condition (DK1-DK4): build its index records, rank them with BM25 for every
 question and score Recall@K against gold canonical units. No network, no model, no generated answers.
 
 A run directory holds `manifest.json` (inputs, hashes, parameters, environment), `records.jsonl` (the
@@ -18,12 +18,13 @@ import platform
 import subprocess
 
 from legal_ai.common.io import canonical, digest, read_jsonl, write_json, write_jsonl
-from legal_ai.indexing.records import RECORD_VERSION, TOKENIZER, check_records, fixed_chunks, structural_records
+from legal_ai.indexing.records import RECORD_VERSION, TOKENIZER, check_records, claim_records, fixed_chunks, structural_records
 from legal_ai.retrieval.bm25 import BM25, tokens
 from legal_ai.validation.bundle import validate_bundle
 
 RUN_VERSION = "retrieval-run-v1"
-BUILDERS = {"fixed_chunks": "DK1", "structural_units": "DK2"}
+BUILDERS = {"fixed_chunks": "DK1", "structural_units": "DK2", "llm_kb_raw": "DK3", "llm_kb_validated": "DK4"}
+KB_FILES = {"llm_kb_raw": "dk3.jsonl", "llm_kb_validated": "dk4.jsonl"}
 
 
 def load_bundle(folder):
@@ -37,14 +38,25 @@ def load_bundle(folder):
     return documents, units, texts
 
 
-def build_records(condition, documents, units, texts):
+def kb_claims(condition, units_path):
+    """The DK3 or DK4 claims of the knowledge-base run named by the condition, checked against this bundle."""
+    folder = Path(condition["kb_run"])
+    manifest = json.loads((folder / "manifest.json").read_text(encoding="utf-8"))
+    if manifest["units_sha256"] != digest(Path(units_path).read_bytes()):
+        raise ValueError("the knowledge-base run was extracted from another corpus bundle")
+    return read_jsonl(folder / KB_FILES[condition["representation"]])
+
+
+def build_records(condition, documents, units, texts, units_path=None):
     representation = condition["representation"]
     if BUILDERS.get(representation) != condition["condition"]:
         raise ValueError(f"unsupported condition/representation: {condition['condition']}/{representation}")
     if representation == "fixed_chunks":
         records = fixed_chunks(documents, units, texts, condition["chunk_tokens"], condition["overlap_tokens"])
-    else:
+    elif representation == "structural_units":
         records = structural_records(documents, units, texts, condition["max_tokens"])
+    else:
+        records = claim_records(condition["condition"], documents, units, texts, kb_claims(condition, units_path))
     return check_records(records, texts)
 
 
@@ -83,7 +95,7 @@ def run(bundle, questions_path, condition_path, shared_path, output):
     if missing:
         raise ValueError(f"gold units missing from the bundle: {missing[:5]}")
 
-    records = build_records(condition, documents, units, texts)
+    records = build_records(condition, documents, units, texts, Path(bundle) / "units.jsonl")
     index = BM25([tokens(row["index_text"]) for row in records], k1=retrieval["k1"], b=retrieval["b"])
     depth = max(ks)
     predictions, errors = [], []

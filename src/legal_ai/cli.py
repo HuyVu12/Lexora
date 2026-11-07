@@ -56,6 +56,17 @@ def main():
     command.add_argument("--store", required=True, help="workspace SQLite store of the web app")
     command.add_argument("--config", default="configs/experiment-scope-v1.json")
     command.add_argument("--actor", required=True, help="account name recorded as the creator")
+    command = commands.add_parser("kb-extract", help="DK3/DK4 knowledge base: one Claude Code model extracts norms from every sentence of a corpus bundle")
+    command.add_argument("bundle", help="contract bundle written by corpus-export")
+    command.add_argument("--output", required=True, help="new directory, or an earlier run of the same bundle to resume")
+    command.add_argument("--model", default="claude-opus-5-5")
+    command.add_argument("--effort", default="medium")
+    command.add_argument("--max-calls", type=int, default=0, help="call budget of this session (required unless --dry-run)")
+    command.add_argument("--approve-claude", action="store_true", help="explicit approval of the model calls")
+    command.add_argument("--dry-run", action="store_true", help="only count batches and characters; no model call")
+    command = commands.add_parser("kb-materialize", help="rebuild dk3/dk4 and the validation report of a knowledge-base run from raw.jsonl; offline")
+    command.add_argument("run", help="knowledge-base run directory")
+    command.add_argument("--bundle", help="contract bundle (default: the one recorded in the run manifest)")
     command = commands.add_parser("run-retrieval", help="DK1/DK2 retrieval run with Recall@K into a new run directory; no network")
     command.add_argument("bundle")
     command.add_argument("--condition", required=True, help="configs/experiments/dk1.json or dk2.json")
@@ -92,6 +103,24 @@ def main():
             print(json.dumps({"corpus_id": corpus["id"], "name": corpus["name"],
                               "documents": [{"document_id": d["document_id"], "articles": d["article_count"], "audit": d["audit_count"]} for d in corpus["documents"]]},
                              ensure_ascii=False, indent=2))
+        elif args.command in ("kb-extract", "kb-materialize"):
+            from legal_ai.common.io import read_jsonl
+            from legal_ai.evaluation import kb_run
+            if args.command == "kb-materialize":
+                bundle = args.bundle or json.loads((Path(args.run) / "manifest.json").read_text(encoding="utf-8"))["bundle"]
+                print(json.dumps(kb_run.materialize(read_jsonl(Path(bundle) / "units.jsonl"), args.run), ensure_ascii=False, indent=2))
+            else:
+                units = read_jsonl(Path(args.bundle) / "units.jsonl")
+                if args.dry_run:
+                    print(json.dumps(kb_run.estimate(units), ensure_ascii=False, indent=2))
+                else:
+                    from legal_ai.providers.claude_code import ClaudeCodeProvider
+                    if args.max_calls < 1:
+                        raise ValueError("--max-calls must be a positive call budget")
+                    provider = ClaudeCodeProvider(args.model, args.effort, args.max_calls, approved=args.approve_claude)
+                    kb_run.start(args.bundle, args.output, args.model, args.effort)
+                    counts = kb_run.extract(units, provider, args.output, log=lambda line: print(line, flush=True))
+                    print(json.dumps({"calls": counts, "report": kb_run.materialize(units, args.output)}, ensure_ascii=False, indent=2))
         elif args.command == "run-retrieval":
             from legal_ai.evaluation.retrieval_run import run
             print(json.dumps(run(args.bundle, args.questions, args.condition, args.shared, args.output), ensure_ascii=False, indent=2))
