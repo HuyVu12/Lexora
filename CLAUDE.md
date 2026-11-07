@@ -11,11 +11,11 @@ Most project docs (`README.md`, `docs/`) are written in Vietnamese.
 Lexora is a thesis-scale RAG pilot for Vietnamese labor law built on an evidence-backed legal knowledge base.
 Every claim must be traceable to an exact quote with Unicode character offsets and a SHA-256 of the normalized source text.
 Extracted norms and candidates are review-only (`needs_review`) until a human approves them; never present outputs as verified legal facts.
-The four-condition research pipeline (DK1-DK4: fixed chunks, structural chunks, LLM KB before validation, LLM KB after validation) has its DK1/DK2 retrieval runs (`run-retrieval`, see `docs/planning/dk1-dk2-retrieval-2026-11-07.md`); DK3/DK4, generation and answer scoring are not implemented yet; the only LLM extraction today is the web app's opt-in `norm-llm-v1` (`extraction/llm_norms.py`).
+The four-condition research pipeline (DK1-DK4: fixed chunks, structural chunks, LLM KB before validation, LLM KB after validation) runs on the 94-article experiment scope (`configs/experiment-scope-v1.json`): retrieval for all four conditions (BM25, local BGE-M3 dense, hybrid), the DK3/DK4 knowledge base from one Opus extraction run, cited answers with blinded grading, planted-error validation (RQ2) and the extraction gold set (RQ1); see `docs/planning/progress-2026-11-08.md`.
 
 Direction since 2026-11-06 (decided; web, UI and graph migration done 07/11, PostgreSQL deferred until after the MVP freeze on 27/11): the product targets real users (corporate legal and HR staff: reviewers and readers), runs on a local machine first, and the tech migration comes before the DK1-DK4 pipeline.
 Target stack: the core pipeline stays standard-library Python for reproducibility; the web layer moves to FastAPI + Pydantic, storage stays SQLite for the first steps, PostgreSQL (pgvector when needed) later, the UI to Svelte 5 + SvelteKit (static SPA served by FastAPI, TypeScript, typed dictionaries for i18n), graphs to Cytoscape.js; LLM calls go through Claude Code (Opus 5.5 for DK3 extraction and answers, Sonnet 5.5 as the supplementary judge) or the 9Router provider, one fixed model per run; no LangChain, LlamaIndex or graph database.
-Read `docs/planning/target-stack-2026-11-06.md` (layers, migration steps, open decisions) and `docs/planning/progress-2026-11-07.md` (what is done, what comes next) before larger work, and get user approval before installing any dependency.
+Read `docs/planning/target-stack-2026-11-06.md` (layers, migration steps, open decisions) and `docs/planning/progress-2026-11-08.md` (what is done, what comes next) before larger work, and get user approval before installing any dependency.
 
 ## Commands
 
@@ -31,7 +31,12 @@ python -m legal_ai.cli --help                             # snapshot, parse, val
 python -m legal_ai.cli build-pilot --config configs/sources-full-v1.json --output data/normalized/<new>   # whole-document corpus from pinned snapshots
 python -m legal_ai.cli catalog-search data/catalog/catalog-v1.sqlite 'bo luat lao dong'   # offline, accents ignored; build with catalog-build (needs .venv catalog extra)
 python -m legal_ai.cli vbpl-fetch <vbpl.vn link or ID>      # ONE approved vbpl.vn document -> data/raw/vbpl/<id>/<sha>/
-python -m legal_ai.cli run-retrieval data/normalized/full-v1 --condition configs/experiments/dk2.json --output experiments/runs/<new>   # DK1/DK2 Recall@K
+python -m legal_ai.cli run-retrieval data/normalized/full-v1 --condition configs/experiments/dk2.json --output experiments/runs/<new>   # DK1-DK4 Recall@K; --shared configs/experiments/shared.json for hybrid (needs .venv embeddings extra)
+python -m legal_ai.cli corpus-scope --store <store.sqlite> --actor <user>            # experiment-scope corpus from pinned local snapshots
+python -m legal_ai.cli kb-extract <bundle> --output experiments/runs/<new> --dry-run   # DK3/DK4 extraction plan; real run adds --max-calls N --approve-claude
+python -m legal_ai.cli kb-materialize <kb run>                                       # rebuild dk3/dk4/validation offline; kb-inject <kb run> --output <new> for RQ2
+python -m legal_ai.cli gold-score <gold.jsonl> --bundle <bundle> --predictions rules   # RQ1 P/R/F1 (or a dk3.jsonl/dk4.jsonl)
+python -m legal_ai.cli answer-run <retrieval run> --questions <q.json> --output <new> --max-calls N --approve-claude   # then answer-score, answer-sheet, answer-grades, answer-judge
 python -m legal_ai.cli search data/normalized/pilot-v2 'Tiền lương thử việc ít nhất bao nhiêu phần trăm?' --top-k 2
 python -m legal_ai.cli graph-build data/normalized/graph-pilot-v1 --config configs/entity-graph.json --output data/kb/new-entity-graph
 ```
@@ -39,7 +44,7 @@ python -m legal_ai.cli graph-build data/normalized/graph-pilot-v1 --config confi
 Web app (FastAPI + SvelteKit; needs the project virtualenv):
 
 ```powershell
-python -m venv .venv; .venv\Scripts\python -m pip install -e ".[web,web-test,catalog]"   # once; installs from PyPI (approved 2026-11-06, pypdf/pyarrow 2026-11-07)
+python -m venv .venv; .venv\Scripts\python -m pip install -e ".[web,web-test,catalog,embeddings]"   # once; installs from PyPI (approved 2026-11-06, pypdf/pyarrow 2026-11-07, embeddings 2026-11-08; BGE-M3 weights go to models/bge-m3)
 .venv\Scripts\python -m unittest discover -s tests -v                          # full suite incl. tests/test_web_api.py
 .venv\Scripts\python -m legal_ai.web --store data/kb/app-new.sqlite --seed data/kb/entity-relation-review/graph.json --port 8766  # --frontend <build dir>, --source-catalog, opt-in 9Router flags
 ```

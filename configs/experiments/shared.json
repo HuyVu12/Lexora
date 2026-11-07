@@ -1,0 +1,7 @@
+{
+  "status": "draft",
+  "top_k": 5,
+  "retrieval": {"method": "hybrid", "tokenizer": "lexora-syllable-v1", "k1": 1.2, "b": 0.75, "rrf_c": 60, "rrf_candidates": 30, "recall_k": [1, 3, 5, 10]},
+  "embedding_model": {"name": "BAAI/bge-m3", "revision": "5617a9f61b028005a4858fdac845db406aefb181", "path": "models/bge-m3", "max_seq_length": 1024},
+  "note": "Shared retrieval settings for DK1-DK4 (one embedding model, one fusion rule). Compare bm25/dense/hybrid on dev only, then freeze."
+}

@@ -2,6 +2,7 @@
 	import PageGuide from '#lib/components/PageGuide.svelte';
 	import { page } from '$app/state';
 	import Icon from '#lib/components/Icon.svelte';
+	import Term from '#lib/components/Term.svelte';
 	import { api } from '#lib/api.js';
 	import { t, formatDay } from '#lib/i18n/index.svelte.js';
 	import { session, canReview } from '#lib/session.svelte.js';
@@ -34,7 +35,7 @@
 	};
 	const flagged = $derived(new Set(doc?.audit.map((a) => a.unit_id).filter(Boolean) ?? []));
 	const shown = $derived(doc ? (filter === 'audit' ? doc.units.filter((u) => flagged.has(u.unit_id)) : doc.units) : []);
-	const AUDIT_CODES = new Set(['duplicate_heading', 'orphan_heading', 'sequence_gap']);
+	const AUDIT_CODES = new Set(['duplicate_heading', 'orphan_heading', 'sequence_gap', 'heading_variant', 'quoted_text', 'unclosed_quote', 'appendix_start']);
 	const auditLabel = (code: string) => (AUDIT_CODES.has(code) ? t(`corpus.audit.${code}` as MessageKey) : code);
 	const anchor = (u: ParsedUnit) => 'u-' + u.unit_id.replace(/[^a-z0-9-]/gi, '_');
 </script>
@@ -55,8 +56,8 @@
 				<h1 class="title serif">{doc.title}</h1>
 				<p class="facts">
 					<code>{doc.document_id}</code>
-					<span>{t('corpus.doc.counts', { articles: doc.article_count, leaves: doc.leaf_count })}</span>
-					{#if doc.metadata.effect_status?.name}<span>{doc.metadata.effect_status.name}</span>{/if}
+					<span><Term key="leaf_unit">{t('corpus.doc.counts', { articles: doc.article_count, leaves: doc.leaf_count })}</Term></span>
+					{#if doc.metadata.effect_status?.name}<span><Term key="effect_status">{doc.metadata.effect_status.name}</Term></span>{/if}
 					{#if doc.source_kind === 'vbpl'}
 						<a href={doc.source_url} target="_blank" rel="noopener noreferrer">vbpl.vn · {t('corpus.doc.accessed', { date: formatDay(doc.accessed_at) })}</a>
 					{:else}
@@ -90,7 +91,7 @@
 			</section>
 
 			<aside class="panel" id="audit" aria-labelledby="audit-heading">
-				<h2 class="heading" id="audit-heading">{t('corpus.doc.auditTitle')}</h2>
+				<h2 class="heading" id="audit-heading"><Term key="parser_warning">{t('corpus.doc.auditTitle')}</Term></h2>
 				<p class="small muted">{t('corpus.doc.auditLead')}</p>
 				{#if doc.audit.length}
 					<ul class="audit">
@@ -98,7 +99,7 @@
 							<li>
 								<Icon name="warn" size={16} />
 								<span>
-									<strong>{auditLabel(a.code)}</strong>
+									<strong>{#if AUDIT_CODES.has(a.code)}<Term key={`audit_${a.code}`}>{auditLabel(a.code)}</Term>{:else}{a.code}{/if}</strong>
 									{#if a.unit_id}<a class="small" href="#{'u-' + a.unit_id.replace(/[^a-z0-9-]/gi, '_')}" onclick={() => (filter = 'all')}><code>{a.unit_id.slice(doc.document_id.length + 1)}</code></a>{/if}
 									<span class="small muted">{t('corpus.doc.offset', { n: a.offset })}</span>
 								</span>
@@ -109,8 +110,13 @@
 					<p class="small">{t('corpus.doc.noAudit')}</p>
 				{/if}
 				{#if doc.unassigned_text.trim()}
-					<h3 class="label">{t('corpus.doc.unassigned', { n: doc.unassigned_characters })}</h3>
+					<h3 class="label"><Term key="unassigned_text">{t('corpus.doc.unassigned', { n: doc.unassigned_characters })}</Term></h3>
 					<pre class="unassigned">{doc.unassigned_text.trim()}</pre>
+				{/if}
+				{#if doc.trailing_text.trim()}
+					<h3 class="label"><Term key="audit_appendix_start">{t('corpus.doc.trailing', { n: doc.trailing_characters })}</Term></h3>
+					<p class="small muted">{t('corpus.doc.trailingLead')}</p>
+					<pre class="unassigned">{doc.trailing_text.trim()}</pre>
 				{/if}
 			</aside>
 		</div>

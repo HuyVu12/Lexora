@@ -17,6 +17,8 @@ web = ["fastapi==0.162.0", "uvicorn==0.54.0", "pydantic==2.14.3", "pypdf==7.0.0"
 catalog = ["pyarrow==26.0.1"]
 # TestClient for tests/test_web_api.py.
 web-test = ["httpx2==2.16.0"]
+# Local dense retrieval for DK1-DK4 with BAAI/bge-m3 on CPU (approved 2026-11-08); weights go to models/, outside Git.
+embeddings = ["sentence-transformers==6.2.0", "torch==2.15.0"]
 
 [project.scripts]
 lexora = "legal_ai.cli:main"

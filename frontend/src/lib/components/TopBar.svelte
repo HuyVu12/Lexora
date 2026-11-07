@@ -15,8 +15,9 @@
 	];
 	const author: Item[] = [{ href: '/import', key: 'nav.import', match: (p) => p.startsWith('/import') || p.startsWith('/drafts') }];
 	const research: Item[] = [
-		{ href: '/research', key: 'nav.corpora', match: (p) => p.startsWith('/research') && !p.startsWith('/research/questions') },
-		{ href: '/research/questions', key: 'nav.questions', match: (p) => p.startsWith('/research/questions') }
+		{ href: '/research', key: 'nav.corpora', match: (p) => p.startsWith('/research') && !p.startsWith('/research/questions') && !p.startsWith('/research/gold') },
+		{ href: '/research/questions', key: 'nav.questions', match: (p) => p.startsWith('/research/questions') },
+		{ href: '/research/gold', key: 'nav.gold', match: (p) => p.startsWith('/research/gold') }
 	];
 	const admin: Item[] = [{ href: '/admin/users', key: 'nav.users', match: (p) => p.startsWith('/admin') }];
 	const groups = $derived([
@@ -70,7 +71,7 @@
 			<div class="user">
 				<button type="button" class="who" aria-expanded={menuOpen} aria-haspopup="true" onclick={() => (menuOpen = !menuOpen)}>
 					<span class="avatar" aria-hidden="true">{account.display_name.slice(0, 1).toUpperCase()}</span>
-					<span class="name">{account.display_name}<small>{t(`role.${account.role}`)}</small></span>
+					<span class="name" title={account.display_name}><span class="full">{account.display_name}</span><small>{t(`role.${account.role}`)}</small></span>
 				</button>
 				{#if menuOpen}
 					<div class="menu">
@@ -212,8 +213,14 @@
 	}
 	.name {
 		display: grid;
+		max-width: 150px;
 		line-height: 1.2;
 		font-weight: 500;
+	}
+	.full {
+		overflow: hidden;
+		white-space: nowrap;
+		text-overflow: ellipsis;
 	}
 	.name small {
 		font-size: 12px;
@@ -237,8 +244,46 @@
 		justify-content: flex-start;
 	}
 	nav a,
+	.about,
 	.brand span {
 		white-space: nowrap;
+	}
+	.avatar,
+	.end {
+		flex-shrink: 0;
+	}
+	@media (max-width: 1360px) {
+		.name {
+			display: none;
+		}
+	}
+	@media (max-width: 1240px) {
+		.topbar {
+			gap: 16px;
+		}
+		nav,
+		.group + .group {
+			gap: 12px;
+		}
+		.group + .group {
+			padding-left: 12px;
+		}
+		nav a {
+			padding: 0 9px;
+		}
+		.lang-text {
+			display: none;
+		}
+	}
+	@media (max-width: 1180px) {
+		.brand span {
+			display: none;
+		}
+	}
+	@media (max-width: 1060px) {
+		.about {
+			display: none;
+		}
 	}
 	@media (max-width: 900px) {
 		.topbar {

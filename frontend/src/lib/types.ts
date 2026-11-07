@@ -239,6 +239,8 @@ export interface CorpusDocument {
 	leaf_count: number;
 	audit_count: number;
 	unassigned_characters: number;
+	trailing_characters: number;
+	parser_version: string;
 	warnings: string[];
 }
 
@@ -304,6 +306,7 @@ export interface CorpusDocumentDetail extends CorpusDocument {
 	units: ParsedUnit[];
 	audit: { code: string; offset: number; unit_id?: string }[];
 	unassigned_text: string;
+	trailing_text: string;
 }
 
 export type QuestionType = 'lookup' | 'synthesis' | 'temporal' | 'out_of_scope';
@@ -430,4 +433,63 @@ export interface VbplImport {
 	accessed_at: string;
 	metadata: { title?: string; doc_num?: string; doc_type?: string; effect_status?: EffectStatus | null; issue_date?: string | null };
 	articles: OutlineArticle[];
+}
+
+export type GoldModality = 'obligation' | 'prohibition' | 'entitlement' | 'permission' | 'unknown';
+
+export interface GoldNorm {
+	modality: GoldModality;
+	modality_cue: string | null;
+	slots: Partial<Record<string, string>>;
+}
+
+export interface GoldSetSummary {
+	id: string;
+	name: string;
+	corpus_version_id: string;
+	corpus_version: number;
+	articles: number;
+	sentences: number;
+	created_by: string;
+	created_at: string;
+	imported: boolean;
+	labelled: Record<string, number>;
+	adjudicated: number;
+}
+
+export interface GoldItem {
+	key: string;
+	unit_id: string;
+	text: string;
+	path: string;
+	document_title: string;
+	context: string | null;
+	norms: GoldNorm[] | null;
+}
+
+export interface GoldWorkspace extends GoldSetSummary {
+	items: GoldItem[];
+	annotator: string;
+	slots: string[];
+	modalities: GoldModality[];
+	annotators: { annotator: string; annotator_name: string; imported: number; labels: number }[];
+}
+
+export interface GoldAgreement {
+	sentences: number;
+	kappa_has_norm: number | null;
+	kappa_modality_matched: number | null;
+	matched_norm_pairs: number;
+	f1_strict: { norms: number | null; slots: number | null };
+	f1_lenient: { norms: number | null; slots: number | null };
+}
+
+export interface GoldComparison {
+	first: string;
+	second: string;
+	sentences: number;
+	labelled_by_both: number;
+	agreement: GoldAgreement | null;
+	adjudicated: number;
+	items: { key: string; unit_id: string; text: string; first: GoldNorm[] | null; second: GoldNorm[] | null; agree: boolean; final: { norms: GoldNorm[]; decided_by: string } | null }[];
 }

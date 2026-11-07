@@ -338,6 +338,8 @@ class ReviewStore:
         # Reject malformed structure rather than publishing an incomplete source map.
         if any(a["code"] in {"orphan_heading", "duplicate_heading"} for a in parsed["audit"]):
             raise ValueError("Cấu trúc có heading trùng hoặc khoản/điểm thiếu cha; sửa TXT rồi nhập lại")
+        if any(a["code"] == "quoted_text" for a in parsed["audit"]):
+            raise ValueError("Văn bản có Điều sửa đổi văn bản khác (trích dẫn chứa Điều/khoản/điểm); kho tri thức chưa nhận loại này")
         document = {"schema_version": VERSION, "document_id": document_id, "document_version_id": version,
                     "snapshot_id": digest(text), "title": title.strip(), "source_url": source_url or "upload://" + document_id,
                     "accessed_at": now(), "source_sha256": digest(text), "effective_from": None,

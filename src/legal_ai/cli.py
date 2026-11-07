@@ -52,6 +52,69 @@ def main():
     command.add_argument("--store", required=True, help="workspace SQLite store of the web app")
     command.add_argument("--version", required=True, help="corpus version ID (shown in the app)")
     command.add_argument("--output", required=True, help="new, empty directory")
+    command = commands.add_parser("corpus-scope", help="create a research corpus from the chosen articles of pinned local vbpl.vn snapshots; no network")
+    command.add_argument("--store", required=True, help="workspace SQLite store of the web app")
+    command.add_argument("--config", default="configs/experiment-scope-v1.json")
+    command.add_argument("--actor", required=True, help="account name recorded as the creator")
+    command = commands.add_parser("kb-extract", help="DK3/DK4 knowledge base: one Claude Code model extracts norms from every sentence of a corpus bundle")
+    command.add_argument("bundle", help="contract bundle written by corpus-export")
+    command.add_argument("--output", required=True, help="new directory, or an earlier run of the same bundle to resume")
+    command.add_argument("--model", default="claude-opus-5-5")
+    command.add_argument("--effort", default="medium")
+    command.add_argument("--max-calls", type=int, default=0, help="call budget of this session (required unless --dry-run)")
+    command.add_argument("--approve-claude", action="store_true", help="explicit approval of the model calls")
+    command.add_argument("--dry-run", action="store_true", help="only count batches and characters; no model call")
+    command = commands.add_parser("kb-materialize", help="rebuild dk3/dk4 and the validation report of a knowledge-base run from raw.jsonl; offline")
+    command.add_argument("run", help="knowledge-base run directory")
+    command.add_argument("--bundle", help="contract bundle (default: the one recorded in the run manifest)")
+    command = commands.add_parser("answer-run", help="cited answers for one retrieval run through Claude Code; resumes an earlier run")
+    command.add_argument("retrieval_run", help="run directory written by run-retrieval")
+    command.add_argument("--questions", required=True, help="the question file the retrieval run used")
+    command.add_argument("--config", default="configs/experiments/answer.json")
+    command.add_argument("--output", required=True, help="new directory, or an earlier answer run with the same inputs")
+    command.add_argument("--split", choices=["dev", "held_out"], help="answer only this split")
+    command.add_argument("--max-calls", type=int, required=True, help="call budget of this session")
+    command.add_argument("--approve-claude", action="store_true", help="explicit approval of the model calls")
+    command = commands.add_parser("answer-score", help="automatic metrics of an answer run (refusals, citations against gold units); offline")
+    command.add_argument("answer_run")
+    command.add_argument("--questions", required=True)
+    command = commands.add_parser("answer-sheet", help="blinded CSV grading sheet pooling several answer runs, and its separate key; offline")
+    command.add_argument("answer_runs", nargs="+")
+    command.add_argument("--questions", required=True)
+    command.add_argument("--sheet", required=True, help="CSV file to write")
+    command.add_argument("--key", required=True, help="JSON key file to write; keep it away from graders")
+    command = commands.add_parser("answer-grades", help="per-condition scores of a filled grading sheet; offline")
+    command.add_argument("sheet")
+    command.add_argument("--key", required=True)
+    command.add_argument("--compare", help="a second filled sheet of the same items: report Cohen's kappa")
+    command = commands.add_parser("answer-judge", help="fill a copy of a grading sheet with a Claude Code judge (supplement to people)")
+    command.add_argument("sheet")
+    command.add_argument("--output", required=True, help="CSV file to write")
+    command.add_argument("--config", default="configs/experiments/answer.json")
+    command.add_argument("--max-calls", type=int, required=True)
+    command.add_argument("--approve-claude", action="store_true")
+    command = commands.add_parser("kb-inject", help="RQ2: plant errors of each type in DK4 claims and measure what the validator catches; offline")
+    command.add_argument("run", help="knowledge-base run directory")
+    command.add_argument("--output", required=True, help="new, empty directory")
+    command.add_argument("--per-type", type=int, default=30)
+    command.add_argument("--seed", default="lexora-inject-v1")
+    command = commands.add_parser("gold-template", help="RQ1: empty extraction gold rows for every sentence of the chosen articles; offline")
+    command.add_argument("bundle")
+    command.add_argument("--output", required=True, help="JSONL file to write")
+    group = command.add_mutually_exclusive_group(required=True)
+    group.add_argument("--article", action="append", help="article unit ID, e.g. 45-2019-qh14/chapter-iii/section-1/article-24 (repeatable)")
+    group.add_argument("--sample", type=int, help="seeded sample of this many articles, spread over documents")
+    command.add_argument("--seed", default="lexora-gold-v1")
+    command = commands.add_parser("gold-check", help="RQ1: check a filled gold file (exact quotes, offsets); offline")
+    command.add_argument("gold")
+    command.add_argument("--bundle", required=True)
+    command = commands.add_parser("gold-agreement", help="RQ1: agreement of two annotators on the same gold template; offline")
+    command.add_argument("first")
+    command.add_argument("second")
+    command = commands.add_parser("gold-score", help="RQ1: P/R/F1 of the rule baseline or a knowledge-base run against the gold file; offline")
+    command.add_argument("gold")
+    command.add_argument("--bundle", required=True)
+    command.add_argument("--predictions", required=True, help="'rules', or a dk3.jsonl / dk4.jsonl of a knowledge-base run")
     command = commands.add_parser("run-retrieval", help="DK1/DK2 retrieval run with Recall@K into a new run directory; no network")
     command.add_argument("bundle")
     command.add_argument("--condition", required=True, help="configs/experiments/dk1.json or dk2.json")
@@ -81,9 +144,91 @@ def main():
         elif args.command == "corpus-export":
             from legal_ai.research.corpus import CorpusStore
             print(json.dumps(CorpusStore(args.store).export_version(args.version, args.output), ensure_ascii=False, indent=2))
+        elif args.command == "corpus-scope":
+            from legal_ai.research.corpus import CorpusStore
+            from legal_ai.research.scope import build_scope
+            corpus = build_scope(CorpusStore(args.store), args.config, args.actor)
+            print(json.dumps({"corpus_id": corpus["id"], "name": corpus["name"],
+                              "documents": [{"document_id": d["document_id"], "articles": d["article_count"], "audit": d["audit_count"]} for d in corpus["documents"]]},
+                             ensure_ascii=False, indent=2))
+        elif args.command in ("kb-extract", "kb-materialize"):
+            from legal_ai.common.io import read_jsonl
+            from legal_ai.evaluation import kb_run
+            if args.command == "kb-materialize":
+                bundle = args.bundle or json.loads((Path(args.run) / "manifest.json").read_text(encoding="utf-8"))["bundle"]
+                print(json.dumps(kb_run.materialize(read_jsonl(Path(bundle) / "units.jsonl"), args.run), ensure_ascii=False, indent=2))
+            else:
+                units = read_jsonl(Path(args.bundle) / "units.jsonl")
+                if args.dry_run:
+                    print(json.dumps(kb_run.estimate(units), ensure_ascii=False, indent=2))
+                else:
+                    from legal_ai.providers.claude_code import ClaudeCodeProvider
+                    if args.max_calls < 1:
+                        raise ValueError("--max-calls must be a positive call budget")
+                    provider = ClaudeCodeProvider(args.model, args.effort, args.max_calls, approved=args.approve_claude)
+                    kb_run.start(args.bundle, args.output, args.model, args.effort)
+                    counts = kb_run.extract(units, provider, args.output, log=lambda line: print(line, flush=True))
+                    print(json.dumps({"calls": counts, "report": kb_run.materialize(units, args.output)}, ensure_ascii=False, indent=2))
+        elif args.command in ("answer-run", "answer-judge"):
+            from legal_ai.providers.claude_code import ClaudeCodeProvider
+            config = json.loads(Path(args.config).read_text(encoding="utf-8"))
+            log = lambda line: print(line, flush=True)
+            if args.command == "answer-run":
+                from legal_ai.evaluation.answer_run import run as answer_run
+                provider = ClaudeCodeProvider(config["model"], config["effort"], args.max_calls, approved=args.approve_claude)
+                print(json.dumps(answer_run(args.retrieval_run, args.questions, args.config, provider, args.output, split=args.split, log=log), indent=2))
+            else:
+                from legal_ai.evaluation.answer_grading import judge_sheet
+                provider = ClaudeCodeProvider(config["judge_model"], config["judge_effort"], args.max_calls, approved=args.approve_claude)
+                print(json.dumps(judge_sheet(args.sheet, provider, args.output, log=log), indent=2))
+        elif args.command == "answer-score":
+            from legal_ai.evaluation.answer_run import score
+            print(json.dumps(score(args.answer_run, args.questions), ensure_ascii=False, indent=2))
+        elif args.command == "answer-sheet":
+            from legal_ai.evaluation.answer_grading import make_sheet
+            print(json.dumps(make_sheet(args.answer_runs, args.questions, args.sheet, args.key), indent=2))
+        elif args.command == "answer-grades":
+            from legal_ai.evaluation.answer_grading import agreement, score_sheet
+            report = score_sheet(args.sheet, args.key)
+            if args.compare:
+                report["agreement"] = agreement(args.sheet, args.compare)
+            print(json.dumps(report, ensure_ascii=False, indent=2))
+        elif args.command == "kb-inject":
+            from legal_ai.common.io import read_jsonl
+            from legal_ai.evaluation.error_injection import run as inject_run
+            bundle = json.loads((Path(args.run) / "manifest.json").read_text(encoding="utf-8"))["bundle"]
+            print(json.dumps(inject_run(args.run, read_jsonl(Path(bundle) / "units.jsonl"), args.output, args.per_type, args.seed), ensure_ascii=False, indent=2))
+        elif args.command.startswith("gold-"):
+            from legal_ai.common.io import read_jsonl, write_jsonl
+            from legal_ai.evaluation import extraction_gold as gold
+            if args.command == "gold-agreement":
+                print(json.dumps(gold.agreement(read_jsonl(args.first), read_jsonl(args.second)), ensure_ascii=False, indent=2))
+            else:
+                units = read_jsonl(Path(args.bundle) / "units.jsonl")
+                if args.command == "gold-template":
+                    articles = args.article or gold.sample_articles(units, args.sample, args.seed)
+                    rows = gold.template(units, articles)
+                    write_jsonl(args.output, rows)
+                    print(json.dumps({"articles": articles, "sentences": len(rows)}, ensure_ascii=False, indent=2))
+                else:
+                    rows = read_jsonl(args.gold)
+                    problems = gold.check(rows, units)
+                    if args.command == "gold-check" or problems:
+                        print(json.dumps({"rows": len(rows), "problems": problems}, ensure_ascii=False, indent=2))
+                        if problems:
+                            raise ValueError(f"{len(problems)} problems in the gold file")
+                    else:
+                        predicted = gold.rule_predictions(units, rows) if args.predictions == "rules" else gold.claim_predictions(read_jsonl(args.predictions), rows)
+                        print(json.dumps(gold.score(rows, predicted), ensure_ascii=False, indent=2))
         elif args.command == "run-retrieval":
             from legal_ai.evaluation.retrieval_run import run
-            print(json.dumps(run(args.bundle, args.questions, args.condition, args.shared, args.output), ensure_ascii=False, indent=2))
+            shared = json.loads(Path(args.shared).read_text(encoding="utf-8"))
+            embedder = None
+            if shared["retrieval"].get("method") in ("dense", "hybrid"):
+                from legal_ai.retrieval.embeddings import LocalEmbedder
+                model = shared["embedding_model"]
+                embedder = LocalEmbedder(model["path"], model["name"], model["revision"], model.get("max_seq_length", 1024))
+            print(json.dumps(run(args.bundle, args.questions, args.condition, args.shared, args.output, embedder), ensure_ascii=False, indent=2))
         elif args.command == "graph-build":
             from legal_ai.kb.graph import GRAPH_VERSION, build_graph
             config = json.loads(Path(args.config).read_text(encoding="utf-8"))

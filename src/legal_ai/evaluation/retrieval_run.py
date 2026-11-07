@@ -1,4 +1,4 @@
-"""Retrieval run for one condition (DK1 or DK2): build its index records, rank them with BM25 for every
+"""Retrieval run for one condition (DK1-DK4): build its index records, rank them with BM25 for every
 question and score Recall@K against gold canonical units. No network, no model, no generated answers.
 
 A run directory holds `manifest.json` (inputs, hashes, parameters, environment), `records.jsonl` (the
@@ -18,12 +18,13 @@ import platform
 import subprocess
 
 from legal_ai.common.io import canonical, digest, read_jsonl, write_json, write_jsonl
-from legal_ai.indexing.records import RECORD_VERSION, TOKENIZER, check_records, fixed_chunks, structural_records
+from legal_ai.indexing.records import RECORD_VERSION, TOKENIZER, check_records, claim_records, fixed_chunks, structural_records
 from legal_ai.retrieval.bm25 import BM25, tokens
 from legal_ai.validation.bundle import validate_bundle
 
 RUN_VERSION = "retrieval-run-v1"
-BUILDERS = {"fixed_chunks": "DK1", "structural_units": "DK2"}
+BUILDERS = {"fixed_chunks": "DK1", "structural_units": "DK2", "llm_kb_raw": "DK3", "llm_kb_validated": "DK4"}
+KB_FILES = {"llm_kb_raw": "dk3.jsonl", "llm_kb_validated": "dk4.jsonl"}
 
 
 def load_bundle(folder):
@@ -37,14 +38,25 @@ def load_bundle(folder):
     return documents, units, texts
 
 
-def build_records(condition, documents, units, texts):
+def kb_claims(condition, units_path):
+    """The DK3 or DK4 claims of the knowledge-base run named by the condition, checked against this bundle."""
+    folder = Path(condition["kb_run"])
+    manifest = json.loads((folder / "manifest.json").read_text(encoding="utf-8"))
+    if manifest["units_sha256"] != digest(Path(units_path).read_bytes()):
+        raise ValueError("the knowledge-base run was extracted from another corpus bundle")
+    return read_jsonl(folder / KB_FILES[condition["representation"]])
+
+
+def build_records(condition, documents, units, texts, units_path=None):
     representation = condition["representation"]
     if BUILDERS.get(representation) != condition["condition"]:
         raise ValueError(f"unsupported condition/representation: {condition['condition']}/{representation}")
     if representation == "fixed_chunks":
         records = fixed_chunks(documents, units, texts, condition["chunk_tokens"], condition["overlap_tokens"])
-    else:
+    elif representation == "structural_units":
         records = structural_records(documents, units, texts, condition["max_tokens"])
+    else:
+        records = claim_records(condition["condition"], documents, units, texts, kb_claims(condition, units_path))
     return check_records(records, texts)
 
 
@@ -61,7 +73,10 @@ def _git_state(root):
         return {"commit": None, "dirty": None}
 
 
-def run(bundle, questions_path, condition_path, shared_path, output):
+METHODS = ("bm25", "dense", "hybrid")
+
+
+def run(bundle, questions_path, condition_path, shared_path, output, embedder=None):
     output = Path(output)
     if output.exists() and any(output.iterdir()):
         raise ValueError("output must be empty: use a new run directory")
@@ -70,8 +85,13 @@ def run(bundle, questions_path, condition_path, shared_path, output):
     question_file = json.loads(Path(questions_path).read_text(encoding="utf-8"))
     questions = question_file["questions"]
     retrieval = shared["retrieval"]
-    if retrieval.get("method") != "bm25" or retrieval.get("tokenizer") != TOKENIZER:
-        raise ValueError(f"shared config must select bm25 with tokenizer {TOKENIZER}")
+    method = retrieval.get("method")
+    if method not in METHODS:
+        raise ValueError(f"retrieval method must be one of {METHODS}")
+    if method != "dense" and retrieval.get("tokenizer") != TOKENIZER:
+        raise ValueError(f"BM25 needs tokenizer {TOKENIZER}")
+    if method != "bm25" and embedder is None:
+        raise ValueError("dense and hybrid retrieval need an embedder (the embeddings extra and the local model)")
     ks = sorted(set(retrieval["recall_k"]) | {shared["top_k"]})
 
     documents, units, texts = load_bundle(bundle)
@@ -83,12 +103,22 @@ def run(bundle, questions_path, condition_path, shared_path, output):
     if missing:
         raise ValueError(f"gold units missing from the bundle: {missing[:5]}")
 
-    records = build_records(condition, documents, units, texts)
-    index = BM25([tokens(row["index_text"]) for row in records], k1=retrieval["k1"], b=retrieval["b"])
+    records = build_records(condition, documents, units, texts, Path(bundle) / "units.jsonl")
+    lexical = BM25([tokens(row["index_text"]) for row in records], k1=retrieval["k1"], b=retrieval["b"]) if method != "dense" else None
+    dense = None
+    if method != "bm25":
+        from legal_ai.retrieval.embeddings import DenseIndex, rrf
+        dense = DenseIndex(embedder, [row["index_text"] for row in records])
     depth = max(ks)
     predictions, errors = [], []
     for question in questions:
-        ranked = index.rank(tokens(question["question"]))[:depth]
+        if method == "bm25":
+            ranked = lexical.rank(tokens(question["question"]))[:depth]
+        elif method == "dense":
+            ranked = dense.rank(question["question"])[:depth]
+        else:
+            ranked = rrf([lexical.rank(tokens(question["question"])), dense.rank(question["question"])],
+                         retrieval.get("rrf_c", 60), retrieval.get("rrf_candidates", 30))[:depth]
         top = [records[i] for i, _ in ranked]
         gold = question["relevant_unit_ids"]
         row = {"question_id": question["question_id"], "family_id": question.get("family_id"), "split": question.get("split"),
@@ -101,7 +131,7 @@ def run(bundle, questions_path, condition_path, shared_path, output):
             row["recall"][str(k)] = len(covered) / len(gold) if gold else None
             row["context_tokens"][str(k)] = sum(r["token_count"] for r in top[:k])
         if not ranked:
-            errors.append({"question_id": question["question_id"], "code": "no_lexical_match"})
+            errors.append({"question_id": question["question_id"], "code": "no_match"})
         predictions.append(row)
 
     scored = [row for row in predictions if row["gold_unit_ids"]]
@@ -123,6 +153,7 @@ def run(bundle, questions_path, condition_path, shared_path, output):
         "question_set": {"description": question_file.get("description"), "count": len(questions)},
         "records_sha256": digest("".join(canonical(r) + "\n" for r in records)),
         "status": "exploratory" if shared.get("status") != "frozen" or condition.get("status") != "frozen" else "frozen",
+        "method": method, "dense": ({**embedder.describe(), "texts_sha256": dense.texts_sha256} if dense else None),
         "network": False, "model_calls": 0,
         "environment": {"python": platform.python_version(), "platform": platform.platform(), "git": _git_state(root)},
         "limitations": ["Retrieval only: no context packing, generation, citation or abstention behavior is scored",

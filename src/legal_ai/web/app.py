@@ -20,10 +20,11 @@ from typing import Literal
 from fastapi import Depends, FastAPI, Query, Request
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import HTMLResponse, JSONResponse, RedirectResponse, Response
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, Field
 from starlette.exceptions import HTTPException as StarletteHTTPException
 
 from legal_ai.auth import SESSION_HOURS, AccountStore, AuthError
+from legal_ai.common.io import canonical
 from legal_ai.glossary import bilingual, embed_terms
 from legal_ai.ingestion.catalog import Catalog
 from legal_ai.ingestion.excerpt import excerpt as cut_excerpt, outline as article_outline
@@ -34,6 +35,7 @@ from legal_ai.kb.import_review import MAX_BYTES, Conflict
 from legal_ai.rag.review_chat import ChatService
 from legal_ai.research.corpus import CorpusStore
 from legal_ai.research import proposals as question_proposals
+from legal_ai.research.gold import GoldStore
 from legal_ai.research.questions import QuestionStore
 from legal_ai.providers.claude_code import ProviderError
 from legal_ai.web.setup import run_extraction
@@ -50,7 +52,8 @@ NO_CATALOG = "Chưa có danh mục văn bản (khởi động với --catalog)"
 # A base64 upload of the largest accepted file, plus the JSON around it.
 UPLOAD_PATH, UPLOAD_LIMIT = "/api/corpus/file", MAX_FILE_BYTES * 4 // 3 + 100_000
 # Question packs carry a corpus version; they get the same large limit as file uploads.
-LARGE_PATHS = {UPLOAD_PATH, "/api/prepare-file", "/api/question-sets/import-pack", "/api/question-set/import-labels"}
+LARGE_PATHS = {UPLOAD_PATH, "/api/prepare-file", "/api/question-sets/import-pack", "/api/question-set/import-labels",
+               "/api/gold/import-pack", "/api/gold/import-labels"}
 NO_PROPOSER = "Chưa bật đề xuất bằng model cho phiên chạy này (khởi động với --proposal-model và --approve-claude)"
 
 
@@ -156,6 +159,7 @@ class CorpusVbplBody(Body):
     corpus_id: str
     reference: str
     document_id: str | None = None
+    article_ids: list[str] | None = Field(default=None, max_length=400)
     confirm: bool = False
 
 
@@ -238,6 +242,19 @@ class LabelsBody(Body):
     labels: dict
 
 
+class GoldCreateBody(Body):
+    name: str
+    corpus_version_id: str
+    sample: int | None = None
+    articles: list[str] | None = Field(default=None, max_length=120)
+
+
+class GoldSaveBody(Body):
+    set_id: str
+    key: str
+    norms: list[dict] = Field(max_length=8)
+
+
 class FreezeQuestionsBody(Body):
     set_id: str
     other: str
@@ -263,6 +280,7 @@ def create_app(store, port, *, provider=None, source_catalog=None, extractor=Non
     corpora = CorpusStore(store.path)
     catalog = Catalog(catalog_path) if catalog_path else None
     questions = QuestionStore(store.path, corpora)
+    golds = GoldStore(store.path, corpora)
     store.interrupt_extractions()
     frontend = Path(frontend_dir).resolve() if frontend_dir else None
     app = FastAPI(title="Lexora", docs_url=None, redoc_url=None, openapi_url="/api/openapi.json")
@@ -560,7 +578,7 @@ def create_app(store, port, *, provider=None, source_catalog=None, extractor=Non
         except OSError as exc:  # Network failures are not storage failures.
             raise ValueError(f"Không kết nối được vbpl.vn ({exc.__class__.__name__})") from exc
         raw = Path(manifest["local_path"]).read_bytes()
-        return corpora.add_vbpl(body.corpus_id, manifest, raw, account["username"], body.document_id or None)
+        return corpora.add_vbpl(body.corpus_id, manifest, raw, account["username"], body.document_id or None, body.article_ids)
 
     @app.post(UPLOAD_PATH)
     def corpus_file(body: CorpusFileBody, account=Depends(reviewer)):
@@ -713,6 +731,53 @@ def create_app(store, port, *, provider=None, source_catalog=None, extractor=Non
     @app.get("/api/question-set/frozen")
     def question_frozen(id: str = Query(), _=Depends(reviewer)):
         return download(questions.frozen_file(id), f"lexora-questions-{id}.json")
+
+    # Extraction gold sets (RQ1) --------------------------------------------------------------
+    @app.get("/api/gold")
+    def gold_sets(_=Depends(reviewer)):
+        return {"sets": golds.sets(), "versions": frozen_versions()}
+
+    @app.post("/api/gold")
+    def gold_create(body: GoldCreateBody, account=Depends(reviewer)):
+        return golds.create(body.name, body.corpus_version_id, account["username"], body.articles, body.sample)
+
+    @app.get("/api/gold/set")
+    def gold_set(id: str = Query(), account=Depends(reviewer)):
+        return golds.workspace(id, account["username"]) | {"annotators": golds.annotators(id)}
+
+    @app.post("/api/gold/label")
+    def gold_label(body: GoldSaveBody, account=Depends(reviewer)):
+        return golds.save(body.set_id, body.key, account["username"], account["display_name"], body.norms)
+
+    @app.get("/api/gold/pack")
+    def gold_pack(id: str = Query(), _=Depends(reviewer)):
+        return download(golds.export_pack(id), f"lexora-gold-pack-{id}.json")
+
+    @app.post("/api/gold/import-pack")
+    def gold_import_pack(body: PackBody, account=Depends(reviewer)):
+        return golds.import_pack(body.pack, account["username"])
+
+    @app.get("/api/gold/labels")
+    def gold_labels(id: str = Query(), account=Depends(reviewer)):
+        return download(golds.export_labels(id, account["username"]), f"lexora-gold-labels-{id}-{account['username']}.json")
+
+    @app.post("/api/gold/import-labels")
+    def gold_import_labels(body: LabelsBody, account=Depends(reviewer)):
+        return golds.import_labels(body.labels, account["username"])
+
+    @app.get("/api/gold/compare")
+    def gold_compare(id: str = Query(), other: str = Query(), account=Depends(reviewer)):
+        return golds.comparison(id, account["username"], other)
+
+    @app.post("/api/gold/adjudicate")
+    def gold_adjudicate(body: GoldSaveBody, account=Depends(reviewer)):
+        return golds.adjudicate(body.set_id, body.key, body.norms, account["username"])
+
+    @app.get("/api/gold/file")
+    def gold_file(id: str = Query(), _=Depends(reviewer)):
+        rows = golds.gold_file(id)
+        body = "".join(canonical(row) + "\n" for row in rows)
+        return Response(body, media_type="application/x-ndjson", headers={"Content-Disposition": f'attachment; filename="lexora-gold-{id}.jsonl"'})
 
     # Graph viewers (self-contained pages of published revisions) --------------------------
     def viewer_page(request, revision_id, structure):

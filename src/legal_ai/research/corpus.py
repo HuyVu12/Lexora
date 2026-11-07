@@ -19,6 +19,7 @@ import threading
 
 from legal_ai.common.io import canonical, digest, write_json, write_jsonl
 from legal_ai.ingestion.catalog import fold
+from legal_ai.ingestion.excerpt import excerpt, outline
 from legal_ai.ingestion.files import extract_text
 from legal_ai.ingestion.parser import parse
 from legal_ai.ingestion.vbpl_api import document_text, unwrap
@@ -111,7 +112,8 @@ class CorpusStore:
                 "accessed_at": row["accessed_at"], "metadata": json.loads(row["metadata"]), "added_at": row["added_at"], "added_by": row["added_by"],
                 "unit_count": len(units), "article_count": sum(u["unit_type"] == "article" for u in units),
                 "leaf_count": sum(u["unit_id"] not in parents for u in units), "audit_count": len(report["audit"]),
-                "unassigned_characters": len(report["unassigned_text"]), "warnings": report.get("warnings", [])}
+                "unassigned_characters": len(report["unassigned_text"]), "trailing_characters": len(report.get("trailing_text", "")),
+                "parser_version": report.get("parser_version", "lexora-parser-v1"), "warnings": report.get("warnings", [])}
 
     @staticmethod
     def _version_summary(row):
@@ -131,7 +133,8 @@ class CorpusStore:
             raise ValueError(no_articles or "Không tìm thấy Điều nào; mỗi Điều cần bắt đầu trên một dòng riêng bằng “Điều N.”")
         for unit in parsed["units"]:
             validate_unit(unit)
-        report = {"audit": parsed["audit"], "unassigned_text": parsed["unassigned_text"], "warnings": warnings}
+        report = {"parser_version": parsed["parser_version"], "audit": parsed["audit"], "unassigned_text": parsed["unassigned_text"],
+                  "trailing_text": parsed["trailing_text"], "warnings": warnings}
         row_id = "d" + secrets.token_hex(8)
         with self._lock, closing(self._connect()) as db, db:
             if db.execute("SELECT 1 FROM corpora WHERE id = ?", (corpus_id,)).fetchone() is None:
@@ -148,8 +151,10 @@ class CorpusStore:
                 canonical(normalized), canonical(parsed["units"]), canonical(report), _now(), actor, None))
         return self.document(row_id)
 
-    def add_vbpl(self, corpus_id, manifest, raw, actor, document_id=None):
-        """Add a vbpl.vn snapshot fetched by `vbpl_api.fetch_document` (its manifest and stored bytes)."""
+    def add_vbpl(self, corpus_id, manifest, raw, actor, document_id=None, article_ids=None):
+        """Add a vbpl.vn snapshot fetched by `vbpl_api.fetch_document` (its manifest and stored bytes).
+        With `article_ids` (outline IDs) only those articles and their chapter/section headings are kept, verbatim;
+        the row still stores the whole snapshot, and the metadata records the chosen articles."""
         if digest(raw) != manifest["source_sha256"]:
             raise ValueError("Nội dung bản chụp không khớp manifest")
         document = unwrap(raw)
@@ -157,6 +162,11 @@ class CorpusStore:
         if meta.get("is_translation"):
             raise ValueError("Đây là bản dịch; hãy thêm bản gốc tiếng Việt")
         text = document_text(document)["text"]
+        if article_ids is not None:
+            chosen = set(article_ids)
+            order = [a["id"] for a in outline(text) if a["id"] in chosen]
+            text = excerpt(text, article_ids, limit=None)
+            meta = meta | {"excerpt": {"article_ids": order, "count": len(order)}}
         kind = (meta.get("doc_type") or "văn bản").lower()
         no_articles = (f"Văn bản này ({kind} {meta.get('doc_num') or ''}) không chia thành Điều nên không đưa vào corpus được. "
                        "Lệnh công bố, chỉ thị và công văn thường như vậy; hãy chọn chính văn bản luật, nghị định hoặc thông tư.")
@@ -179,7 +189,7 @@ class CorpusStore:
             raise ValueError("Không tìm thấy văn bản")
         report = json.loads(row["report"])
         return self._summary(row) | {"corpus_id": row["corpus_id"], "removed_at": row["removed_at"], "units": json.loads(row["units"]),
-                                     "audit": report["audit"], "unassigned_text": report["unassigned_text"]}
+                                     "audit": report["audit"], "unassigned_text": report["unassigned_text"], "trailing_text": report.get("trailing_text", "")}
 
     def remove(self, corpus_id, row_id):
         with self._lock, closing(self._connect()) as db, db:
@@ -227,7 +237,8 @@ class CorpusStore:
                                 "source_ref": row["source_ref"], "source_url": row["source_url"], "source_sha256": row["source_sha256"],
                                 "accessed_at": row["accessed_at"], "normalized_sha256": normalized["normalized_sha256"],
                                 "effect_status": json.loads(row["metadata"]).get("effect_status"), "units": len(doc_units),
-                                "audit_count": len(json.loads(row["report"])["audit"])})
+                                "audit_count": len(json.loads(row["report"])["audit"]),
+                                "parser_version": json.loads(row["report"]).get("parser_version", "lexora-parser-v1")})
             validate_bundle(documents, units, [], [])
             number = (latest["number"] if latest else 0) + 1
             manifest = {"store_version": STORE_VERSION, "schema_version": VERSION, "corpus_id": corpus_id, "number": number,

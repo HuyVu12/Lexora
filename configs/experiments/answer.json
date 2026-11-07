@@ -1,0 +1,13 @@
+{
+  "answer_version": "answer-run-v1",
+  "status": "draft",
+  "model": "claude-opus-5-5",
+  "effort": "medium",
+  "judge_model": "claude-sonnet-5-5",
+  "judge_effort": "medium",
+  "prompt": "answer-v1.md",
+  "top_k": 5,
+  "context_token_budget": 3000,
+  "token_counter": "lexora-syllable-v1",
+  "note": "The same settings for DK1-DK4. Token budget counted in Lexora syllable tokens until the Opus tokenizer count replaces it (progress item 8)."
+}

@@ -1,8 +1,8 @@
 """Choose articles of a long statute and cut them out as one verbatim excerpt.
 
 `outline` lists the articles of a document with their chapter and section, and marks the ones a knowledge base
-cannot take: an article holding a heading the parser could not place (a duplicate or orphan heading, typical of
-articles that amend other laws and quote their clauses). `excerpt` joins the chosen articles in document order,
+cannot take: an article holding a heading the parser could not place (a duplicate or orphan heading) or a quotation
+that hides headings (`quoted_text`, typical of articles that amend other laws and quote their clauses). `excerpt` joins the chosen articles in document order,
 each with all its clauses and points, and repeats the chapter and section headings above them, so the excerpt
 parses into the same structure. Every character of the excerpt is copied from the normalized source text.
 """
@@ -10,7 +10,7 @@ parses into the same structure. Every character of the excerpt is copied from th
 from legal_ai.ingestion.parser import parse
 from legal_ai.normalization.text import normalize
 
-BLOCKING = {"duplicate_heading", "orphan_heading"}
+BLOCKING = {"duplicate_heading", "orphan_heading", "quoted_text"}
 MAX_ARTICLES = 60
 
 
@@ -71,13 +71,14 @@ def outline(text):
     return articles
 
 
-def excerpt(text, article_ids):
-    """The chosen articles (outline IDs) with their chapter/section headings, verbatim, in document order."""
+def excerpt(text, article_ids, limit=MAX_ARTICLES):
+    """The chosen articles (outline IDs) with their chapter/section headings, verbatim, in document order.
+    `limit` caps one knowledge-base import; research scopes pass None."""
     chosen = set(article_ids)
     if not chosen:
         raise ValueError("Chọn ít nhất một Điều")
-    if len(chosen) > MAX_ARTICLES:
-        raise ValueError(f"Mỗi lần nhập tối đa {MAX_ARTICLES} Điều; nhập phần còn lại ở lần sau và gộp vào kho")
+    if limit is not None and len(chosen) > limit:
+        raise ValueError(f"Mỗi lần nhập tối đa {limit} Điều; nhập phần còn lại ở lần sau và gộp vào kho")
     source, parsed = _parsed(text)
     units = parsed["units"]
     by_id = {u["unit_id"]: u for u in units}

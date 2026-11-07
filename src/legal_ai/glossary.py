@@ -28,7 +28,7 @@ GLOSSARY = {
     "obligation": {
         "term": "Nghĩa vụ",
         "definition": "Việc chủ thể bắt buộc phải làm. Không làm là vi phạm.",
-        "cues": "phải, có nghĩa vụ, có trách nhiệm, bắt buộc",
+        "cues": "phải, có nghĩa vụ, có trách nhiệm, bắt buộc, buộc, chịu trách nhiệm",
         "example": "Người sử dụng lao động phải trả lương cho người lao động đúng hạn.",
         "highlight": "phải",
     },
@@ -42,7 +42,7 @@ GLOSSARY = {
     "entitlement": {
         "term": "Quyền",
         "definition": "Điều chủ thể được hưởng hoặc được đòi hỏi; bên kia phải tôn trọng hoặc đáp ứng.",
-        "cues": "có quyền, được quyền",
+        "cues": "có quyền, được quyền, được",
         "example": "Người lao động có quyền đơn phương chấm dứt hợp đồng lao động.",
         "highlight": "có quyền",
     },
@@ -197,6 +197,127 @@ GLOSSARY = {
     "public": {
         "term": "Kho công khai",
         "definition": "Cho phép gửi nội dung kho tới dịch vụ AI khi bạn chủ động chọn dùng AI cho một lượt.",
+    },
+    "audit_duplicate_heading": {
+        "term": "Tiêu đề trùng số",
+        "definition": "Parser gặp lại một số Điều, khoản hoặc điểm đã có trong cùng cấp cha. Chữ vẫn được giữ nhưng gộp vào đơn vị trước đó, nên cần đối chiếu văn bản gốc. Thường do văn bản gốc gõ lặp, ví dụ hai điểm “d)” liền nhau hoặc hai dòng “Chương XI”.",
+        "example": "d) Quyết định việc cho phép nhà thầu tuyển dụng; d) Chấp thuận vị trí công việc.",
+        "highlight": "d)",
+    },
+    "audit_orphan_heading": {
+        "term": "Tiêu đề không có cấp cha",
+        "definition": "Một dòng trông như khoản (“1.”) hoặc điểm (“a)”) nhưng không nằm trong Điều hoặc khoản nào. Dòng đó được giữ là chữ của đơn vị đứng trước, không thành đơn vị riêng.",
+    },
+    "audit_sequence_gap": {
+        "term": "Số thứ tự bị nhảy",
+        "definition": "Số Điều hoặc khoản không liền nhau, ví dụ sau Điều 91 là Điều 93. Có thể văn bản gốc thiếu một tiêu đề; nếu corpus chỉ lấy một số Điều được chọn thì chỗ nhảy là bình thường.",
+    },
+    "audit_heading_variant": {
+        "term": "Tiêu đề Điều viết sai chính tả",
+        "definition": "Văn bản gốc viết sai chữ “Điều”. Lexora vẫn tách đúng Điều đó và ghi lại để bạn biết nguồn có lỗi gõ; nguyên văn không bị sửa.",
+        "example": "Điêu 38. Chậm đóng bảo hiểm xã hội bắt buộc, bảo hiểm thất nghiệp",
+        "highlight": "Điêu",
+    },
+    "audit_quoted_text": {
+        "term": "Trích dẫn sửa đổi",
+        "definition": "Điều này sửa đổi một văn bản khác và trích nội dung mới trong dấu ngoặc kép. Các Điều, khoản, điểm bên trong trích dẫn thuộc văn bản bị sửa, nên Lexora giữ chúng là chữ của khoản đang trích dẫn và không tách thành đơn vị con. Kho tri thức chưa nhập loại Điều này.",
+        "example": "Sửa đổi, bổ sung khoản 5 Điều 3 như sau: “5. Giám đốc điều hành là người đứng đầu chi nhánh.”",
+        "highlight": "“5. Giám đốc điều hành là người đứng đầu chi nhánh.”",
+    },
+    "audit_unclosed_quote": {
+        "term": "Dấu ngoặc kép không đóng",
+        "definition": "Một dòng mở ngoặc kép nhưng đến hết văn bản không có dấu đóng. Lexora bỏ qua dấu này và tách bình thường; nên xem văn bản gốc có thiếu dấu không.",
+    },
+    "audit_appendix_start": {
+        "term": "Bắt đầu phụ lục",
+        "definition": "Từ dòng “Phụ lục” trở đi là biểu mẫu kèm theo văn bản. Các dòng “Điều 1.” trong mẫu quyết định không phải Điều của văn bản, nên Lexora không tách phần này và không đưa vào bản ghi truy xuất; nội dung vẫn xem được ở mục Phụ lục.",
+    },
+    "q_lookup": {
+        "term": "Tra cứu",
+        "definition": "Câu hỏi về một quy định cụ thể, trả lời được từ một hoặc vài đơn vị liền nhau.",
+        "example": "Tiền lương thử việc ít nhất bằng bao nhiêu phần trăm?",
+    },
+    "q_synthesis": {
+        "term": "Tổng hợp",
+        "definition": "Câu hỏi phải ghép nhiều quy định, ở nhiều Điều hoặc nhiều văn bản, mới trả lời đủ.",
+        "example": "Khi đơn phương chấm dứt hợp đồng, người lao động phải báo trước bao lâu và được trợ cấp gì?",
+    },
+    "q_temporal": {
+        "term": "Hiệu lực, sửa đổi",
+        "definition": "Câu hỏi về thời điểm áp dụng, việc văn bản còn hiệu lực hay đã bị sửa đổi, thay thế. Mặc định là từ chối, trừ khi chính nguyên văn trong corpus nêu rõ.",
+        "example": "Nghị định 12/2022 còn áp dụng không?",
+    },
+    "q_out_of_scope": {
+        "term": "Ngoài phạm vi",
+        "definition": "Câu hỏi không có căn cứ trong corpus đã khóa hoặc không thuộc pháp luật lao động; hệ thống nên từ chối.",
+    },
+    "expect_answer": {
+        "term": "Trả lời",
+        "definition": "Corpus có đủ căn cứ nguyên văn để trả lời; người gán phải chọn các đơn vị chứa căn cứ đó.",
+    },
+    "expect_refuse": {
+        "term": "Từ chối",
+        "definition": "Corpus không đủ căn cứ, câu hỏi ngoài phạm vi hoặc cần xác minh hiệu lực mà corpus không chứng minh được; hệ thống trả lời đúng là từ chối.",
+    },
+    "relevant_units": {
+        "term": "Đơn vị liên quan",
+        "definition": "Các Điều, khoản, điểm thật sự chứa căn cứ cho câu trả lời; chọn đơn vị nhỏ nhất đủ căn cứ. Đây là đáp án dùng để tính Recall@K của truy xuất.",
+    },
+    "paraphrase_family": {
+        "term": "Nhóm diễn đạt",
+        "definition": "Các câu hỏi cùng ý nhưng viết khác nhau. Cả nhóm luôn rơi vào cùng tập dev hoặc held-out để kết quả không bị rò rỉ.",
+    },
+    "proposal_mode": {
+        "term": "Chế độ gán nhãn",
+        "definition": "Mỗi người chọn một lần: tự gán hoặc xem đề xuất của model. Xem cùng một đề xuất làm hai người dễ giống nhau hơn, nên chế độ được ghi lại khi báo cáo đồng thuận.",
+    },
+    "kappa": {
+        "term": "Kappa (Cohen)",
+        "definition": "Mức đồng thuận của hai người gán đã trừ phần trùng do ngẫu nhiên: 1 là hoàn toàn đồng ý, 0 là ngang ngẫu nhiên. Thường coi từ 0,6 trở lên là khá, từ 0,8 là tốt.",
+    },
+    "dice": {
+        "term": "Hệ số Dice",
+        "definition": "Mức trùng giữa hai tập đơn vị liên quan: 2 x số đơn vị chung / tổng số đơn vị của hai người. 1 là hai tập giống hệt, 0 là không có đơn vị chung.",
+    },
+    "full_agreement": {
+        "term": "Khớp hoàn toàn",
+        "definition": "Tỉ lệ câu mà hai người giống nhau ở mọi trường: loại câu, hành vi mong đợi và tập đơn vị liên quan.",
+    },
+    "held_out": {
+        "term": "Tập held-out",
+        "definition": "Phần câu hỏi giữ riêng, chỉ chạy một lần sau khi đã khóa cấu hình trên tập dev. Không dùng để chọn model, prompt hay tham số.",
+    },
+    "adjudication": {
+        "term": "Chốt nhãn",
+        "definition": "Sau khi so hai người gán, chọn hoặc sửa thành một nhãn cuối cho mỗi câu. Nhãn cuối là đáp án dùng trong thực nghiệm.",
+    },
+    "frozen_version": {
+        "term": "Phiên bản đã khóa",
+        "definition": "Bản chụp cố định các văn bản của corpus, có mã băm. Bộ câu hỏi, gold set và thực nghiệm đều gắn với một phiên bản nên văn bản không thay đổi giữa chừng.",
+    },
+    "leaf_unit": {
+        "term": "Đơn vị lá",
+        "definition": "Đơn vị nhỏ nhất không chia tiếp: Điều không có khoản, khoản không có điểm, hoặc điểm. ĐK2 truy xuất theo đơn vị này.",
+    },
+    "effect_status": {
+        "term": "Trạng thái hiệu lực",
+        "definition": "Trạng thái vbpl.vn ghi vào lúc tải văn bản. Lexora chỉ lưu lại để tham khảo, không tự xác minh hiệu lực pháp luật.",
+    },
+    "parser_warning": {
+        "term": "Cảnh báo parser",
+        "definition": "Chỗ máy tách Chương, Điều, khoản, điểm chưa chắc chắn. Mở văn bản để xem từng cảnh báo và đối chiếu với nguyên văn trước khi khóa phiên bản.",
+    },
+    "unassigned_text": {
+        "term": "Chữ ngoài các Điều",
+        "definition": "Phần đầu văn bản trước Điều đầu tiên: quốc hiệu, số hiệu, căn cứ ban hành. Được giữ nguyên nhưng không thuộc đơn vị nào.",
+    },
+    "f1_strict": {
+        "term": "F1, khớp chặt",
+        "definition": "Trung bình điều hòa của độ chính xác và độ phủ. Khớp chặt: hai cụm từ phải giống hệt sau khi bỏ khác biệt chữ hoa, khoảng trắng và dấu câu ở hai đầu.",
+    },
+    "f1_lenient": {
+        "term": "F1, khớp lỏng",
+        "definition": "Như F1 khớp chặt nhưng chấp nhận lệch ranh giới: một cụm chứa cụm kia, hoặc trùng ít nhất một nửa số tiếng.",
     },
     "context": {
         "term": "Ngữ cảnh",
