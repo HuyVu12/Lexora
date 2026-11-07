@@ -22,6 +22,10 @@ from legal_ai.common.io import digest
 CATALOG_VERSION = "catalog-v1"
 TH1NHNG0 = "th1nhng0/vietnamese-legal-documents"
 UTS_VLC = "undertheseanlp/UTS_VLC"
+# Normative types written in Điều/Khoản; ranked first because a corpus needs that structure.
+STRUCTURED = ("Hiến pháp", "Bộ luật", "Luật", "Pháp lệnh", "Nghị định", "Nghị quyết", "Thông tư", "Thông tư liên tịch", "Văn bản hợp nhất")
+# Types that usually have no Điều at all (a promulgation order, a directive, an official letter).
+UNSTRUCTURED = {"Lệnh", "Chỉ thị", "Công văn"}
 IN_FORCE = {"Còn hiệu lực", "Hết hiệu lực một phần", "Chưa có hiệu lực", "Ngưng hiệu lực một phần"}
 FILES = {"metadata": "th1nhng0-metadata.parquet", "relationships": "th1nhng0-relationships.parquet", "uts": "uts_vlc-vn_law.sqlite"}
 SCHEMA = """
@@ -120,8 +124,9 @@ class Catalog:
 
     def search(self, query, limit=20, include_translations=False, doc_type=None):
         """Documents whose title or number holds every query word, accents ignored; only the last word may be
-        a prefix (still being typed). Order: exact document number, the words as one phrase, documents in force
-        (incl. partly expired or not yet effective), FTS5 rank, newest first."""
+        a prefix (still being typed). Order: exact document number, the words as one phrase, normative types written
+        in Điều (laws, decrees, circulars...), documents in force (incl. partly expired or not yet effective), FTS5 rank,
+        newest first."""
         if type(limit) is not int or not 1 <= limit <= 100:
             raise ValueError("limit must be between 1 and 100")
         words = re.findall(r"[0-9a-z]+", fold(query))[:12]
@@ -129,9 +134,10 @@ class Catalog:
             return []
         terms = [f'"{word}"' for word in words[:-1]] + [f'"{words[-1]}"*']
         filters = ("" if include_translations else " AND d.is_translation = 0") + (" AND d.doc_type = ?" if doc_type else "")
+        structured = ", ".join("'" + kind + "'" for kind in STRUCTURED)
         sql = ("SELECT d.*, (d.folded_num = ?) AS exact, bm25(documents_fts) AS rank "
                "FROM documents_fts JOIN documents d USING (vbpl_id) WHERE documents_fts MATCH ?" + filters
-               + " ORDER BY exact DESC, d.in_force DESC, rank, d.issue_date DESC, d.vbpl_id LIMIT ?")
+               + f" ORDER BY exact DESC, (d.doc_type IN ({structured})) DESC, d.in_force DESC, rank, d.issue_date DESC, d.vbpl_id LIMIT ?")
         number = fold(query).strip()
         # Two passes, since FTS5 allows one MATCH per query: the words as one phrase first, then all words anywhere.
         queries = [" + ".join(terms), " AND ".join(terms)] if len(words) > 1 else [" AND ".join(terms)]
@@ -142,7 +148,8 @@ class Catalog:
                 parameters = [number, match] + ([doc_type] if doc_type else []) + [limit]
                 for row in db.execute(sql, parameters):
                     found.setdefault(row["vbpl_id"], (row["exact"], {key: row[key] for key in row.keys() if key not in hidden}
-                                                      | {"sources": row["sources"].split(","), "in_force": bool(row["in_force"])}))
+                                                      | {"sources": row["sources"].split(","), "in_force": bool(row["in_force"]),
+                                                         "usually_no_articles": row["doc_type"] in UNSTRUCTURED}))
         exact = [row for flag, row in found.values() if flag]
         return (exact + [row for flag, row in found.values() if not flag])[:limit]
 

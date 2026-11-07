@@ -200,6 +200,7 @@
 												<span class="serif">{r.title}</span>
 												<span class="small muted">{[r.doc_type, r.doc_num, r.issue_date && formatDay(r.issue_date), r.agency].filter(Boolean).join(' · ')}</span>
 												{#if r.effect_status}<span class="status {statusTone(r.effect_status)}" title={t('corpus.search.statusNote')}>{r.effect_status}*</span>{/if}
+												{#if r.usually_no_articles}<span class="small no-articles"><Icon name="warn" size={14} />{t('corpus.search.noArticles')}</span>{/if}
 											</div>
 											{#if inCorpus.has(r.vbpl_id)}
 												<span class="small muted added"><Icon name="check" size={16} />{t('corpus.search.inCorpus')}</span>
@@ -363,6 +364,12 @@
 		display: grid;
 		gap: 3px;
 		min-width: 0;
+	}
+	.no-articles {
+		display: inline-flex;
+		align-items: center;
+		gap: 4px;
+		color: var(--attention);
 	}
 	.added {
 		display: inline-flex;

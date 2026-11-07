@@ -458,6 +458,7 @@ const vi = {
 	'corpus.search.hint': 'Gõ có dấu hoặc không dấu. Văn bản còn hiệu lực hiện trước.',
 	'corpus.search.results': 'Kết quả tìm kiếm',
 	'corpus.search.statusNote': 'Hiệu lực theo bộ dữ liệu danh mục, có thể đã cũ; khi lấy văn bản, Lexora ghi hiệu lực do vbpl.vn trả về.',
+	'corpus.search.noArticles': 'Thường không chia thành Điều, nên không đưa vào corpus được',
 	'corpus.search.inCorpus': 'Đã có',
 	'corpus.search.none': 'Không tìm thấy văn bản phù hợp.',
 	'corpus.fetch': 'Lấy từ vbpl.vn',

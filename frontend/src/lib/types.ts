@@ -283,6 +283,7 @@ export interface CatalogEntry {
 	effect_status: string | null;
 	agency: string | null;
 	in_force: boolean;
+	usually_no_articles: boolean;
 	sources: string[];
 }
 

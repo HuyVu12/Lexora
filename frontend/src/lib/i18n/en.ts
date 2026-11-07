@@ -460,6 +460,7 @@ const en: Record<MessageKey, string> = {
 	'corpus.search.hint': 'Accents optional. Documents in force come first.',
 	'corpus.search.results': 'Search results',
 	'corpus.search.statusNote': 'Validity as recorded in the catalog dataset, possibly outdated; fetching records the validity vbpl.vn reports.',
+	'corpus.search.noArticles': 'Usually not divided into articles, so it cannot join a corpus',
 	'corpus.search.inCorpus': 'Added',
 	'corpus.search.none': 'No matching document.',
 	'corpus.fetch': 'Fetch from vbpl.vn',
