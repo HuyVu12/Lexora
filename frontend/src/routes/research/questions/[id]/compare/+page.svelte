@@ -3,6 +3,7 @@
 	import StepTag from '#lib/components/StepTag.svelte';
 	import { page } from '$app/state';
 	import Icon from '#lib/components/Icon.svelte';
+	import Term from '#lib/components/Term.svelte';
 	import LabelForm from '#lib/components/LabelForm.svelte';
 	import { api } from '#lib/api.js';
 	import { t } from '#lib/i18n/index.svelte.js';
@@ -118,11 +119,11 @@
 		<h2 class="heading section-title"><StepTag n={1} />{t('cmp.metrics')}</h2>
 		<section class="metrics" aria-label={t('cmp.metrics')}>
 			<div><span class="value">{report.labelled_by_both}/{report.questions}</span><span class="small muted">{t('cmp.both')}</span></div>
-			<div><span class="value">{fmt(report.kappa_question_type)}</span><span class="small muted">{t('cmp.kappaType')}</span></div>
-			<div><span class="value">{fmt(report.kappa_expected_status)}</span><span class="small muted">{t('cmp.kappaStatus')}</span></div>
-			<div><span class="value">{fmt(report.mean_unit_dice)}</span><span class="small muted">{t('cmp.dice')}</span></div>
-			<div><span class="value">{pct(report.full_agreement)}</span><span class="small muted">{t('cmp.full')}</span></div>
-			<div><span class="value">{report.adjudicated}/{report.questions}</span><span class="small muted">{t('cmp.adjudicated')}</span></div>
+			<div><span class="value">{fmt(report.kappa_question_type)}</span><span class="small muted"><Term key="kappa">{t('cmp.kappaType')}</Term></span></div>
+			<div><span class="value">{fmt(report.kappa_expected_status)}</span><span class="small muted"><Term key="kappa">{t('cmp.kappaStatus')}</Term></span></div>
+			<div><span class="value">{fmt(report.mean_unit_dice)}</span><span class="small muted"><Term key="dice">{t('cmp.dice')}</Term></span></div>
+			<div><span class="value">{pct(report.full_agreement)}</span><span class="small muted"><Term key="full_agreement">{t('cmp.full')}</Term></span></div>
+			<div><span class="value">{report.adjudicated}/{report.questions}</span><span class="small muted"><Term key="adjudication">{t('cmp.adjudicated')}</Term></span></div>
 		</section>
 		<p class="small muted modes">
 			{t('cmp.modes', {
@@ -184,7 +185,7 @@
 			<section class="panel freeze">
 				<h2 class="heading"><StepTag n={3} />{t('cmp.freeze')}</h2>
 				<p class="small muted">{t('cmp.freezeLead')}</p>
-				<label class="field inline"><span>{t('cmp.heldOut')}</span><input type="number" min="10" max="50" step="5" bind:value={heldOut} />%</label>
+				<label class="field inline"><span><Term key="held_out">{t('cmp.heldOut')}</Term></span><input type="number" min="10" max="50" step="5" bind:value={heldOut} />%</label>
 				<div><button type="button" class="btn primary" disabled={report.adjudicated < report.questions} onclick={freeze}><Icon name="lock" />{t('cmp.freezeGo')}</button></div>
 				{#if report.adjudicated < report.questions}<p class="small muted">{t('cmp.freezeNeed', { n: report.questions - report.adjudicated })}</p>{/if}
 			</section>

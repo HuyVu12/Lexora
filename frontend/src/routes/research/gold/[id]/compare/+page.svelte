@@ -3,6 +3,7 @@
 	import GoldNormEditor from '#lib/components/GoldNormEditor.svelte';
 	import { page } from '$app/state';
 	import Icon from '#lib/components/Icon.svelte';
+	import Term from '#lib/components/Term.svelte';
 	import { api } from '#lib/api.js';
 	import { t } from '#lib/i18n/index.svelte.js';
 	import { session, canReview } from '#lib/session.svelte.js';
@@ -94,14 +95,14 @@
 
 		<section class="panel stats" aria-labelledby="agree-heading">
 			<h2 class="heading" id="agree-heading">{t('gold.cmp.agreement')}</h2>
-			<p class="small muted">{t('gold.cmp.both', { done: report.labelled_by_both, n: report.sentences })} · {t('gold.cmp.adjudicated', { done: report.adjudicated, n: report.sentences })}</p>
+			<p class="small muted">{t('gold.cmp.both', { done: report.labelled_by_both, n: report.sentences })} · <Term key="adjudication">{t('gold.cmp.adjudicated', { done: report.adjudicated, n: report.sentences })}</Term></p>
 			{#if report.agreement}
 				<dl class="numbers">
-					<div><dt>{t('gold.cmp.kappaHas')}</dt><dd>{pct(report.agreement.kappa_has_norm)}</dd></div>
-					<div><dt>{t('gold.cmp.kappaMod', { n: report.agreement.matched_norm_pairs })}</dt><dd>{pct(report.agreement.kappa_modality_matched)}</dd></div>
-					<div><dt>{t('gold.cmp.f1Strict')}</dt><dd>{pct(report.agreement.f1_strict.norms)}</dd></div>
-					<div><dt>{t('gold.cmp.f1Lenient')}</dt><dd>{pct(report.agreement.f1_lenient.norms)}</dd></div>
-					<div><dt>{t('gold.cmp.slotF1')}</dt><dd>{pct(report.agreement.f1_strict.slots)}</dd></div>
+					<div><dt><Term key="kappa">{t('gold.cmp.kappaHas')}</Term></dt><dd>{pct(report.agreement.kappa_has_norm)}</dd></div>
+					<div><dt><Term key="kappa">{t('gold.cmp.kappaMod', { n: report.agreement.matched_norm_pairs })}</Term></dt><dd>{pct(report.agreement.kappa_modality_matched)}</dd></div>
+					<div><dt><Term key="f1_strict">{t('gold.cmp.f1Strict')}</Term></dt><dd>{pct(report.agreement.f1_strict.norms)}</dd></div>
+					<div><dt><Term key="f1_lenient">{t('gold.cmp.f1Lenient')}</Term></dt><dd>{pct(report.agreement.f1_lenient.norms)}</dd></div>
+					<div><dt><Term key="f1_strict">{t('gold.cmp.slotF1')}</Term></dt><dd>{pct(report.agreement.f1_strict.slots)}</dd></div>
 				</dl>
 			{/if}
 			{#if report.adjudicated === report.sentences}<a class="btn primary download" href="/api/gold/file?id={id}" download><Icon name="download" />{t('gold.exchange.file')}</a>{/if}

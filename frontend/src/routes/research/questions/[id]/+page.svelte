@@ -3,6 +3,7 @@
 	import StepTag from '#lib/components/StepTag.svelte';
 	import { page } from '$app/state';
 	import Icon from '#lib/components/Icon.svelte';
+	import Term from '#lib/components/Term.svelte';
 	import LabelForm from '#lib/components/LabelForm.svelte';
 	import ConfirmDialog from '#lib/components/ConfirmDialog.svelte';
 	import { api } from '#lib/api.js';
@@ -196,7 +197,7 @@
 					<span>{t('qs.count', { n: ws.items.length })}</span>
 					<span>{t('qs.labelledOf', { done: ws.labelled, n: ws.items.length })}</span>
 					<a href="/research/{ws.corpus_id}">{t('qs.onVersion', { n: ws.corpus_version })}</a>
-					{#if ws.show_proposals !== null}<span class="chip">{ws.show_proposals ? t('qs.mode.shownChip') : t('qs.mode.hiddenChip')}</span>{/if}
+					{#if ws.show_proposals !== null}<span class="chip"><Term key="proposal_mode">{ws.show_proposals ? t('qs.mode.shownChip') : t('qs.mode.hiddenChip')}</Term></span>{/if}
 				</p>
 				{#if ws.guideline}<details class="guideline"><summary>{t('qs.guideline')}</summary><p class="small">{ws.guideline}</p></details>{/if}
 			</div>
@@ -240,7 +241,7 @@
 									<span class="qtext">{item.text}</span>
 									<span class="marks">
 										{#if item.label}<Icon name="check" size={16} /><span class="visually-hidden">{t('qs.labelled')}</span>{/if}
-										{#if item.origin === 'model'}<span class="tag">AI</span>{/if}
+										{#if item.origin === 'model'}<span class="tag"><Term key="ai" focusable={false}>AI</Term></span>{/if}
 									</span>
 								</button>
 							</li>
@@ -264,7 +265,7 @@
 						<p class="muted">{t('qs.pickOne')}</p>
 					{:else}
 						<div class="question">
-							<p class="small muted">{t('qs.questionN', { n: current.position })} · {current.origin === 'model' ? t('qs.origin.model') : t('qs.origin.human', { who: current.created_by })}{#if family.length > 1} · {t('qs.family', { n: family.length })}{/if}</p>
+							<p class="small muted">{t('qs.questionN', { n: current.position })} · {current.origin === 'model' ? t('qs.origin.model') : t('qs.origin.human', { who: current.created_by })}{#if family.length > 1} · <Term key="paraphrase_family">{t('qs.family', { n: family.length })}</Term>{/if}</p>
 							<p class="serif qbig">{current.text}</p>
 							{#if !frozen}<button type="button" class="btn quiet small remove" onclick={() => removeQuestion(current!)}><Icon name="x" size={16} />{t('qs.remove')}</button>{/if}
 						</div>

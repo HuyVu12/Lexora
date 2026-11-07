@@ -52,6 +52,13 @@ class GlossaryTests(unittest.TestCase):
             if "highlight" in entry:
                 self.assertIn(entry["highlight"], entry["example"], key)
 
+    def test_question_labels_built_from_codes_have_explanations(self):
+        from legal_ai.research.questions import QUESTION_TYPES, STATUSES
+        for kind in QUESTION_TYPES:
+            self.assertIn(f"q_{kind}", GLOSSARY)
+        for status in STATUSES:
+            self.assertIn(f"expect_{status}", GLOSSARY)
+
     def test_every_parser_audit_code_has_an_explanation(self):
         import re
         parser = (ROOT / "src" / "legal_ai" / "ingestion" / "parser.py").read_text(encoding="utf-8")

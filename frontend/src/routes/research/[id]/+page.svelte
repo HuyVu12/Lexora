@@ -3,6 +3,7 @@
 	import StepTag from '#lib/components/StepTag.svelte';
 	import { page } from '$app/state';
 	import Icon from '#lib/components/Icon.svelte';
+	import Term from '#lib/components/Term.svelte';
 	import CatalogSearch from '#lib/components/CatalogSearch.svelte';
 	import { api } from '#lib/api.js';
 	import { t, formatDate, formatDay } from '#lib/i18n/index.svelte.js';
@@ -142,7 +143,7 @@
 				<p class="facts">
 					<span>{t('research.docs', { n: corpus.documents.length })}</span>
 					<span>{t('corpus.articles', { n: articles })}</span>
-					<span>{corpus.versions.length ? t('research.latest', { n: corpus.versions[0].number }) : t('research.notFrozen')}</span>
+					<span><Term key="frozen_version">{corpus.versions.length ? t('research.latest', { n: corpus.versions[0].number }) : t('research.notFrozen')}</Term></span>
 				</p>
 			</div>
 		</header>
@@ -192,7 +193,7 @@
 								<li>
 									<div class="doc-main">
 										<a class="serif" href="/research/{corpus.id}/document/{d.id}">{d.title}</a>
-										<span class="small muted"><code>{d.document_id}</code> · {t('corpus.doc.counts', { articles: d.article_count, leaves: d.leaf_count })}</span>
+										<span class="small muted"><code>{d.document_id}</code> · <Term key="leaf_unit">{t('corpus.doc.counts', { articles: d.article_count, leaves: d.leaf_count })}</Term></span>
 										<span class="small muted">
 											{#if d.source_kind === 'vbpl'}
 												<a href={d.source_url} target="_blank" rel="noopener noreferrer">vbpl.vn</a> · {t('corpus.doc.accessed', { date: formatDay(d.accessed_at) })}
@@ -201,8 +202,8 @@
 											{/if}
 										</span>
 										<span class="tags">
-											{#if d.metadata.effect_status?.name}<span class="status {statusTone(d.metadata.effect_status.name)}">{d.metadata.effect_status.name}</span>{/if}
-											{#if d.audit_count}<a class="chip warn" href="/research/{corpus.id}/document/{d.id}#audit"><Icon name="warn" size={14} />{t('corpus.doc.audit', { n: d.audit_count })}</a>{/if}
+											{#if d.metadata.effect_status?.name}<span class="status {statusTone(d.metadata.effect_status.name)}"><Term key="effect_status">{d.metadata.effect_status.name}</Term></span>{/if}
+											{#if d.audit_count}<a class="chip warn" href="/research/{corpus.id}/document/{d.id}#audit"><Icon name="warn" size={14} /><Term key="parser_warning" focusable={false}>{t('corpus.doc.audit', { n: d.audit_count })}</Term></a>{/if}
 											{#if d.warnings.includes('pdf_line_breaks')}<span class="chip warn">{t('corpus.doc.pdf')}</span>{/if}
 										</span>
 									</div>
@@ -217,7 +218,7 @@
 			</div>
 
 			<section class="panel versions" aria-labelledby="versions-heading">
-				<h2 class="heading" id="versions-heading"><StepTag n={3} />{t('corpus.versions')}</h2>
+				<h2 class="heading" id="versions-heading"><StepTag n={3} /><Term key="frozen_version">{t('corpus.versions')}</Term></h2>
 				<p class="small muted">{t('corpus.versions.lead')}</p>
 				{#if corpus.changed_since_version && corpus.documents.length}
 					<form class="fields" onsubmit={freeze}>

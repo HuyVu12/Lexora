@@ -1,5 +1,6 @@
 <script lang="ts">
 	import Icon from './Icon.svelte';
+	import Term from './Term.svelte';
 	import { api } from '#lib/api.js';
 	import { t } from '#lib/i18n/index.svelte.js';
 	import type { LabelFields, QuestionType, ExpectedStatus, UnitCandidate } from '#lib/types.js';
@@ -72,7 +73,7 @@
 		<legend class="label">{t('qs.field.type')}</legend>
 		<div class="options">
 			{#each TYPES as kind (kind)}
-				<label class="option"><input type="radio" name="{name}-type" value={kind} bind:group={fields.question_type} /><strong>{t(`qs.type.${kind}` as MessageKey)}</strong><span>{t(`qs.type.${kind}.hint` as MessageKey)}</span></label>
+				<label class="option"><input type="radio" name="{name}-type" value={kind} bind:group={fields.question_type} /><strong><Term key={`q_${kind}`} focusable={false}>{t(`qs.type.${kind}` as MessageKey)}</Term></strong><span>{t(`qs.type.${kind}.hint` as MessageKey)}</span></label>
 			{/each}
 		</div>
 	</fieldset>
@@ -81,13 +82,13 @@
 		<legend class="label">{t('qs.field.status')}</legend>
 		<div class="options two">
 			{#each STATUSES as status (status)}
-				<label class="option"><input type="radio" name="{name}-status" value={status} bind:group={fields.expected_status} /><strong>{t(`qs.status.${status}` as MessageKey)}</strong><span>{t(`qs.status.${status}.hint` as MessageKey)}</span></label>
+				<label class="option"><input type="radio" name="{name}-status" value={status} bind:group={fields.expected_status} /><strong><Term key={`expect_${status}`} focusable={false}>{t(`qs.status.${status}` as MessageKey)}</Term></strong><span>{t(`qs.status.${status}.hint` as MessageKey)}</span></label>
 			{/each}
 		</div>
 	</fieldset>
 
 	<fieldset>
-		<legend class="label">{t('qs.field.units', { n: fields.relevant_unit_ids.length })}</legend>
+		<legend class="label"><Term key="relevant_units">{t('qs.field.units', { n: fields.relevant_unit_ids.length })}</Term></legend>
 		{#if fields.relevant_unit_ids.length}
 			<ul class="chosen">
 				{#each fields.relevant_unit_ids as id (id)}

@@ -56,8 +56,8 @@
 				<h1 class="title serif">{doc.title}</h1>
 				<p class="facts">
 					<code>{doc.document_id}</code>
-					<span>{t('corpus.doc.counts', { articles: doc.article_count, leaves: doc.leaf_count })}</span>
-					{#if doc.metadata.effect_status?.name}<span>{doc.metadata.effect_status.name}</span>{/if}
+					<span><Term key="leaf_unit">{t('corpus.doc.counts', { articles: doc.article_count, leaves: doc.leaf_count })}</Term></span>
+					{#if doc.metadata.effect_status?.name}<span><Term key="effect_status">{doc.metadata.effect_status.name}</Term></span>{/if}
 					{#if doc.source_kind === 'vbpl'}
 						<a href={doc.source_url} target="_blank" rel="noopener noreferrer">vbpl.vn · {t('corpus.doc.accessed', { date: formatDay(doc.accessed_at) })}</a>
 					{:else}
@@ -91,7 +91,7 @@
 			</section>
 
 			<aside class="panel" id="audit" aria-labelledby="audit-heading">
-				<h2 class="heading" id="audit-heading">{t('corpus.doc.auditTitle')}</h2>
+				<h2 class="heading" id="audit-heading"><Term key="parser_warning">{t('corpus.doc.auditTitle')}</Term></h2>
 				<p class="small muted">{t('corpus.doc.auditLead')}</p>
 				{#if doc.audit.length}
 					<ul class="audit">
@@ -110,11 +110,11 @@
 					<p class="small">{t('corpus.doc.noAudit')}</p>
 				{/if}
 				{#if doc.unassigned_text.trim()}
-					<h3 class="label">{t('corpus.doc.unassigned', { n: doc.unassigned_characters })}</h3>
+					<h3 class="label"><Term key="unassigned_text">{t('corpus.doc.unassigned', { n: doc.unassigned_characters })}</Term></h3>
 					<pre class="unassigned">{doc.unassigned_text.trim()}</pre>
 				{/if}
 				{#if doc.trailing_text.trim()}
-					<h3 class="label">{t('corpus.doc.trailing', { n: doc.trailing_characters })}</h3>
+					<h3 class="label"><Term key="audit_appendix_start">{t('corpus.doc.trailing', { n: doc.trailing_characters })}</Term></h3>
 					<p class="small muted">{t('corpus.doc.trailingLead')}</p>
 					<pre class="unassigned">{doc.trailing_text.trim()}</pre>
 				{/if}
