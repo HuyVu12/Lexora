@@ -27,3 +27,14 @@ tmp/
 /docs/planning/jira-backlog-*.md
 /docs/planning/jira-sync-*.json
 /docs/planning/jira-sync-*.md
+
+# Claude Code: local settings and the junction to .agents/skills (the tracked source)
+/.claude/settings.local.json
+/.claude/skills
+
+# Python editable-install metadata
+*.egg-info/
+# Impeccable runtime state (commit config.json, design.json and surfaces/ only)
+/.impeccable/hook.cache.json
+/.impeccable/mocks/
+/.impeccable/review/

@@ -1,7 +1,7 @@
 """Technical integrity checks; accepted does not assert legal correctness."""
 
 from legal_ai.common.io import digest, canonical
-from legal_ai.schemas.contract import VERSION, validate_claim, validate_evidence, validate_unit
+from legal_ai.schemas.contract import MODALITY_CUES, VERSION, validate_claim, validate_evidence, validate_unit
 
 
 def align_quote(unit, quote):
@@ -70,9 +70,8 @@ def validate_record(claim, evidence, units):
         if slot["state"] == "present" and not any(slot["text"] in by_id[key].get("quote", "") for key in slot["evidence_ids"] if key in by_id):
             reasons.append("slot_text_not_in_evidence")
     if claim.get("modality_evidence_ids"):
-        cues = {"obligation": "phải", "permission": "có thể", "prohibition": "không được", "entitlement": "có quyền"}
-        expected = cues.get(claim["modality"])
-        if expected is None or any(by_id.get(eid, {}).get("quote", "").casefold() != expected for eid in claim["modality_evidence_ids"]):
+        expected = MODALITY_CUES.get(claim["modality"])
+        if expected is None or any(by_id.get(eid, {}).get("quote", "").casefold() not in expected for eid in claim["modality_evidence_ids"]):
             reasons.append("modality_evidence_mismatch")
     review = claim["modality"] == "unknown" or claim["completeness"] == "unknown" or any(slot["state"] == "unknown" for slot in claim["slots"].values())
     decision = "rejected" if reasons else "needs_review" if review else "accepted"

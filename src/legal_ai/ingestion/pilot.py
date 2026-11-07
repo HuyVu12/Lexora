@@ -1,4 +1,7 @@
-"""Build a scoped pilot from pinned local snapshots. No network requests."""
+"""Build a scoped or whole-document corpus from pinned local snapshots. No network requests.
+
+Each source lists `article_ids`, or `"all"` to take every article the parser found in the snapshot.
+"""
 
 import json
 from pathlib import Path
@@ -30,8 +33,11 @@ def build_pilot(config_path, raw_root, output):
         version = normalized["normalized_sha256"]
         parsed = parse(normalized, source["document_id"], version)
         by_id = {unit["unit_id"]: unit for unit in parsed["units"]}
-        targets = set(source["article_ids"])
-        if not targets <= by_id.keys():
+        if source["article_ids"] == "all":
+            targets = {uid for uid, unit in by_id.items() if unit["unit_type"] == "article"}
+        else:
+            targets = set(source["article_ids"])
+        if not targets or not targets <= by_id.keys():
             raise ValueError("configured article missing from snapshot")
         selected = {uid for uid in by_id if any(uid == article or uid.startswith(article + "/") for article in targets)}
         target_ids = set(selected)
@@ -66,6 +72,6 @@ def build_pilot(config_path, raw_root, output):
     artifact_files = sorted(path.relative_to(output).as_posix() for path in output.rglob("*") if path.is_file())
     hashes = {name: digest((output / name).read_bytes()) for name in artifact_files}
     parent_ids = {unit["parent_id"] for unit in units}
-    manifest = {"schema_version": VERSION, "topic": config["topic"], "synthetic": False, "status": "prepared_for_review", "document_count": len(documents), "target_unit_count": sum(len(r["target_unit_ids"]) for r in reports), "context_unit_count": sum(len(r["context_unit_ids"]) for r in reports), "leaf_unit_count": sum(unit["unit_id"] not in parent_ids for unit in units), "claim_count": 0, "legal_status": "unknown", "config_sha256": digest(Path(config_path).read_bytes()), "artifact_hashes": hashes, "limitations": ["Not a consolidated/current-law corpus", "No LLM extraction or generation", "Whole-document parser audits remain; only scoped pilot prepared", "Requires human parser and metadata review"]}
+    manifest = {"schema_version": VERSION, "topic": config["topic"], "synthetic": False, "status": "prepared_for_review", "document_count": len(documents), "target_unit_count": sum(len(r["target_unit_ids"]) for r in reports), "context_unit_count": sum(len(r["context_unit_ids"]) for r in reports), "leaf_unit_count": sum(unit["unit_id"] not in parent_ids for unit in units), "claim_count": 0, "legal_status": "unknown", "config_sha256": digest(Path(config_path).read_bytes()), "artifact_hashes": hashes, "limitations": ["Not a consolidated/current-law corpus", "No LLM extraction or generation", "Whole-document parser audits remain; only scoped pilot prepared" if any(s["article_ids"] != "all" for s in config["sources"]) else "Whole-document parser audits remain and need human review", "Requires human parser and metadata review"]}
     write_json(output / "manifest.json", manifest)
     return manifest

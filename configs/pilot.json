@@ -1,1 +1,10 @@
-{"status":"draft","seed":42,"generation_model":null,"embedding_model":null,"top_k":5,"context_token_budget":null,"schema_version":"0-draft"}
+{
+  "status": "draft",
+  "seed": 42,
+  "generation_model": null,
+  "embedding_model": null,
+  "top_k": 5,
+  "context_token_budget": null,
+  "schema_version": "0-draft",
+  "retrieval": {"method": "bm25", "tokenizer": "lexora-syllable-v1", "k1": 1.2, "b": 0.75, "recall_k": [1, 3, 5, 10]}
+}

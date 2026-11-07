@@ -18,7 +18,7 @@ class SourceLibrary:
             raise ValueError("Unsupported source catalog version")
         return value["entries"]
 
-    def prepare(self, store, source_id):
+    def prepare(self, store, source_id, target, **options):
         entry = next((e for e in self.entries() if e["id"] == source_id), None)
         if entry is None:
             raise ValueError("Nguồn không có trong thư viện đã chuẩn bị")
@@ -28,4 +28,4 @@ class SourceLibrary:
         raw = path.read_bytes()
         if digest(raw) != entry["sha256"]:
             raise ValueError("Checksum nguồn không khớp; không tạo bản nháp")
-        return store.prepare(entry["title"], raw.decode("utf-8"), synthetic=False, source_url=entry["source_url"])
+        return store.prepare(entry["title"], raw.decode("utf-8"), synthetic=False, source_url=entry["source_url"], target=target, **options)

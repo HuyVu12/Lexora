@@ -21,7 +21,7 @@ Khung triển khai đồ án RAG với Legal Knowledge Base có cấu trúc và 
 - `prompts/`: nơi quản lý phiên bản prompt extraction, answer và evaluation.
 - `tests/`: unittest offline, fixture tổng hợp và câu pilot nháp.
 - `experiments/`: manifest và kết quả thực nghiệm tái lập.
-- `apps/demo/`: hướng dẫn demo local; implementation UI/server nằm trong `src/legal_ai/demo*`.
+- `apps/demo/`: hướng dẫn chạy ứng dụng local; lớp web ở `src/legal_ai/web/`, giao diện SvelteKit ở `frontend/`.
 - `scripts/`: các entry point CLI sẽ xây trong tuần đầu.
 - `docs/`: đề cương gốc, thiết kế, kế hoạch, guideline và báo cáo.
 - `infra/lightning/`: quy trình vận hành máy tính toán.
