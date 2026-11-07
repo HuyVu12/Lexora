@@ -1,4 +1,4 @@
-"""Automatic validation of LLM knowledge-base claims (`kb-validator-v1`): what turns DK3 into DK4.
+"""Automatic validation of LLM knowledge-base claims (`kb-validator-v2`): what turns DK3 into DK4.
 
 A DK3 claim is one norm the model reported for one source sentence, with the model's slot strings as given.
 Each check records `pass`, `fail` or `not_applicable` with reason codes, so "not checked" never reads as "passed":
@@ -6,17 +6,21 @@ Each check records `pass`, `fail` or `not_applicable` with reason codes, so "not
 - V1 schema: modality in the enum, a non-empty action, slot values strings or null within length limits.
 - V2 integrity: the source unit exists in this corpus version and the sentence span is inside it.
 - V3 evidence: every non-null slot is an exact quote of its source sentence (case folded only when lengths match).
-- V4 modality: a modality other than "unknown" needs a cue word that is an exact quote and belongs to that modality.
+- V4 modality: a cue word the model gives must be an exact quote of the sentence and belong to the modality it
+  claims (`fail` otherwise: a made-up or contradicting cue). Statutes often state a norm without a cue in the
+  sentence itself (points of a list whose lead carries the sanction, "... thì áp dụng ..."); a modality given
+  without any cue cannot be checked and is recorded as `unverified`, which is not a failure (design 7.2: what
+  cannot be decided is not rejected automatically). Reports count `unverified` separately.
 - V7 duplicate: the same unit, modality and slot strings as an earlier claim (kept once, later copies flagged).
 
-A claim is accepted when V1-V4 pass and it is not a duplicate. Accepted means it passed these checks, not that
+A claim is accepted when no check fails (V4 may be `unverified`) and it is not a duplicate. Accepted means it passed these checks, not that
 the norm is legally right: a verbatim quote can still be read the wrong way, which the gold set has to measure.
 """
 
 from legal_ai.extraction.llm_norms import LLM_SLOTS, MODALITIES, locate
 from legal_ai.schemas.contract import MODALITY_CUES
 
-VALIDATOR_VERSION = "kb-validator-v1"
+VALIDATOR_VERSION = "kb-validator-v2"
 CHECKS = ("V1_schema", "V2_integrity", "V3_evidence", "V4_modality", "V7_duplicate")
 MAX_SLOT_CHARS = 1000
 
@@ -72,15 +76,18 @@ def evidence_spans(claim, unit):
 
 
 def _modality(claim, unit):
+    """(cue offsets or None, problems, verified) for the claim's modality."""
     if claim.get("modality") == "unknown":
-        return None, []
+        return None, [], False
+    if claim.get("modality_cue") in (None, ""):
+        return None, [], False
     start, end = _local(unit, claim)
     cue = locate(unit["text"], start, end, claim.get("modality_cue"))
     if cue is None:
-        return None, ["modality_cue_not_verbatim"]
+        return None, ["modality_cue_not_verbatim"], False
     if unit["text"][cue[0]:cue[1]].casefold() not in MODALITY_CUES.get(claim.get("modality"), set()):
-        return None, ["modality_cue_mismatch"]
-    return [unit["source_start"] + cue[0], unit["source_start"] + cue[1]], []
+        return None, ["modality_cue_mismatch"], False
+    return [unit["source_start"] + cue[0], unit["source_start"] + cue[1]], [], True
 
 
 def _duplicate_key(claim):
@@ -106,8 +113,13 @@ def validate(claims, units):
             spans, missing = evidence_spans(claim, unit)
             checks["V3_evidence"] = "fail" if missing else "pass"
             reasons += [f"{name}_not_verbatim" for name in missing]
-            cue, problem = _modality(claim, unit)
-            checks["V4_modality"] = "fail" if problem else ("pass" if claim.get("modality") != "unknown" else "not_applicable")
+            cue, problem, verified = _modality(claim, unit)
+            if problem:
+                checks["V4_modality"] = "fail"
+            elif verified:
+                checks["V4_modality"] = "pass"
+            else:
+                checks["V4_modality"] = "not_applicable" if claim.get("modality") == "unknown" else "unverified"
             reasons += problem
             evidence = {"slots": spans, **({"modality_cue": cue} if cue else {})}
         hard = any(checks[name] == "fail" for name in ("V1_schema", "V2_integrity", "V3_evidence", "V4_modality"))

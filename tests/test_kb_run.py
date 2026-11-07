@@ -108,8 +108,12 @@ class KbRunTests(unittest.TestCase):
                 "sentence": {"start": unit["source_start"] + 28, "end": unit["source_end"] - 2}, "modality": "unknown", "modality_cue": None,
                 "slots": norm(None, "bằng 85%", None, None) | {}}
         base["slots"] = {k: v for k, v in base["slots"].items() if k not in ("modality", "modality_cue")}
-        results = validate([base, base | {"claim_id": "c2", "unit_id": "syn/missing"}, base | {"claim_id": "c3", "modality": "duty"}], self.units)
-        self.assertEqual([r["decision"] for r in results], ["accepted", "rejected", "rejected"])
+        results = validate([base, base | {"claim_id": "c2", "unit_id": "syn/missing"}, base | {"claim_id": "c3", "modality": "duty"},
+                            base | {"claim_id": "c4", "modality": "obligation", "slots": base["slots"] | {"actor": "Tiền lương"}},
+                            base | {"claim_id": "c5", "modality": "obligation", "modality_cue": "phải"}], self.units)
+        self.assertEqual([r["decision"] for r in results], ["accepted", "rejected", "rejected", "accepted", "rejected"])
+        self.assertEqual(results[3]["checks"]["V4_modality"], "unverified", "a modality without any cue cannot be checked, so it is not rejected")
+        self.assertEqual(results[4]["reasons"], ["modality_cue_not_verbatim"], "a cue the sentence does not contain is made up")
         self.assertEqual(results[1]["checks"]["V3_evidence"], "not_applicable")
         self.assertIn("modality_not_in_enum", results[2]["reasons"])
 

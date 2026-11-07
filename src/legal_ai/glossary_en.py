@@ -7,7 +7,7 @@ definition and the cue description are translated.
 GLOSSARY_EN = {
     "norm": {"term": "Norm", "definition": "A rule of conduct drawn from one sentence of the statute: who must, may or must not do what, and under which conditions. Lexora splits each norm into parts you check against the exact text."},
     "modality": {"term": "Modality", "definition": "Whether the sentence obliges, forbids, permits or grants a right. Lexora recognises it from cue words such as “phải”, “không được”, “có quyền”."},
-    "obligation": {"term": "Obligation", "definition": "Something the subject is required to do. Not doing it is a breach.", "cues": "phải, có nghĩa vụ, có trách nhiệm, bắt buộc"},
+    "obligation": {"term": "Obligation", "definition": "Something the subject is required to do. Not doing it is a breach.", "cues": "phải, có nghĩa vụ, có trách nhiệm, bắt buộc, buộc"},
     "prohibition": {"term": "Prohibition", "definition": "Something the subject must not do.", "cues": "không được, cấm, nghiêm cấm, bị cấm"},
     "entitlement": {"term": "Right", "definition": "Something the subject is entitled to or may demand; the other side must respect or meet it.", "cues": "có quyền, được quyền"},
     "permission": {"term": "Permission", "definition": "The subject may do it but is not required to.", "cues": "có thể, được"},

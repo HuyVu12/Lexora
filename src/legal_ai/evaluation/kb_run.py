@@ -7,7 +7,7 @@ without paying twice; model answers cannot be reproduced by re-running (no seed)
 
 `materialize` turns `raw.jsonl` into the two knowledge bases, offline and deterministically:
 - `dk3.jsonl`: every norm the model returned, slot strings exactly as given (KB before validation);
-- `validation.jsonl`: the `kb-validator-v1` result of each DK3 claim;
+- `validation.jsonl`: the automatic validator's result for each DK3 claim;
 - `dk4.jsonl`: the accepted DK3 claims with their evidence offsets (KB after automatic validation).
 DK4 is a subset of DK3 by construction, so the two differ only by validation.
 """
@@ -169,9 +169,9 @@ def start(bundle, output, model, effort):
     manifest = {"run_version": RUN_VERSION, "run_id": f"kb-{datetime.now(timezone.utc).strftime('%Y%m%dT%H%M%SZ')}",
                 "created_at": datetime.now(timezone.utc).isoformat(timespec="seconds"), "bundle": bundle.as_posix(), "units_sha256": units_sha,
                 "model": model, "effort": effort, "prompt": PROMPT_RUN, "system_sha256": digest(SYSTEM),
-                "schema_sha256": digest(canonical(SCHEMA)), "validator_version": VALIDATOR_VERSION,
+                "schema_sha256": digest(canonical(SCHEMA)),
                 "limitations": ["Model answers are not reproducible by re-running; raw.jsonl is the record",
                                 "Only norms (obligation, prohibition, entitlement, permission) are extracted; definitions without a modal cue are left out",
-                                "Accepted means passing kb-validator-v1, not a legally verified norm"]}
+                                "Accepted means passing the automatic validator named in report.json, not a legally verified norm"]}
     write_json(manifest_path, manifest)
     return manifest

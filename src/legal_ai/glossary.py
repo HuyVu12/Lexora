@@ -28,7 +28,7 @@ GLOSSARY = {
     "obligation": {
         "term": "Nghĩa vụ",
         "definition": "Việc chủ thể bắt buộc phải làm. Không làm là vi phạm.",
-        "cues": "phải, có nghĩa vụ, có trách nhiệm, bắt buộc",
+        "cues": "phải, có nghĩa vụ, có trách nhiệm, bắt buộc, buộc",
         "example": "Người sử dụng lao động phải trả lương cho người lao động đúng hạn.",
         "highlight": "phải",
     },

@@ -1,7 +1,7 @@
 """Planted errors for RQ2 (`error-injection-v1`): how many errors of each type the automatic validator catches,
 and how many clean claims it rejects.
 
-Clean claims are the DK4 claims of a knowledge-base run (they passed `kb-validator-v1`). For every error type a
+Clean claims are the DK4 claims of a knowledge-base run (they passed the automatic validator). For every error type a
 seeded sample of clean claims is copied and corrupted in one way; each copy and each clean claim is validated on
 its own, so duplicate detection does not interfere. Types marked `expected_detectable: false` change meaning while
 every quote stays verbatim (a dropped negation, exception or condition); the validator is not built to see them,
@@ -71,9 +71,17 @@ def _invalid_modality(_claim, _rng, _pool, _units):
 
 def _flip_modality(claim, _rng, _pool, _units):
     flipped = {"obligation": "prohibition", "prohibition": "obligation", "entitlement": "obligation", "permission": "prohibition"}
-    if claim["modality"] not in flipped:
-        return None
+    if claim["modality"] not in flipped or not claim.get("modality_cue"):
+        return None  # Without a cue the modality is unverifiable by design; flipping it tests nothing.
     return {"modality": flipped[claim["modality"]]}
+
+
+def _fabricate_cue(claim, _rng, _pool, units):
+    if claim["modality"] != "obligation" or claim.get("modality_cue"):
+        return None
+    unit = next(u for u in units if u["unit_id"] == claim["unit_id"])
+    sentence = unit["text"][claim["sentence"]["start"] - unit["source_start"]:claim["sentence"]["end"] - unit["source_start"]]
+    return None if "phải" in sentence.casefold() else {"modality_cue": "phải"}
 
 
 def _drop_negation(claim, _rng, _pool, _units):
@@ -99,6 +107,7 @@ TYPES = {  # name: (corruption, expected_detectable, check expected to fire)
     "stale_unit_version": (_stale_version, True, "V2_integrity"),
     "invalid_modality": (_invalid_modality, True, "V1_schema"),
     "modality_flipped": (_flip_modality, True, "V4_modality"),
+    "modality_cue_fabricated": (_fabricate_cue, True, "V4_modality"),
     "negation_dropped": (_drop_negation, False, None),
     "exception_dropped": (_drop_slot("exceptions"), False, None),
     "condition_dropped": (_drop_slot("conditions"), False, None),
@@ -161,7 +170,7 @@ def run(kb_dir, units, output, per_type=30, seed="lexora-inject-v1"):
               "detection_precision": caught / (caught + false_rejects) if caught + false_rejects else None,
               "by_type": dict(sorted(by_type.items())),
               "notes": ["Types with expected_detectable=false keep every quote verbatim; the validator is not designed to catch them",
-                        "Clean means accepted by kb-validator-v1 in DK4, not checked against the human gold set"]}
+                        "Clean means accepted by the validator in DK4, not checked against the human gold set"]}
     write_jsonl(output / "injected.jsonl", injected)
     write_jsonl(output / "results.jsonl", [{"claim_id": c["claim_id"], "kind": "injected", **r} for c, r in zip(injected, injected_results)]
                 + [{"claim_id": c["claim_id"], "kind": "clean", **r} for c, r in zip(clean, clean_results)])
