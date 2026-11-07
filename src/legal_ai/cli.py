@@ -48,6 +48,10 @@ def main():
     command = commands.add_parser("vbpl-fetch", help="fetch ONE explicitly approved vbpl.vn document (link or ID) as an immutable snapshot")
     command.add_argument("reference", help="vbpl.vn document link or ID")
     command.add_argument("--output", default="data/raw/vbpl")
+    command = commands.add_parser("corpus-export", help="write a frozen research corpus version as a contract bundle for run-retrieval")
+    command.add_argument("--store", required=True, help="workspace SQLite store of the web app")
+    command.add_argument("--version", required=True, help="corpus version ID (shown in the app)")
+    command.add_argument("--output", required=True, help="new, empty directory")
     command = commands.add_parser("run-retrieval", help="DK1/DK2 retrieval run with Recall@K into a new run directory; no network")
     command.add_argument("bundle")
     command.add_argument("--condition", required=True, help="configs/experiments/dk1.json or dk2.json")
@@ -74,6 +78,9 @@ def main():
         elif args.command == "vbpl-fetch":
             from legal_ai.ingestion.vbpl_api import fetch_document
             print(json.dumps(fetch_document(args.reference, args.output), ensure_ascii=False, indent=2))
+        elif args.command == "corpus-export":
+            from legal_ai.research.corpus import CorpusStore
+            print(json.dumps(CorpusStore(args.store).export_version(args.version, args.output), ensure_ascii=False, indent=2))
         elif args.command == "run-retrieval":
             from legal_ai.evaluation.retrieval_run import run
             print(json.dumps(run(args.bundle, args.questions, args.condition, args.shared, args.output), ensure_ascii=False, indent=2))
