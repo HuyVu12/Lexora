@@ -214,3 +214,91 @@ export interface SourceEntry {
 	title: string;
 	downloaded_at: string;
 }
+
+export interface EffectStatus {
+	code: string | null;
+	name: string | null;
+}
+
+export interface CorpusDocument {
+	id: string;
+	document_id: string;
+	title: string;
+	source_kind: 'vbpl' | 'file';
+	source_ref: string;
+	source_url: string;
+	source_sha256: string;
+	accessed_at: string;
+	metadata: { effect_status?: EffectStatus | null; doc_num?: string; format?: string; filename?: string; effective_from?: string | null };
+	added_at: string;
+	added_by: string;
+	unit_count: number;
+	article_count: number;
+	leaf_count: number;
+	audit_count: number;
+	unassigned_characters: number;
+	warnings: string[];
+}
+
+export interface CorpusVersion {
+	id: string;
+	number: number;
+	note: string;
+	frozen_at: string;
+	frozen_by: string;
+	document_rows: string[];
+	bundle_sha256: string;
+	document_count: number;
+	unit_count: number;
+}
+
+export interface CorpusSummary {
+	id: string;
+	name: string;
+	description: string;
+	created_at: string;
+	created_by: string;
+	documents: number;
+	latest_version: number | null;
+}
+
+export interface CorpusDetail extends Omit<CorpusSummary, 'documents' | 'latest_version'> {
+	documents: CorpusDocument[];
+	versions: CorpusVersion[];
+	changed_since_version: boolean;
+}
+
+export interface CorpusListing {
+	corpora: CorpusSummary[];
+	vbpl_enabled: boolean;
+	catalog: { documents: number; revisions: Record<string, string>; built_at: string } | null;
+}
+
+export interface CatalogEntry {
+	vbpl_id: string;
+	doc_num: string | null;
+	title: string;
+	doc_type: string | null;
+	issue_date: string | null;
+	effect_status: string | null;
+	agency: string | null;
+	in_force: boolean;
+	sources: string[];
+}
+
+export interface ParsedUnit {
+	unit_id: string;
+	unit_type: 'chapter' | 'section' | 'article' | 'clause' | 'point';
+	parent_id: string | null;
+	label: string;
+	text: string;
+	source_start: number;
+}
+
+export interface CorpusDocumentDetail extends CorpusDocument {
+	corpus_id: string;
+	removed_at: string | null;
+	units: ParsedUnit[];
+	audit: { code: string; offset: number; unit_id?: string }[];
+	unassigned_text: string;
+}

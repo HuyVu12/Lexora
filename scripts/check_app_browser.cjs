@@ -267,6 +267,40 @@ async function main() {
     await capture('chat-en');
     await evaluate('document.querySelector(".lang").click(); true');
     await waitFor('document.documentElement.lang === "vi"', 'Vietnamese locale');
+
+    // Research corpus: create, search the offline catalog (fetching stays off in this run), upload a file, review, freeze.
+    await open('/research');
+    await waitFor('document.querySelector("h1")?.textContent.includes("Corpus nghiên cứu")', 'research page');
+    await capture('research-empty');
+    await evaluate(`__fill(document.querySelector('.create input'), 'Corpus minh họa E2E'); document.querySelector('.create button[type=submit]').click(); true`);
+    await waitFor('location.pathname.startsWith("/research/c") && !!document.querySelector(".segmented")', 'corpus page');
+    await evaluate(helpers);
+    if (await evaluate('!!document.querySelector("input[type=search]")')) {
+      await evaluate(`__fill(document.querySelector('input[type=search]'), 'bo luat lao dong'); true`);
+      await waitFor('document.querySelectorAll(".results li").length > 0', 'catalog results');
+      assert(await evaluate('[...document.querySelectorAll(".results li button")].every(b => b.disabled)'), 'fetch buttons stay disabled without --allow-vbpl');
+      await capture('corpus-search');
+    }
+    await evaluate('__click(".segmented button", "Tải tệp lên"); true');
+    await waitFor('!!document.querySelector("input[type=file]")', 'upload form');
+    const sample = path.join(profile, 'luat-minh-hoa.txt');
+    fs.writeFileSync(sample, DOC, 'utf8');
+    const { root } = await send('DOM.getDocument', { depth: 1 });
+    const { nodeId } = await send('DOM.querySelector', { nodeId: root.nodeId, selector: 'input[type=file]' });
+    await send('DOM.setFileInputFiles', { nodeId, files: [sample] });
+    await waitFor('!__q(".fields button[type=submit]").disabled', 'upload button enabled');
+    await evaluate('__q(".fields button[type=submit]").click(); true');
+    await waitFor('document.querySelector(".docs")?.innerText.includes("luat-minh-hoa")', 'uploaded document listed');
+    await capture('corpus-documents', true);
+    await evaluate('__click(".docs a.serif"); true');
+    await waitFor('document.querySelectorAll(".units li").length >= 4', 'parsed units');
+    await capture('corpus-document');
+    await evaluate('__click(".crumb a"); true');
+    await waitFor('!!__q(".versions button[type=submit]")', 'freeze form');
+    await evaluate(helpers);
+    await evaluate('__q(".versions button[type=submit]").click(); true');
+    await waitFor('document.querySelector(".versions")?.innerText.includes("Phiên bản 1")', 'frozen version');
+    await capture('corpus-frozen');
     await logout();
 
     // Reader: published bases only, no authoring navigation, authoring pages refuse.
@@ -278,6 +312,9 @@ async function main() {
     await waitFor('document.body.innerText.includes("không có quyền")', 'import forbidden for reader');
     await open('/admin/users');
     await waitFor('document.body.innerText.includes("không có quyền")', 'admin forbidden for reader');
+    assert(!(await evaluate('[...document.querySelectorAll(".topbar nav a")].some(a => a.getAttribute("href") === "/research")')), 'reader has no research link');
+    await open('/research');
+    await waitFor('document.body.innerText.includes("không có quyền")', 'research forbidden for reader');
     await open('/');
     await waitFor('!!document.querySelector(".who")', 'reader home again');
     await evaluate(helpers);

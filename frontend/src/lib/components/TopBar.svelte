@@ -14,10 +14,12 @@
 		{ href: '/chat', key: 'nav.chat', match: (p) => p.startsWith('/chat') }
 	];
 	const author: Item[] = [{ href: '/import', key: 'nav.import', match: (p) => p.startsWith('/import') || p.startsWith('/drafts') }];
+	const research: Item[] = [{ href: '/research', key: 'nav.corpora', match: (p) => p.startsWith('/research') }];
 	const admin: Item[] = [{ href: '/admin/users', key: 'nav.users', match: (p) => p.startsWith('/admin') }];
 	const groups = $derived([
 		{ key: 'nav.zone.lookup' as MessageKey, items: lookup },
 		...(canReview(account) ? [{ key: 'nav.zone.author' as MessageKey, items: author }] : []),
+		...(canReview(account) ? [{ key: 'nav.zone.research' as MessageKey, items: research }] : []),
 		...(account?.role === 'admin' ? [{ key: 'nav.zone.admin' as MessageKey, items: admin }] : [])
 	]);
 
