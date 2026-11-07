@@ -45,31 +45,31 @@ class CorpusTests(unittest.TestCase):
     def test_duplicates_bad_ids_translations_and_tampered_snapshots_are_refused(self):
         cid = self.corpus["id"]
         self.store.add_file(cid, "a.txt", LAW.encode("utf-8"), "phapche")
-        with self.assertRaisesRegex(ValueError, "already in this corpus"):
+        with self.assertRaisesRegex(ValueError, "đã có trong corpus"):
             self.store.add_file(cid, "a.txt", OTHER.encode("utf-8"), "phapche")
-        with self.assertRaisesRegex(ValueError, "exact source"):
+        with self.assertRaisesRegex(ValueError, "cùng nội dung"):
             self.store.add_file(cid, "b.txt", LAW.encode("utf-8"), "phapche")
-        with self.assertRaisesRegex(ValueError, "document ID"):
+        with self.assertRaisesRegex(ValueError, "Mã văn bản"):
             self.store.add_file(cid, "c.txt", OTHER.encode("utf-8"), "phapche", document_id="Có dấu/../x")
-        with self.assertRaisesRegex(ValueError, "no Điều"):
+        with self.assertRaisesRegex(ValueError, "Không tìm thấy Điều"):
             self.store.add_file(cid, "d.txt", "Chỉ là ghi chú, không có điều khoản.".encode("utf-8"), "phapche")
         manifest, raw = vbpl_snapshot(translation=True)
-        with self.assertRaisesRegex(ValueError, "translation"):
+        with self.assertRaisesRegex(ValueError, "bản dịch"):
             self.store.add_vbpl(cid, manifest, raw, "phapche")
         manifest, raw = vbpl_snapshot()
-        with self.assertRaisesRegex(ValueError, "do not match"):
+        with self.assertRaisesRegex(ValueError, "không khớp"):
             self.store.add_vbpl(cid, manifest, raw + b" ", "phapche")
-        with self.assertRaisesRegex(ValueError, "name exists"):
+        with self.assertRaisesRegex(ValueError, "cùng tên"):
             self.store.create("Lao động", "", "phapche")
 
     def test_versions_pin_documents_and_later_removal_keeps_them(self):
         cid = self.corpus["id"]
-        with self.assertRaisesRegex(ValueError, "at least one"):
+        with self.assertRaisesRegex(ValueError, "ít nhất một"):
             self.store.freeze(cid, "", "phapche")
         first = self.store.add_file(cid, "a.txt", LAW.encode("utf-8"), "phapche")
         v1 = self.store.freeze(cid, "Bản đầu", "phapche")
         self.assertEqual((v1["number"], v1["document_rows"], v1["unit_count"]), (1, [first["id"]], 4))
-        with self.assertRaisesRegex(ValueError, "nothing changed"):
+        with self.assertRaisesRegex(ValueError, "Không có thay đổi"):
             self.store.freeze(cid, "", "phapche")
         self.store.add_file(cid, "b.txt", OTHER.encode("utf-8"), "phapche")
         self.assertTrue(self.store.corpus(cid)["changed_since_version"])
@@ -93,7 +93,7 @@ class CorpusTests(unittest.TestCase):
         self.assertEqual(sorted(d["document_id"] for d in documents), ["45-2019-gd", "a"])
         self.assertEqual((out / "45-2019-gd" / "source.json").read_bytes(), raw)
         self.assertEqual(json.loads((out / "manifest.json").read_text(encoding="utf-8"))["bundle_sha256"], version["bundle_sha256"])
-        with self.assertRaisesRegex(ValueError, "empty"):
+        with self.assertRaisesRegex(ValueError, "trống"):
             self.store.export_version(version["id"], out)
 
 

@@ -3,7 +3,7 @@
 import argparse
 
 from legal_ai.kb.import_review import ReviewStore
-from legal_ai.web.setup import add_arguments, providers
+from legal_ai.web.setup import add_arguments, providers, sources
 
 
 def main():
@@ -18,8 +18,11 @@ def main():
     from legal_ai.auth import AccountStore
     if AccountStore(store.path).count() == 0:
         print(f"Chưa có tài khoản. Tạo quản trị đầu tiên: python -m legal_ai.auth create-admin --store {args.store} --username <tên>", flush=True)
+    catalog_path, vbpl_dir = sources(args)
     app = create_app(store, args.port, provider=provider, source_catalog=args.source_catalog, extractor=extractor,
-                     embedder=embedder, frontend_dir=args.frontend)
+                     embedder=embedder, frontend_dir=args.frontend, catalog_path=catalog_path, vbpl_dir=vbpl_dir)
+    if vbpl_dir:
+        print("vbpl.vn: reviewers may fetch one document per confirmed request", flush=True)
     print(f"Lexora: http://127.0.0.1:{args.port} (Ctrl+C to stop)", flush=True)
     # Loopback only, no access log: request URLs and uploads are never logged.
     uvicorn.run(app, host="127.0.0.1", port=args.port, access_log=False, log_level="warning", server_header=False)

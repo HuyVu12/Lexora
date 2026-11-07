@@ -32,7 +32,7 @@ _last_call = [0.0]
 
 class NoRedirects(HTTPRedirectHandler):
     def redirect_request(self, req, fp, code, msg, headers, newurl):
-        raise ValueError("the vbpl gateway answered with a redirect; refusing to follow it")
+        raise ValueError("vbpl.vn trả về chuyển hướng; Lexora không đi theo")
 
 
 def parse_reference(text):
@@ -43,14 +43,14 @@ def parse_reference(text):
         return text
     parsed = urlparse(text)
     if parsed.scheme not in {"http", "https"} or parsed.hostname not in SITE_HOSTS:
-        raise ValueError("paste a vbpl.vn document link or a vbpl.vn document ID")
+        raise ValueError("Hãy dán link văn bản trên vbpl.vn hoặc mã văn bản vbpl.vn")
     match = re.search(r"/van-ban/chi-tiet/([^/?#]+)", parsed.path)
     if not match:
-        raise ValueError("the link is not a vbpl.vn document page (…/van-ban/chi-tiet/…)")
+        raise ValueError("Link không phải trang văn bản của vbpl.vn (…/van-ban/chi-tiet/…)")
     tail = match.group(1)
     candidate = tail.rsplit("--", 1)[1] if "--" in tail else tail
     if not _ID.fullmatch(candidate):
-        raise ValueError("could not read a document ID from the link")
+        raise ValueError("Không đọc được mã văn bản trong link")
     return candidate
 
 
@@ -64,14 +64,14 @@ def _get(url, timeout):
             with build_opener(NoRedirects()).open(request, timeout=timeout) as response:
                 final = urlparse(response.url)
                 if final.scheme != "https" or final.hostname != GATEWAY_HOST:
-                    raise ValueError("response came from an unexpected host")
+                    raise ValueError("Phản hồi đến từ máy chủ không mong đợi")
                 if "json" not in response.headers.get("Content-Type", "").lower():
-                    raise ValueError("the vbpl gateway did not answer with JSON")
+                    raise ValueError("vbpl.vn không trả về JSON")
                 data = response.read(MAX_BYTES + 1)
         finally:
             _last_call[0] = time.monotonic()
     if len(data) > MAX_BYTES:
-        raise ValueError("document exceeds the 20 MB limit")
+        raise ValueError("Văn bản vượt giới hạn 20 MB")
     return data
 
 
@@ -80,10 +80,10 @@ def unwrap(data):
     try:
         payload = json.loads(data.decode("utf-8"))
     except (UnicodeDecodeError, ValueError) as exc:
-        raise ValueError("the vbpl gateway answered with invalid JSON") from exc
+        raise ValueError("vbpl.vn trả về JSON không hợp lệ") from exc
     if not isinstance(payload, dict) or payload.get("success") is not True or not isinstance(payload.get("data"), dict):
         message = payload.get("message") if isinstance(payload, dict) else None
-        raise ValueError(f"vbpl.vn did not return the document{': ' + message if message else ''}")
+        raise ValueError(f"vbpl.vn không trả về văn bản{': ' + message if message else ''}")
     return payload["data"]
 
 
@@ -115,7 +115,7 @@ def document_text(document):
     """Plain statute text of a gateway document, paragraph by paragraph, ready for normalization."""
     content = (document.get("documentContent") or {}).get("content")
     if not content:
-        raise ValueError("vbpl.vn has no text body for this document (it may be PDF only); import its file instead")
+        raise ValueError("vbpl.vn không có nội dung chữ cho văn bản này (có thể chỉ có PDF); hãy tải tệp lên thay thế")
     return extract_paragraphs(content)
 
 
@@ -127,13 +127,13 @@ def fetch_document(reference, destination, timeout=60):
     data = _get(url, timeout)
     document = unwrap(data)
     if str(document.get("id")) != vbpl_id:
-        raise ValueError("vbpl.vn returned a different document than requested")
+        raise ValueError("vbpl.vn trả về văn bản khác với văn bản yêu cầu")
     sha = digest(data)
     folder = Path(destination) / vbpl_id / sha
     folder.mkdir(parents=True, exist_ok=True)
     target = folder / "document.json"
     if target.exists() and target.read_bytes() != data:
-        raise ValueError("immutable snapshot collision")
+        raise ValueError("Bản chụp bất biến bị trùng nhưng khác nội dung")
     if not target.exists():
         with target.open("xb") as stream:
             stream.write(data)

@@ -56,7 +56,7 @@ def _decode(data):
     try:
         return data.decode("utf-8")
     except UnicodeDecodeError as exc:
-        raise ValueError("the file is not UTF-8 text; save it as UTF-8 and try again") from exc
+        raise ValueError("Tệp không phải văn bản UTF-8; hãy lưu lại dạng UTF-8 rồi thử lại") from exc
 
 
 def _html(data):
@@ -74,7 +74,7 @@ def _docx(data):
         with zipfile.ZipFile(io.BytesIO(data)) as archive:
             xml = archive.read("word/document.xml")
     except (zipfile.BadZipFile, KeyError) as exc:
-        raise ValueError("the file is not a valid DOCX document") from exc
+        raise ValueError("Tệp không phải DOCX hợp lệ") from exc
     paragraphs = []
     for paragraph in ElementTree.fromstring(xml).iter(f"{_W}p"):
         parts = []
@@ -94,32 +94,32 @@ def _pdf(data):
         from pypdf import PdfReader
         from pypdf.errors import PdfReadError
     except ImportError as exc:
-        raise ValueError("PDF import needs pypdf: install the web extra (pip install -e \".[web]\")") from exc
+        raise ValueError("Đọc PDF cần pypdf: cài phần web (pip install -e \".[web]\")") from exc
     try:
         reader = PdfReader(io.BytesIO(data))
         if reader.is_encrypted:
-            raise ValueError("the PDF is password protected")
+            raise ValueError("PDF có mật khẩu")
         pages = [page.extract_text() or "" for page in reader.pages]
     except PdfReadError as exc:
-        raise ValueError("the file is not a readable PDF") from exc
+        raise ValueError("Không đọc được tệp PDF") from exc
     text = _lines("\n".join(pages))
     if len(re.sub(r"\s", "", text)) < 20 * max(1, len(pages)):  # Scans yield next to nothing per page.
-        raise ValueError("the PDF has almost no text layer (probably scanned); use OCR or a DOCX/TXT/HTML copy")
+        raise ValueError("PDF gần như không có lớp chữ (có thể là bản scan); hãy OCR hoặc dùng bản DOCX/TXT/HTML")
     return text
 
 
 def extract_text(filename, data):
     """{"format", "text", "warnings"} for an uploaded file; ValueError with a reader-facing reason otherwise."""
     if not isinstance(data, (bytes, bytearray)) or not data:
-        raise ValueError("the file is empty")
+        raise ValueError("Tệp rỗng")
     if len(data) > MAX_FILE_BYTES:
-        raise ValueError("the file exceeds 20 MB")
+        raise ValueError("Tệp vượt 20 MB")
     kind = FORMATS.get(PurePath(filename or "").suffix.lower())
     if kind is None:
-        raise ValueError("supported files: TXT, HTML, DOCX, PDF with a text layer")
+        raise ValueError("Chỉ nhận TXT, HTML, DOCX và PDF có lớp chữ")
     text = {"txt": lambda d: _lines(_decode(d)), "html": _html, "docx": _docx, "pdf": _pdf}[kind](bytes(data))
     if not text.strip():
-        raise ValueError("no text found in the file")
+        raise ValueError("Không tìm thấy chữ trong tệp")
     warnings = []
     if kind == "pdf":
         warnings.append("pdf_line_breaks")  # PDF lines wrap mid-sentence; check headings in the parser report.

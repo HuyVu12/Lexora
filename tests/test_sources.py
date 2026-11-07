@@ -76,10 +76,10 @@ class VbplSnapshotTests(unittest.TestCase):
     def test_failed_or_mismatched_answers_store_nothing(self):
         with self.assertRaisesRegex(ValueError, "không tồn tại"):
             self.fetch({"success": "false", "message": "Văn bản không tồn tại."})
-        with self.assertRaisesRegex(ValueError, "different document"):
+        with self.assertRaisesRegex(ValueError, "văn bản khác"):
             self.fetch(gateway_document(vbpl_id="999"))
         self.assertEqual(list(Path(self.temp.name).iterdir()), [])
-        with self.assertRaisesRegex(ValueError, "no text body"):
+        with self.assertRaisesRegex(ValueError, "không có nội dung chữ"):
             vbpl_api.document_text(gateway_document(content="")["data"])
 
 
@@ -185,7 +185,7 @@ class FileTests(unittest.TestCase):
         self.assertEqual(result["format"], "pdf")
         self.assertIn("1. Ben A phai bao truoc 30 ngay", result["text"])
         self.assertIn("pdf_line_breaks", result["warnings"])
-        with self.assertRaisesRegex(ValueError, "scanned"):
+        with self.assertRaisesRegex(ValueError, "scan"):
             extract_text("scan.pdf", pdf([]))
 
 

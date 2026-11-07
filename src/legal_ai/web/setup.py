@@ -19,6 +19,9 @@ def add_arguments(parser, default_port):
     parser.add_argument("--embedding-dimensions", type=int, default=768)
     parser.add_argument("--embedding-max-calls", type=int, default=200)
     parser.add_argument("--approve-router", action="store_true", help="Explicitly authorize the exact selected routes; does not assert pricing")
+    parser.add_argument("--catalog", help="Offline document catalog (catalog-v1 SQLite); default data/catalog/catalog-v1.sqlite when present")
+    parser.add_argument("--allow-vbpl", action="store_true", help="Let reviewers fetch one vbpl.vn document per confirmed request")
+    parser.add_argument("--vbpl-dir", default="data/raw/vbpl", help="Snapshot directory for fetched vbpl.vn documents")
 
 
 def providers(args, parser):
@@ -54,3 +57,10 @@ def run_extraction(store, extractor, draft_id, units, targets):
         store.finish_extraction(draft_id, claims, evidence, reports, errors)
     except Exception:  # Keep the server alive and unblock review with rule results.
         store.fail_extraction(draft_id, "internal_error")
+
+
+def sources(args):
+    """(catalog_path, vbpl_dir) for create_app: the catalog when given or present by default; vbpl only when allowed."""
+    default = Path("data/catalog/catalog-v1.sqlite")
+    catalog = args.catalog or (str(default) if default.is_file() else None)
+    return catalog, (args.vbpl_dir if args.allow_vbpl else None)

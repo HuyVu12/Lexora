@@ -71,11 +71,11 @@ class CorpusStore:
     def create(self, name, description, actor):
         name, description = (name or "").strip(), (description or "").strip()
         if not 1 <= len(name) <= 120 or len(description) > 2000:
-            raise ValueError("corpus name needs 1-120 characters, description at most 2000")
+            raise ValueError("Tên corpus cần 1-120 ký tự, mô tả tối đa 2000 ký tự")
         corpus_id = "c" + secrets.token_hex(6)
         with self._lock, closing(self._connect()) as db, db:
             if db.execute("SELECT 1 FROM corpora WHERE name = ?", (name,)).fetchone():
-                raise ValueError("a corpus with this name exists")
+                raise ValueError("Đã có corpus cùng tên")
             db.execute("INSERT INTO corpora VALUES (?,?,?,?,?)", (corpus_id, name, description, _now(), actor))
         return self.corpus(corpus_id)
 
@@ -90,7 +90,7 @@ class CorpusStore:
         with closing(self._connect()) as db:
             row = db.execute("SELECT * FROM corpora WHERE id = ?", (corpus_id,)).fetchone()
             if row is None:
-                raise ValueError("corpus not found")
+                raise ValueError("Không tìm thấy corpus")
             documents = [self._summary(d) for d in db.execute(
                 "SELECT * FROM corpus_documents WHERE corpus_id = ? AND removed_at IS NULL ORDER BY added_at, id", (corpus_id,))]
             versions = [self._version_summary(v) for v in db.execute(
@@ -124,25 +124,25 @@ class CorpusStore:
     def _add(self, corpus_id, document_id, title, kind, ref, url, raw, accessed_at, metadata, text, warnings, actor):
         document_id = document_id.strip().lower()
         if not _SLUG.fullmatch(document_id):
-            raise ValueError("document ID: lowercase letters, digits and dashes, at most 80 characters")
+            raise ValueError("Mã văn bản chỉ gồm chữ thường không dấu, số và dấu gạch, tối đa 80 ký tự")
         normalized = normalize(text, f"{document_id}/source.txt")
         parsed = parse(normalized, document_id, normalized["normalized_sha256"])
         if not any(u["unit_type"] == "article" for u in parsed["units"]):
-            raise ValueError("no Điều found; check that each article starts on its own line with “Điều N.”")
+            raise ValueError("Không tìm thấy Điều nào; mỗi Điều cần bắt đầu trên một dòng riêng bằng “Điều N.”")
         for unit in parsed["units"]:
             validate_unit(unit)
         report = {"audit": parsed["audit"], "unassigned_text": parsed["unassigned_text"], "warnings": warnings}
         row_id = "d" + secrets.token_hex(8)
         with self._lock, closing(self._connect()) as db, db:
             if db.execute("SELECT 1 FROM corpora WHERE id = ?", (corpus_id,)).fetchone() is None:
-                raise ValueError("corpus not found")
+                raise ValueError("Không tìm thấy corpus")
             live = db.execute("SELECT document_id, source_sha256 FROM corpus_documents WHERE corpus_id = ? AND removed_at IS NULL", (corpus_id,)).fetchall()
             if any(r["document_id"] == document_id for r in live):
-                raise ValueError(f"document ID {document_id} is already in this corpus; choose another")
+                raise ValueError(f"Mã văn bản {document_id} đã có trong corpus; hãy chọn mã khác")
             if any(r["source_sha256"] == digest(raw) for r in live):
-                raise ValueError("this exact source is already in the corpus")
+                raise ValueError("Nguồn này (cùng nội dung) đã có trong corpus")
             if len(live) >= MAX_DOCUMENTS:
-                raise ValueError(f"a corpus holds at most {MAX_DOCUMENTS} documents")
+                raise ValueError(f"Một corpus chứa tối đa {MAX_DOCUMENTS} văn bản")
             db.execute("INSERT INTO corpus_documents VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)", (
                 row_id, corpus_id, document_id, title, kind, ref, url, digest(raw), accessed_at, canonical(metadata), raw,
                 canonical(normalized), canonical(parsed["units"]), canonical(report), _now(), actor, None))
@@ -151,11 +151,11 @@ class CorpusStore:
     def add_vbpl(self, corpus_id, manifest, raw, actor, document_id=None):
         """Add a vbpl.vn snapshot fetched by `vbpl_api.fetch_document` (its manifest and stored bytes)."""
         if digest(raw) != manifest["source_sha256"]:
-            raise ValueError("snapshot bytes do not match their manifest")
+            raise ValueError("Nội dung bản chụp không khớp manifest")
         document = unwrap(raw)
         meta = manifest["metadata"]
         if meta.get("is_translation"):
-            raise ValueError("this is a translation; add the Vietnamese original")
+            raise ValueError("Đây là bản dịch; hãy thêm bản gốc tiếng Việt")
         text = document_text(document)["text"]
         return self._add(corpus_id, document_id or slug(meta.get("doc_num") or meta["vbpl_id"]), meta.get("title") or meta["vbpl_id"], "vbpl",
                          meta["vbpl_id"], manifest["site_url"], raw, manifest["accessed_at"], meta, text, [], actor)
@@ -173,7 +173,7 @@ class CorpusStore:
         with closing(self._connect()) as db:
             row = db.execute("SELECT * FROM corpus_documents WHERE id = ?", (row_id,)).fetchone()
         if row is None:
-            raise ValueError("document not found")
+            raise ValueError("Không tìm thấy văn bản")
         report = json.loads(row["report"])
         return self._summary(row) | {"corpus_id": row["corpus_id"], "removed_at": row["removed_at"], "units": json.loads(row["units"]),
                                      "audit": report["audit"], "unassigned_text": report["unassigned_text"]}
@@ -183,7 +183,7 @@ class CorpusStore:
             changed = db.execute("UPDATE corpus_documents SET removed_at = ? WHERE id = ? AND corpus_id = ? AND removed_at IS NULL",
                                  (_now(), row_id, corpus_id)).rowcount
         if not changed:
-            raise ValueError("document not found in this corpus")
+            raise ValueError("Không tìm thấy văn bản trong corpus này")
         return self.corpus(corpus_id)
 
     # Versions ------------------------------------------------------------------------
@@ -204,16 +204,16 @@ class CorpusStore:
     def freeze(self, corpus_id, note, actor):
         note = (note or "").strip()
         if len(note) > 500:
-            raise ValueError("note at most 500 characters")
+            raise ValueError("Ghi chú tối đa 500 ký tự")
         with self._lock, closing(self._connect()) as db, db:
             if db.execute("SELECT 1 FROM corpora WHERE id = ?", (corpus_id,)).fetchone() is None:
-                raise ValueError("corpus not found")
+                raise ValueError("Không tìm thấy corpus")
             ids = [r["id"] for r in db.execute("SELECT id FROM corpus_documents WHERE corpus_id = ? AND removed_at IS NULL ORDER BY document_id", (corpus_id,))]
             if not ids:
-                raise ValueError("add at least one document before freezing")
+                raise ValueError("Cần ít nhất một văn bản trước khi khóa phiên bản")
             latest = db.execute("SELECT * FROM corpus_versions WHERE corpus_id = ? ORDER BY number DESC LIMIT 1", (corpus_id,)).fetchone()
             if latest and sorted(json.loads(latest["document_rows"])) == sorted(ids):
-                raise ValueError(f"nothing changed since version {latest['number']}")
+                raise ValueError(f"Không có thay đổi nào so với phiên bản {latest['number']}")
             documents, units = [], []
             entries = []
             for row in self._rows(db, ids):
@@ -240,7 +240,7 @@ class CorpusStore:
         with closing(self._connect()) as db:
             row = db.execute("SELECT * FROM corpus_versions WHERE id = ?", (version_id,)).fetchone()
         if row is None:
-            raise ValueError("corpus version not found")
+            raise ValueError("Không tìm thấy phiên bản corpus")
         return self._version_summary(row) | {"corpus_id": row["corpus_id"], "manifest": json.loads(row["manifest"])}
 
     def bundle(self, version_id):
@@ -255,14 +255,14 @@ class CorpusStore:
             units.extend(doc_units)
             texts[document["document_id"]] = normalized["text"]
         if digest(canonical({"documents": documents, "units": units})) != version["manifest"]["bundle_sha256"]:
-            raise ValueError("stored corpus version does not match its hash")
+            raise ValueError("Phiên bản corpus đã lưu không khớp mã băm")
         return documents, units, texts
 
     def export_version(self, version_id, output):
         """Write a frozen version as a contract bundle (+ source bytes) into a new, empty directory."""
         output = Path(output)
         if output.exists() and any(output.iterdir()):
-            raise ValueError("output must be empty: use a new directory")
+            raise ValueError("Thư mục xuất phải trống: hãy dùng thư mục mới")
         version = self.version(version_id)
         documents, units, _ = self.bundle(version_id)
         with closing(self._connect()) as db:

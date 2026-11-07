@@ -3,6 +3,8 @@
 Runs only where the `web` extra is installed (`.venv`); the standard-library suite skips it.
 """
 
+import base64
+import json
 from pathlib import Path
 import sys
 import tempfile
@@ -14,6 +16,7 @@ sys.path.insert(0, str(ROOT / "src"))
 
 from legal_ai import auth
 from legal_ai.auth import AccountStore
+from legal_ai.common.io import digest
 from legal_ai.kb.import_review import ReviewStore
 
 try:
@@ -205,6 +208,50 @@ class WebApiTests(unittest.TestCase):
         self.assertEqual(self.post(admin, "/api/users", {"username": "x", "display_name": "x", "role": "reader", "password": "short"}).status_code, 400)
         reviewer = self.client("phapche", "review password 1")
         self.assertEqual(reviewer.get("/api/users").status_code, 403)
+
+    def test_research_corpus_from_files_and_confirmed_vbpl_fetches(self):
+        reader = self.client("nhansu", "reader password 1")
+        self.assertEqual(reader.get("/api/corpora").status_code, 403)
+        self.assertEqual(self.post(reader, "/api/corpora", {"name": "x"}).status_code, 403)
+        reviewer = self.client("phapche", "review password 1")
+        listing = reviewer.get("/api/corpora").json()
+        self.assertEqual((listing["corpora"], listing["vbpl_enabled"], listing["catalog"]), ([], False, None))
+        corpus = self.post(reviewer, "/api/corpora", {"name": "Lao động", "description": "thử"}).json()
+        upload = {"corpus_id": corpus["id"], "filename": "luat.txt", "content_base64": base64.b64encode(SOURCE.encode("utf-8")).decode()}
+        added = self.post(reviewer, "/api/corpus/file", upload)
+        self.assertEqual(added.status_code, 200, added.text)
+        self.assertEqual((added.json()["document_id"], added.json()["added_by"]), ("luat", "phapche"))
+        self.assertEqual(self.post(reviewer, "/api/corpus/file", dict(upload, content_base64="not base64!")).status_code, 400)
+        refused = self.post(reviewer, "/api/corpus/vbpl", {"corpus_id": corpus["id"], "reference": "139264", "confirm": True})
+        self.assertIn("--allow-vbpl", refused.json()["error"])
+        self.assertEqual(reviewer.get("/api/catalog/search", params={"q": "lao động"}).status_code, 400)
+        version = self.post(reviewer, "/api/corpus/freeze", {"corpus_id": corpus["id"], "note": "v1"}).json()
+        self.assertEqual((version["number"], version["document_count"]), (1, 1))
+        detail = reviewer.get("/api/corpus", params={"id": corpus["id"]}).json()
+        self.assertEqual((len(detail["documents"]), detail["changed_since_version"]), (1, False))
+        units = reviewer.get("/api/corpus/document", params={"id": added.json()["id"]}).json()["units"]
+        self.assertEqual(units[0]["unit_id"], "luat/article-1")
+        too_big = self.post(reviewer, "/api/corpus/file", dict(upload, content_base64="A" * (30 * 1024 * 1024)))
+        self.assertEqual(too_big.status_code, 400)
+
+    def test_vbpl_fetch_needs_the_run_flag_and_a_confirmation(self):
+        raw = json.dumps({"success": True, "data": {"id": "139264", "documentContent": {"content": "<p>Điều 1. Phạm vi giả định</p><p>Nội dung giả định.</p>"}}},
+                         ensure_ascii=False).encode("utf-8")
+        snapshot = Path(self.temp.name) / "document.json"
+        snapshot.write_bytes(raw)
+        manifest = {"source_sha256": digest(raw), "site_url": "https://vbpl.vn/van-ban/chi-tiet/139264", "accessed_at": "2026-11-07T00:00:00+00:00",
+                    "local_path": str(snapshot), "metadata": {"vbpl_id": "139264", "doc_num": "45/2019/GD", "title": "Bộ luật Giả định", "is_translation": False}}
+        self.app = create_app(self.store, PORT, token="t0ken", frontend_dir=self.build, vbpl_dir=Path(self.temp.name) / "vbpl")
+        reviewer = self.client("phapche", "review password 1")
+        corpus = self.post(reviewer, "/api/corpora", {"name": "Có vbpl"}).json()
+        self.assertTrue(reviewer.get("/api/corpora").json()["vbpl_enabled"])
+        with mock.patch("legal_ai.web.app.fetch_document", return_value=manifest) as fetch:
+            unconfirmed = self.post(reviewer, "/api/corpus/vbpl", {"corpus_id": corpus["id"], "reference": "139264"})
+            self.assertEqual((unconfirmed.status_code, fetch.call_count), (400, 0), "no network call before the reviewer confirms")
+            added = self.post(reviewer, "/api/corpus/vbpl", {"corpus_id": corpus["id"], "reference": "https://vbpl.vn/van-ban/chi-tiet/139264", "confirm": True})
+        self.assertEqual(added.status_code, 200, added.text)
+        self.assertEqual((added.json()["document_id"], added.json()["source_kind"]), ("45-2019-gd", "vbpl"))
+        fetch.assert_called_once()
 
 
 if __name__ == "__main__":

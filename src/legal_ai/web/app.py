@@ -9,6 +9,8 @@ Roles: `reader` asks questions over published knowledge bases; `reviewer` also i
 publishes; `admin` also manages accounts. Chat sessions are private to the account that started them.
 """
 
+import base64
+import binascii
 from pathlib import Path
 import json
 import secrets
@@ -23,9 +25,13 @@ from starlette.exceptions import HTTPException as StarletteHTTPException
 
 from legal_ai.auth import SESSION_HOURS, AccountStore, AuthError
 from legal_ai.glossary import bilingual, embed_terms
+from legal_ai.ingestion.catalog import Catalog
+from legal_ai.ingestion.files import MAX_FILE_BYTES
 from legal_ai.ingestion.source_library import SourceLibrary
+from legal_ai.ingestion.vbpl_api import fetch_document
 from legal_ai.kb.import_review import MAX_BYTES, Conflict
 from legal_ai.rag.review_chat import ChatService
+from legal_ai.research.corpus import CorpusStore
 from legal_ai.web.setup import run_extraction
 
 PACKAGE = Path(__file__).resolve().parents[1]
@@ -35,6 +41,10 @@ TOKEN_PLACEHOLDER = "__CSRF_TOKEN__"
 COOKIE = "lexora_session"
 NO_EXTRACTOR = "Chưa bật model tách quy phạm cho phiên chạy này"
 REVIEW_ROLES = ("admin", "reviewer")
+NO_VBPL = "Chưa bật lấy văn bản từ vbpl.vn cho phiên chạy này (khởi động lại với --allow-vbpl)"
+NO_CATALOG = "Chưa có danh mục văn bản (khởi động với --catalog)"
+# A base64 upload of the largest accepted file, plus the JSON around it.
+UPLOAD_PATH, UPLOAD_LIMIT = "/api/corpus/file", MAX_FILE_BYTES * 4 // 3 + 100_000
 
 
 class Denied(Exception):
@@ -108,17 +118,53 @@ class AccountUpdateBody(Body):
     password: str | None = None
 
 
+class CorpusCreateBody(Body):
+    name: str
+    description: str = ""
+
+
+class CorpusVbplBody(Body):
+    corpus_id: str
+    reference: str
+    document_id: str | None = None
+    confirm: bool = False
+
+
+class CorpusFileBody(Body):
+    corpus_id: str
+    filename: str
+    content_base64: str
+    title: str | None = None
+    document_id: str | None = None
+
+
+class CorpusDocumentBody(Body):
+    corpus_id: str
+    document_row: str
+
+
+class CorpusFreezeBody(Body):
+    corpus_id: str
+    note: str = ""
+
+
 def error(message, status, **extra):
     return JSONResponse({"error": message, **extra}, status_code=status)
 
 
-def create_app(store, port, *, provider=None, source_catalog=None, extractor=None, embedder=None, token=None, frontend_dir=None):
-    """Build the app for one loopback port and one workspace store; `frontend_dir` is the SvelteKit static build."""
+def create_app(store, port, *, provider=None, source_catalog=None, extractor=None, embedder=None, token=None, frontend_dir=None,
+               catalog_path=None, vbpl_dir=None):
+    """Build the app for one loopback port and one workspace store; `frontend_dir` is the SvelteKit static build.
+
+    `catalog_path` enables the offline document catalog. `vbpl_dir` (only with --allow-vbpl) lets reviewers fetch
+    one vbpl.vn document per confirmed request into that snapshot directory."""
     token = token or secrets.token_urlsafe(32)
     hosts = {f"127.0.0.1:{port}", f"localhost:{port}"}
     accounts = AccountStore(store.path)
     chat = ChatService(store, provider, embedder)
     library = SourceLibrary(source_catalog)
+    corpora = CorpusStore(store.path)
+    catalog = Catalog(catalog_path) if catalog_path else None
     store.interrupt_extractions()
     frontend = Path(frontend_dir).resolve() if frontend_dir else None
     app = FastAPI(title="Lexora", docs_url=None, redoc_url=None, openapi_url="/api/openapi.json")
@@ -162,7 +208,7 @@ def create_app(store, port, *, provider=None, source_catalog=None, extractor=Non
                 size = int(request.headers.get("content-length", "0"))
             except ValueError:
                 size = -1
-            if not 0 < size <= MAX_BYTES * 7:
+            if not 0 < size <= (UPLOAD_LIMIT if request.url.path == UPLOAD_PATH else MAX_BYTES * 7):
                 response = error("Request exceeds local upload limit", 400)
             elif host not in hosts or request.headers.get("x-lexora-token") != token:
                 response = error("Invalid local request token", 403)
@@ -331,6 +377,69 @@ def create_app(store, port, *, provider=None, source_catalog=None, extractor=Non
     def chat_ask(body: ChatAskBody, account=Depends(current)):
         own_chat(body.session_id, account)
         return chat.ask(body.session_id, body.question, body.mode, body.allow_public_transfer, body.semantic)
+
+    # Research corpora (reviewers) -------------------------------------------------------
+    @app.get("/api/corpora")
+    def corpus_list(_=Depends(reviewer)):
+        return {"corpora": corpora.corpora(), "vbpl_enabled": vbpl_dir is not None, "catalog": catalog.info() if catalog else None}
+
+    @app.post("/api/corpora")
+    def corpus_create(body: CorpusCreateBody, account=Depends(reviewer)):
+        return corpora.create(body.name, body.description, account["username"])
+
+    @app.get("/api/corpus")
+    def corpus_detail(id: str = Query(), _=Depends(reviewer)):
+        return corpora.corpus(id)
+
+    @app.get("/api/corpus/document")
+    def corpus_document(id: str = Query(), _=Depends(reviewer)):
+        return corpora.document(id)
+
+    @app.post("/api/corpus/vbpl")
+    def corpus_vbpl(body: CorpusVbplBody, account=Depends(reviewer)):
+        """One network call to vbpl.vn, only when this run allows it and the reviewer confirmed it."""
+        if vbpl_dir is None:
+            raise ValueError(NO_VBPL)
+        if not body.confirm:
+            raise ValueError("Hãy xác nhận trước khi Lexora gọi vbpl.vn")
+        corpora.corpus(body.corpus_id)
+        try:
+            manifest = fetch_document(body.reference, vbpl_dir)
+        except OSError as exc:  # Network failures are not storage failures.
+            raise ValueError(f"Không kết nối được vbpl.vn ({exc.__class__.__name__})") from exc
+        raw = Path(manifest["local_path"]).read_bytes()
+        return corpora.add_vbpl(body.corpus_id, manifest, raw, account["username"], body.document_id or None)
+
+    @app.post(UPLOAD_PATH)
+    def corpus_file(body: CorpusFileBody, account=Depends(reviewer)):
+        try:
+            data = base64.b64decode(body.content_base64, validate=True)
+        except (binascii.Error, ValueError) as exc:
+            raise ValueError("Nội dung tệp không hợp lệ") from exc
+        return corpora.add_file(body.corpus_id, body.filename, data, account["username"], body.title, body.document_id or None)
+
+    @app.post("/api/corpus/remove")
+    def corpus_remove(body: CorpusDocumentBody, _=Depends(reviewer)):
+        return corpora.remove(body.corpus_id, body.document_row)
+
+    @app.post("/api/corpus/freeze")
+    def corpus_freeze(body: CorpusFreezeBody, account=Depends(reviewer)):
+        return corpora.freeze(body.corpus_id, body.note, account["username"])
+
+    @app.get("/api/catalog/search")
+    def catalog_search(q: str = Query(), limit: int = Query(20), translations: bool = Query(False), _=Depends(reviewer)):
+        if catalog is None:
+            raise ValueError(NO_CATALOG)
+        return {"results": catalog.search(q, limit, translations)}
+
+    @app.get("/api/catalog/document")
+    def catalog_document(id: str = Query(), _=Depends(reviewer)):
+        if catalog is None:
+            raise ValueError(NO_CATALOG)
+        document = catalog.document(id)
+        if document is None:
+            raise ValueError("Không có văn bản này trong danh mục")
+        return document | {"relationships": catalog.relationships(id)}
 
     # Graph viewers (self-contained pages of published revisions) --------------------------
     def viewer_page(request, revision_id, structure):
