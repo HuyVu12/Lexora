@@ -79,6 +79,10 @@ def main():
     command.add_argument("--split", choices=["dev", "held_out"], help="answer only this split")
     command.add_argument("--max-calls", type=int, required=True, help="call budget of this session")
     command.add_argument("--approve-claude", action="store_true", help="explicit approval of the model calls")
+    command.add_argument("--router-model", help="answer with one approved 9Router model instead of the config's Claude model (a MODEL_* alias or a name)")
+    command.add_argument("--approve-router", action="store_true", help="explicit approval of the 9Router calls")
+    command.add_argument("--timeout", type=int, default=300, help="seconds per 9Router call")
+    command.add_argument("--max-tokens", type=int, default=8000, help="answer token limit for 9Router models")
     command = commands.add_parser("answer-score", help="automatic metrics of an answer run (refusals, citations against gold units); offline")
     command.add_argument("answer_run")
     command.add_argument("--questions", required=True)
@@ -224,7 +228,14 @@ def main():
             log = lambda line: print(line, flush=True)
             if args.command == "answer-run":
                 from legal_ai.evaluation.answer_run import run as answer_run
-                provider = ClaudeCodeProvider(config["model"], config["effort"], args.max_calls, approved=args.approve_claude)
+                if args.router_model:
+                    from legal_ai.providers.router import ChatStructured, RouterProvider, read_settings
+                    settings = read_settings(Path.cwd() / ".env")
+                    name = settings.get(args.router_model, args.router_model) if args.router_model.startswith("MODEL_") else args.router_model
+                    chat = RouterProvider(settings, model=name, approved_route=args.approve_router, max_calls=args.max_calls, timeout=args.timeout)
+                    provider = ChatStructured(chat, max_tokens=args.max_tokens)
+                else:
+                    provider = ClaudeCodeProvider(config["model"], config["effort"], args.max_calls, approved=args.approve_claude)
                 print(json.dumps(answer_run(args.retrieval_run, args.questions, args.config, provider, args.output, split=args.split, log=log), indent=2))
             else:
                 from legal_ai.evaluation.answer_grading import judge_sheet

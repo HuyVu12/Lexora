@@ -69,6 +69,39 @@ class AnswerRunTests(unittest.TestCase):
             retrieval_run(self.root / "bundle", self.questions, path, shared, self.root / f"retrieval-{name}")
             self.retrieval[name] = self.root / f"retrieval-{name}"
 
+    def test_a_9router_chat_model_answers_through_the_structured_adapter(self):
+        from legal_ai.providers.router import ChatStructured
+
+        class Chat:
+            model, calls, max_calls = "ollama/stand-in", 0, 10
+
+            def __init__(self):
+                self.systems = []
+
+            def complete(self, system, user, max_tokens=900):
+                self.calls += 1
+                self.systems.append(system)
+                request = json.loads(user)
+                if "Thuế" in request["question"]:
+                    return {"content": "Không đủ căn cứ, không phải JSON."}
+                first = request["evidence"][0]["id"]
+                body = {"status": "answered", "statements": [{"text": "Theo đoạn đầu.", "evidence_ids": [first, "E99"]}, "một chuỗi trần", {"text": "Không trích dẫn"}]}
+                return {"content": "Đây là kết quả:\n```json\n" + json.dumps(body, ensure_ascii=False) + "\n```", "usage": {"prompt_tokens": 50, "completion_tokens": 20}}
+
+        chat = Chat()
+        provider = ChatStructured(chat, max_tokens=2000)
+        output = self.root / "answers-router"
+        counts = run(self.retrieval["DK2"], self.questions, self.config, provider, output)
+        self.assertEqual((counts["answered"], counts["failed"]), (2, 1), "unparseable chat output is a failed call, not a crash")
+        self.assertIn("JSON Schema", chat.systems[0])
+        manifest = json.loads((output / "manifest.json").read_text(encoding="utf-8"))
+        self.assertEqual((manifest["provider"], manifest["model"], manifest["effort"]), ("9router", "ollama/stand-in", "temperature-0"))
+        rows = {r["question_id"]: r for r in read_jsonl(output / "answers.jsonl")}
+        self.assertEqual(rows["q1"]["statements"][0]["evidence_ids"], ["E01"], "evidence IDs outside the bundle are dropped")
+        self.assertEqual(rows["q1"]["gate"]["uncited_removed"], 2, "a bare string and an uncited statement are both removed")
+        self.assertIn("```json", rows["q1"]["raw_content"])
+        self.assertEqual(rows["q3"]["error"], "invalid_output")
+
     def test_gate_removes_uncited_statements_and_downgrades_empty_answers(self):
         blocks = [{"id": "E01", "record_id": "r1", "unit_ids": ["u1"]}]
         kept = gate({"status": "answered", "statements": [{"text": "A", "evidence_ids": ["E01", "E01"]}, {"text": "B", "evidence_ids": []}]}, blocks)

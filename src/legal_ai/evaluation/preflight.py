@@ -93,7 +93,7 @@ def check(retrieval_dirs, answer_dirs=()):
         unmatched = [str(d) for d, _ in runs if d.resolve() not in by_retrieval]
         add("one answer run per retrieval run", "fail" if unmatched or len(answers) != len(runs) else "pass",
             f"without answers: {unmatched}" if unmatched else "")
-        keys = ("model", "effort", "system_sha256", "prompt", "top_k", "context_token_budget", "token_counter", "split", "questions_sha256")
+        keys = ("provider", "model", "effort", "system_sha256", "prompt", "top_k", "context_token_budget", "token_counter", "split", "questions_sha256")
         settings = [{k: m.get(k) for k in keys} for _, m in answers]
         add("same answer settings", "pass" if _same(settings) else "fail", "" if _same(settings) else [dict(s, run=str(d)) for (d, _), s in zip(answers, settings)])
         if any(m.get("split") == "held_out" for _, m in answers):

@@ -66,19 +66,24 @@ def gate(output, blocks):
     """Apply the citation gate to one model answer; returns the stored answer fields."""
     by_id = {b["id"]: b for b in blocks}
     statements, removed = [], 0
-    for item in output.get("statements") or []:
-        cited = [e for e in dict.fromkeys(item.get("evidence_ids") or []) if e in by_id]
+    raw = output.get("statements")
+    for item in raw if isinstance(raw, list) else []:
+        if not isinstance(item, dict):  # A chat model may answer with bare strings; they carry no citation.
+            removed += 1
+            continue
+        ids = item.get("evidence_ids")
+        cited = [e for e in dict.fromkeys(ids if isinstance(ids, list) else []) if isinstance(e, str) and e in by_id]
         if not cited or not str(item.get("text", "")).strip():
             removed += 1
             continue
-        statements.append({"text": item["text"].strip(), "evidence_ids": cited, "record_ids": [by_id[e]["record_id"] for e in cited],
+        statements.append({"text": str(item["text"]).strip(), "evidence_ids": cited, "record_ids": [by_id[e]["record_id"] for e in cited],
                            "unit_ids": sorted({u for e in cited for u in by_id[e]["unit_ids"]})})
     status = output.get("status") if output.get("status") in ANSWERED + REFUSED else "insufficient_evidence"
     downgraded = status in ANSWERED and not statements
     if status in REFUSED:
         statements = []
     return {"status": "insufficient_evidence" if downgraded else status, "model_status": output.get("status"), "statements": statements,
-            "limitations": [str(x) for x in output.get("limitations") or []][:4],
+            "limitations": [str(x) for x in (output.get("limitations") if isinstance(output.get("limitations"), list) else [])][:4],
             "gate": {"uncited_removed": removed, "downgraded_to_insufficient": downgraded}}
 
 
@@ -95,7 +100,8 @@ def run(retrieval_dir, questions_path, config_path, provider, output, *, split=N
     system, system_sha = system_prompt(config["prompt"])
     manifest = {"run_version": RUN_VERSION, "condition": retrieval["condition"]["condition"], "retrieval_run": retrieval_dir.as_posix(),
                 "retrieval_records_sha256": retrieval["records_sha256"], "questions_sha256": digest(Path(questions_path).read_bytes()),
-                "split": split, "model": provider.model, "effort": getattr(provider, "effort", None), "prompt": config["prompt"],
+                "split": split, "provider": getattr(provider, "provider", "claude-code"), "model": provider.model,
+                "effort": getattr(provider, "effort", None), "prompt": config["prompt"],
                 "system_sha256": system_sha, "top_k": config["top_k"], "context_token_budget": config["context_token_budget"],
                 "token_counter": "lexora-syllable-v1"}
     manifest_path = output / "manifest.json"
@@ -127,6 +133,8 @@ def run(retrieval_dir, questions_path, config_path, provider, output, *, split=N
                 answer = provider.structured(system, prompt, schema(b["id"] for b in blocks), purpose="answer")
                 row |= gate(answer["output"], blocks) | {"usage": answer.get("usage"), "cost_usd": answer.get("cost_usd"),
                                                          "duration_ms": answer.get("duration_ms"), "served_by": answer.get("model"), "error": None}
+                if answer.get("raw_content") is not None:
+                    row["raw_content"] = answer["raw_content"]  # Chat models: keep the exact text the answer was parsed from.
                 counts["answered"] += 1
             except ProviderError as exc:
                 row |= {"error": exc.code}
