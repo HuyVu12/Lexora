@@ -184,6 +184,7 @@
 		overflow-wrap: anywhere;
 	}
 	.prose :global(pre) {
+		line-height: 1.45;
 		margin: 0 0 14px;
 		padding: 14px 16px;
 		border-radius: var(--r-control);
@@ -225,6 +226,23 @@
 		font-weight: 600;
 		color: var(--ink-2);
 		border-bottom-color: var(--rule-strong);
+	}
+	.prose :global(figure) {
+		margin: 4px 0 20px;
+		display: grid;
+		gap: 8px;
+	}
+	.prose :global(figure img) {
+		display: block;
+		width: 100%;
+		max-width: 820px;
+		height: auto;
+		border-radius: var(--r-panel);
+		border: 1px solid var(--rule);
+	}
+	.prose :global(figcaption) {
+		font-size: 13px;
+		color: var(--muted);
 	}
 	.prose :global(hr) {
 		border: 0;

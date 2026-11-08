@@ -80,6 +80,17 @@ export function render(markdown: string): { html: string; headings: Heading[] } 
 			i++;
 			continue;
 		}
+		// A line holding only an image becomes a figure; `assets/x.svg` points to the document images.
+		const image = line.trim().match(/^!\[([^\]]*)\]\(([^)\s]+)\)$/);
+		if (image) {
+			flush();
+			const src = image[2].startsWith('assets/') ? `/api/docs/${image[2]}` : image[2];
+			if (/^\/api\/docs\/assets\/[a-z0-9-]+\.(svg|png)$/.test(src)) {
+				out.push(`<figure><img src="${escape(src)}" alt="${escape(image[1])}" loading="lazy"><figcaption>${inline(image[1])}</figcaption></figure>`);
+			}
+			i++;
+			continue;
+		}
 		if (/^(-{3,}|\*{3,})\s*$/.test(line)) {
 			flush();
 			out.push('<hr>');

@@ -498,6 +498,14 @@ def create_app(store, port, *, provider=None, source_catalog=None, extractor=Non
     def documents(_=Depends(current)):
         return {"documents": guides.list()}
 
+    @app.get("/api/docs/assets/{name}")
+    def document_asset(name: str, _=Depends(current)):
+        try:
+            body, media = guides.asset(name)
+        except KeyError as exc:
+            raise Denied(404, exc.args[0]) from None
+        return Response(body, media_type=media, headers={"Cache-Control": "private, max-age=300"})
+
     @app.get("/api/docs/{slug}")
     def document(slug: str, _=Depends(current)):
         try:

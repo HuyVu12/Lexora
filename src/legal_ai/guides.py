@@ -11,6 +11,7 @@ block of `key: value` lines between `---` lines:
     updated: 2026-11-08
     ---
 
+Images go in the `assets` subfolder (`.svg` or `.png`) and are referenced as `![caption](assets/name.svg)`.
 The file name without `.md` is the slug (lower-case letters, digits and hyphens only). Adding a document means adding
 a file; nothing else changes. The app renders the Markdown itself; files are read-only data, never executed.
 """
@@ -20,6 +21,8 @@ import re
 
 GUIDES_VERSION = "guides-v1"
 SLUG = re.compile(r"^[a-z0-9][a-z0-9-]{0,80}$")
+ASSET = re.compile(r"^[a-z0-9][a-z0-9-]{0,80}\.(svg|png)$")
+ASSET_TYPES = {"svg": "image/svg+xml", "png": "image/png"}
 MAX_BYTES = 400_000
 
 
@@ -57,6 +60,15 @@ class Guides:
     def list(self):
         entries = [_entry(path, _split(path.read_text(encoding="utf-8-sig"))[0]) for path in self._files()]
         return sorted(entries, key=lambda e: (e["order"], e["title"]))
+
+    def asset(self, name):
+        """(bytes, media type) of an image in the `assets` subfolder; only plain lower-case names ending in .svg or .png."""
+        if not isinstance(name, str) or not ASSET.match(name):
+            raise KeyError("Không tìm thấy hình")
+        path = self.folder / "assets" / name
+        if not path.is_file() or path.stat().st_size > 2_000_000:
+            raise KeyError("Không tìm thấy hình")
+        return path.read_bytes(), ASSET_TYPES[name.rsplit(".", 1)[1]]
 
     def get(self, slug):
         if not isinstance(slug, str) or not SLUG.match(slug):

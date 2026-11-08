@@ -1,6 +1,7 @@
 """Project documents for the Documents page: Markdown files with front matter, listed and served by slug."""
 
 from pathlib import Path
+import re
 import sys
 import tempfile
 import unittest
@@ -30,9 +31,26 @@ class ProjectDocsTests(unittest.TestCase):
                 with self.assertRaises(KeyError):
                     guides.get(slug)
 
+    def test_images_are_served_from_assets_by_safe_name_only(self):
+        with tempfile.TemporaryDirectory() as folder:
+            root = Path(folder)
+            (root / "assets").mkdir()
+            (root / "assets" / "flow.svg").write_text("<svg xmlns='http://www.w3.org/2000/svg'/>", encoding="utf-8")
+            (root / "secret.md").write_text("x", encoding="utf-8")
+            guides = Guides(root)
+            body, media = guides.asset("flow.svg")
+            self.assertEqual((media, body[:4]), ("image/svg+xml", b"<svg"))
+            for name in ("../secret.md", "flow.SVG", "flow.js", "missing.svg", ""):
+                with self.assertRaises(KeyError):
+                    guides.asset(name)
+
     def test_repository_documents_have_titles_and_categories(self):
         documents = Guides(ROOT / "docs" / "guides").list()
         self.assertIn("huong-dan-gan-nhan", [d["slug"] for d in documents])
+        guides = Guides(ROOT / "docs" / "guides")
+        for doc in documents:
+            for name in re.findall(r"\]\(assets/([^)]+)\)", guides.get(doc["slug"])["markdown"]):
+                guides.asset(name)  # every image a document uses exists
         self.assertTrue(all(d["title"] != d["slug"] and d["category"] != "Khác" and d["updated"] for d in documents),
                         "every shipped document declares title, category and updated in its front matter")
 
