@@ -1,6 +1,6 @@
 """Build a fresh demo workspace store from local files only (`demo-store-v1`).
 
-The store gets three accounts (admin, reviewer, reader) with random passwords that are printed once and never
+The store gets four accounts (admin, reviewer, reader, dev) with random passwords that are printed once and never
 written to disk, and the experiment-scope research corpus frozen as version 1, built from the pinned vbpl.vn
 snapshots under `data/raw/vbpl`. It holds no knowledge base: during the rehearsal a person imports, reviews and
 publishes one, and the runbook (`docs/demo-runbook.md`) has them back the store up right after, so the backup holds
@@ -16,7 +16,8 @@ from legal_ai.research.corpus import CorpusStore
 from legal_ai.research.scope import build_scope
 
 DEMO_VERSION = "demo-store-v1"
-ACCOUNTS = (("admin", "Quản trị demo", "admin"), ("phapche", "Người duyệt pháp chế", "reviewer"), ("nhansu", "Người tra cứu nhân sự", "reader"))
+ACCOUNTS = (("admin", "Quản trị demo", "admin"), ("phapche", "Người duyệt pháp chế", "reviewer"), ("nhansu", "Người tra cứu nhân sự", "reader"),
+            ("dev", "Giám sát kỹ thuật", "dev"))
 
 
 def build(store_path, scope_path="configs/experiment-scope-v1.json", raw_dir="data/raw/vbpl"):

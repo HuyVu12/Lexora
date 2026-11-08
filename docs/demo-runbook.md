@@ -23,7 +23,7 @@ $env:PYTHONPATH = 'src'
 .venv\Scripts\python -m legal_ai.cli demo-build --store data/kb/demo-<ngày>.sqlite
 ```
 
-- Lệnh tạo ba tài khoản (`admin` quản trị, `phapche` người duyệt, `nhansu` người tra cứu) với mật khẩu ngẫu nhiên in ra đúng một lần; ghi lại ngay.
+- Lệnh tạo bốn tài khoản (`admin` quản trị, `phapche` người duyệt, `nhansu` người tra cứu, `dev` giám sát) với mật khẩu ngẫu nhiên in ra đúng một lần; ghi lại ngay.
 - Store có sẵn corpus "Phạm vi thực nghiệm v1" đã khóa phiên bản 1, chưa có kho tri thức nào.
 - Lệnh từ chối ghi vào tệp đã tồn tại, nên mỗi lần dựng là một store sạch.
 

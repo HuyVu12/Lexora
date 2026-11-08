@@ -117,6 +117,25 @@ class AuthTests(unittest.TestCase):
         self.assertEqual(self.accounts.chats_of(reader["id"]), {"c1"})
         self.assertEqual(self.accounts.chats_of(self.admin["id"]), set())
 
+    def test_store_from_before_the_dev_role_accepts_it_and_keeps_accounts_and_sessions(self):
+        old = Path(self.temp.name) / "old.sqlite"
+        with closing(sqlite3.connect(old)) as db, db:
+            db.executescript("""
+                CREATE TABLE accounts (id INTEGER PRIMARY KEY, username TEXT NOT NULL UNIQUE, display_name TEXT NOT NULL,
+                    role TEXT NOT NULL CHECK (role IN ('admin', 'reviewer', 'reader')), password TEXT NOT NULL,
+                    active INTEGER NOT NULL DEFAULT 1, failures INTEGER NOT NULL DEFAULT 0, locked_until TEXT, created_at TEXT NOT NULL);
+                CREATE TABLE sessions (digest TEXT PRIMARY KEY, account_id INTEGER NOT NULL REFERENCES accounts(id), expires_at TEXT NOT NULL);
+                CREATE TABLE chat_owners (chat_id TEXT PRIMARY KEY, account_id INTEGER NOT NULL REFERENCES accounts(id));""")
+            db.execute("INSERT INTO accounts VALUES (7, 'boss', 'B', 'admin', ?, 1, 0, NULL, '2026-11-01T00:00:00+00:00')", (hash_password("old password 1"),))
+            db.execute("INSERT INTO chat_owners VALUES ('c1', 7)")
+        accounts = AccountStore(old)
+        token, boss = accounts.login("boss", "old password 1")
+        self.assertEqual((boss["id"], accounts.session(token)["username"], accounts.chats_of(7)), (7, "boss", {"c1"}))
+        self.assertEqual(accounts.create("watcher", "Giám sát", "dev", "watch password 1")["role"], "dev")
+        self.assertEqual(accounts.activity(), {"accounts": {"admin": 1, "dev": 1}, "active_sessions": 1})
+        with closing(sqlite3.connect(old)) as db:
+            self.assertIn("REFERENCES accounts(id)", db.execute("SELECT sql FROM sqlite_master WHERE name = 'sessions'").fetchone()[0])
+
     def test_review_store_still_opens_the_shared_file(self):
         self.assertEqual(ReviewStore(self.path).knowledge_bases(), [])
         self.assertEqual(AccountStore(self.path).count(), 1)

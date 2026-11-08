@@ -34,8 +34,8 @@ class DemoSetupTests(unittest.TestCase):
             result = build(store, scope, raw_dir=root / "raw")
             accounts = AccountStore(store)
             passwords = {username: password for username, _, password in result["accounts"]}
-            self.assertEqual(sorted(passwords), ["admin", "nhansu", "phapche"])
-            self.assertEqual(len(set(passwords.values())), 3, "every account gets its own random password")
+            self.assertEqual(sorted(passwords), ["admin", "dev", "nhansu", "phapche"])
+            self.assertEqual(len(set(passwords.values())), 4, "every account gets its own random password")
             _token, account = accounts.login("phapche", passwords["phapche"])
             self.assertEqual(account["role"], "reviewer")
             corpus = CorpusStore(store).corpus(result["corpus"]["id"])
