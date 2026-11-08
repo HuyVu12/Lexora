@@ -32,7 +32,7 @@ const en: Record<MessageKey, string> = {
 	'common.optional': 'Optional',
 	'common.dismiss': 'Dismiss message',
 	'common.forbidden.title': 'You do not have access to this page',
-	'common.forbidden.body': 'Reader accounts can ask questions and open published knowledge bases.',
+	'common.forbidden.body': 'The role of this account cannot open this page. Ask an admin to change your role if you need it.',
 	'common.notFound': 'Page not found.',
 	'common.toHome': 'Go to the overview',
 

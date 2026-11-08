@@ -1,46 +1,57 @@
 <script lang="ts">
 	import { page } from '$app/state';
-	import { goto } from '$app/navigation';
+	import { goto, afterNavigate } from '$app/navigation';
 	import Icon from './Icon.svelte';
 	import { t, i18n } from '#lib/i18n/index.svelte.js';
 	import { session, canReview, canMonitor } from '#lib/session.svelte.js';
 	import { api } from '#lib/api.js';
 	import type { MessageKey } from '#lib/i18n/vi.js';
 
+	// Three everyday links stay on the bar; the four research pages share one menu; account management and
+	// monitoring live in the avatar menu, so even an admin sees a short bar.
 	type Item = { href: string; key: MessageKey; match: (p: string) => boolean };
 	const account = $derived(session.account);
-	const lookup: Item[] = [
-		{ href: '/', key: 'nav.home', match: (p) => p === '/' || p.startsWith('/kb') },
-		{ href: '/chat', key: 'nav.chat', match: (p) => p.startsWith('/chat') }
-	];
-	const author: Item[] = [{ href: '/import', key: 'nav.import', match: (p) => p.startsWith('/import') || p.startsWith('/drafts') }];
+	const home: Item = { href: '/', key: 'nav.home', match: (p) => p === '/' || p.startsWith('/kb') };
+	const chat: Item = { href: '/chat', key: 'nav.chat', match: (p) => p.startsWith('/chat') };
+	const importing: Item = { href: '/import', key: 'nav.import', match: (p) => p.startsWith('/import') || p.startsWith('/drafts') };
+	const results: Item = { href: '/research/results', key: 'nav.results', match: (p) => p.startsWith('/research/results') };
+	const monitor: Item = { href: '/dev', key: 'nav.monitor', match: (p) => p.startsWith('/dev') };
+	const users: Item = { href: '/admin/users', key: 'nav.users', match: (p) => p.startsWith('/admin') };
 	const research: Item[] = [
 		{ href: '/research', key: 'nav.corpora', match: (p) => p.startsWith('/research') && !/^\/research\/(questions|gold|results)/.test(p) },
 		{ href: '/research/questions', key: 'nav.questions', match: (p) => p.startsWith('/research/questions') },
 		{ href: '/research/gold', key: 'nav.gold', match: (p) => p.startsWith('/research/gold') },
-		{ href: '/research/results', key: 'nav.results', match: (p) => p.startsWith('/research/results') }
+		results
 	];
-	const monitor: Item = { href: '/dev', key: 'nav.monitor', match: (p) => p.startsWith('/dev') };
-	const admin: Item[] = [{ href: '/admin/users', key: 'nav.users', match: (p) => p.startsWith('/admin') }, monitor];
-	// A dev account monitors: the dashboard and the research results, nothing to import or review.
-	const dev: Item[] = [monitor, research[research.length - 1]];
-	const groups = $derived([
-		{ key: 'nav.zone.lookup' as MessageKey, items: lookup },
-		...(canReview(account) ? [{ key: 'nav.zone.author' as MessageKey, items: author }] : []),
-		...(canReview(account) ? [{ key: 'nav.zone.research' as MessageKey, items: research }] : []),
-		...(account?.role === 'admin' ? [{ key: 'nav.zone.admin' as MessageKey, items: admin }] : []),
-		...(account?.role === 'dev' && canMonitor(account) ? [{ key: 'nav.zone.monitor' as MessageKey, items: dev }] : [])
-	]);
+	// A dev account's work is monitoring, so its two pages stay on the bar.
+	const links = $derived(canReview(account) ? [home, chat, importing] : account?.role === 'dev' ? [home, chat, monitor, results] : [home, chat]);
+	const manage = $derived([...(account?.role === 'admin' ? [users] : []), ...(account?.role === 'admin' && canMonitor(account) ? [monitor] : [])]);
+	const inResearch = $derived(research.some((item) => item.match(page.url.pathname)));
 
-	let menuOpen = $state(false);
+	let open = $state<'' | 'research' | 'user'>('');
+	afterNavigate(() => (open = ''));
+	const toggle = (menu: 'research' | 'user') => (open = open === menu ? '' : menu);
+
+	function outside(event: MouseEvent) {
+		if (open && !(event.target as Element).closest('.has-menu')) open = '';
+	}
+	function escape(event: KeyboardEvent) {
+		if (event.key === 'Escape' && open) {
+			const which = open;
+			open = '';
+			document.getElementById(`${which}-button`)?.focus();
+		}
+	}
 
 	async function logout() {
 		await api('/api/auth/logout', {}).catch(() => undefined);
 		session.account = null;
-		menuOpen = false;
+		open = '';
 		await goto('/login');
 	}
 </script>
+
+<svelte:window onclick={outside} onkeydown={escape} />
 
 <header class="topbar">
 	<a class="skip" href="#main">{t('nav.skip')}</a>
@@ -58,13 +69,22 @@
 	</a>
 	{#if account}
 		<nav aria-label={t('nav.main')}>
-			{#each groups as group (group.key)}
-				<div class="group" role="group" aria-label={t(group.key)}>
-					{#each group.items as item (item.href)}
-						<a href={item.href} aria-current={item.match(page.url.pathname) ? 'page' : undefined}>{t(item.key)}</a>
-					{/each}
-				</div>
+			{#each links as item (item.href)}
+				<a href={item.href} aria-current={item.match(page.url.pathname) ? 'page' : undefined}>{t(item.key)}</a>
 			{/each}
+			{#if canReview(account)}
+				<div class="has-menu research">
+					<button type="button" id="research-button" class="nav-button" class:current={inResearch} aria-expanded={open === 'research'}
+						aria-controls="research-menu" onclick={() => toggle('research')}>{t('nav.zone.research')}<Icon name="chevron" size={16} /></button>
+					{#if open === 'research'}
+						<div class="drop" id="research-menu">
+							{#each research as item (item.href)}
+								<a href={item.href} aria-current={item.match(page.url.pathname) ? 'page' : undefined}>{t(item.key)}</a>
+							{/each}
+						</div>
+					{/if}
+				</div>
+			{/if}
 		</nav>
 	{/if}
 	<div class="end">
@@ -73,14 +93,26 @@
 			<Icon name="globe" size={16} /><span class="lang-text">{t('lang.switchTo')}</span>
 		</button>
 		{#if account}
-			<div class="user">
-				<button type="button" class="who" aria-expanded={menuOpen} aria-haspopup="true" onclick={() => (menuOpen = !menuOpen)}>
+			<div class="user has-menu">
+				<button type="button" id="user-button" class="who" class:current={manage.some((item) => item.match(page.url.pathname))}
+					aria-expanded={open === 'user'} aria-controls="user-menu" onclick={() => toggle('user')}>
 					<span class="avatar" aria-hidden="true">{account.display_name.slice(0, 1).toUpperCase()}</span>
 					<span class="name" title={account.display_name}><span class="full">{account.display_name}</span><small>{t(`role.${account.role}`)}</small></span>
+					<Icon name="chevron" size={16} />
 				</button>
-				{#if menuOpen}
-					<div class="menu">
-						<p class="small muted">@{account.username}</p>
+				{#if open === 'user'}
+					<div class="menu" id="user-menu">
+						<div class="who-card">
+							<strong>{account.display_name}</strong>
+							<span class="small muted">@{account.username} · {t(`role.${account.role}`)}</span>
+						</div>
+						{#if manage.length}
+							<div class="menu-links">
+								{#each manage as item (item.href)}
+									<a href={item.href} aria-current={item.match(page.url.pathname) ? 'page' : undefined}>{t(item.key)}</a>
+								{/each}
+							</div>
+						{/if}
 						<button type="button" class="btn quiet small" onclick={logout}><Icon name="logout" size={16} />{t('user.logout')}</button>
 					</div>
 				{/if}
@@ -124,45 +156,43 @@
 	}
 	nav {
 		display: flex;
-		gap: 20px;
-		height: 100%;
-		/* With many zones (admin) the links scroll sideways; the language button and user menu never leave the bar. */
-		min-width: 0;
-		overflow-x: auto;
-		scrollbar-width: none;
-	}
-	.group {
-		display: flex;
-		gap: 2px;
 		align-items: center;
+		gap: 2px;
+		height: 100%;
 	}
-	.group + .group {
-		padding-left: 20px;
-		border-left: 1px solid var(--rule);
-	}
-	nav a,
+	nav > a,
+	.nav-button,
 	.about {
 		position: relative;
 		display: inline-flex;
 		align-items: center;
+		gap: 4px;
 		height: 36px;
 		padding: 0 12px;
+		border: 0;
 		border-radius: var(--r-control);
+		background: none;
 		color: var(--ink-2);
+		font: inherit;
 		font-weight: 500;
 		text-decoration: none;
+		white-space: nowrap;
+		cursor: pointer;
 	}
-	nav a:hover,
+	nav > a:hover,
+	.nav-button:hover,
 	.about:hover {
 		background: var(--desk);
 		color: var(--ink);
 	}
-	nav a[aria-current='page'],
+	nav > a[aria-current='page'],
+	.nav-button.current,
 	.about[aria-current='page'] {
 		color: var(--ink);
 		background: var(--desk);
 	}
-	nav a[aria-current='page']::after {
+	nav > a[aria-current='page']::after,
+	.nav-button.current::after {
 		content: '';
 		position: absolute;
 		left: 12px;
@@ -172,11 +202,87 @@
 		border-radius: 2px;
 		background: var(--graphite);
 	}
+	.has-menu {
+		position: relative;
+	}
+	.research {
+		margin-left: 10px;
+		padding-left: 12px;
+		border-left: 1px solid var(--rule);
+	}
+	.nav-button :global(svg),
+	.who :global(svg:last-child) {
+		color: var(--muted);
+		transition: transform 0.15s var(--ease-out);
+	}
+	[aria-expanded='true'] :global(svg:last-child) {
+		transform: rotate(180deg);
+	}
+	.drop,
+	.menu {
+		position: absolute;
+		top: calc(100% + 8px);
+		min-width: 200px;
+		padding: 6px;
+		display: grid;
+		gap: 2px;
+		background: var(--paper);
+		border: 1px solid var(--rule);
+		border-radius: var(--r-panel);
+		box-shadow: var(--shadow-pop);
+	}
+	.drop {
+		left: 12px;
+	}
+	.menu {
+		right: 0;
+		min-width: 230px;
+	}
+	.drop a,
+	.menu-links a {
+		display: flex;
+		align-items: center;
+		min-height: 36px;
+		padding: 0 10px;
+		border-radius: var(--r-control);
+		color: var(--ink-2);
+		font-weight: 500;
+		text-decoration: none;
+	}
+	.drop a:hover,
+	.menu-links a:hover {
+		background: var(--desk);
+		color: var(--ink);
+	}
+	.drop a[aria-current='page'],
+	.menu-links a[aria-current='page'] {
+		background: var(--desk);
+		color: var(--ink);
+		font-weight: 600;
+	}
+	.who-card {
+		display: grid;
+		gap: 1px;
+		padding: 6px 10px 8px;
+		border-bottom: 1px solid var(--rule);
+		margin-bottom: 4px;
+	}
+	.menu-links {
+		display: grid;
+		gap: 2px;
+		padding-bottom: 4px;
+		margin-bottom: 4px;
+		border-bottom: 1px solid var(--rule);
+	}
+	.menu .btn {
+		justify-content: flex-start;
+	}
 	.end {
 		margin-left: auto;
 		display: flex;
 		align-items: center;
 		gap: 8px;
+		flex-shrink: 0;
 	}
 	.lang {
 		display: inline-flex;
@@ -193,21 +299,19 @@
 	.lang:hover {
 		border-color: var(--ink-2);
 	}
-	.user {
-		position: relative;
-	}
 	.who {
 		display: flex;
 		align-items: center;
-		gap: 10px;
-		padding: 4px 8px 4px 4px;
+		gap: 8px;
+		padding: 4px 6px 4px 4px;
 		border: 0;
 		border-radius: var(--r-control);
 		background: transparent;
 		cursor: pointer;
 		text-align: left;
 	}
-	.who:hover {
+	.who:hover,
+	.who.current {
 		background: var(--desk);
 	}
 	.avatar {
@@ -216,6 +320,7 @@
 		border-radius: 50%;
 		display: grid;
 		place-items: center;
+		flex-shrink: 0;
 		background: var(--graphite);
 		color: #fff;
 		font-weight: 600;
@@ -236,113 +341,55 @@
 		color: var(--muted);
 		font-weight: 400;
 	}
-	.menu {
-		position: absolute;
-		right: 0;
-		top: calc(100% + 6px);
-		min-width: 200px;
-		padding: 10px;
-		display: grid;
-		gap: 6px;
-		background: var(--paper);
-		border: 1px solid var(--rule);
-		border-radius: var(--r-panel);
-		box-shadow: var(--shadow-pop);
-	}
-	.menu .btn {
-		justify-content: flex-start;
-	}
-	nav a,
-	.about,
 	.brand span {
 		white-space: nowrap;
 	}
-	.avatar,
-	.end {
-		flex-shrink: 0;
+	button:focus-visible,
+	nav a:focus-visible,
+	.drop a:focus-visible,
+	.menu-links a:focus-visible {
+		outline: 2px solid var(--focus);
+		outline-offset: 2px;
 	}
-	@media (max-width: 1480px) {
+	@media (max-width: 1180px) {
 		.name {
 			display: none;
 		}
 	}
-	@media (max-width: 1320px) {
+	@media (max-width: 960px) {
 		.topbar {
-			gap: 16px;
+			gap: 14px;
 		}
-		nav,
-		.group + .group {
-			gap: 12px;
-		}
-		.group + .group {
-			padding-left: 12px;
-		}
-		nav a {
-			padding: 0 9px;
-		}
-		.lang-text {
+		.lang-text,
+		.about {
 			display: none;
 		}
 	}
-	@media (max-width: 1260px) {
+	@media (max-width: 860px) {
+		.topbar {
+			gap: 10px;
+			padding: 0 12px;
+		}
 		.brand span {
 			display: none;
 		}
-	}
-	@media (max-width: 1140px) {
-		.about {
-			display: none;
-		}
-	}
-	@media (max-width: 1040px) {
-		nav,
-		.group + .group {
-			gap: 8px;
-		}
-		.group + .group {
-			padding-left: 8px;
-		}
-		nav a {
-			padding: 0 7px;
-		}
-	}
-	@media (max-width: 1000px) {
-		nav,
-		.group + .group {
-			gap: 4px;
-		}
-		.group + .group {
-			padding-left: 6px;
-		}
-		nav a {
-			padding: 0 6px;
-			font-size: 14px;
-		}
-	}
-	@media (max-width: 900px) {
-		.topbar {
-			gap: 12px;
-			padding: 0 12px;
-		}
-		.brand span,
-		.lang-text {
-			display: none;
-		}
-		nav a {
+		nav > a,
+		.nav-button {
 			padding: 0 9px;
-		}
-		.name,
-		.about {
-			display: none;
-		}
-		.group + .group {
-			padding-left: 8px;
 		}
 	}
 	@media (max-width: 760px) {
-		/* Phones are for looking things up; authoring and admin open from the overview's buttons. */
-		.group + .group {
+		/* Phones are for looking things up; authoring and research open from the overview's buttons, admin from the avatar menu. */
+		nav > a[href='/import'],
+		nav > a[href='/research/results'],
+		.research {
 			display: none;
+		}
+	}
+	@media (prefers-reduced-motion: reduce) {
+		.nav-button :global(svg),
+		.who :global(svg:last-child) {
+			transition: none;
 		}
 	}
 </style>

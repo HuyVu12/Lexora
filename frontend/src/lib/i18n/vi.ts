@@ -30,7 +30,7 @@ const vi = {
 	'common.optional': 'Không bắt buộc',
 	'common.dismiss': 'Đóng thông báo',
 	'common.forbidden.title': 'Bạn không có quyền xem trang này',
-	'common.forbidden.body': 'Tài khoản tra cứu chỉ hỏi đáp và xem các kho đã công bố.',
+	'common.forbidden.body': 'Vai trò của tài khoản này không mở được trang này. Nhờ quản trị đổi vai trò nếu bạn cần.',
 	'common.notFound': 'Không tìm thấy trang.',
 	'common.toHome': 'Về trang tổng quan',
 
