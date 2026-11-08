@@ -97,6 +97,9 @@ def main():
     command.add_argument("--config", default="configs/experiments/answer.json")
     command.add_argument("--max-calls", type=int, required=True)
     command.add_argument("--approve-claude", action="store_true")
+    command = commands.add_parser("demo-build", help="new demo store: three accounts with printed random passwords and the frozen experiment-scope corpus; offline")
+    command.add_argument("--store", required=True, help="new SQLite file")
+    command.add_argument("--scope", default="configs/experiment-scope-v1.json")
     command = commands.add_parser("preflight", help="fairness checks of DK1-DK4 retrieval (and answer) runs before reporting RQ3; offline")
     command.add_argument("--retrieval", nargs="+", required=True, help="retrieval run directories, one per condition")
     command.add_argument("--answers", nargs="*", default=[], help="answer run directories made from those retrieval runs")
@@ -212,6 +215,14 @@ def main():
             if args.compare:
                 report["agreement"] = agreement(args.sheet, args.compare)
             print(json.dumps(report, ensure_ascii=False, indent=2))
+        elif args.command == "demo-build":
+            from legal_ai.demo_setup import build as demo_build
+            result = demo_build(args.store, args.scope)
+            print(f"Demo store: {result['store']}")
+            print(f"Corpus: {result['corpus']['name']} ({result['corpus']['documents']} documents), frozen version {result['version']['number']} ({result['version']['id']})")
+            print("Accounts (passwords are shown only now; note them down):")
+            for username, role, password in result["accounts"]:
+                print(f"  {username:8} {role:9} {password}")
         elif args.command == "preflight":
             from legal_ai.common.io import write_json
             from legal_ai.evaluation.preflight import check

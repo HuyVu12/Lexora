@@ -37,6 +37,9 @@ python -m legal_ai.cli kb-extract <bundle> --output experiments/runs/<new> --dry
 python -m legal_ai.cli kb-materialize <kb run>                                       # rebuild dk3/dk4/validation offline; kb-inject <kb run> --output <new> for RQ2
 python -m legal_ai.cli gold-score <gold.jsonl> --bundle <bundle> --predictions rules   # RQ1 P/R/F1 (or a dk3.jsonl/dk4.jsonl)
 python -m legal_ai.cli answer-run <retrieval run> --questions <q.json> --output <new> --max-calls N --approve-claude   # then answer-score, answer-sheet, answer-grades, answer-judge
+python -m legal_ai.cli preflight --retrieval <DK1..DK4 runs> --answers <answer runs>   # fairness checks before reporting RQ3; exits 1 on failure
+python -m legal_ai.cli kb-compare                                                    # extraction-model comparison -> docs/results/extraction-models.{md,json}
+python -m legal_ai.cli demo-build --store data/kb/demo-<date>.sqlite                  # fresh demo store (accounts with printed passwords, frozen scope corpus); see docs/demo-runbook.md
 python -m legal_ai.cli search data/normalized/pilot-v2 'Tiền lương thử việc ít nhất bao nhiêu phần trăm?' --top-k 2
 python -m legal_ai.cli graph-build data/normalized/graph-pilot-v1 --config configs/entity-graph.json --output data/kb/new-entity-graph
 ```
