@@ -79,6 +79,22 @@ class WebApiTests(unittest.TestCase):
         self.approve_all(client, draft)
         return self.post(client, "/api/publish", {"draft_id": draft["id"], "reason": "Đối chiếu nguyên văn"}).json()
 
+    def test_public_host_behind_https_proxy_needs_https_origin_and_secure_cookie(self):
+        app = create_app(self.store, PORT, token="t0ken", frontend_dir=self.build, public_hosts=["vlexora.duckdns.org"])
+        client = TestClient(app, base_url="https://vlexora.duckdns.org")
+        self.clients.append(client)
+        login = {"username": "phapche", "password": "review password 1"}
+        refused = client.post("/api/auth/login", json=login, headers={"X-Lexora-Token": "t0ken", "Origin": "http://vlexora.duckdns.org"})
+        self.assertEqual(refused.status_code, 403, "plain-http origin is refused")
+        ok = client.post("/api/auth/login", json=login, headers={"X-Lexora-Token": "t0ken", "Origin": "https://vlexora.duckdns.org"})
+        self.assertEqual(ok.status_code, 200, ok.text)
+        self.assertIn("secure", ok.headers["set-cookie"].lower())
+        other = TestClient(app, base_url="https://evil.example")
+        self.clients.append(other)
+        self.assertEqual(other.get("/").status_code, 403, "unknown hosts are still refused")
+        with self.assertRaisesRegex(ValueError, "bare DNS"):
+            create_app(self.store, PORT, public_hosts=["https://x.duckdns.org"])
+
     def test_static_build_token_headers_spa_fallback_and_no_escape(self):
         anonymous = self.client()
         page = anonymous.get("/")

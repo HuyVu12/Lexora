@@ -286,14 +286,19 @@ def error(message, status, **extra):
 
 
 def create_app(store, port, *, provider=None, source_catalog=None, extractor=None, embedder=None, token=None, frontend_dir=None,
-               catalog_path=None, vbpl_dir=None, proposer=None, experiments_dir="experiments/runs"):
+               catalog_path=None, vbpl_dir=None, proposer=None, experiments_dir="experiments/runs", public_hosts=()):
     """Build the app for one loopback port and one workspace store; `frontend_dir` is the SvelteKit static build.
 
     `catalog_path` enables the offline document catalog. `vbpl_dir` (only with --allow-vbpl) lets reviewers fetch
     one vbpl.vn document per confirmed request into that snapshot directory. `proposer` (only with --approve-claude)
     is the structured model provider for question proposals and drafts; each call needs a confirmation."""
     token = token or secrets.token_urlsafe(32)
-    hosts = {f"127.0.0.1:{port}", f"localhost:{port}"}
+    # Loopback by default. `public_hosts` are exact names served over HTTPS by a reverse proxy (e.g. Caddy): they are
+    # accepted as Host, POSTs must come from https://<name>, and session cookies are sent over HTTPS only.
+    public = {name.strip().lower() for name in public_hosts if name and name.strip()}
+    if any(not all(c.isalnum() or c in ".-" for c in name) for name in public):
+        raise ValueError("public host names are bare DNS names, without scheme, port or path")
+    hosts = {f"127.0.0.1:{port}", f"localhost:{port}"} | public
     accounts = AccountStore(store.path)
     ops = OpsStore(store.path)
     started_at = datetime.now(timezone.utc).isoformat(timespec="seconds")
@@ -370,7 +375,7 @@ def create_app(store, port, *, provider=None, source_catalog=None, extractor=Non
                 response = error("Request exceeds local upload limit", 400)
             elif host not in hosts or request.headers.get("x-lexora-token") != token:
                 response = error("Invalid local request token", 403)
-            elif request.headers.get("origin") and request.headers["origin"] != "http://" + host:
+            elif request.headers.get("origin") and request.headers["origin"] != ("https://" if host in public else "http://") + host:
                 response = error("Invalid origin", 403)
             elif request.headers.get("content-type", "").split(";")[0].strip().lower() != "application/json":
                 response = error("Expected application/json", 400)
@@ -431,7 +436,7 @@ def create_app(store, port, *, provider=None, source_catalog=None, extractor=Non
             raise
         ops.record_event("login", result="ok", role=account["role"])
         response = JSONResponse(account)
-        response.set_cookie(COOKIE, session, max_age=SESSION_HOURS * 3600, httponly=True, samesite="strict", path="/")
+        response.set_cookie(COOKIE, session, max_age=SESSION_HOURS * 3600, httponly=True, samesite="strict", path="/", secure=bool(public))
         return response
 
     @app.post("/api/auth/logout")
