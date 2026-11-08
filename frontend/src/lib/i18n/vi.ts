@@ -984,6 +984,7 @@ const vi = {
 	'results.error.provider_http_error': 'Lỗi HTTP từ nhà cung cấp',
 	'results.error.timeout': 'Quá thời gian',
 	'results.error.quota_exhausted': 'Hết ngân sách lượt gọi',
+	'results.error.rate_limited': 'Nhà cung cấp tạm từ chối (quá hạn mức)',
 	'results.error.budget_exhausted': 'Hết ngân sách lượt gọi',
 	'guide.results.page': 'Kết quả thực nghiệm',
 	'guide.results.purpose': 'Xem nhanh số liệu các lượt chạy để so sánh model và ghi vào luận văn.',

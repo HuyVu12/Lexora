@@ -46,13 +46,17 @@ class DenseIndex:
                 for sha, blob in db.execute(f"SELECT text_sha, vector FROM embeddings WHERE model=? AND dims=? AND text_sha IN ({marks})", (model, dims, *chunk)):
                     cached[sha] = array("f", blob).tolist()
         missing = list(dict.fromkeys(k for k in keys if k not in cached))
-        if missing:
-            text_of = dict(zip(keys, texts))
-            fresh = self.embedder.embed([text_of[k] for k in missing])
+        text_of = dict(zip(keys, texts))
+        size = getattr(self.embedder, "MAX_BATCH", 64)
+        # Store each batch as it arrives: a rate limit halfway through a large KB (Gemini answers 429 after a few
+        # batches) then loses only the failed batch, and the next question continues where this one stopped.
+        for at in range(0, len(missing), size):
+            batch = missing[at:at + size]
+            fresh = self.embedder.embed([text_of[k] for k in batch])
             with self.store.connect() as db:
                 db.executemany("INSERT OR REPLACE INTO embeddings VALUES (?, ?, ?, ?)",
-                               [(model, dims, k, array("f", v).tobytes()) for k, v in zip(missing, fresh)])
-            cached.update(zip(missing, fresh))
+                               [(model, dims, k, array("f", v).tobytes()) for k, v in zip(batch, fresh)])
+            cached.update(zip(batch, fresh))
         return [cached[k] for k in keys]
 
     def similarities(self, passages, question):

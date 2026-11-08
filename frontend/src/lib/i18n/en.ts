@@ -986,6 +986,7 @@ const en: Record<MessageKey, string> = {
 	'results.error.provider_http_error': 'Provider HTTP error',
 	'results.error.timeout': 'Timed out',
 	'results.error.quota_exhausted': 'Call budget used up',
+	'results.error.rate_limited': 'Provider rate limit',
 	'results.error.budget_exhausted': 'Call budget used up',
 	'guide.results.page': 'Experiment results',
 	'guide.results.purpose': 'A quick view of the run numbers to compare models and report them in the thesis.',
