@@ -1,6 +1,6 @@
 {
   "compare_version": "kb-compare-v1",
-  "generated_at": "2026-11-08T07:47:52+00:00",
+  "generated_at": "2026-11-08T09:42:38+00:00",
   "runs": [
     {
       "run": "kb-scope-v1-opus-medium",
@@ -124,7 +124,11 @@
           }
         }
       },
-      "report_stale": false
+      "report_stale": false,
+      "rejection_explained": {
+        "categories": {},
+        "values_found": {}
+      }
     },
     {
       "run": "kb-scope-v1-nemotron-nano-30b",
@@ -187,7 +191,15 @@
       "calling_minutes": 10.6,
       "cost_usd": 0,
       "injection": null,
-      "report_stale": false
+      "report_stale": false,
+      "rejection_explained": {
+        "categories": {
+          "not_found": 2
+        },
+        "values_found": {
+          "nowhere": 2
+        }
+      }
     },
     {
       "run": "kb-scope-v1-gemma4-31b",
@@ -331,7 +343,19 @@
           }
         }
       },
-      "report_stale": false
+      "report_stale": false,
+      "rejection_explained": {
+        "categories": {
+          "context": 117,
+          "modality_only": 16,
+          "not_found": 9
+        },
+        "values_found": {
+          "ancestor": 334,
+          "nowhere": 10,
+          "unit": 3
+        }
+      }
     },
     {
       "run": "kb-scope-v1-gpt-oss-120b",
@@ -468,7 +492,19 @@
           }
         }
       },
-      "report_stale": false
+      "report_stale": false,
+      "rejection_explained": {
+        "categories": {
+          "context": 10,
+          "modality_only": 7,
+          "not_found": 12,
+          "other": 2
+        },
+        "values_found": {
+          "ancestor": 20,
+          "nowhere": 12
+        }
+      }
     },
     {
       "run": "kb-scope-v1-nemotron-3-ultra",
@@ -613,7 +649,19 @@
           }
         }
       },
-      "report_stale": false
+      "report_stale": false,
+      "rejection_explained": {
+        "categories": {
+          "context": 25,
+          "modality_only": 9,
+          "not_found": 21
+        },
+        "values_found": {
+          "ancestor": 72,
+          "nowhere": 26,
+          "unit": 4
+        }
+      }
     },
     {
       "run": "kb-scope-v1-beam",
@@ -754,7 +802,18 @@
           }
         }
       },
-      "report_stale": false
+      "report_stale": false,
+      "rejection_explained": {
+        "categories": {
+          "context": 15,
+          "not_found": 3
+        },
+        "values_found": {
+          "ancestor": 51,
+          "nowhere": 3,
+          "unit": 1
+        }
+      }
     },
     {
       "run": "kb-scope-v1-nemotron-3-super",
@@ -890,7 +949,18 @@
           }
         }
       },
-      "report_stale": false
+      "report_stale": false,
+      "rejection_explained": {
+        "categories": {
+          "context": 9,
+          "not_found": 14
+        },
+        "values_found": {
+          "ancestor": 12,
+          "nowhere": 15,
+          "unit": 4
+        }
+      }
     }
   ]
 }

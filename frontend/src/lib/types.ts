@@ -539,4 +539,5 @@ export interface KbRunSummary {
 	cost_usd: number | null;
 	injection: KbInjection | null;
 	report_stale: boolean;
+	rejection_explained: { categories: Record<string, number>; values_found: Record<string, number> } | null;
 }

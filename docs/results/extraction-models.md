@@ -1,6 +1,6 @@
 # So sánh model trích xuất kho tri thức (ĐK3/ĐK4)
 
-Tệp do `python -m legal_ai.cli kb-compare` sinh ra lúc 2026-11-08T07:47:52+00:00; không sửa tay.
+Tệp do `python -m legal_ai.cli kb-compare` sinh ra lúc 2026-11-08T09:42:38+00:00; không sửa tay.
 Mọi lượt dùng cùng phạm vi thực nghiệm, cùng prompt `norm-llm-v1` và được kiểm chứng lại bằng cùng một bộ kiểm chứng.
 
 | Model | Nhà cung cấp | Lượt OK / thử | Câu chưa có trả lời | ĐK3 | ĐK4 | Bị loại | Tính quy phạm chưa xác minh | Chi phí niêm yết |
@@ -41,6 +41,24 @@ Token do nhà cung cấp báo về; token suy luận chỉ có khi model báo ri
 - `ollama/beam`: hành vi không nguyên văn: 15, từ tình thái bịa: 15, chủ thể không nguyên văn: 13, điều kiện không nguyên văn: 3, ngoại lệ không nguyên văn: 3, kết quả không nguyên văn: 3, bên nhận không nguyên văn: 3. Lượt gọi lỗi (mọi lần thử): provider_unavailable: 10, provider_http_error: 40.
 - `ollama/nemotron-3-super`: hành vi không nguyên văn: 16, chủ thể không nguyên văn: 8, bên thụ hưởng không nguyên văn: 3, điều kiện không nguyên văn: 2, từ tình thái bịa: 1, đối tượng không nguyên văn: 1. Lượt gọi lỗi (mọi lần thử): provider_unavailable: 8.
 
+## Bị loại vì đâu (phân tích tự động)
+
+Với mỗi giá trị không nằm nguyên văn trong câu, tìm xem nó có ở chỗ khác của cùng đơn vị hoặc ở đơn vị cha (câu dẫn của khoản, tên Điều) không.
+"Mượn ngữ cảnh" là mọi giá trị thiếu đều tìm thấy ở đó: thường đúng về pháp lý nhưng không truy được về đúng câu; bị loại không có nghĩa là sai.
+
+| Model | Bị loại | Mượn ngữ cảnh | Có giá trị không tìm thấy | Chỉ sai nghĩa từ tình thái | Khác |
+|---|---|---|---|---|---|
+| `claude-opus-5-5` | 0 | - | - | - | - |
+| `ollama/nemotron-3-nano:30b` | 2 | 0 (0.0%) | 2 (100.0%) | 0 (0.0%) | 0 (0.0%) |
+| `ollama/gemma4:31b` | 142 | 117 (82.4%) | 9 (6.3%) | 16 (11.3%) | 0 (0.0%) |
+| `ollama/gpt-oss:120b` | 31 | 10 (32.3%) | 12 (38.7%) | 7 (22.6%) | 2 (6.5%) |
+| `ollama/nemotron-3-ultra:cloud` | 55 | 25 (45.5%) | 21 (38.2%) | 9 (16.4%) | 0 (0.0%) |
+| `ollama/beam` | 18 | 15 (83.3%) | 3 (16.7%) | 0 (0.0%) | 0 (0.0%) |
+| `ollama/nemotron-3-super` | 23 | 9 (39.1%) | 14 (60.9%) | 0 (0.0%) | 0 (0.0%) |
+
+Con số tự động chỉ cho biết chữ lấy từ đâu; đúng hay sai về pháp lý cần người gán nhãn (`kb-audit-sheet`, `kb-audit-score`).
+
+
 ## Chèn lỗi có chủ đích (RQ2)
 
 - `claude-opus-5-5`: bắt 98.9% lỗi thuộc loại phát hiện được, 1.3% lỗi ngữ nghĩa, loại nhầm 0.0% trên 450 bản ghi sạch (kb-validator-v3).
@@ -50,5 +68,7 @@ Token do nhà cung cấp báo về; token suy luận chỉ có khi model báo ri
 - `ollama/nemotron-3-ultra:cloud`: bắt 97.4% lỗi thuộc loại phát hiện được, 0.0% lỗi ngữ nghĩa, loại nhầm 0.0% trên 325 bản ghi sạch (kb-validator-v3).
 - `ollama/beam`: bắt 98.9% lỗi thuộc loại phát hiện được, 0.0% lỗi ngữ nghĩa, loại nhầm 0.0% trên 247 bản ghi sạch (kb-validator-v3).
 - `ollama/nemotron-3-super`: bắt 98.0% lỗi thuộc loại phát hiện được, 1.3% lỗi ngữ nghĩa, loại nhầm 0.0% trên 308 bản ghi sạch (kb-validator-v3).
+
+Bản ghi sạch lấy từ chính ĐK4 (đã qua bộ kiểm chứng), nên tỉ lệ loại nhầm chỉ kiểm tra bộ kiểm chứng cho kết quả ổn định, không phải bằng chứng nó không loại nhầm quy phạm đúng.
 
 Chi phí chỉ có với Claude Code (giá niêm yết, trừ vào hạn mức gói); lượt qua 9Router không báo chi phí.

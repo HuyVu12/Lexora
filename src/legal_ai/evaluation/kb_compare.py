@@ -93,6 +93,12 @@ def _reasoning_tokens(row):
     return 0
 
 
+def _explained(run_dir):
+    from legal_ai.evaluation.rejection_audit import explain
+    found = explain(run_dir)
+    return {"categories": found["categories"], "values_found": found["values_found"]}
+
+
 def summarize(run_dir):
     run_dir = Path(run_dir)
     manifest = json.loads((run_dir / "manifest.json").read_text(encoding="utf-8"))
@@ -140,7 +146,8 @@ def summarize(run_dir):
             "claims_per_sentence": dk3 / answered if answered else None,
             "completion_tokens_per_claim": completion / dk3 if dk3 else None,
             "median_call_seconds": median_s, "calling_minutes": total_min,
-            "cost_usd": report.get("cost_usd"), "injection": _injection(run_dir), "report_stale": report_stale}
+            "cost_usd": report.get("cost_usd"), "injection": _injection(run_dir), "report_stale": report_stale,
+            "rejection_explained": _explained(run_dir) if (run_dir / "validation.jsonl").exists() else None}
 
 
 def reason_label(code):
@@ -190,6 +197,15 @@ def markdown(summaries, generated_at):
         reasons = ", ".join(f"{reason_label(k)}: {v}" for k, v in sorted(s["reasons"].items(), key=lambda kv: -kv[1])) or "không có"
         errors = ", ".join(f"{k}: {v}" for k, v in s["call_errors"].items()) or "không có"
         lines.append(f"- `{s['model']}`: {reasons}. Lượt gọi lỗi (mọi lần thử): {errors}.")
+    lines += ["", "## Bị loại vì đâu (phân tích tự động)", "",
+              "Với mỗi giá trị không nằm nguyên văn trong câu, tìm xem nó có ở chỗ khác của cùng đơn vị hoặc ở đơn vị cha (câu dẫn của khoản, tên Điều) không.",
+              "\"Mượn ngữ cảnh\" là mọi giá trị thiếu đều tìm thấy ở đó: thường đúng về pháp lý nhưng không truy được về đúng câu; bị loại không có nghĩa là sai.", "",
+              "| Model | Bị loại | Mượn ngữ cảnh | Có giá trị không tìm thấy | Chỉ sai nghĩa từ tình thái | Khác |", "|---|---|---|---|---|---|"]
+    for s in summaries:
+        cats = (s.get("rejection_explained") or {}).get("categories", {})
+        cell = lambda name: f"{cats.get(name, 0)} ({_pct(cats.get(name, 0) / s['rejected'])})" if s["rejected"] else "-"
+        lines.append(f"| `{s['model']}` | {s['rejected']} | {cell('context')} | {cell('not_found')} | {cell('modality_only')} | {cell('other')} |")
+    lines += ["", "Con số tự động chỉ cho biết chữ lấy từ đâu; đúng hay sai về pháp lý cần người gán nhãn (`kb-audit-sheet`, `kb-audit-score`).", ""]
     lines += ["", "## Chèn lỗi có chủ đích (RQ2)", ""]
     for s in summaries:
         inj = s["injection"]
@@ -198,6 +214,7 @@ def markdown(summaries, generated_at):
                          f"loại nhầm {_pct(inj['false_reject_rate'])} trên {inj['clean_claims']} bản ghi sạch ({inj['validator_version']}).")
         else:
             lines.append(f"- `{s['model']}`: chưa chạy `kb-inject`.")
+    lines += ["", "Bản ghi sạch lấy từ chính ĐK4 (đã qua bộ kiểm chứng), nên tỉ lệ loại nhầm chỉ kiểm tra bộ kiểm chứng cho kết quả ổn định, không phải bằng chứng nó không loại nhầm quy phạm đúng."]
     lines += ["", "Chi phí chỉ có với Claude Code (giá niêm yết, trừ vào hạn mức gói); lượt qua 9Router không báo chi phí.", ""]
     return "\n".join(lines)
 

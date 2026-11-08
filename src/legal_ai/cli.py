@@ -113,6 +113,17 @@ def main():
     command.add_argument("--output", required=True, help="new, empty directory")
     command.add_argument("--per-type", type=int, default=30)
     command.add_argument("--seed", default="lexora-inject-v1")
+    command = commands.add_parser("kb-audit-sheet", help="blinded CSV sample of rejected and accepted claims for people to label against the statute; offline")
+    command.add_argument("runs", nargs="+", help="knowledge-base run directories")
+    command.add_argument("--sheet", required=True, help="CSV file to write")
+    command.add_argument("--key", required=True, help="JSON key file to write; keep it away from annotators")
+    command.add_argument("--rejected", type=int, default=30, help="rejected claims per run")
+    command.add_argument("--accepted", type=int, default=10, help="accepted claims per run")
+    command.add_argument("--seed", default="lexora-rejection-audit-v1")
+    command = commands.add_parser("kb-audit-score", help="share of wrong claims among rejected and accepted ones in a labelled audit sheet; offline")
+    command.add_argument("sheet")
+    command.add_argument("--key", required=True)
+    command.add_argument("--compare", help="a second annotator's sheet of the same items: report Cohen's kappa")
     command = commands.add_parser("gold-template", help="RQ1: empty extraction gold rows for every sentence of the chosen articles; offline")
     command.add_argument("bundle")
     command.add_argument("--output", required=True, help="JSONL file to write")
@@ -243,6 +254,15 @@ def main():
             from legal_ai.evaluation.error_injection import run as inject_run
             bundle = json.loads((Path(args.run) / "manifest.json").read_text(encoding="utf-8"))["bundle"]
             print(json.dumps(inject_run(args.run, read_jsonl(Path(bundle) / "units.jsonl"), args.output, args.per_type, args.seed), ensure_ascii=False, indent=2))
+        elif args.command == "kb-audit-sheet":
+            from legal_ai.evaluation.rejection_audit import make_sheet as audit_sheet
+            print(json.dumps(audit_sheet(args.runs, args.sheet, args.key, args.rejected, args.accepted, args.seed), indent=2))
+        elif args.command == "kb-audit-score":
+            from legal_ai.evaluation.rejection_audit import agreement as audit_agreement, score_sheet as audit_score
+            report = audit_score(args.sheet, args.key)
+            if args.compare:
+                report["agreement"] = audit_agreement(args.sheet, args.compare)
+            print(json.dumps(report, ensure_ascii=False, indent=2))
         elif args.command.startswith("gold-"):
             from legal_ai.common.io import read_jsonl, write_jsonl
             from legal_ai.evaluation import extraction_gold as gold

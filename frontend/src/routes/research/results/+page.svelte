@@ -155,6 +155,15 @@
 											{:else}
 												<p class="small">{t('results.reasons.none')}</p>
 											{/if}
+											{#if r.rejection_explained && r.rejected}
+												<h3 class="label">{t('results.explained')}</h3>
+												<ul class="plain">
+													{#each sorted(r.rejection_explained.categories) as [code, n] (code)}
+														<li><span>{t(`results.explained.${code}` as MessageKey) ?? code}</span><strong>{n}</strong><span class="small muted">{pct(n / r.rejected)}</span></li>
+													{/each}
+												</ul>
+												<p class="small muted explained-note">{t('results.explained.note')}</p>
+											{/if}
 											<h3 class="label">{t('results.errors')}</h3>
 											{#if Object.keys(r.call_errors).length}
 												<ul class="plain">{#each sorted(r.call_errors) as [code, n] (code)}<li><span>{failure(code)}</span><strong>{n}</strong></li>{/each}</ul>
@@ -288,10 +297,19 @@
 	}
 	.plain li {
 		display: grid;
-		grid-template-columns: minmax(0, 1fr) auto 2.5rem;
+		grid-template-columns: minmax(0, 1fr) auto 3.25rem;
 		gap: 10px;
 		align-items: baseline;
 		font-variant-numeric: tabular-nums;
+	}
+	.plain li > :first-child {
+		overflow-wrap: anywhere;
+	}
+	.plain li > :nth-child(3) {
+		text-align: right;
+	}
+	.detail-body p.explained-note {
+		margin: -4px 0 14px;
 	}
 	.plain li:not(:has(:nth-child(3))) {
 		grid-template-columns: minmax(0, 1fr) auto;
