@@ -113,6 +113,16 @@ def main():
     command.add_argument("--output", required=True, help="new, empty directory")
     command.add_argument("--per-type", type=int, default=30)
     command.add_argument("--seed", default="lexora-inject-v1")
+    command = commands.add_parser("question-drafts", help="add model-drafted questions with proposed labels to a question set (new or existing); offline")
+    command.add_argument("drafts", nargs="+", help="JSON files, each a list of drafted questions")
+    command.add_argument("--store", required=True)
+    command.add_argument("--actor", required=True, help="account recorded as the one who added the drafts")
+    command.add_argument("--author", required=True, help="who drafted them, e.g. claude-opus-5-5 (agent session)")
+    group = command.add_mutually_exclusive_group(required=True)
+    group.add_argument("--set", help="existing question set ID")
+    group.add_argument("--version", help="frozen corpus version ID for a new set (with --name and --guideline)")
+    command.add_argument("--name")
+    command.add_argument("--guideline", help="labelling guideline file for a new set")
     command = commands.add_parser("kb-audit-sheet", help="blinded CSV sample of rejected and accepted claims for people to label against the statute; offline")
     command.add_argument("runs", nargs="+", help="knowledge-base run directories")
     command.add_argument("--sheet", required=True, help="CSV file to write")
@@ -254,6 +264,23 @@ def main():
             from legal_ai.evaluation.error_injection import run as inject_run
             bundle = json.loads((Path(args.run) / "manifest.json").read_text(encoding="utf-8"))["bundle"]
             print(json.dumps(inject_run(args.run, read_jsonl(Path(bundle) / "units.jsonl"), args.output, args.per_type, args.seed), ensure_ascii=False, indent=2))
+        elif args.command == "question-drafts":
+            from legal_ai.research.corpus import CorpusStore
+            from legal_ai.research.questions import QuestionStore
+            store = QuestionStore(args.store, CorpusStore(args.store))
+            set_id = args.set
+            if set_id is None:
+                if not args.name:
+                    raise ValueError("a new set needs --name")
+                guideline = Path(args.guideline).read_text(encoding="utf-8") if args.guideline else ""
+                set_id = store.create(args.name, args.version, guideline, args.actor)["id"]
+            items = []
+            for path in args.drafts:
+                batch = json.loads(Path(path).read_text(encoding="utf-8"))
+                offset = len(items)  # paraphrase_of is local to each file.
+                items += [item | {"batch": Path(path).stem, "paraphrase_of": None if item.get("paraphrase_of") is None else item["paraphrase_of"] + offset}
+                          for item in batch]
+            print(json.dumps({"set_id": set_id} | store.import_drafts(set_id, items, args.actor, args.author), ensure_ascii=False, indent=2))
         elif args.command == "kb-audit-sheet":
             from legal_ai.evaluation.rejection_audit import make_sheet as audit_sheet
             print(json.dumps(audit_sheet(args.runs, args.sheet, args.key, args.rejected, args.accepted, args.seed), indent=2))

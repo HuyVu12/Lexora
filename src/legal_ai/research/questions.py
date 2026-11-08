@@ -206,6 +206,40 @@ class QuestionStore:
                                                                                    canonical(candidates), canonical(call), _now()))
         return {"id": proposal_id, "fields": clean, "rationale": rationale}
 
+    def import_drafts(self, set_id, items, actor, author):
+        """Add model-drafted questions with their proposed labels, all strictly checked before anything is written.
+
+        Each item: text, question_type, expected_status, relevant_unit_ids, rationale and `paraphrase_of` (index of an
+        earlier item, which puts both in one paraphrase family). Questions get origin `model` with the author; the labels
+        are stored as proposals, never as labels, so the two annotators still label every question themselves."""
+        with closing(self._connect()) as db:
+            row = self._set_row(db, set_id)
+            self._open(row)
+        known = self._units(row["corpus_version_id"])
+        if not isinstance(items, list) or not items:
+            raise ValueError("Tệp nháp cần một danh sách câu hỏi")
+        with closing(self._connect()) as db:
+            texts = {q["text"] for q in self._questions(db, set_id)}
+        for n, item in enumerate(items):
+            text = item.get("text")
+            if not isinstance(text, str) or not text.strip() or text in texts:
+                raise ValueError(f"Câu {n}: câu hỏi rỗng hoặc trùng với câu đã có")
+            texts.add(text)
+            self._clean_fields(item, known, strict=True)  # Unknown unit IDs or missing labels stop the whole import.
+            if item.get("expected_status") == "refuse" and item.get("relevant_unit_ids"):
+                raise ValueError(f"Câu {n}: câu cần từ chối không có đơn vị liên quan")
+            source = item.get("paraphrase_of")
+            if source is not None and not (isinstance(source, int) and 0 <= source < n):
+                raise ValueError(f"Câu {n}: paraphrase_of phải trỏ tới một câu đứng trước")
+        added = []
+        for n, item in enumerate(items):
+            source = item.get("paraphrase_of")
+            question = self.add_question(set_id, item["text"], actor, family_id=added[source]["family_id"] if source is not None else None,
+                                         origin="model", origin_detail={"author": author, "draft_index": n, "batch": item.get("batch")})
+            self.add_proposal(set_id, question["id"], item, item.get("rationale", ""), [], {"model": author, "purpose": "question-draft-labels"})
+            added.append(question)
+        return {"added": len(added), "families": len({q["family_id"] for q in added})}
+
     def _latest_proposal(self, db, set_id, question_id):
         row = db.execute("SELECT * FROM question_proposals WHERE set_id = ? AND question_id = ? ORDER BY created_at DESC, rowid DESC LIMIT 1",
                          (set_id, question_id)).fetchone()
