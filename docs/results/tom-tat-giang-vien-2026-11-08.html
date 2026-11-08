@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lexora: tóm tắt kết quả 08/11</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,500;8..60,600&display=swap" rel="stylesheet">
+<style>
+:root {
+  /* Bản ghi nhớ học thuật một cột: tiêu đề serif, số liệu căn cột, màu chỉ dùng cho trạng thái và ba nhóm lý do bị loại. */
+  --paper: #f6f7f9;
+  --sheet: #ffffff;
+  --ink: #1c2330;
+  --muted: #5d6676;
+  --line: #dde1e8;
+  --accent: #2c5a85;
+  --ctx: #6f9bc4;
+  --nf: #c0573e;
+  --mod: #d9a43a;
+  --good: #2f7d4f;
+  --warn: #a8701a;
+  --todo: #7a8291;
+  --font-display: "Source Serif 4", Georgia, "Times New Roman", serif;
+  --font-body: "Be Vietnam Pro", "Segoe UI", system-ui, sans-serif;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #12161d; --sheet: #191e27; --ink: #e6e9ef; --muted: #9aa3b2; --line: #2c3340;
+    --accent: #8bb6e0; --ctx: #5f8db8; --nf: #e07a60; --mod: #e2b453; --good: #6cc08d; --warn: #e0a548; --todo: #8f97a6;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --paper: #12161d; --sheet: #191e27; --ink: #e6e9ef; --muted: #9aa3b2; --line: #2c3340;
+  --accent: #8bb6e0; --ctx: #5f8db8; --nf: #e07a60; --mod: #e2b453; --good: #6cc08d; --warn: #e0a548; --todo: #8f97a6;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--paper); color: var(--ink); font: 400 15.5px/1.6 var(--font-body); }
+main { max-width: 900px; margin: 0 auto; padding: 40px 20px 64px; display: grid; gap: 28px; }
+header { display: grid; gap: 8px; border-bottom: 2px solid var(--ink); padding-bottom: 18px; }
+.meta { color: var(--muted); font-size: 13.5px; display: flex; flex-wrap: wrap; gap: 6px 18px; }
+h1, h2 { font-family: var(--font-display); font-weight: 600; text-wrap: balance; margin: 0; }
+h1 { font-size: 30px; line-height: 1.2; }
+h2 { font-size: 20px; display: flex; gap: 10px; align-items: baseline; }
+h2 .no { font-family: var(--font-body); font-size: 13px; color: var(--accent); font-weight: 600; }
+section { background: var(--sheet); border: 1px solid var(--line); border-radius: 8px; padding: 22px 24px; display: grid; gap: 14px; }
+p { margin: 0; max-width: 72ch; }
+ul { margin: 0; padding-left: 20px; display: grid; gap: 6px; max-width: 76ch; }
+.lead { font-size: 16.5px; }
+.small { font-size: 13.5px; color: var(--muted); }
+.table-wrap { overflow-x: auto; }
+table { border-collapse: collapse; width: 100%; font-size: 14px; font-variant-numeric: tabular-nums; }
+th, td { text-align: left; padding: 7px 10px; border-bottom: 1px solid var(--line); vertical-align: top; }
+th { font-weight: 600; color: var(--muted); font-size: 12.5px; text-transform: uppercase; letter-spacing: .03em; }
+td.n, th.n { text-align: right; white-space: nowrap; }
+code { font-size: 13px; background: color-mix(in srgb, var(--line) 55%, transparent); padding: 1px 5px; border-radius: 4px; }
+.pill { display: inline-block; font-size: 12px; font-weight: 600; padding: 2px 9px; border-radius: 999px; border: 1px solid currentColor; white-space: nowrap; }
+.pill.good { color: var(--good); } .pill.warn { color: var(--warn); } .pill.todo { color: var(--todo); }
+.chart { display: grid; gap: 8px; }
+.row { display: grid; grid-template-columns: 150px minmax(0, 1fr) 56px; gap: 12px; align-items: center; font-size: 13.5px; }
+.track { position: relative; height: 18px; background: repeating-linear-gradient(to right, var(--line) 0 1px, transparent 1px calc(100% / 3.5)); border-left: 1px solid var(--muted); }
+.bar { display: flex; height: 100%; }
+.bar span { display: block; height: 100%; }
+.c { background: var(--ctx); } .f { background: var(--nf); } .m { background: var(--mod); } .o { background: var(--todo); }
+.axis { display: grid; grid-template-columns: 150px minmax(0, 1fr) 56px; gap: 12px; font-size: 12px; color: var(--muted); }
+.axis .ticks { position: relative; height: 16px; }
+.axis .ticks span { position: absolute; transform: translateX(-50%); }
+.axis .ticks span:first-child { transform: none; }
+.legend { display: flex; flex-wrap: wrap; gap: 6px 18px; font-size: 13px; color: var(--muted); }
+.legend i { display: inline-block; width: 11px; height: 11px; border-radius: 2px; margin-right: 6px; vertical-align: -1px; }
+.two { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
+.callout { border-left: 3px solid var(--accent); padding: 4px 0 4px 14px; }
+ol { margin: 0; padding-left: 22px; display: grid; gap: 6px; max-width: 76ch; }
+@media (max-width: 640px) {
+  main { padding-top: 24px; }
+  section { padding: 18px 16px; }
+  .two { grid-template-columns: 1fr; }
+  .row, .axis { grid-template-columns: 96px minmax(0, 1fr) 48px; gap: 8px; }
+  h1 { font-size: 25px; }
+}
+</style>
+</head>
+<body>
+<main>
+  <header>
+    <h1>Lexora: tóm tắt kết quả thực nghiệm đến 08/11/2026</h1>
+    <p class="lead">RAG trên kho tri thức pháp luật lao động có bằng chứng nguyên văn; so sánh bốn điều kiện ĐK1-ĐK4.</p>
+    <div class="meta"><span>Bản nháp gửi trước buổi gặp</span><span>Phạm vi: 94 Điều, 5 văn bản, phiên bản khóa <code>veaeaad4a6edc</code></span><span>Số liệu sinh tự động từ <code>kb-compare</code></span></div>
+  </header>
+
+  <section aria-labelledby="s1">
+    <h2 id="s1"><span class="no">01</span>Tóm tắt</h2>
+    <ul>
+      <li>Hệ thống và dữ liệu đã chạy đầu cuối: lấy văn bản từ vbpl.vn, tách Điều/Khoản/Điểm, trích xuất quy phạm, kiểm chứng tự động, duyệt bởi người, hỏi đáp có trích dẫn.</li>
+      <li><strong>RQ2 đã có số liệu:</strong> bộ kiểm chứng bắt 97-100% lỗi kỹ thuật được chèn có chủ đích; với model yếu hơn nó loại 7-32% quy phạm.</li>
+      <li>Phát hiện mới: bị loại chưa chắc là sai. Với gemma4, 82% số bị loại chỉ vì lấy chữ từ câu dẫn của khoản. Đang gán nhãn tay để đo độ chính xác thật.</li>
+      <li><strong>RQ1 và RQ3 chưa có số liệu:</strong> công cụ đã xong, đang chờ gold set và bộ câu hỏi do hai người gán nhãn.</li>
+    </ul>
+  </section>
+
+  <section aria-labelledby="s2">
+    <h2 id="s2"><span class="no">02</span>Trạng thái theo câu hỏi nghiên cứu</h2>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Câu hỏi</th><th>Công cụ</th><th>Số liệu</th><th>Việc còn lại</th></tr></thead>
+        <tbody>
+          <tr><td><strong>RQ1</strong> Chất lượng trích xuất</td><td><span class="pill good">Xong</span></td><td><span class="pill todo">Chưa có</span></td><td>Gán nhãn gold set (hai người, kappa), rồi P/R/F1 chặt và lỏng cho ĐK3, ĐK4 và bộ quy tắc</td></tr>
+          <tr><td><strong>RQ2</strong> Hiệu quả kiểm chứng</td><td><span class="pill good">Xong</span></td><td><span class="pill warn">Một phần</span></td><td>Gán nhãn mù 104 quy phạm (80 bị loại, 24 được giữ) để đo độ chính xác</td></tr>
+          <tr><td><strong>RQ3</strong> Chất lượng câu trả lời ĐK1-ĐK4</td><td><span class="pill good">Xong</span></td><td><span class="pill todo">Chưa có</span></td><td>Bộ câu hỏi có nhãn, truy xuất bốn điều kiện, sinh câu trả lời, chấm mù, preflight công bằng</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section aria-labelledby="s3">
+    <h2 id="s3"><span class="no">03</span>So sánh model trích xuất (ĐK3 trước, ĐK4 sau kiểm chứng)</h2>
+    <p>Cùng phạm vi, cùng prompt <code>norm-llm-v1</code>, nhiệt độ 0, giới hạn 16.000 token, cùng bộ kiểm chứng <code>kb-validator-v3</code>. Opus qua Claude Code; các model khác qua 9Router.</p>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Model</th><th class="n">Lô OK / 95</th><th class="n">Câu có trả lời</th><th class="n">ĐK3</th><th class="n">ĐK4</th><th class="n">Bị loại</th><th class="n">Bắt lỗi chèn</th></tr></thead>
+        <tbody>
+          <tr><td>claude-opus-5-5</td><td class="n">95</td><td class="n">100%</td><td class="n">450</td><td class="n">450</td><td class="n">0%</td><td class="n">98,9%</td></tr>
+          <tr><td>gemma4:31b</td><td class="n">93</td><td class="n">93,6%</td><td class="n">446</td><td class="n">304</td><td class="n">31,8%</td><td class="n">98,1%</td></tr>
+          <tr><td>nemotron-3-ultra</td><td class="n">88</td><td class="n">86,5%</td><td class="n">380</td><td class="n">325</td><td class="n">14,5%</td><td class="n">97,4%</td></tr>
+          <tr><td>gpt-oss:120b</td><td class="n">95</td><td class="n">100%</td><td class="n">416</td><td class="n">385</td><td class="n">7,5%</td><td class="n">100%</td></tr>
+          <tr><td>nemotron-3-super</td><td class="n">95</td><td class="n">88,6%</td><td class="n">331</td><td class="n">308</td><td class="n">6,9%</td><td class="n">98,0%</td></tr>
+          <tr><td>beam</td><td class="n">76</td><td class="n">62,2%</td><td class="n">265</td><td class="n">247</td><td class="n">6,8%</td><td class="n">98,9%</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="small">"Bắt lỗi chèn": tỉ lệ bị loại trong các loại lỗi kỹ thuật được chèn vào ĐK4 (sai đơn vị, sai phiên bản, sửa trích dẫn, đổi số, chủ thể và từ tình thái bịa; 30 lỗi mỗi loại). Lỗi ngữ nghĩa với trích dẫn vẫn nguyên văn (bỏ phủ định, bỏ điều kiện, bỏ ngoại lệ) gần như không bị bắt (0-1,3%), đúng như thiết kế. nemotron-3-nano chỉ chạy mẫu 8 lô (hết token trước khi trả lời) nên không đưa vào bảng; beam thiếu 19 lô do 9Router quá tải.</p>
+  </section>
+
+  <section aria-labelledby="s4">
+    <h2 id="s4"><span class="no">04</span>Bị loại vì đâu</h2>
+    <p>Với mỗi giá trị không nằm nguyên văn trong câu, chương trình tìm xem nó có trong câu dẫn của khoản hoặc tên Điều không. Thanh là tỉ lệ bị loại trên ĐK3, chia theo lý do.</p>
+    <div class="legend" aria-hidden="true">
+      <span><i class="c"></i>Lấy chữ từ câu dẫn hoặc tên Điều</span>
+      <span><i class="f"></i>Có giá trị không tìm thấy trong luật</span>
+      <span><i class="m"></i>Chỉ sai nghĩa từ tình thái</span>
+      <span><i class="o"></i>Khác</span>
+    </div>
+    <div class="chart" role="img" aria-label="Tỉ lệ bị loại theo lý do: gemma4 31,8% trong đó 26,2% do lấy chữ từ câu dẫn; nemotron-3-ultra 14,5%; gpt-oss 7,5%; nemotron-3-super 6,9%; beam 6,8%; Opus 0%.">
+      <div class="row"><span>gemma4:31b</span><div class="track"><div class="bar" style="width:calc(31.8% / 0.35)"><span class="c" style="flex:117"></span><span class="f" style="flex:9"></span><span class="m" style="flex:16"></span></div></div><strong>31,8%</strong></div>
+      <div class="row"><span>nemotron-3-ultra</span><div class="track"><div class="bar" style="width:calc(14.5% / 0.35)"><span class="c" style="flex:25"></span><span class="f" style="flex:21"></span><span class="m" style="flex:9"></span></div></div><strong>14,5%</strong></div>
+      <div class="row"><span>gpt-oss:120b</span><div class="track"><div class="bar" style="width:calc(7.5% / 0.35)"><span class="c" style="flex:10"></span><span class="f" style="flex:12"></span><span class="m" style="flex:7"></span><span class="o" style="flex:2"></span></div></div><strong>7,5%</strong></div>
+      <div class="row"><span>nemotron-3-super</span><div class="track"><div class="bar" style="width:calc(6.9% / 0.35)"><span class="c" style="flex:9"></span><span class="f" style="flex:14"></span></div></div><strong>6,9%</strong></div>
+      <div class="row"><span>beam</span><div class="track"><div class="bar" style="width:calc(6.8% / 0.35)"><span class="c" style="flex:15"></span><span class="f" style="flex:3"></span></div></div><strong>6,8%</strong></div>
+      <div class="row"><span>claude-opus-5-5</span><div class="track"></div><strong>0%</strong></div>
+      <div class="axis" aria-hidden="true"><span></span><div class="ticks"><span style="left:0">0%</span><span style="left:28.57%">10%</span><span style="left:57.14%">20%</span><span style="left:85.71%">30%</span></div><span></span></div>
+    </div>
+    <div class="callout">
+      <p>Ví dụ: điểm e) chỉ ghi "Đủ tuổi nghỉ hưu ..., trừ trường hợp các bên có thỏa thuận khác". Model điền chủ thể "Người lao động" và hành vi "đơn phương chấm dứt" từ câu dẫn của khoản 2. Về pháp lý là đúng, nhưng bị loại vì không nằm trong câu của điểm e).</p>
+    </div>
+    <p>Với gemma4 phần lớn số bị loại có thể là quy phạm đúng; với gpt-oss và hai model nemotron, giá trị không tìm thấy trong luật chiếm 38-61%, tức bộ kiểm chứng nhiều khả năng loại đúng lỗi. Đây mới là phân loại tự động theo chỗ lấy chữ; đúng hay sai được đo bằng bảng gán nhãn mù ở mục 05.</p>
+  </section>
+
+  <section aria-labelledby="s5">
+    <h2 id="s5"><span class="no">05</span>Giới hạn đã biết</h2>
+    <ul>
+      <li>Bị loại không đồng nghĩa với sai; chưa có độ chính xác của bộ kiểm chứng cho tới khi có nhãn người.</li>
+      <li>Bộ kiểm chứng v3 được chỉnh sau khi xem đầu ra của Opus trên cùng phạm vi (trước mọi phép đo). Việc này được ghi trong nhật ký quyết định.</li>
+      <li>Tỉ lệ loại nhầm 0% ở phần chèn lỗi không phải bằng chứng, vì bản ghi sạch lấy từ chính ĐK4.</li>
+      <li>Mỗi model chạy một lần; phiên bản model qua 9Router không ghim được, nên không có độ dao động. Thời gian gọi phản ánh tải của 9Router, không phải tốc độ model.</li>
+      <li>Với Opus, ĐK3 trùng ĐK4 (không quy phạm nào bị loại), nên nếu dùng Opus cho RQ3 thì ĐK3 và ĐK4 không khác nhau.</li>
+    </ul>
+  </section>
+
+  <section aria-labelledby="s6">
+    <h2 id="s6"><span class="no">06</span>Việc tiếp theo và xin ý kiến</h2>
+    <div class="two">
+      <div>
+        <p><strong>Kế hoạch</strong></p>
+        <ol>
+          <li>Hai người gán nhãn 104 quy phạm, tính kappa và tỉ lệ sai trong nhóm bị loại và nhóm được giữ.</li>
+          <li>Gán nhãn gold set trích xuất (RQ1) trên trang Gold của ứng dụng.</li>
+          <li>Hoàn thành bộ câu hỏi có nhãn, chạy ĐK1-ĐK4 và chấm mù (RQ3); khóa MVP ngày 27/11.</li>
+        </ol>
+      </div>
+      <div>
+        <p><strong>Xin ý kiến thầy/cô</strong></p>
+        <ol>
+          <li>Chọn model cho ĐK3/ĐK4 ở RQ3: nhóm đề xuất gemma4 (khác biệt ĐK3/ĐK4 rõ, ít lỗi gọi), giữ Opus làm đối chứng.</li>
+          <li>Có nên cho phép trích dẫn từ câu dẫn của khoản cha (bộ kiểm chứng v4) trước khi đo RQ3, hay giữ v3 và báo cáo đây là giới hạn?</li>
+          <li>Quy mô gold set và bộ câu hỏi như vậy đã đủ cho phạm vi đồ án chưa?</li>
+        </ol>
+      </div>
+    </div>
+  </section>
+
+  <p class="small">Số liệu đầy đủ (token, tỉ lệ lỗi gọi, thời gian, lý do bị loại theo từng trường) nằm trong <code>docs/results/extraction-models.md</code> và trang Nghiên cứu &gt; Kết quả của ứng dụng.</p>
+</main>
+</body>
+</html>

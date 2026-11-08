@@ -341,6 +341,67 @@ class WebApiTests(unittest.TestCase):
         frozen = vu.get("/api/question-set/frozen", params={"id": qset["id"]}).json()
         self.assertEqual(frozen["questions"][0]["relevant_unit_ids"], [unit])
 
+    def test_dev_monitors_calls_and_usage_and_only_dev_changes_controls(self):
+        class Proposer:
+            model, effort, max_calls, calls = "stand-in", "low", 5, 0
+
+            def __init__(self):
+                self.ledger = []
+
+            def structured(self, system, prompt, schema, purpose="structured"):
+                self.calls += 1
+                output = {"question_type": "lookup", "expected_status": "answer", "relevant_unit_ids": schema["properties"]["relevant_unit_ids"]["items"]["enum"][:1], "rationale": "r"}
+                self.ledger.append({"purpose": purpose, "status": "ok", "output": output})
+                return {"output": output, "usage": {"input_tokens": 12, "output_tokens": 3}, "cost_usd": 0.01}
+
+        AccountStore(self.store.path).create("dev", "Giám sát", "dev", "watch password 1")
+        proposer = Proposer()
+        self.app = create_app(self.store, PORT, token="t0ken", frontend_dir=self.build, proposer=proposer,
+                              experiments_dir=Path(self.temp.name) / "runs")
+        reader, vu = self.client("nhansu", "reader password 1"), self.client("phapche", "review password 1")
+        self.post(self.client(), "/api/auth/login", {"username": "nhansu", "password": "wrong password"})
+        for path in ("/api/dev/overview", "/api/dev/calls", "/api/dev/report"):
+            self.assertEqual((reader.get(path).status_code, vu.get(path).status_code), (403, 403), path)
+
+        published = self.publish(vu)
+        session = self.post(reader, "/api/chat/start", {"kb_ids": [published["kb_id"]]}).json()
+        self.post(reader, "/api/chat/ask", {"session_id": session["id"], "question": "thông báo kết quả thử việc"})
+        version = self._frozen_corpus(vu)
+        qset = self.post(vu, "/api/question-sets", {"name": "Bộ giám sát", "corpus_version_id": version["id"]}).json()
+        question = self.post(vu, "/api/question-set/question", {"set_id": qset["id"], "text": "Người lao động phải thông báo gì?"}).json()
+        propose = {"set_id": qset["id"], "question_id": question["id"], "confirm": True}
+        self.assertEqual(self.post(vu, "/api/question-set/propose", propose).status_code, 200)
+
+        dev, admin = self.client("dev", "watch password 1"), self.client("admin", "admin password 1")
+        overview = dev.get("/api/dev/overview").json()
+        self.assertEqual((overview["today"]["calls"], overview["today"]["by_feature"]["proposal"], overview["can_change"]), (1, 1, True))
+        self.assertEqual(overview["models"]["proposal"]["model"], "stand-in")
+        calls = admin.get("/api/dev/calls").json()
+        self.assertEqual((calls["recent"][0]["actor"], calls["models"][0]["prompt_tokens"]), ("phapche", 12))
+        usage = dev.get("/api/dev/usage").json()
+        today = usage["daily"][-1]
+        self.assertEqual((today["questions"], today["login_refused"], usage["accounts"]["dev"]), (1, 1, 1))
+        self.assertFalse(admin.get("/api/dev/overview").json()["can_change"])
+        self.assertEqual(dev.get("/api/dev/kb").json()["publishes_by_reviewer"], {"Pháp chế (phapche)": 1})
+        self.assertIn("python", dev.get("/api/dev/system").json())
+        self.assertEqual(dev.get("/api/experiments/kb").status_code, 200, "dev also sees the research results page")
+
+        switch_off = {"feature": "proposal", "enabled": False, "daily_limit": None}
+        self.assertEqual(self.post(admin, "/api/dev/controls", switch_off).status_code, 403)
+        self.assertEqual(self.post(dev, "/api/dev/controls", switch_off).json()["controls"]["proposal"]["enabled"], False)
+        refused = self.post(vu, "/api/question-set/propose", propose)
+        self.assertEqual((refused.status_code, proposer.calls), (400, 1))
+        self.assertIn("disabled_by_dev", refused.json()["error"])
+        self.assertEqual(dev.get("/api/dev/overview").json()["today"]["blocked"], 1)
+
+        notes = {"limitations": ["Một giới hạn"], "next_steps": [], "questions": ["Một câu hỏi?"]}
+        self.assertEqual(self.post(admin, "/api/dev/notes", {"notes": notes}).status_code, 403)
+        self.post(dev, "/api/dev/notes", {"notes": notes})
+        self.assertEqual(admin.get("/api/dev/report").json()["notes"]["questions"], ["Một câu hỏi?"])
+        exported = admin.get("/api/dev/report.html")
+        self.assertIn("attachment", exported.headers["content-disposition"])
+        self.assertIn("Một giới hạn", exported.text)
+
     def test_model_calls_need_the_run_provider_and_a_confirmation(self):
         class Proposer:
             model, effort, max_calls, calls = "stand-in", "low", 3, 0

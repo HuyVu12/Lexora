@@ -7,7 +7,7 @@
 	import { notify, act } from '#lib/toast.svelte.js';
 	import type { Account, Role } from '#lib/types.js';
 
-	const ROLES: Role[] = ['reader', 'reviewer', 'admin'];
+	const ROLES: Role[] = ['reader', 'reviewer', 'dev', 'admin'];
 	let accounts = $state<Account[]>([]);
 	let username = $state('');
 	let displayName = $state('');

@@ -6,11 +6,18 @@ no request logging, strict security headers, {"error": ...} bodies and 409 with 
 "base_changed". Sessions are HttpOnly, SameSite=Strict cookies.
 
 Roles: `reader` asks questions over published knowledge bases; `reviewer` also imports, reviews and
-publishes; `admin` also manages accounts. Chat sessions are private to the account that started them.
+publishes; `admin` also manages accounts; `dev` asks like a reader and monitors the system. The monitoring
+pages (`/api/dev/*`) are open to `admin` and `dev`; only `dev` changes model-call limits, switches and report
+notes. Chat sessions are private to the account that started them.
 """
 
 import base64
 import binascii
+import contextvars
+from datetime import datetime, timezone
+import os
+import platform
+import time
 from pathlib import Path
 import json
 import secrets
@@ -32,6 +39,8 @@ from legal_ai.ingestion.files import MAX_FILE_BYTES, extract_text
 from legal_ai.ingestion.source_library import SourceLibrary
 from legal_ai.ingestion.vbpl_api import document_text, fetch_document, load_snapshot, unwrap
 from legal_ai.kb.import_review import MAX_BYTES, Conflict
+from legal_ai.ops import report as results_report
+from legal_ai.ops.monitor import FEATURES, MeteredProvider, OpsStore, actor as call_actor
 from legal_ai.rag.review_chat import ChatService
 from legal_ai.research.corpus import CorpusStore
 from legal_ai.research import proposals as question_proposals
@@ -47,6 +56,7 @@ TOKEN_PLACEHOLDER = "__CSRF_TOKEN__"
 COOKIE = "lexora_session"
 NO_EXTRACTOR = "Chưa bật model tách quy phạm cho phiên chạy này"
 REVIEW_ROLES = ("admin", "reviewer")
+MONITOR_ROLES = ("admin", "dev")
 NO_VBPL = "Chưa bật lấy văn bản từ vbpl.vn cho phiên chạy này (khởi động lại với --allow-vbpl)"
 NO_CATALOG = "Chưa có danh mục văn bản (khởi động với --catalog)"
 # A base64 upload of the largest accepted file, plus the JSON around it.
@@ -116,14 +126,14 @@ class ChatAskBody(Body):
 class AccountCreateBody(Body):
     username: str
     display_name: str
-    role: Literal["admin", "reviewer", "reader"]
+    role: Literal["admin", "reviewer", "reader", "dev"]
     password: str
 
 
 class AccountUpdateBody(Body):
     id: int
     display_name: str | None = None
-    role: Literal["admin", "reviewer", "reader"] | None = None
+    role: Literal["admin", "reviewer", "reader", "dev"] | None = None
     active: bool | None = None
     password: str | None = None
 
@@ -255,6 +265,16 @@ class GoldSaveBody(Body):
     norms: list[dict] = Field(max_length=8)
 
 
+class ControlBody(Body):
+    feature: Literal["chat", "extraction", "proposal", "embedding"]
+    enabled: bool
+    daily_limit: int | None = None
+
+
+class NotesBody(Body):
+    notes: dict
+
+
 class FreezeQuestionsBody(Body):
     set_id: str
     other: str
@@ -266,7 +286,7 @@ def error(message, status, **extra):
 
 
 def create_app(store, port, *, provider=None, source_catalog=None, extractor=None, embedder=None, token=None, frontend_dir=None,
-               catalog_path=None, vbpl_dir=None, proposer=None):
+               catalog_path=None, vbpl_dir=None, proposer=None, experiments_dir="experiments/runs"):
     """Build the app for one loopback port and one workspace store; `frontend_dir` is the SvelteKit static build.
 
     `catalog_path` enables the offline document catalog. `vbpl_dir` (only with --allow-vbpl) lets reviewers fetch
@@ -275,6 +295,12 @@ def create_app(store, port, *, provider=None, source_catalog=None, extractor=Non
     token = token or secrets.token_urlsafe(32)
     hosts = {f"127.0.0.1:{port}", f"localhost:{port}"}
     accounts = AccountStore(store.path)
+    ops = OpsStore(store.path)
+    started_at = datetime.now(timezone.utc).isoformat(timespec="seconds")
+    # Every model call of the app goes through the dev controls and the call log.
+    meter = lambda inner, feature: MeteredProvider(inner, ops, feature) if inner is not None else None
+    provider, extractor, embedder, proposer = (meter(provider, "chat"), meter(extractor, "extraction"),
+                                               meter(embedder, "embedding"), meter(proposer, "proposal"))
     chat = ChatService(store, provider, embedder)
     library = SourceLibrary(source_catalog)
     corpora = CorpusStore(store.path)
@@ -294,7 +320,8 @@ def create_app(store, port, *, provider=None, source_catalog=None, extractor=Non
     def launch(draft):
         if draft.get("extraction", {}).get("mode") == "llm":
             units, targets = store.start_extraction(draft["id"])
-            threading.Thread(target=run_extraction, args=(store, extractor, draft["id"], units, targets), daemon=True).start()
+            context = contextvars.copy_context()  # Keep the reviewer who started it on the call log.
+            threading.Thread(target=context.run, args=(run_extraction, store, extractor, draft["id"], units, targets), daemon=True).start()
 
     def current(request: Request):
         account = accounts.session(request.cookies.get(COOKIE))
@@ -305,6 +332,21 @@ def create_app(store, port, *, provider=None, source_catalog=None, extractor=Non
     def reviewer(account=Depends(current)):
         if account["role"] not in REVIEW_ROLES:
             raise Denied(403, "Tài khoản tra cứu không được nhập, duyệt hay công bố")
+        return account
+
+    def monitor(account=Depends(current)):
+        if account["role"] not in MONITOR_ROLES:
+            raise Denied(403, "Chỉ quản trị và tài khoản giám sát (dev) được xem trang giám sát")
+        return account
+
+    def dev_only(account=Depends(current)):
+        if account["role"] != "dev":
+            raise Denied(403, "Chỉ tài khoản giám sát (dev) được đổi hạn mức, công tắc và ghi chú báo cáo")
+        return account
+
+    def researcher(account=Depends(current)):
+        if account["role"] not in REVIEW_ROLES + ("dev",):
+            raise Denied(403, "Tài khoản tra cứu không xem được kết quả thực nghiệm")
         return account
 
     def admin(account=Depends(current)):
@@ -333,6 +375,9 @@ def create_app(store, port, *, provider=None, source_catalog=None, extractor=Non
             elif request.headers.get("content-type", "").split(";")[0].strip().lower() != "application/json":
                 response = error("Expected application/json", 400)
             else:
+                # Model calls only happen in POST routes; name the signed-in account on their log rows.
+                signed_in = accounts.session(request.cookies.get(COOKIE))
+                call_actor.set(signed_in["username"] if signed_in else None)
                 response = await call_next(request)
         elif host not in hosts:
             response = error("Invalid local host", 403)
@@ -379,7 +424,12 @@ def create_app(store, port, *, provider=None, source_catalog=None, extractor=Non
     # Accounts --------------------------------------------------------------------------
     @app.post("/api/auth/login")
     def login(body: LoginBody):
-        session, account = accounts.login(body.username, body.password)
+        try:
+            session, account = accounts.login(body.username, body.password)
+        except AuthError as exc:
+            ops.record_event("login", result="locked" if "tạm khóa" in str(exc) else "refused")
+            raise
+        ops.record_event("login", result="ok", role=account["role"])
         response = JSONResponse(account)
         response.set_cookie(COOKIE, session, max_age=SESSION_HOURS * 3600, httponly=True, samesite="strict", path="/")
         return response
@@ -546,7 +596,11 @@ def create_app(store, port, *, provider=None, source_catalog=None, extractor=Non
     @app.post("/api/chat/ask")
     def chat_ask(body: ChatAskBody, account=Depends(current)):
         own_chat(body.session_id, account)
-        return chat.ask(body.session_id, body.question, body.mode, body.allow_public_transfer, body.semantic)
+        began = time.monotonic()
+        answer = chat.ask(body.session_id, body.question, body.mode, body.allow_public_transfer, body.semantic)
+        ops.record_event("chat_ask", mode=body.mode, semantic=body.semantic, status=answer.get("status"), citations=len(answer.get("citations") or []),
+                         kbs=len(answer.get("bindings") or []), ms=round((time.monotonic() - began) * 1000))  # Counts only, never the question.
+        return answer
 
     # Research corpora (reviewers) -------------------------------------------------------
     @app.get("/api/corpora")
@@ -731,6 +785,123 @@ def create_app(store, port, *, provider=None, source_catalog=None, extractor=Non
     @app.get("/api/question-set/frozen")
     def question_frozen(id: str = Query(), _=Depends(reviewer)):
         return download(questions.frozen_file(id), f"lexora-questions-{id}.json")
+
+    # Experiment results (read-only view of run directories) -----------------------------------
+    @app.get("/api/experiments/kb")
+    def experiment_kb_runs(_=Depends(researcher)):
+        from legal_ai.evaluation.kb_compare import kb_runs, summarize
+        from legal_ai.validation.claims import VALIDATOR_VERSION
+        folder = Path(experiments_dir)
+        runs = [summarize(path) for path in kb_runs(folder)] if folder.exists() else []
+        return {"runs": runs, "validator_version": VALIDATOR_VERSION, "folder": folder.as_posix()}
+
+    # Monitoring (admin and dev; changes by dev only) -------------------------------------------
+    def kb_summaries():
+        from legal_ai.evaluation.kb_compare import kb_runs, summarize
+        folder = Path(experiments_dir)
+        return [summarize(path) for path in kb_runs(folder)] if folder.exists() else []
+
+    def models_in_use():
+        return {feature: ({"model": inner.model, "provider": inner._kind, "calls": getattr(inner, "calls", None),
+                           "max_calls": getattr(inner, "max_calls", None)} if inner is not None else None)
+                for feature, inner in (("chat", provider), ("extraction", extractor), ("proposal", proposer), ("embedding", embedder))}
+
+    @app.get("/api/dev/overview")
+    def dev_overview(account=Depends(monitor)):
+        today, controls, models = ops.today(), ops.controls(), models_in_use()
+        drafts = store.state()["drafts"]
+        alerts = []
+        if today["calls"] >= 5 and today["errors"] / today["calls"] > 0.2:
+            alerts.append({"level": "critical", "code": "error_rate", "value": today["errors"] / today["calls"]})
+        for feature in FEATURES:
+            control, used = controls[feature], today["by_feature"][feature]
+            if not control["enabled"]:
+                alerts.append({"level": "warning", "code": "disabled", "feature": feature})
+            elif control["daily_limit"] is not None and used >= 0.8 * control["daily_limit"]:
+                alerts.append({"level": "critical" if used >= control["daily_limit"] else "warning", "code": "near_limit",
+                               "feature": feature, "used": used, "limit": control["daily_limit"]})
+            run = models[feature]
+            if run and run["max_calls"] and run["calls"] is not None and run["calls"] >= 0.8 * run["max_calls"]:
+                alerts.append({"level": "warning", "code": "run_budget", "feature": feature, "used": run["calls"], "limit": run["max_calls"]})
+        if today["blocked"]:
+            alerts.append({"level": "warning", "code": "blocked", "value": today["blocked"]})
+        return {"today": today, "controls": controls, "models": models, "alerts": alerts, "can_change": account["role"] == "dev",
+                "running": [{"id": d["id"], "title": d["title"], "kb_name": d["kb_name"]} for d in drafts if d["extraction_state"] == "running"],
+                "changes": ops.changes(10), "started_at": started_at}
+
+    @app.get("/api/dev/calls")
+    def dev_calls(days: int = Query(14), _=Depends(monitor)):
+        return ops.calls(max(1, min(days, 90)))
+
+    @app.get("/api/dev/usage")
+    def dev_usage(days: int = Query(14), _=Depends(monitor)):
+        return ops.usage(max(1, min(days, 90))) | accounts.activity()
+
+    @app.get("/api/dev/kb")
+    def dev_kb(_=Depends(monitor)):
+        state = store.state()
+        kbs = state["knowledge_bases"]
+        open_drafts = [d for d in state["drafts"] if d["status"] not in ("published", "discarded")]
+        publishers = {}
+        for kb in kbs:
+            for revision in store.knowledge_base(kb["id"])["revisions"]:
+                if revision.get("reviewer"):
+                    publishers[revision["reviewer"]] = publishers.get(revision["reviewer"], 0) + 1
+        return {"knowledge_bases": [{k: kb[k] for k in ("id", "name", "data_class", "revisions", "documents", "approved_claims", "updated_at", "archived_at")}
+                                    for kb in kbs],
+                "drafts": [{k: d[k] for k in ("id", "title", "kb_name", "status", "extraction_state", "claims", "decided", "created_at")} for d in open_drafts],
+                "publishes_by_reviewer": publishers,
+                "corpora": [{"id": c["id"], "name": c["name"], "documents": c.get("documents"), "latest_version": c.get("latest_version")} for c in corpora.corpora()],
+                "question_sets": [{k: q[k] for k in ("id", "name", "questions", "frozen", "created_at")} for q in questions.sets()],
+                "gold_sets": [{k: g[k] for k in ("id", "name", "sentences", "labelled", "adjudicated", "created_at")} for g in golds.sets()]}
+
+    @app.get("/api/dev/system")
+    def dev_system(_=Depends(monitor)):
+        def size(path):
+            try:
+                return os.path.getsize(path)
+            except OSError:
+                return None
+        head, commit = Path(".git/HEAD"), None
+        if head.is_file():
+            ref = head.read_text(encoding="utf-8").strip()
+            target = Path(".git") / ref[5:] if ref.startswith("ref: ") else None
+            commit = (target.read_text(encoding="utf-8").strip() if target and target.is_file() else ref)[:12]
+        build = frontend / "index.html" if frontend else None
+        return {"started_at": started_at, "python": platform.python_version(), "platform": platform.platform(terse=True), "commit": commit,
+                "store": {"path": Path(store.path).as_posix(), "bytes": size(store.path)},
+                "frontend_built_at": datetime.fromtimestamp(build.stat().st_mtime, timezone.utc).isoformat(timespec="seconds") if build and build.is_file() else None,
+                "models": models_in_use(), "vbpl_enabled": vbpl_dir is not None, "catalog": catalog.info() if catalog else None,
+                "experiments_dir": Path(experiments_dir).as_posix(), "source_catalog": source_catalog is not None}
+
+    @app.get("/api/dev/experiments")
+    def dev_experiments(_=Depends(monitor)):
+        from legal_ai.validation.claims import VALIDATOR_VERSION
+        return {"runs": results_report.experiment_runs(experiments_dir), "kb": kb_summaries(), "audits": results_report.audits(experiments_dir),
+                "validator_version": VALIDATOR_VERSION}
+
+    def report():
+        return results_report.report_data(kb_summaries(), golds=golds.sets(), question_sets=questions.sets(),
+                                          runs=results_report.experiment_runs(experiments_dir),
+                                          audit_progress=results_report.audits(experiments_dir), notes=ops.setting("report_notes"))
+
+    @app.get("/api/dev/report")
+    def dev_report(account=Depends(monitor)):
+        return report() | {"can_change": account["role"] == "dev"}
+
+    @app.get("/api/dev/report.html")
+    def dev_report_html(_=Depends(monitor)):
+        name = f"lexora-bao-cao-{datetime.now().astimezone():%Y-%m-%d}.html"
+        return Response(results_report.render_html(report()), media_type="text/html; charset=utf-8",
+                        headers={"Content-Disposition": f'attachment; filename="{name}"'})
+
+    @app.post("/api/dev/controls")
+    def dev_controls(body: ControlBody, account=Depends(dev_only)):
+        return {"controls": ops.set_control(body.feature, enabled=body.enabled, daily_limit=body.daily_limit, by=account["username"])}
+
+    @app.post("/api/dev/notes")
+    def dev_notes(body: NotesBody, account=Depends(dev_only)):
+        return {"notes": ops.put_setting("report_notes", results_report.clean_notes(body.notes), account["username"])}
 
     # Extraction gold sets (RQ1) --------------------------------------------------------------
     @app.get("/api/gold")

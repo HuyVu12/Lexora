@@ -1,7 +1,8 @@
 """Local accounts, roles and sessions for the Lexora workspace (standard library only).
 
-Three roles: `admin` manages accounts and can do everything, `reviewer` imports, reviews and
-publishes, `reader` asks questions over published knowledge bases. Passwords are hashed with
+Four roles: `admin` manages accounts and can do everything, `reviewer` imports, reviews and
+publishes, `reader` asks questions over published knowledge bases, `dev` asks questions like a reader and
+monitors the system (model calls, usage, results report) and sets the model-call limits and switches. Passwords are hashed with
 scrypt and a per-user salt; sessions are random tokens stored only as SHA-256 digests with an
 expiry. Repeated failed logins lock an account for a short time. There is no self sign-up: the
 first admin is created on the machine with `python -m legal_ai.auth create-admin`.
@@ -15,9 +16,10 @@ import hashlib
 import hmac
 import secrets
 import sqlite3
+import sys
 import threading
 
-ROLES = ("admin", "reviewer", "reader")
+ROLES = ("admin", "reviewer", "reader", "dev")
 SESSION_HOURS = 12
 MAX_FAILURES = 5
 LOCK_MINUTES = 5
@@ -82,7 +84,7 @@ class AccountStore:
                     id INTEGER PRIMARY KEY,
                     username TEXT NOT NULL UNIQUE,
                     display_name TEXT NOT NULL,
-                    role TEXT NOT NULL CHECK (role IN ('admin', 'reviewer', 'reader')),
+                    role TEXT NOT NULL CHECK (role IN ('admin', 'reviewer', 'reader', 'dev')),
                     password TEXT NOT NULL,
                     active INTEGER NOT NULL DEFAULT 1,
                     failures INTEGER NOT NULL DEFAULT 0,
@@ -99,6 +101,24 @@ class AccountStore:
                     account_id INTEGER NOT NULL REFERENCES accounts(id)
                 );
             """)
+        self._allow_all_roles()
+
+    def _allow_all_roles(self):
+        """Stores made before the `dev` role have a CHECK constraint without it; rebuild the table, keeping every row and ID."""
+        with closing(sqlite3.connect(self.path, timeout=10)) as db:
+            sql = db.execute("SELECT sql FROM sqlite_master WHERE type = 'table' AND name = 'accounts'").fetchone()[0]
+            if all(f"'{role}'" in sql for role in ROLES):
+                return
+            allowed = ", ".join(f"'{role}'" for role in ROLES)
+            new_sql = sql.replace(sql[sql.index("CHECK (role IN"):sql.index(")", sql.index("CHECK (role IN")) + 2], f"CHECK (role IN ({allowed}))")
+            # Sessions and chat owners reference accounts(id) by name; keep those references while the table is swapped.
+            db.execute("PRAGMA foreign_keys = OFF")
+            db.execute("PRAGMA legacy_alter_table = ON")
+            with db:
+                db.execute(new_sql.replace("CREATE TABLE accounts", "CREATE TABLE accounts_roles", 1))
+                db.execute("INSERT INTO accounts_roles SELECT * FROM accounts")
+                db.execute("DROP TABLE accounts")
+                db.execute("ALTER TABLE accounts_roles RENAME TO accounts")
 
     def connect(self):
         db = sqlite3.connect(self.path, timeout=10)
@@ -203,6 +223,14 @@ class AccountStore:
                 return None
             return self.public(row)
 
+    def activity(self):
+        """Counts only: accounts by role and active state, and sessions that have not expired."""
+        with self.connect() as db:
+            roles = {f"{r['role']}{'' if r['active'] else '_inactive'}": r["n"] for r in db.execute(
+                "SELECT role, active, COUNT(*) AS n FROM accounts GROUP BY role, active")}
+            live = db.execute("SELECT COUNT(*) FROM sessions WHERE expires_at > ?", (stamp(now()),)).fetchone()[0]
+        return {"accounts": roles, "active_sessions": live}
+
     def own_chat(self, chat_id, account_id):
         with self.connect() as db:
             db.execute("INSERT OR IGNORE INTO chat_owners (chat_id, account_id) VALUES (?, ?)", (chat_id, account_id))
@@ -242,6 +270,8 @@ def main():
     parser.add_argument("--username")
     parser.add_argument("--name", help="Display name")
     args = parser.parse_args()
+    if hasattr(sys.stdout, "reconfigure"):
+        sys.stdout.reconfigure(encoding="utf-8")  # Vietnamese display names on a Windows console.
     accounts = AccountStore(args.store)
     if args.command == "list":
         for account in accounts.list():

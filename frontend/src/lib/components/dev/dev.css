@@ -1,0 +1,106 @@
+/* Shared layout of the monitoring tabs (imported once by routes/dev). Tables use the global .table. */
+.dev-tab {
+	display: grid;
+	gap: 16px;
+}
+.dev-tab .panel {
+	display: grid;
+	gap: 12px;
+}
+.dev-tiles {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+	gap: 12px;
+}
+.dev-tile {
+	display: grid;
+	gap: 2px;
+	padding: 14px 16px;
+	background: var(--paper);
+	border: 1px solid var(--rule);
+	border-radius: var(--r-panel);
+}
+/* A tile that needs attention says so with its number and a tinted card, not a side stripe. */
+.dev-tile.bad {
+	background: var(--reject-soft);
+	border-color: #f1c4bf;
+}
+.dev-tile.bad strong {
+	color: var(--reject);
+}
+.dev-tile.warn {
+	background: var(--attention-soft);
+	border-color: #f0d3a1;
+}
+.dev-tile.warn strong {
+	color: var(--attention);
+}
+.dev-tile strong {
+	font: 600 26px/1.15 var(--serif);
+	font-variant-numeric: tabular-nums;
+}
+.dev-two {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: 16px;
+	align-items: start;
+}
+.table-scroll {
+	overflow-x: auto;
+	position: relative; /* Keeps visually hidden labels inside the scroll box. */
+}
+.dev-tab .table {
+	font-size: 14px;
+}
+.dev-tab .table th[scope='row'] {
+	font-size: 14px;
+	color: var(--ink);
+	font-weight: 500;
+}
+.dev-tab .table td.num,
+.dev-tab .table th.num {
+	white-space: nowrap;
+}
+.dev-list {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	display: grid;
+	gap: 8px;
+	font-size: 14px;
+}
+.dev-list li {
+	display: flex;
+	justify-content: space-between;
+	align-items: baseline;
+	gap: 12px;
+}
+.dev-list li > :first-child {
+	overflow-wrap: anywhere;
+}
+.status-ok {
+	color: var(--approve);
+}
+.status-error {
+	color: var(--reject);
+}
+.status-blocked {
+	color: var(--attention);
+}
+@media (max-width: 860px) {
+	.dev-two {
+		grid-template-columns: 1fr;
+	}
+}
+/* Grid children shrink to the column so wide tables scroll inside their panel instead of widening the page. */
+.dev-tab > *,
+.dev-tab .panel > *,
+.dev-two > * {
+	min-width: 0;
+}
+.dev-tab .table tr:last-child th {
+	border-bottom: 0;
+}
+.dev-tab .table.wide {
+	min-width: 760px;
+}

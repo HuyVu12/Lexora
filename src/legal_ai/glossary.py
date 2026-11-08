@@ -319,9 +319,53 @@ GLOSSARY = {
         "term": "F1, khớp lỏng",
         "definition": "Như F1 khớp chặt nhưng chấp nhận lệch ranh giới: một cụm chứa cụm kia, hoặc trùng ít nhất một nửa số tiếng.",
     },
+    "dk3": {
+        "term": "ĐK3",
+        "definition": "Kho tri thức do LLM trích xuất theo schema, giữ nguyên mọi giá trị model trả về, chưa qua kiểm chứng.",
+    },
+    "dk4": {
+        "term": "ĐK4",
+        "definition": "Chính ĐK3 sau khi bộ kiểm chứng tự động loại các bản ghi vi phạm (sai schema, sai đơn vị, cụm không nguyên văn, từ tình thái bịa hoặc mâu thuẫn, trùng lặp).",
+    },
+    "modality_unverified": {
+        "term": "Tính quy phạm chưa xác minh",
+        "definition": "Model nêu tính quy phạm nhưng không có từ tình thái nào trong câu để kiểm, thường gặp ở các điểm liệt kê. Bản ghi vẫn được giữ.",
+    },
+    "planted_errors": {
+        "term": "Chèn lỗi có chủ đích",
+        "definition": "Lấy bản ghi sạch của ĐK4, cố ý làm hỏng theo từng loại lỗi rồi xem bộ kiểm chứng bắt được bao nhiêu. Lỗi kỹ thuật nên bị bắt; lỗi ngữ nghĩa như bỏ phủ định thì không, đó là giới hạn cần báo cáo.",
+    },
+    "rejected_claims": {
+        "term": "Bị loại",
+        "definition": "Số bản ghi của ĐK3 không vào được ĐK4 và tỉ lệ trên tổng số; lý do nằm trong phần chi tiết.",
+    },
     "context": {
         "term": "Ngữ cảnh",
         "definition": "Câu dẫn của Điều hoặc khoản chứa đoạn trích. Đọc cùng để hiểu đúng phạm vi áp dụng.",
+    },
+    "daily_limit": {
+        "term": "Hạn mức mỗi ngày",
+        "definition": "Số lượt gọi model tối đa của một tính năng trong một ngày (theo giờ máy chủ). Hết hạn mức thì lượt gọi bị chặn trước khi gửi đi; để trống là không giới hạn.",
+    },
+    "feature_switch": {
+        "term": "Công tắc tính năng",
+        "definition": "Tắt một tính năng dùng model (trả lời bằng model, tách quy phạm, đề xuất nhãn, tìm theo ngữ nghĩa) ngay lập tức khi có sự cố; các phần không dùng model vẫn chạy.",
+    },
+    "run_budget": {
+        "term": "Ngân sách lượt chạy",
+        "definition": "Số lượt gọi tối đa đặt bằng cờ khi khởi động app (ví dụ --proposal-max-calls). Hết ngân sách thì phải khởi động lại app.",
+    },
+    "latency_p95": {
+        "term": "p95",
+        "definition": "95% số lượt nhanh hơn mức này. Trung vị (p50) cho biết lượt điển hình, p95 cho biết lượt chậm.",
+    },
+    "blocked_calls": {
+        "term": "Lượt bị chặn",
+        "definition": "Lượt gọi không được gửi đi vì tính năng đang tắt hoặc đã hết hạn mức mỗi ngày; không tính vào hạn mức.",
+    },
+    "no_evidence_rate": {
+        "term": "Không tìm thấy căn cứ",
+        "definition": "Tỉ lệ câu hỏi không có đoạn nguồn đã duyệt nào khớp. Cao nghĩa là kho thiếu nội dung hoặc người dùng hỏi ngoài phạm vi.",
     },
 }
 
