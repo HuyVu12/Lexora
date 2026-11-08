@@ -16,6 +16,7 @@ import hashlib
 import hmac
 import secrets
 import sqlite3
+import sys
 import threading
 
 ROLES = ("admin", "reviewer", "reader", "dev")
@@ -269,6 +270,8 @@ def main():
     parser.add_argument("--username")
     parser.add_argument("--name", help="Display name")
     args = parser.parse_args()
+    if hasattr(sys.stdout, "reconfigure"):
+        sys.stdout.reconfigure(encoding="utf-8")  # Vietnamese display names on a Windows console.
     accounts = AccountStore(args.store)
     if args.command == "list":
         for account in accounts.list():
