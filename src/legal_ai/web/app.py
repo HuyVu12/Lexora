@@ -33,6 +33,7 @@ from starlette.exceptions import HTTPException as StarletteHTTPException
 from legal_ai.auth import SESSION_HOURS, AccountStore, AuthError
 from legal_ai.common.io import canonical
 from legal_ai.glossary import bilingual, embed_terms
+from legal_ai.guides import Guides
 from legal_ai.ingestion.catalog import Catalog
 from legal_ai.ingestion.excerpt import excerpt as cut_excerpt, outline as article_outline
 from legal_ai.ingestion.files import MAX_FILE_BYTES, extract_text
@@ -286,7 +287,7 @@ def error(message, status, **extra):
 
 
 def create_app(store, port, *, provider=None, source_catalog=None, extractor=None, embedder=None, token=None, frontend_dir=None,
-               catalog_path=None, vbpl_dir=None, proposer=None, experiments_dir="experiments/runs", public_hosts=()):
+               catalog_path=None, vbpl_dir=None, proposer=None, experiments_dir="experiments/runs", public_hosts=(), guides_dir="docs/guides"):
     """Build the app for one loopback port and one workspace store; `frontend_dir` is the SvelteKit static build.
 
     `catalog_path` enables the offline document catalog. `vbpl_dir` (only with --allow-vbpl) lets reviewers fetch
@@ -312,6 +313,7 @@ def create_app(store, port, *, provider=None, source_catalog=None, extractor=Non
     catalog = Catalog(catalog_path) if catalog_path else None
     questions = QuestionStore(store.path, corpora)
     golds = GoldStore(store.path, corpora)
+    guides = Guides(guides_dir)
     store.interrupt_extractions()
     frontend = Path(frontend_dir).resolve() if frontend_dir else None
     app = FastAPI(title="Lexora", docs_url=None, redoc_url=None, openapi_url="/api/openapi.json")
@@ -477,6 +479,17 @@ def create_app(store, port, *, provider=None, source_catalog=None, extractor=Non
             value["drafts"] = []
             value["knowledge_bases"] = [k for k in value["knowledge_bases"] if k.get("current_revision")]
         return value
+
+    @app.get("/api/docs")
+    def documents(_=Depends(current)):
+        return {"documents": guides.list()}
+
+    @app.get("/api/docs/{slug}")
+    def document(slug: str, _=Depends(current)):
+        try:
+            return guides.get(slug)
+        except KeyError as exc:
+            raise Denied(404, exc.args[0]) from None
 
     @app.get("/api/glossary")
     def glossary():

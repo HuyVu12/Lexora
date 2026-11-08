@@ -1211,7 +1211,16 @@ const vi = {
 	'dev.sys.flags': 'Tính năng bật khi khởi động',
 	'dev.sys.budget': '{used}/{max} lượt',
 	'dev.sys.catalog': 'Danh mục văn bản',
-	'dev.sys.secrets': 'Khóa 9Router và cài đặt trong .env không bao giờ hiện ở đây.'
+	'dev.sys.secrets': 'Khóa 9Router và cài đặt trong .env không bao giờ hiện ở đây.',
+	'nav.docs': 'Tài liệu',
+	'docs.title': 'Tài liệu',
+	'docs.lead': 'Hướng dẫn và tài liệu của dự án. Mỗi tài liệu ghi ngày cập nhật gần nhất.',
+	'docs.search': 'Tìm tài liệu',
+	'docs.empty': 'Chưa có tài liệu nào.',
+	'docs.noMatch': 'Không có tài liệu khớp với từ khóa.',
+	'docs.updated': 'Cập nhật {date}',
+	'docs.back': 'Tất cả tài liệu',
+	'docs.toc': 'Trong tài liệu này'
 } satisfies Record<string, string>;
 
 export default vi;

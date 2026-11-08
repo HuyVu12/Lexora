@@ -1213,7 +1213,16 @@ const en: Record<MessageKey, string> = {
 	'dev.sys.flags': 'Features enabled at start',
 	'dev.sys.budget': '{used}/{max} calls',
 	'dev.sys.catalog': 'Document catalog',
-	'dev.sys.secrets': 'The 9Router key and .env settings never appear here.'
+	'dev.sys.secrets': 'The 9Router key and .env settings never appear here.',
+	'nav.docs': 'Documents',
+	'docs.title': 'Documents',
+	'docs.lead': 'Project guides and documents. Each shows when it was last updated.',
+	'docs.search': 'Search documents',
+	'docs.empty': 'No documents yet.',
+	'docs.noMatch': 'No document matches.',
+	'docs.updated': 'Updated {date}',
+	'docs.back': 'All documents',
+	'docs.toc': 'On this page'
 };
 
 export default en;

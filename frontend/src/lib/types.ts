@@ -701,3 +701,13 @@ export interface DevReport {
 	notes: Record<NoteKey, string[]>;
 	can_change: boolean;
 }
+
+// Project documents (/api/docs): Markdown files in docs/guides with a small front matter.
+export interface DocEntry {
+	slug: string;
+	title: string;
+	summary: string;
+	category: string;
+	order: number;
+	updated: string | null;
+}
