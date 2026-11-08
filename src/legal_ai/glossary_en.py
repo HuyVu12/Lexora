@@ -73,4 +73,10 @@ GLOSSARY_EN = {
     "planted_errors": {"term": "Planted errors", "definition": "Clean DK4 claims are corrupted on purpose, one error type at a time, to see how many the validator catches. Technical errors should be caught; semantic ones such as a dropped negation are not, a limit to report."},
     "rejected_claims": {"term": "Rejected", "definition": "DK3 claims that did not make it into DK4, and their share; the reasons are in the details."},
     "context": {"term": "Context", "definition": "The lead-in of the article or clause that holds the quote. Read it with the quote to understand where it applies."},
+    "daily_limit": {"term": "Daily limit", "definition": "The most model calls one feature may make in a day (server time). Past it, calls are blocked before they are sent; empty means no limit."},
+    "feature_switch": {"term": "Feature switch", "definition": "Turns one model feature off at once when something goes wrong (model answers, norm extraction, label proposals, semantic search); everything without a model keeps working."},
+    "run_budget": {"term": "Run budget", "definition": "The call budget set by a flag when the app starts (for example --proposal-max-calls). Once used up, the app has to be restarted."},
+    "latency_p95": {"term": "p95", "definition": "95% of calls are faster than this. The median (p50) shows a typical call, p95 the slow ones."},
+    "blocked_calls": {"term": "Blocked calls", "definition": "Calls that were not sent because the feature is off or its daily limit is used up; they do not count against the limit."},
+    "no_evidence_rate": {"term": "No evidence found", "definition": "Share of questions with no matching reviewed source passage. High means the base lacks content or people ask outside its scope."},
 }

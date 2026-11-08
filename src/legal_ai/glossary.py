@@ -343,6 +343,30 @@ GLOSSARY = {
         "term": "Ngữ cảnh",
         "definition": "Câu dẫn của Điều hoặc khoản chứa đoạn trích. Đọc cùng để hiểu đúng phạm vi áp dụng.",
     },
+    "daily_limit": {
+        "term": "Hạn mức mỗi ngày",
+        "definition": "Số lượt gọi model tối đa của một tính năng trong một ngày (theo giờ máy chủ). Hết hạn mức thì lượt gọi bị chặn trước khi gửi đi; để trống là không giới hạn.",
+    },
+    "feature_switch": {
+        "term": "Công tắc tính năng",
+        "definition": "Tắt một tính năng dùng model (trả lời bằng model, tách quy phạm, đề xuất nhãn, tìm theo ngữ nghĩa) ngay lập tức khi có sự cố; các phần không dùng model vẫn chạy.",
+    },
+    "run_budget": {
+        "term": "Ngân sách lượt chạy",
+        "definition": "Số lượt gọi tối đa đặt bằng cờ khi khởi động app (ví dụ --proposal-max-calls). Hết ngân sách thì phải khởi động lại app.",
+    },
+    "latency_p95": {
+        "term": "p95",
+        "definition": "95% số lượt nhanh hơn mức này. Trung vị (p50) cho biết lượt điển hình, p95 cho biết lượt chậm.",
+    },
+    "blocked_calls": {
+        "term": "Lượt bị chặn",
+        "definition": "Lượt gọi không được gửi đi vì tính năng đang tắt hoặc đã hết hạn mức mỗi ngày; không tính vào hạn mức.",
+    },
+    "no_evidence_rate": {
+        "term": "Không tìm thấy căn cứ",
+        "definition": "Tỉ lệ câu hỏi không có đoạn nguồn đã duyệt nào khớp. Cao nghĩa là kho thiếu nội dung hoặc người dùng hỏi ngoài phạm vi.",
+    },
 }
 
 

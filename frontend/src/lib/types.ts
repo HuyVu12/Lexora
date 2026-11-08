@@ -1,4 +1,4 @@
-export type Role = 'admin' | 'reviewer' | 'reader';
+export type Role = 'admin' | 'reviewer' | 'reader' | 'dev';
 
 export interface Account {
 	id: number;
@@ -540,4 +540,164 @@ export interface KbRunSummary {
 	injection: KbInjection | null;
 	report_stale: boolean;
 	rejection_explained: { categories: Record<string, number>; values_found: Record<string, number> } | null;
+}
+
+// Monitoring (/api/dev/*): metadata and counts only, never prompts, answers or questions.
+export type Feature = 'chat' | 'extraction' | 'proposal' | 'embedding';
+export interface FeatureControl {
+	enabled: boolean;
+	daily_limit: number | null;
+}
+export interface ModelInUse {
+	model: string;
+	provider: string;
+	calls: number | null;
+	max_calls: number | null;
+}
+export interface DevAlert {
+	level: 'critical' | 'warning';
+	code: 'error_rate' | 'disabled' | 'near_limit' | 'run_budget' | 'blocked';
+	feature?: Feature;
+	value?: number;
+	used?: number;
+	limit?: number;
+}
+export interface DevToday {
+	calls: number;
+	errors: number;
+	blocked: number;
+	prompt_tokens: number;
+	completion_tokens: number;
+	cost_usd: number;
+	by_feature: Record<Feature, number>;
+}
+export interface DevChange {
+	at: string;
+	actor: string;
+	key: string;
+	before: string | null;
+	after: string;
+}
+export interface DevOverview {
+	today: DevToday;
+	controls: Record<Feature, FeatureControl>;
+	models: Record<Feature, ModelInUse | null>;
+	alerts: DevAlert[];
+	can_change: boolean;
+	running: { id: string; title: string; kb_name: string }[];
+	changes: DevChange[];
+	started_at: string;
+}
+export interface DevCallModel {
+	feature: Feature;
+	provider: string;
+	model: string;
+	calls: number;
+	errors: number;
+	requests: number;
+	prompt_tokens: number;
+	completion_tokens: number;
+	reasoning_tokens: number;
+	cost_usd: number;
+	error_rate: number;
+	p50_ms: number | null;
+	p95_ms: number | null;
+}
+export interface DevCallRow {
+	at: string;
+	feature: Feature;
+	purpose: string | null;
+	provider: string;
+	model: string;
+	actor: string | null;
+	status: 'ok' | 'error' | 'blocked';
+	code: string | null;
+	prompt_tokens: number;
+	completion_tokens: number;
+	cost_usd: number | null;
+	duration_ms: number | null;
+}
+export interface DevCalls {
+	days: number;
+	daily: { day: string; features: Record<Feature, { ok: number; error: number; blocked: number }> }[];
+	models: DevCallModel[];
+	codes: Record<string, number>;
+	recent: DevCallRow[];
+}
+export interface DevUsage {
+	days: number;
+	daily: { day: string; login_ok: number; login_refused: number; login_locked: number; questions: number }[];
+	questions: number;
+	by_mode: { extractive: number; llm: number };
+	semantic: number;
+	status: Record<string, number>;
+	no_evidence_rate: number | null;
+	citations_mean: number | null;
+	p50_ms: number | null;
+	p95_ms: number | null;
+	accounts: Record<string, number>;
+	active_sessions: number;
+}
+export interface DevKb {
+	knowledge_bases: { id: string; name: string; data_class: string; revisions: number; documents: number; approved_claims: number; updated_at: string; archived_at: string | null }[];
+	drafts: { id: string; title: string; kb_name: string; status: string; extraction_state: string; claims: number; decided: number; created_at: string }[];
+	publishes_by_reviewer: Record<string, number>;
+	corpora: { id: string; name: string; documents: number; latest_version: number | null }[];
+	question_sets: { id: string; name: string; questions: number; frozen: unknown; created_at: string }[];
+	gold_sets: { id: string; name: string; sentences: number; labelled: Record<string, number>; adjudicated: number; created_at: string }[];
+}
+export interface DevSystem {
+	started_at: string;
+	python: string;
+	platform: string;
+	commit: string | null;
+	store: { path: string; bytes: number | null };
+	frontend_built_at: string | null;
+	models: Record<Feature, ModelInUse | null>;
+	vbpl_enabled: boolean;
+	catalog: unknown;
+	experiments_dir: string;
+	source_catalog: boolean;
+}
+export interface DevRun {
+	name: string;
+	kind: 'kb' | 'retrieval' | 'answer' | 'injection' | 'other';
+	created_at: string | null;
+}
+export interface DevAudit {
+	name: string;
+	items: number;
+	sheets: { file: string; items: number; labelled: number }[];
+}
+export interface DevExperiments {
+	runs: DevRun[];
+	kb: KbRunSummary[];
+	audits: DevAudit[];
+	validator_version: string;
+}
+export type NoteKey = 'limitations' | 'next_steps' | 'questions';
+export interface ReportRow {
+	model: string;
+	provider: string;
+	batches_ok: number;
+	batches_planned: number | null;
+	sentence_answer_rate: number | null;
+	dk3: number;
+	dk4: number;
+	rejected: number;
+	rejected_rate: number | null;
+	detectable_rate: number | null;
+	semantic_rate: number | null;
+	call_error_rate: number | null;
+	explained: Record<string, number>;
+}
+export interface DevReport {
+	report_version: string;
+	generated_at: string;
+	status: { rq: string; title: string; facts: string; state: 'done' | 'partial' | 'todo' }[];
+	extraction: ReportRow[];
+	sampled_models: string[];
+	audits: DevAudit[];
+	notes: Record<NoteKey, string[]>;
+	can_change: boolean;
 }

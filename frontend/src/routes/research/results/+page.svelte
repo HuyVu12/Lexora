@@ -4,7 +4,7 @@
 	import Term from '#lib/components/Term.svelte';
 	import { api } from '#lib/api.js';
 	import { t, formatDate } from '#lib/i18n/index.svelte.js';
-	import { session, canReview } from '#lib/session.svelte.js';
+	import { session, canSeeResults } from '#lib/session.svelte.js';
 	import type { KbRunSummary } from '#lib/types.js';
 	import type { MessageKey } from '#lib/i18n/vi.js';
 
@@ -12,7 +12,7 @@
 	let error = $state('');
 
 	$effect(() => {
-		if (canReview(session.account))
+		if (canSeeResults(session.account))
 			api<{ runs: KbRunSummary[]; validator_version: string; folder: string }>('/api/experiments/kb')
 				.then((v) => (data = v))
 				.catch((e) => (error = e.message));
@@ -39,7 +39,7 @@
 <svelte:head><title>{t('results.title')} · Lexora</title></svelte:head>
 
 <div class="page">
-	{#if !canReview(session.account)}
+	{#if !canSeeResults(session.account)}
 		<h1 class="title">{t('common.forbidden.title')}</h1>
 		<p class="lead">{t('common.forbidden.body')}</p>
 	{:else}
