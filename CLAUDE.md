@@ -70,6 +70,7 @@ Test files insert `src/` into `sys.path` themselves, so tests run without `PYTHO
 There is no linter or formatter.
 Optional Node DOM smokes (no npm deps): `scripts/check_graph_viewer.cjs`, `scripts/check_entity_graph_viewer.cjs`.
 Always write graph/app outputs to a new directory or new SQLite store; an existing store keeps its data and ignores `--seed`.
+The shared deployment for annotators runs on the GCP VM at https://vlexora.duckdns.org behind the existing Caddy (`--public-host`, `--bind`); see `docs/deploy-gcp.md`. Its store is the one labels go to.
 
 Network rules: only `cli snapshot`, `cli vbpl-fetch`, the web flag `--allow-vbpl` (one confirmed vbpl.vn document per request), the opt-in 9Router flags (`--router-model`, `--extract-model`, `--embedding-model`, each requiring `--approve-router`) and the Claude Code flags (`--extract-claude-model`, `--proposal-model`, each requiring `--approve-claude`) touch the network or a model.
 All require explicit user approval of endpoint, model, data and scope first, per `AGENTS.md`; vbpl.vn's own search pages are never automated.
