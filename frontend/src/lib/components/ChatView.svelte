@@ -156,7 +156,7 @@
 								</details>
 							</figure>
 						{/each}
-						<p class="pencil">{turn.mode === 'extractive' || turn.status === 'insufficient_evidence' || turn.status === 'sources_found' ? t(turn.retrieval?.mode === 'hybrid' ? 'chat.note.hybrid' : 'chat.note.lexical') : turn.note}</p>
+						<p class="pencil">{turn.mode === 'extractive' || turn.status === 'insufficient_evidence' ? t(turn.retrieval?.mode === 'hybrid' ? 'chat.note.hybrid' : 'chat.note.lexical') : turn.note}</p>
 					</article>
 				{/each}
 			</div>

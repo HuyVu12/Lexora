@@ -290,6 +290,7 @@ const vi = {
 	'chat.status.sources_found': 'Các đoạn đã duyệt liên quan',
 	'chat.status.answered': 'Câu trả lời do model tạo từ các đoạn đã duyệt',
 	'chat.status.insufficient_evidence': 'Chưa tìm thấy căn cứ trong các kho đã chọn',
+	'chat.status.model_insufficient': 'Model cho rằng các đoạn tìm được chưa đủ để trả lời',
 	'chat.status.provider_disabled': 'Model chưa được bật',
 	'chat.status.transfer_not_approved': 'Chưa đồng ý gửi dữ liệu cho lượt này',
 	'chat.status.private_transfer_blocked': 'Không gửi dữ liệu của kho riêng tư',

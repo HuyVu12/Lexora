@@ -292,6 +292,7 @@ const en: Record<MessageKey, string> = {
 	'chat.status.sources_found': 'Related approved passages',
 	'chat.status.answered': 'Model answer built from approved passages',
 	'chat.status.insufficient_evidence': 'No evidence found in the chosen bases',
+	'chat.status.model_insufficient': 'The model found the retrieved passages not enough to answer',
 	'chat.status.provider_disabled': 'The model is not enabled',
 	'chat.status.transfer_not_approved': 'Sending data was not approved for this turn',
 	'chat.status.private_transfer_blocked': 'Private base data is never sent',
