@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 70 780 240" width="780" height="240" role="img" aria-labelledby="t d">
+  <title id="t">Luồng RAG trong Lexora</title>
+  <desc id="d">Câu hỏi được truy xuất trong kho tri thức thành 5 đoạn căn cứ; model chỉ được trả lời từ các đoạn đó; cổng trích dẫn cho ra câu trả lời có trích dẫn hoặc từ chối.</desc>
+  <defs>
+    <marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 z" fill="#595e63"/>
+    </marker>
+    <style>
+      text { font-family: "Be Vietnam Pro", "Segoe UI", Roboto, Helvetica, Arial, sans-serif; fill: #222426; }
+      .t { font-size: 15px; font-weight: 600; }
+      .s { font-size: 12px; fill: #595e63; }
+      .l { font-size: 12px; fill: #595e63; font-style: italic; }
+      .box { fill: #ffffff; stroke: #b6babb; stroke-width: 1.2; }
+      .line { stroke: #595e63; stroke-width: 1.6; fill: none; }
+    </style>
+  </defs>
+  <rect y="70" width="780" height="240" fill="#f4f5f4" rx="12"/>
+
+  <rect class="box" x="20" y="96" width="130" height="64" rx="10"/>
+  <text class="t" x="85" y="124" text-anchor="middle">Câu hỏi</text>
+  <text class="s" x="85" y="144" text-anchor="middle">người dùng gõ</text>
+
+  <rect class="box" x="190" y="96" width="170" height="64" rx="10"/>
+  <text class="t" x="275" y="124" text-anchor="middle">1. Truy xuất</text>
+  <text class="s" x="275" y="144" text-anchor="middle">BM25 · BGE-M3 · kết hợp</text>
+
+  <rect x="190" y="220" width="170" height="64" rx="10" fill="#e7e8e7" stroke="#b6babb" stroke-width="1.2"/>
+  <text class="t" x="275" y="248" text-anchor="middle">Kho tri thức</text>
+  <text class="s" x="275" y="268" text-anchor="middle">ĐK1 · ĐK2 · ĐK3 · ĐK4</text>
+
+  <rect class="box" x="400" y="96" width="150" height="64" rx="10"/>
+  <text class="t" x="475" y="124" text-anchor="middle">5 đoạn căn cứ</text>
+  <text class="s" x="475" y="144" text-anchor="middle">mã E01 … E05</text>
+
+  <rect class="box" x="590" y="96" width="170" height="64" rx="10"/>
+  <text class="t" x="675" y="124" text-anchor="middle">2. Sinh câu trả lời</text>
+  <text class="s" x="675" y="144" text-anchor="middle">chỉ được dùng E01-E05</text>
+
+  <rect x="430" y="232" width="150" height="56" rx="10" fill="#fff1d9" stroke="#e0bf86" stroke-width="1.2"/>
+  <text class="t" x="505" y="256" text-anchor="middle">Từ chối</text>
+  <text class="s" x="505" y="275" text-anchor="middle">khi không đủ căn cứ</text>
+
+  <rect x="600" y="232" width="150" height="56" rx="10" fill="#e3f2e8" stroke="#9ccbad" stroke-width="1.2"/>
+  <text class="t" x="675" y="256" text-anchor="middle">Câu trả lời</text>
+  <text class="s" x="675" y="275" text-anchor="middle">mỗi ý kèm mã trích dẫn</text>
+
+  <path class="line" d="M150 128 H186" marker-end="url(#a)"/>
+  <path class="line" d="M275 220 V164" marker-end="url(#a)"/>
+  <text class="l" x="285" y="196">tìm trong kho</text>
+  <path class="line" d="M360 128 H396" marker-end="url(#a)"/>
+  <path class="line" d="M550 128 H586" marker-end="url(#a)"/>
+  <path class="line" d="M675 196 H505 V228" marker-end="url(#a)"/>
+  <path class="line" d="M675 160 V228" marker-end="url(#a)"/>
+  <text class="l" x="596" y="190" text-anchor="end">cổng trích dẫn</text>
+</svg>
