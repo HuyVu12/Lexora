@@ -19,9 +19,10 @@
 	const users: Item = { href: '/admin/users', key: 'nav.users', match: (p) => p.startsWith('/admin') };
 	const docs: Item = { href: '/docs', key: 'nav.docs', match: (p) => p.startsWith('/docs') };
 	const research: Item[] = [
-		{ href: '/research', key: 'nav.corpora', match: (p) => p.startsWith('/research') && !/^\/research\/(questions|gold|results)/.test(p) },
+		{ href: '/research', key: 'nav.corpora', match: (p) => p.startsWith('/research') && !/^\/research\/(questions|gold|audit|results)/.test(p) },
 		{ href: '/research/questions', key: 'nav.questions', match: (p) => p.startsWith('/research/questions') },
 		{ href: '/research/gold', key: 'nav.gold', match: (p) => p.startsWith('/research/gold') },
+		{ href: '/research/audit', key: 'nav.audit', match: (p) => p.startsWith('/research/audit') },
 		results
 	];
 	// A dev account's work is monitoring, so its two pages stay on the bar.

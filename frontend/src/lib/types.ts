@@ -711,3 +711,56 @@ export interface DocEntry {
 	order: number;
 	updated: string | null;
 }
+
+// Rejection audit in the app (/api/audit*): annotators never receive the key (model, validator decision).
+export type AuditLabel = 'sai' | 'dien_dat' | 'dung_ngu_canh' | 'dung' | 'khong_ro';
+export interface AuditSetSummary {
+	id: string;
+	name: string;
+	items: number;
+	labelled: Record<string, { name: string; n: number }>;
+	adjudicated: number;
+	created_by: string;
+	created_at: string;
+}
+export interface AuditMine {
+	label: AuditLabel;
+	note: string;
+	updated_at: string;
+}
+export interface AuditRow {
+	item_id: string;
+	context: string;
+	unit_text: string;
+	sentence: string;
+	norm: string;
+}
+export interface AuditWorkspace extends AuditSetSummary {
+	labels: AuditLabel[];
+	rows: (AuditRow & { mine: AuditMine | null })[];
+	can_score: boolean;
+}
+export interface AuditSideLabel {
+	label: AuditLabel;
+	note: string;
+	annotator_name: string;
+}
+export interface AuditCompare {
+	set: { id: string; name: string; items: number; first_labelled: number; second_labelled: number; adjudicated: number };
+	first: { username: string; name: string };
+	second: { username: string; name: string };
+	agreement: { labels: { kappa: number | null; n: number }; wrong_or_not: { kappa: number | null; n: number } };
+	items: (AuditRow & { first: AuditSideLabel | null; second: AuditSideLabel | null; final: { label: AuditLabel; note: string; decided_by: string } | null; agree: boolean })[];
+}
+export interface AuditScoreGroup {
+	items: number;
+	labelled: number;
+	labels: Record<string, number>;
+	by_automatic: Record<string, Record<string, number>>;
+	wrong_rate: { value: number | null; n: number };
+}
+export interface AuditScore {
+	source: string;
+	labelled: number;
+	by_model: Record<string, Record<string, AuditScoreGroup>>;
+}
