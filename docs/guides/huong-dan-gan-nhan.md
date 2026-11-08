@@ -14,7 +14,7 @@ Có ba việc gán nhãn, mỗi người làm độc lập trên tài khoản c�
 |---|---|---|---|---|
 | Bộ câu hỏi | Nghiên cứu > Bộ câu hỏi > "Bộ câu hỏi thực nghiệm v1" | 152 câu | 4-6 giờ | RQ3: chất lượng câu trả lời |
 | Gold trích xuất | Nghiên cứu > Gold > "Gold trích xuất v1 (40 Điều)" | 290 câu luật | 5-7 giờ | RQ1: chất lượng trích xuất |
-| Bảng kiểm tra quy phạm bị loại | Tệp CSV mở bằng Excel | 104 dòng | khoảng 2 giờ | RQ2: độ chính xác của bộ kiểm chứng |
+| Bảng kiểm tra quy phạm bị loại | Nghiên cứu > Kiểm tra quy phạm | 104 dòng | khoảng 2 giờ | RQ2: độ chính xác của bộ kiểm chứng |
 
 Làm theo thứ tự trên: bộ câu hỏi trước, vì đó là đầu vào của thực nghiệm chính.
 Mỗi việc xong phần gán riêng thì hai người cùng đối soát và chốt nhãn cuối.
@@ -219,6 +219,8 @@ Khi chốt hết, bấm **Tải gold cuối (JSONL)** và gửi cho người ch�
 
 ## 5. Việc 3: bảng kiểm tra quy phạm bị loại
 
+> Hướng dẫn đầy đủ, cách quyết định và ví dụ: [Hướng dẫn kiểm tra quy phạm bị loại](/docs/huong-dan-kiem-tra-quy-pham). Mục này chỉ tóm tắt.
+
 ### Mục đích
 
 Bộ kiểm chứng tự động loại một quy phạm khi có cụm từ không nằm nguyên văn trong câu.
@@ -227,20 +229,20 @@ Bảng này đo xem trong số bị loại có bao nhiêu thật sự sai, và t
 
 ### Các bước
 
-1. Mở tệp của mình trong thư mục `experiments/runs/audit-rejections-v1/`: `sheet-vu.csv` hoặc `sheet-kha.csv` (người chạy thực nghiệm gửi).
-2. Mỗi dòng có các cột: `context` (tên Điều, câu dẫn), `unit_text` (nguyên văn đơn vị), `sentence` (câu được trích xuất), `norm` (quy phạm AI đưa ra).
-3. Đọc quy phạm, đối chiếu với luật, điền cột `label` bằng một trong năm nhãn dưới đây; ghi `note` nếu cần.
-4. Lưu lại dạng CSV (UTF-8) và gửi lại.
+1. Mở **Nghiên cứu > Kiểm tra quy phạm**, bấm **Mở bảng**.
+2. Mỗi dòng có tên Điều và câu dẫn, nguyên văn đơn vị, câu được trích xuất và quy phạm model đưa ra.
+3. Chọn một trong năm nhãn (phím 1 đến 5), ghi chú nếu cần, bấm **Lưu và sang dòng tiếp**.
+4. Gán xong thì **Đối soát với** người còn lại và chốt nhãn cuối.
 
 Bảng đã trộn ngẫu nhiên và không cho biết quy phạm do model nào tạo hay có bị loại không.
 
 | Nhãn | Khi nào |
 |---|---|
-| `sai` | Nói điều luật không nói, mâu thuẫn với luật, sai chủ thể, sai tính quy phạm, hoặc bỏ mất điều kiện, ngoại lệ làm đổi nghĩa |
-| `dien_dat` | Đúng nghĩa nhưng bị viết lại, rút gọn hoặc ghép từ nhiều chỗ |
-| `dung_ngu_canh` | Đúng, nhưng có chữ lấy từ câu dẫn của khoản hoặc tên Điều |
-| `dung` | Đúng và nguyên văn trong câu |
-| `khong_ro` | Không quyết định được; ghi lý do ở `note` |
+| Sai | Nói điều luật không nói, mâu thuẫn với luật, sai chủ thể, sai tính quy phạm, hoặc bỏ mất điều kiện, ngoại lệ làm đổi nghĩa |
+| Đúng, diễn đạt lại | Đúng nghĩa nhưng bị viết lại, rút gọn hoặc ghép từ nhiều chỗ |
+| Đúng, mượn câu dẫn | Đúng, nhưng có chữ lấy từ câu dẫn của khoản hoặc tên Điều |
+| Đúng, nguyên văn | Đúng và nguyên văn trong câu |
+| Không rõ | Không quyết định được; ghi lý do ở ghi chú |
 
 Nhiều nhãn cùng đúng thì chọn nhãn đứng trên trong bảng.
 
