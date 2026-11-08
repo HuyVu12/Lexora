@@ -97,6 +97,10 @@ def main():
     command.add_argument("--config", default="configs/experiments/answer.json")
     command.add_argument("--max-calls", type=int, required=True)
     command.add_argument("--approve-claude", action="store_true")
+    command = commands.add_parser("preflight", help="fairness checks of DK1-DK4 retrieval (and answer) runs before reporting RQ3; offline")
+    command.add_argument("--retrieval", nargs="+", required=True, help="retrieval run directories, one per condition")
+    command.add_argument("--answers", nargs="*", default=[], help="answer run directories made from those retrieval runs")
+    command.add_argument("--output", help="write the report as JSON here")
     command = commands.add_parser("kb-compare", help="re-validate knowledge-base runs with the current validator and write a side-by-side report; offline")
     command.add_argument("runs", nargs="*", help="run directories (default: every knowledge-base run under experiments/runs)")
     command.add_argument("--json", default="docs/results/extraction-models.json")
@@ -208,6 +212,15 @@ def main():
             if args.compare:
                 report["agreement"] = agreement(args.sheet, args.compare)
             print(json.dumps(report, ensure_ascii=False, indent=2))
+        elif args.command == "preflight":
+            from legal_ai.common.io import write_json
+            from legal_ai.evaluation.preflight import check
+            report = check(args.retrieval, args.answers)
+            if args.output:
+                write_json(args.output, report)
+            print(json.dumps(report, ensure_ascii=False, indent=2))
+            if report["status"] == "fail":
+                return 1
         elif args.command == "kb-compare":
             from legal_ai.evaluation.kb_compare import compare, kb_runs
             runs = args.runs or kb_runs("experiments/runs")
