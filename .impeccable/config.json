@@ -56,6 +56,12 @@
         ],
         "createdAt": "2026-11-06T17:53:26.499Z",
         "reason": "Agent: spent decision-round sketches; each shows its own unchosen direction's palette and type and predates DESIGN.md; not shipping UI"
+      },
+      {
+        "rule": "design-system-font",
+        "value": "source serif 4",
+        "createdAt": "2026-11-08T10:19:04.593Z",
+        "reason": "agent: same family as DESIGN.md 'Source Serif 4 Variable'; the Google Fonts build is named without 'Variable'"
       }
     ]
   }
