@@ -7,7 +7,7 @@ VM e2-micro (Debian 13) dùng chung với 9Router và trang học `goc-hoc`; Lex
 
 | Thành phần | Vị trí |
 |---|---|
-| Code, giao diện đã build | `~/lexora/app` (giải nén từ `git archive` cộng `frontend/build`) |
+| Code, giao diện đã build, tài liệu | `~/lexora/app` (giải nén từ `git archive` của `src prompts configs docs/guides ...` cộng `frontend/build`) |
 | Môi trường Python | `~/lexora/venv`, chỉ nhóm `web` (không torch) |
 | Store | `~/lexora/data/kb/lexora.sqlite` |
 | Danh mục văn bản, bản chụp vbpl.vn | `~/lexora/data/catalog/`, `~/lexora/data/raw/vbpl/` |
@@ -30,10 +30,16 @@ sudo systemctl restart lexora       # khởi động lại (đặt lại ngân s
 Cập nhật code từ máy cá nhân:
 
 ```powershell
-git archive --format=tar -o code.tar HEAD src prompts configs pyproject.toml README.md   # rồi thêm frontend/build vào tar
+git archive --format=tar -o code.tar HEAD src prompts configs docs/guides pyproject.toml README.md   # rồi thêm frontend/build vào tar
 scp code.tar.gz gcp:lexora/
 ssh gcp "cd ~/lexora/app && tar -xzf ../code.tar.gz && sudo systemctl restart lexora"
 ```
+
+Đồng bộ kết quả thực nghiệm (trang Kết quả, tab Thực nghiệm và Báo cáo đọc trực tiếp từ thư mục này) sau mỗi lượt chạy mới trên máy cá nhân:
+nén `experiments/runs` (bỏ thư mục `audit-rejections-v1` có tệp giải mã và các tệp `.log`) cùng `data/normalized/experiment-scope-v1-veaeaad4a6edc`, chép lên rồi giải nén trong `~/lexora/app`; không cần khởi động lại.
+
+Bảng kiểm tra quy phạm bị loại được nhập vào store bằng `kb-audit-import`; tệp giải mã nằm riêng ở `~/lexora/data/audit/key.json` (quyền 600) và không được phục vụ qua web.
+Tài liệu trên trang Tài liệu là các tệp trong `docs/guides/` (kèm hình trong `docs/guides/assets/`), nằm trong gói code.
 
 Lấy store về máy để chạy thực nghiệm: `scp gcp:lexora/backups/lexora-<ngày>.sqlite data/kb/` (bản sao lưu nhất quán, không chép tệp đang mở).
 
