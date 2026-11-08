@@ -16,6 +16,7 @@ DK4 is a subset of DK3 by construction, so the two differ only by validation.
 
 from datetime import datetime, timezone
 import json
+import time
 from pathlib import Path
 
 from legal_ai.common.io import canonical, digest, read_jsonl, write_json, write_jsonl
@@ -67,6 +68,7 @@ def extract(bundle_units, provider, output, *, log=None, max_tokens=CHAT_MAX_TOK
                 continue
             entry = {"key": key, "article_id": article_id, "rows": rows, "request_sha256": digest(request),
                      "at": datetime.now(timezone.utc).isoformat(timespec="seconds")}
+            started = time.monotonic()
             try:
                 if hasattr(provider, "structured"):
                     answer = provider.structured(SYSTEM, request, SCHEMA, purpose="kb-extraction")
@@ -83,6 +85,7 @@ def extract(bundle_units, provider, output, *, log=None, max_tokens=CHAT_MAX_TOK
             except ProviderError as exc:
                 entry |= {"status": "error", "code": exc.code}
                 counts["failed"] += 1
+            entry["duration_ms"] = round((time.monotonic() - started) * 1000)  # Wall time of the call as Lexora saw it.
             handle.write(canonical(entry) + "\n")
             handle.flush()
             if log:

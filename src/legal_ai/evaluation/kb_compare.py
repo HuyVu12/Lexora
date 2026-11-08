@@ -59,10 +59,47 @@ def _injection(run_dir):
     return None
 
 
+SESSION_GAP_S = 900  # Calls further apart than this belong to another session of a resumed run.
+
+
+def _timing(raw):
+    """(median seconds per call, total minutes of calling). Uses the recorded duration_ms when present, else the
+    gap to the next call of the same session (runs call one batch at a time, so the gap approximates the call)."""
+    from datetime import datetime
+    durations = []
+    stamps = [datetime.fromisoformat(row["at"]) for row in raw]
+    for index, row in enumerate(raw):
+        if row.get("duration_ms") is not None:
+            durations.append(row["duration_ms"] / 1000)
+        elif index + 1 < len(raw):
+            gap = (stamps[index + 1] - stamps[index]).total_seconds()
+            if 0 <= gap <= SESSION_GAP_S:
+                durations.append(gap)
+    if not durations:
+        return None, None
+    ordered = sorted(durations)
+    middle = len(ordered) // 2
+    median = ordered[middle] if len(ordered) % 2 else (ordered[middle - 1] + ordered[middle]) / 2
+    return round(median, 1), round(sum(durations) / 60, 1)
+
+
+def _reasoning_tokens(row):
+    usage = row.get("usage") or {}
+    for details in ("completion_tokens_details", "output_tokens_details"):
+        value = (usage.get(details) or {})
+        value = value.get("reasoning_tokens") or value.get("thinking_tokens")
+        if value:
+            return value
+    return 0
+
+
 def summarize(run_dir):
     run_dir = Path(run_dir)
     manifest = json.loads((run_dir / "manifest.json").read_text(encoding="utf-8"))
-    report = json.loads((run_dir / "report.json").read_text(encoding="utf-8")) if (run_dir / "report.json").exists() else {}
+    report_path = run_dir / "report.json"
+    report = json.loads(report_path.read_text(encoding="utf-8")) if report_path.exists() else {}
+    # DK3/DK4 are rebuilt when a run ends (or by kb-compare); calls made since then are not in them yet.
+    report_stale = not report_path.exists() or (run_dir / "raw.jsonl").stat().st_mtime > report_path.stat().st_mtime
     raw = [row for row in read_jsonl(run_dir / "raw.jsonl") if row.get("code") not in STOP_CODES]
     bundle = Path(manifest["bundle"])
     from legal_ai.evaluation.kb_run import batches
@@ -78,6 +115,13 @@ def summarize(run_dir):
     usage = lambda *names: sum(sum((row.get("usage") or {}).get(name) or 0 for name in names) for row in raw)
     dk3, dk4 = report.get("dk3_claims", 0), report.get("dk4_claims", 0)
     sentences = sum(len(row["rows"]) for row in latest.values())
+    call_errors = {}
+    for row in raw:
+        if row.get("status") != "ok":
+            call_errors[row.get("code")] = call_errors.get(row.get("code"), 0) + 1
+    median_s, total_min = _timing(raw)
+    completion = usage("completion_tokens", "output_tokens")
+    answered = sentences - (report.get("sentences_without_answer") or 0)
     return {"run": run_dir.name, "run_id": manifest.get("run_id"), "created_at": manifest.get("created_at"),
             "provider": manifest.get("provider", "claude-code"), "model": manifest.get("model"), "effort": manifest.get("effort"),
             "max_tokens": manifest.get("max_tokens"), "validator_version": report.get("validator_version"),
@@ -90,7 +134,13 @@ def summarize(run_dir):
             # Claude Code reports cached prompt parts separately; 9Router reports prompt/completion tokens.
             "prompt_tokens": usage("prompt_tokens", "input_tokens", "cache_creation_input_tokens", "cache_read_input_tokens"),
             "completion_tokens": usage("completion_tokens", "output_tokens"),
-            "cost_usd": report.get("cost_usd"), "injection": _injection(run_dir)}
+            "reasoning_tokens": sum(_reasoning_tokens(row) for row in raw),
+            "call_errors": call_errors, "call_error_rate": sum(call_errors.values()) / len(raw) if raw else None,
+            "sentence_answer_rate": answered / sentences if sentences else None,
+            "claims_per_sentence": dk3 / answered if answered else None,
+            "completion_tokens_per_claim": completion / dk3 if dk3 else None,
+            "median_call_seconds": median_s, "calling_minutes": total_min,
+            "cost_usd": report.get("cost_usd"), "injection": _injection(run_dir), "report_stale": report_stale}
 
 
 def reason_label(code):
@@ -123,11 +173,23 @@ def markdown(summaries, generated_at):
         lines.append("")
     for s in sampled:
         lines.append(f"`{s['model']}` chỉ chạy mẫu {s['batches_attempted']}/{s['batches_planned']} lượt; số ĐK3/ĐK4 của dòng này không so trực tiếp được với các lượt đầy đủ.")
+    lines += ["", "## Lượt gọi, token và thời gian", "",
+              "| Model | Lượt gọi (kể cả thử lại) | Tỉ lệ lượt lỗi | Câu có trả lời | Quy phạm / câu | Token vào | Token ra | Token suy luận | Token ra / quy phạm | Trung vị mỗi lượt | Tổng thời gian gọi |",
+              "|---|---|---|---|---|---|---|---|---|---|---|"]
+    for s in summaries:
+        per_claim = "-" if s["completion_tokens_per_claim"] is None else f"{s['completion_tokens_per_claim']:.0f}"
+        per_sentence = "-" if s["claims_per_sentence"] is None else f"{s['claims_per_sentence']:.2f}"
+        median = "-" if s["median_call_seconds"] is None else f"{s['median_call_seconds']} s"
+        total = "-" if s["calling_minutes"] is None else f"{s['calling_minutes']} phút"
+        lines.append(f"| `{s['model']}` | {s['calls_made']} | {_pct(s['call_error_rate'])} | {_pct(s['sentence_answer_rate'])} | {per_sentence} | "
+                     f"{s['prompt_tokens']:,} | {s['completion_tokens']:,} | {s['reasoning_tokens']:,} | {per_claim} | {median} | {total} |")
+    lines += ["", "Thời gian mỗi lượt lấy từ `duration_ms` khi có; với lượt cũ là khoảng cách tới lượt kế tiếp trong cùng phiên (ước tính).",
+              "Token do nhà cung cấp báo về; token suy luận chỉ có khi model báo riêng.", ""]
     lines += ["", "## Lý do bị loại", ""]
     for s in summaries:
         reasons = ", ".join(f"{reason_label(k)}: {v}" for k, v in sorted(s["reasons"].items(), key=lambda kv: -kv[1])) or "không có"
-        errors = ", ".join(f"{k}: {v}" for k, v in s["batch_errors"].items()) or "không có"
-        lines.append(f"- `{s['model']}`: {reasons}. Lượt lỗi: {errors}.")
+        errors = ", ".join(f"{k}: {v}" for k, v in s["call_errors"].items()) or "không có"
+        lines.append(f"- `{s['model']}`: {reasons}. Lượt gọi lỗi (mọi lần thử): {errors}.")
     lines += ["", "## Chèn lỗi có chủ đích (RQ2)", ""]
     for s in summaries:
         inj = s["injection"]

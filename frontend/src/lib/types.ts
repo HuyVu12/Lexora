@@ -528,6 +528,15 @@ export interface KbRunSummary {
 	modality_unverified_rate: number | null;
 	prompt_tokens: number;
 	completion_tokens: number;
+	reasoning_tokens: number;
+	call_errors: Record<string, number>;
+	call_error_rate: number | null;
+	sentence_answer_rate: number | null;
+	claims_per_sentence: number | null;
+	completion_tokens_per_claim: number | null;
+	median_call_seconds: number | null;
+	calling_minutes: number | null;
 	cost_usd: number | null;
 	injection: KbInjection | null;
+	report_stale: boolean;
 }

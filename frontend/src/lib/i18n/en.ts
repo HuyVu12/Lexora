@@ -985,7 +985,22 @@ const en: Record<MessageKey, string> = {
 	'guide.results.1': 'Compare the models',
 	'guide.results.1.d': 'Each table row is one model; hover a column name to see how it is computed.',
 	'guide.results.2': 'Open the details',
-	'guide.results.2.d': 'Open a model\'s details for rejection reasons, failed calls and planted-error results.'
+	'guide.results.2.d': 'Open a model\'s details for rejection reasons, failed calls and planted-error results.',
+	'results.usage.title': 'Calls, tokens and time',
+	'results.usage.lead': 'Tokens as the provider reported them; time from the duration recorded per call, older calls estimated from the gap to the next call.',
+	'results.col.callsMade': 'Calls',
+	'results.col.callErrors': 'Failed calls',
+	'results.col.answered': 'Sentences answered',
+	'results.col.perSentence': 'Norms / sentence',
+	'results.col.tokensIn': 'Tokens in',
+	'results.col.tokensOut': 'Tokens out',
+	'results.col.reasoning': 'Reasoning tokens',
+	'results.col.perClaim': 'Tokens out / norm',
+	'results.col.median': 'Median per call',
+	'results.col.total': 'Total calling time',
+	'results.seconds': '{n} s',
+	'results.minutes': '{n} min',
+	'results.reportStale': 'Running or not rebuilt yet: DK3/DK4 numbers are from the previous build'
 };
 
 export default en;

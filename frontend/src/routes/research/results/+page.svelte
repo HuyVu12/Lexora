@@ -86,6 +86,7 @@
 										<th scope="row">
 											<code>{r.model}</code>
 											<span class="small muted">{t('results.settings', { provider: r.provider, effort: r.effort ?? '-', tokens: r.max_tokens ? t('results.maxTokens', { n: num(r.max_tokens) }) : '' })}</span>
+											{#if r.report_stale}<span class="chip warn stale-chip"><Icon name="warn" size={14} />{t('results.reportStale')}</span>{/if}
 										</th>
 										<td class="n">{r.batches_ok}/{r.batches_attempted}{#if r.batches_planned && r.batches_attempted < r.batches_planned}<span class="small muted sample">{t('results.sample', { n: r.batches_planned })}</span>{/if}</td>
 										<td class="n">{r.sentences_without_answer ?? '-'}</td>
@@ -95,6 +96,45 @@
 										<td class="n">{pct(r.modality_unverified_rate)}</td>
 										<td class="n">{r.injection ? pct(r.injection.detectable_rate) : '-'}</td>
 										<td class="n">{cost(r.cost_usd)}</td>
+									</tr>
+								{/each}
+							</tbody>
+						</table>
+					</div>
+
+					<h3 class="label sub">{t('results.usage.title')}</h3>
+					<p class="small muted">{t('results.usage.lead')}</p>
+					<div class="table-wrap">
+						<table>
+							<thead>
+								<tr>
+									<th scope="col">{t('results.col.model')}</th>
+									<th scope="col" class="n">{t('results.col.callsMade')}</th>
+									<th scope="col" class="n">{t('results.col.callErrors')}</th>
+									<th scope="col" class="n">{t('results.col.answered')}</th>
+									<th scope="col" class="n">{t('results.col.perSentence')}</th>
+									<th scope="col" class="n">{t('results.col.tokensIn')}</th>
+									<th scope="col" class="n">{t('results.col.tokensOut')}</th>
+									<th scope="col" class="n">{t('results.col.reasoning')}</th>
+									<th scope="col" class="n">{t('results.col.perClaim')}</th>
+									<th scope="col" class="n">{t('results.col.median')}</th>
+									<th scope="col" class="n">{t('results.col.total')}</th>
+								</tr>
+							</thead>
+							<tbody>
+								{#each data.runs as r (r.run)}
+									<tr>
+										<th scope="row"><code>{r.model}</code></th>
+										<td class="n">{r.calls_made}</td>
+										<td class="n">{pct(r.call_error_rate)}</td>
+										<td class="n">{pct(r.sentence_answer_rate)}</td>
+										<td class="n">{r.claims_per_sentence === null ? '-' : r.claims_per_sentence.toFixed(2)}</td>
+										<td class="n">{num(r.prompt_tokens)}</td>
+										<td class="n">{num(r.completion_tokens)}</td>
+										<td class="n">{r.reasoning_tokens ? num(r.reasoning_tokens) : '-'}</td>
+										<td class="n">{r.completion_tokens_per_claim === null ? '-' : num(Math.round(r.completion_tokens_per_claim))}</td>
+										<td class="n">{r.median_call_seconds === null ? '-' : t('results.seconds', { n: r.median_call_seconds })}</td>
+										<td class="n">{r.calling_minutes === null ? '-' : t('results.minutes', { n: r.calling_minutes })}</td>
 									</tr>
 								{/each}
 							</tbody>
@@ -116,8 +156,8 @@
 												<p class="small">{t('results.reasons.none')}</p>
 											{/if}
 											<h3 class="label">{t('results.errors')}</h3>
-											{#if Object.keys(r.batch_errors).length}
-												<ul class="plain">{#each sorted(r.batch_errors) as [code, n] (code)}<li><span>{failure(code)}</span><strong>{n}</strong></li>{/each}</ul>
+											{#if Object.keys(r.call_errors).length}
+												<ul class="plain">{#each sorted(r.call_errors) as [code, n] (code)}<li><span>{failure(code)}</span><strong>{n}</strong></li>{/each}</ul>
 											{:else}
 												<p class="small">{t('results.errors.none')}</p>
 											{/if}
@@ -198,6 +238,18 @@
 		max-width: 9rem;
 		margin-left: auto;
 		white-space: normal;
+	}
+	.stale-chip {
+		justify-self: start;
+		display: inline-flex;
+		align-items: center;
+		gap: 4px;
+		margin-top: 4px;
+		white-space: normal;
+		font-weight: 400;
+	}
+	.sub {
+		margin: 12px 0 0;
 	}
 	.details {
 		display: grid;

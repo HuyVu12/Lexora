@@ -983,7 +983,22 @@ const vi = {
 	'guide.results.1': 'So sánh các model',
 	'guide.results.1.d': 'Mỗi dòng của bảng là một model; rê chuột vào tên cột để xem cách tính.',
 	'guide.results.2': 'Xem chi tiết',
-	'guide.results.2.d': 'Mở chi tiết của từng model để xem lý do bị loại, lượt lỗi và kết quả chèn lỗi.'
+	'guide.results.2.d': 'Mở chi tiết của từng model để xem lý do bị loại, lượt lỗi và kết quả chèn lỗi.',
+	'results.usage.title': 'Lượt gọi, token và thời gian',
+	'results.usage.lead': 'Token do nhà cung cấp báo về; thời gian lấy từ thời lượng ghi cho từng lượt, lượt cũ ước tính từ khoảng cách giữa hai lượt.',
+	'results.col.callsMade': 'Lượt gọi',
+	'results.col.callErrors': 'Tỉ lệ lượt lỗi',
+	'results.col.answered': 'Câu có trả lời',
+	'results.col.perSentence': 'Quy phạm / câu',
+	'results.col.tokensIn': 'Token vào',
+	'results.col.tokensOut': 'Token ra',
+	'results.col.reasoning': 'Token suy luận',
+	'results.col.perClaim': 'Token ra / quy phạm',
+	'results.col.median': 'Trung vị mỗi lượt',
+	'results.col.total': 'Tổng thời gian gọi',
+	'results.seconds': '{n} s',
+	'results.minutes': '{n} phút',
+	'results.reportStale': 'Đang chạy hoặc chưa dựng lại: số ĐK3/ĐK4 là của lần dựng trước'
 } satisfies Record<string, string>;
 
 export default vi;
