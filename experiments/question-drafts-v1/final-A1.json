@@ -1,0 +1,300 @@
+[
+ {
+  "text": "Bên em tuyển kỹ sư phần mềm tốt nghiệp đại học thì được cho thử việc tối đa bao lâu?",
+  "question_type": "lookup",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-iii/section-1/article-25/clause-2"
+  ],
+  "rationale": "Khoản 2 Điều 25 giới hạn thử việc không quá 60 ngày với công việc cần trình độ từ cao đẳng trở lên.",
+  "paraphrase_of": null
+ },
+ {
+  "text": "Trong thời gian thử việc công ty được trả lương thấp nhất là bao nhiêu so với lương chính thức?",
+  "question_type": "lookup",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-iii/section-1/article-26"
+  ],
+  "rationale": "Điều 26 quy định tiền lương thử việc ít nhất bằng 85% mức lương của công việc đó.",
+  "paraphrase_of": null
+ },
+ {
+  "text": "Hợp đồng lao động có thời hạn thì được ký dài nhất bao nhiêu tháng?",
+  "question_type": "lookup",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-iii/section-1/article-20/clause-1/point-b"
+  ],
+  "rationale": "Điểm b khoản 1 Điều 20 quy định hợp đồng xác định thời hạn không quá 36 tháng.",
+  "paraphrase_of": null
+ },
+ {
+  "text": "Công ty có được giữ bằng đại học bản gốc của nhân viên mới trong suốt thời gian làm việc không?",
+  "question_type": "lookup",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-iii/section-1/article-17/clause-1"
+  ],
+  "rationale": "Khoản 1 Điều 17 cấm người sử dụng lao động giữ bản chính văn bằng, chứng chỉ của người lao động.",
+  "paraphrase_of": null
+ },
+ {
+  "text": "Nếu ký riêng hợp đồng thử việc thì trong đó bắt buộc phải ghi những nội dung gì?",
+  "question_type": "synthesis",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-iii/section-1/article-24/clause-2",
+   "45-2019-qh14/chapter-iii/section-1/article-21/clause-1/point-a",
+   "45-2019-qh14/chapter-iii/section-1/article-21/clause-1/point-b",
+   "45-2019-qh14/chapter-iii/section-1/article-21/clause-1/point-c",
+   "45-2019-qh14/chapter-iii/section-1/article-21/clause-1/point-đ",
+   "45-2019-qh14/chapter-iii/section-1/article-21/clause-1/point-g",
+   "45-2019-qh14/chapter-iii/section-1/article-21/clause-1/point-h"
+  ],
+  "rationale": "Khoản 2 Điều 24 dẫn chiếu thời gian thử việc và các điểm a, b, c, đ, g, h khoản 1 Điều 21.",
+  "paraphrase_of": null
+ },
+ {
+  "text": "Thỏa thuận làm việc bằng miệng, không ký giấy tờ gì có được coi là hợp đồng lao động hợp lệ không?",
+  "question_type": "lookup",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-iii/section-1/article-14/clause-2"
+  ],
+  "rationale": "Khoản 2 Điều 14 chỉ cho phép giao kết bằng lời nói với hợp đồng dưới 01 tháng, trừ một số ngoại lệ.",
+  "paraphrase_of": null
+ },
+ {
+  "text": "Ký hợp đồng lao động online bằng chữ ký điện tử thì có giá trị như bản giấy không?",
+  "question_type": "lookup",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-iii/section-1/article-14/clause-1"
+  ],
+  "rationale": "Khoản 1 Điều 14 công nhận hợp đồng giao kết qua phương tiện điện tử có giá trị như hợp đồng bằng văn bản.",
+  "paraphrase_of": null
+ },
+ {
+  "text": "Doanh nghiệp giữ căn cước công dân bản chính của người lao động thì bị phạt hành chính bao nhiêu tiền?",
+  "question_type": "out_of_scope",
+  "expected_status": "refuse",
+  "relevant_unit_ids": [],
+  "rationale": "Đoạn trích chỉ cấm hành vi tại khoản 1 Điều 17, không có mức phạt tiền.",
+  "paraphrase_of": null
+ },
+ {
+  "text": "Công ty yêu cầu nhân viên nộp 5 triệu tiền cọc khi ký hợp đồng để đảm bảo không nghỉ ngang, như vậy có đúng luật không?",
+  "question_type": "lookup",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-iii/section-1/article-17/clause-2"
+  ],
+  "rationale": "Khoản 2 Điều 17 cấm yêu cầu người lao động thực hiện biện pháp bảo đảm bằng tiền hoặc tài sản khác.",
+  "paraphrase_of": null
+ },
+ {
+  "text": "Hợp đồng có thời hạn đã hết mà nhân viên vẫn đi làm bình thường thì hai bên phải ký hợp đồng mới trong vòng bao lâu?",
+  "question_type": "lookup",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-iii/section-1/article-20/clause-2/point-a"
+  ],
+  "rationale": "Điểm a khoản 2 Điều 20 yêu cầu ký hợp đồng mới trong thời hạn 30 ngày kể từ ngày hết hạn.",
+  "paraphrase_of": null
+ },
+ {
+  "text": "Hợp đồng xác định thời hạn được ký nối tiếp tối đa mấy lần trước khi phải chuyển sang hợp đồng không thời hạn?",
+  "question_type": "lookup",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-iii/section-1/article-20/clause-2/point-c"
+  ],
+  "rationale": "Điểm c khoản 2 Điều 20 chỉ cho ký thêm 01 lần hợp đồng xác định thời hạn, sau đó phải ký không xác định thời hạn.",
+  "paraphrase_of": null
+ },
+ {
+  "text": "Vị trí yêu cầu bằng cao đẳng trở lên thì thời gian thử việc dài nhất là mấy ngày?",
+  "question_type": "lookup",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-iii/section-1/article-25/clause-2"
+  ],
+  "rationale": "Khoản 2 Điều 25 giới hạn thử việc không quá 60 ngày với công việc cần trình độ từ cao đẳng trở lên.",
+  "paraphrase_of": 0
+ },
+ {
+  "text": "Đang thử việc mà thấy không hợp, em có thể nghỉ luôn mà không cần báo trước hay bồi thường gì không?",
+  "question_type": "lookup",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-iii/section-1/article-27/clause-2"
+  ],
+  "rationale": "Khoản 2 Điều 27 cho mỗi bên quyền hủy bỏ trong thời gian thử việc mà không cần báo trước, không phải bồi thường.",
+  "paraphrase_of": null
+ },
+ {
+  "text": "Có thể làm phụ lục hợp đồng để kéo dài thời hạn hợp đồng lao động thêm một năm được không?",
+  "question_type": "lookup",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-iii/section-1/article-22/clause-2"
+  ],
+  "rationale": "Khoản 2 Điều 22 không cho phép phụ lục sửa đổi thời hạn của hợp đồng lao động.",
+  "paraphrase_of": null
+ },
+ {
+  "text": "Nhân viên nghiệp vụ trình độ trung cấp bị công ty cho thử việc 2 tháng với lương bằng 70% lương chính thức, như vậy có vi phạm gì không?",
+  "question_type": "synthesis",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-iii/section-1/article-25/clause-3",
+   "45-2019-qh14/chapter-iii/section-1/article-26"
+  ],
+  "rationale": "Khoản 3 Điều 25 giới hạn thử việc không quá 30 ngày và Điều 26 yêu cầu lương thử việc ít nhất 85%.",
+  "paraphrase_of": null
+ },
+ {
+  "text": "Công ty được điều chuyển tạm thời người lao động sang làm việc khác hợp đồng tối đa bao nhiêu ngày một năm mà không cần họ đồng ý?",
+  "question_type": "lookup",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-iii/section-2/article-29/clause-1"
+  ],
+  "rationale": "Khoản 1 Điều 29 cho phép tạm chuyển không quá 60 ngày làm việc cộng dồn trong 01 năm, quá mức đó cần đồng ý bằng văn bản.",
+  "paraphrase_of": null
+ },
+ {
+  "text": "Muốn chuyển tạm thời nhân viên sang bộ phận khác làm việc khác hợp đồng thì phải báo trước cho họ mấy ngày?",
+  "question_type": "lookup",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-iii/section-2/article-29/clause-2"
+  ],
+  "rationale": "Khoản 2 Điều 29 yêu cầu báo trước ít nhất 03 ngày làm việc.",
+  "paraphrase_of": null
+ },
+ {
+  "text": "Lương thử việc tối thiểu phải đạt bao nhiêu phần trăm mức lương của vị trí đó?",
+  "question_type": "lookup",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-iii/section-1/article-26"
+  ],
+  "rationale": "Điều 26 quy định tiền lương thử việc ít nhất bằng 85% mức lương của công việc đó.",
+  "paraphrase_of": 1
+ },
+ {
+  "text": "Trong thời gian tạm hoãn hợp đồng lao động thì người lao động có được công ty trả lương không?",
+  "question_type": "lookup",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-iii/section-2/article-30/clause-2"
+  ],
+  "rationale": "Khoản 2 Điều 30 quy định không được hưởng lương trong thời gian tạm hoãn, trừ khi có thỏa thuận hoặc luật quy định khác.",
+  "paraphrase_of": null
+ },
+ {
+  "text": "Công ty ký với tôi \"hợp đồng cộng tác viên\" nhưng vẫn trả lương hằng tháng và quản lý giờ giấc như nhân viên, vậy đó có phải hợp đồng lao động không?",
+  "question_type": "lookup",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-iii/section-1/article-13/clause-1"
+  ],
+  "rationale": "Khoản 1 Điều 13 coi thỏa thuận mang tên gọi khác nhưng có trả lương và quản lý, điều hành, giám sát là hợp đồng lao động.",
+  "paraphrase_of": null
+ },
+ {
+  "text": "Nhân viên ký hợp đồng 12 tháng, hết hạn ký tiếp thêm một hợp đồng 12 tháng nữa; nếu hết hợp đồng thứ hai mà vẫn tiếp tục làm thì phải ký loại hợp đồng nào?",
+  "question_type": "synthesis",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-iii/section-1/article-20/clause-1/point-b",
+   "45-2019-qh14/chapter-iii/section-1/article-20/clause-2/point-c"
+  ],
+  "rationale": "Điểm b khoản 1 Điều 20 xác định loại hợp đồng có thời hạn và điểm c khoản 2 Điều 20 buộc ký không xác định thời hạn sau lần ký thêm.",
+  "paraphrase_of": null
+ },
+ {
+  "text": "Người làm hợp đồng ngắn hạn dưới một tháng thì có phải thử việc không?",
+  "question_type": "lookup",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-iii/section-1/article-24/clause-3"
+  ],
+  "rationale": "Khoản 3 Điều 24 không áp dụng thử việc với hợp đồng có thời hạn dưới 01 tháng.",
+  "paraphrase_of": null
+ },
+ {
+  "text": "Doanh nghiệp giữ lại văn bằng, chứng chỉ gốc của người lao động để làm tin có hợp pháp không?",
+  "question_type": "lookup",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-iii/section-1/article-17/clause-1"
+  ],
+  "rationale": "Khoản 1 Điều 17 cấm người sử dụng lao động giữ bản chính văn bằng, chứng chỉ của người lao động.",
+  "paraphrase_of": 3
+ },
+ {
+  "text": "Học sinh 16 tuổi muốn đi làm thêm thì có tự ký hợp đồng lao động được không, cần điều kiện gì?",
+  "question_type": "lookup",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-iii/section-1/article-18/clause-4/point-b"
+  ],
+  "rationale": "Điểm b khoản 4 Điều 18 cho người từ đủ 15 đến chưa đủ 18 tuổi giao kết khi có đồng ý bằng văn bản của người đại diện theo pháp luật.",
+  "paraphrase_of": null
+ },
+ {
+  "text": "Một nhóm công nhân thời vụ muốn cử một người đại diện ký hợp đồng thay cả nhóm thì cần đáp ứng điều kiện gì?",
+  "question_type": "synthesis",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-iii/section-1/article-18/clause-2",
+   "45-2019-qh14/chapter-iii/section-1/article-18/clause-4/point-d"
+  ],
+  "rationale": "Khoản 2 Điều 18 nêu điều kiện tuổi, hình thức văn bản, danh sách kèm theo và điểm d khoản 4 Điều 18 cho người được ủy quyền hợp pháp giao kết.",
+  "paraphrase_of": null
+ },
+ {
+  "text": "Hết thời gian thử việc thì công ty có nghĩa vụ gì với người lao động?",
+  "question_type": "lookup",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-iii/section-1/article-27/clause-1"
+  ],
+  "rationale": "Khoản 1 Điều 27 buộc người sử dụng lao động thông báo kết quả thử việc và nêu hệ quả khi đạt hoặc không đạt.",
+  "paraphrase_of": null
+ },
+ {
+  "text": "Người lao động có hợp đồng không xác định thời hạn muốn nghỉ việc thì phải báo trước cho công ty bao nhiêu ngày?",
+  "question_type": "lookup",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-iii/section-3/article-35/clause-1/point-a"
+  ],
+  "rationale": "Đoạn trích (Điều 3, 13-30) không có quy định về thời hạn báo trước khi đơn phương chấm dứt hợp đồng. (Rà lại: corpus có căn cứ ở chapter-iii/section-3/article-35/clause-1/point-a.)",
+  "paraphrase_of": null
+ },
+ {
+  "text": "Thuê người làm việc 3 tuần thì có được thỏa thuận miệng không và có được cho thử việc trước không?",
+  "question_type": "synthesis",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-iii/section-1/article-14/clause-2",
+   "45-2019-qh14/chapter-iii/section-1/article-24/clause-3"
+  ],
+  "rationale": "Khoản 2 Điều 14 cho phép giao kết bằng lời nói với hợp đồng dưới 01 tháng và khoản 3 Điều 24 không áp dụng thử việc cho hợp đồng đó.",
+  "paraphrase_of": null
+ },
+ {
+  "text": "Nếu không có văn bản đồng ý của nhân viên thì một năm công ty chỉ được cho họ làm tạm công việc trái hợp đồng tổng cộng bao nhiêu ngày?",
+  "question_type": "lookup",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-iii/section-2/article-29/clause-1"
+  ],
+  "rationale": "Khoản 1 Điều 29 cho phép tạm chuyển không quá 60 ngày làm việc cộng dồn trong 01 năm, quá mức đó cần đồng ý bằng văn bản.",
+  "paraphrase_of": 15
+ }
+]

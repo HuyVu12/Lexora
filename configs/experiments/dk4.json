@@ -4,5 +4,7 @@
   "automatic_validation": true,
   "manual_review": false,
   "shared_config": "configs/pilot.json",
-  "status": "draft"
+  "status": "draft",
+  "kb_run": "experiments/runs/kb-scope-v1-gpt-oss-120b",
+  "kb_model_note": "Main extraction model gpt-oss-120b (open-weight, via 9Router), chosen 08/11/2026; gemma4:31b is the replication run. See docs/decisions.md."
 }

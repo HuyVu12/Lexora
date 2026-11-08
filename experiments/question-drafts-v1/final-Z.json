@@ -1,0 +1,122 @@
+[
+ {
+  "text": "Người lao động phải đóng bảo hiểm xã hội bắt buộc bao nhiêu phần trăm tiền lương?",
+  "question_type": "out_of_scope",
+  "expected_status": "refuse",
+  "relevant_unit_ids": [],
+  "rationale": "Tỉ lệ đóng bảo hiểm xã hội nằm ở Luật Bảo hiểm xã hội, không có trong corpus.",
+  "paraphrase_of": null
+ },
+ {
+  "text": "Lao động nữ sinh con được nghỉ thai sản mấy tháng?",
+  "question_type": "out_of_scope",
+  "expected_status": "refuse",
+  "relevant_unit_ids": [],
+  "rationale": "Điều 139 Bộ luật Lao động và Luật Bảo hiểm xã hội không thuộc phạm vi thực nghiệm.",
+  "paraphrase_of": null
+ },
+ {
+  "text": "Hồ sơ xin giấy phép lao động cho người nước ngoài gồm những giấy tờ gì?",
+  "question_type": "out_of_scope",
+  "expected_status": "refuse",
+  "relevant_unit_ids": [],
+  "rationale": "Các Điều về lao động nước ngoài (151-157) không thuộc phạm vi thực nghiệm.",
+  "paraphrase_of": null
+ },
+ {
+  "text": "Năm 2026 lao động nam nghỉ hưu ở tuổi bao nhiêu?",
+  "question_type": "out_of_scope",
+  "expected_status": "refuse",
+  "relevant_unit_ids": [],
+  "rationale": "Tuổi nghỉ hưu ở Điều 169 không thuộc phạm vi thực nghiệm.",
+  "paraphrase_of": null
+ },
+ {
+  "text": "Tiền làm thêm giờ có phải chịu thuế thu nhập cá nhân không?",
+  "question_type": "out_of_scope",
+  "expected_status": "refuse",
+  "relevant_unit_ids": [],
+  "rationale": "Thuế thu nhập cá nhân thuộc pháp luật thuế, không có trong corpus.",
+  "paraphrase_of": null
+ },
+ {
+  "text": "Muốn thành lập công đoàn cơ sở tại doanh nghiệp thì cần điều kiện gì?",
+  "question_type": "out_of_scope",
+  "expected_status": "refuse",
+  "relevant_unit_ids": [],
+  "rationale": "Quy định về tổ chức đại diện người lao động không thuộc phạm vi thực nghiệm.",
+  "paraphrase_of": null
+ },
+ {
+  "text": "Nghỉ việc rồi thì cần điều kiện gì để được nhận trợ cấp thất nghiệp?",
+  "question_type": "out_of_scope",
+  "expected_status": "refuse",
+  "relevant_unit_ids": [],
+  "rationale": "Trợ cấp thất nghiệp thuộc Luật Việc làm, khác với trợ cấp thôi việc và mất việc làm trong Bộ luật Lao động.",
+  "paraphrase_of": null
+ },
+ {
+  "text": "Luật lao động Nhật Bản cho phép làm tối đa bao nhiêu giờ một tuần?",
+  "question_type": "out_of_scope",
+  "expected_status": "refuse",
+  "relevant_unit_ids": [],
+  "rationale": "Pháp luật nước ngoài nằm ngoài phạm vi đề tài.",
+  "paraphrase_of": null
+ },
+ {
+  "text": "Một cuộc đình công được coi là hợp pháp khi đáp ứng những điều kiện nào?",
+  "question_type": "out_of_scope",
+  "expected_status": "refuse",
+  "relevant_unit_ids": [],
+  "rationale": "Các Điều về đình công không thuộc phạm vi thực nghiệm.",
+  "paraphrase_of": null
+ },
+ {
+  "text": "Người lao động khuyết tật được làm việc tối đa bao nhiêu giờ một ngày?",
+  "question_type": "out_of_scope",
+  "expected_status": "refuse",
+  "relevant_unit_ids": [],
+  "rationale": "Quy định riêng cho lao động là người khuyết tật không thuộc phạm vi thực nghiệm.",
+  "paraphrase_of": null
+ },
+ {
+  "text": "Công ty bắt buộc phải trả tiền ăn trưa cho nhân viên mỗi ngày bao nhiêu?",
+  "question_type": "out_of_scope",
+  "expected_status": "refuse",
+  "relevant_unit_ids": [],
+  "rationale": "Corpus không có quy định bắt buộc về mức tiền ăn ca.",
+  "paraphrase_of": null
+ },
+ {
+  "text": "Tôi nên ký hợp đồng có thời hạn hay không thời hạn thì có lợi cho tôi hơn?",
+  "question_type": "out_of_scope",
+  "expected_status": "refuse",
+  "relevant_unit_ids": [],
+  "rationale": "Câu hỏi xin tư vấn lựa chọn cá nhân, hệ thống không tư vấn pháp lý.",
+  "paraphrase_of": null
+ },
+ {
+  "text": "Mức lương tối thiểu vùng I năm 2018 là bao nhiêu?",
+  "question_type": "temporal",
+  "expected_status": "refuse",
+  "relevant_unit_ids": [],
+  "rationale": "Corpus chỉ có Nghị định 293/2025; mức lương tối thiểu các năm trước không có.",
+  "paraphrase_of": null
+ },
+ {
+  "text": "Thời gian thử việc theo Bộ luật Lao động 2012 khác gì so với hiện nay?",
+  "question_type": "temporal",
+  "expected_status": "refuse",
+  "relevant_unit_ids": [],
+  "rationale": "Bộ luật Lao động 2012 đã hết hiệu lực và không có trong corpus nên không so sánh được.",
+  "paraphrase_of": null
+ },
+ {
+  "text": "Đóng bảo hiểm xã hội bắt buộc thì người lao động bị trừ bao nhiêu phần trăm lương?",
+  "question_type": "out_of_scope",
+  "expected_status": "refuse",
+  "relevant_unit_ids": [],
+  "rationale": "Tỉ lệ đóng bảo hiểm xã hội nằm ở Luật Bảo hiểm xã hội, không có trong corpus.",
+  "paraphrase_of": 0
+ }
+]
