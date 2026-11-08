@@ -3,7 +3,7 @@
 	import { goto } from '$app/navigation';
 	import Icon from './Icon.svelte';
 	import { t, i18n } from '#lib/i18n/index.svelte.js';
-	import { session, canReview } from '#lib/session.svelte.js';
+	import { session, canReview, canMonitor } from '#lib/session.svelte.js';
 	import { api } from '#lib/api.js';
 	import type { MessageKey } from '#lib/i18n/vi.js';
 
@@ -20,12 +20,16 @@
 		{ href: '/research/gold', key: 'nav.gold', match: (p) => p.startsWith('/research/gold') },
 		{ href: '/research/results', key: 'nav.results', match: (p) => p.startsWith('/research/results') }
 	];
-	const admin: Item[] = [{ href: '/admin/users', key: 'nav.users', match: (p) => p.startsWith('/admin') }];
+	const monitor: Item = { href: '/dev', key: 'nav.monitor', match: (p) => p.startsWith('/dev') };
+	const admin: Item[] = [{ href: '/admin/users', key: 'nav.users', match: (p) => p.startsWith('/admin') }, monitor];
+	// A dev account monitors: the dashboard and the research results, nothing to import or review.
+	const dev: Item[] = [monitor, research[research.length - 1]];
 	const groups = $derived([
 		{ key: 'nav.zone.lookup' as MessageKey, items: lookup },
 		...(canReview(account) ? [{ key: 'nav.zone.author' as MessageKey, items: author }] : []),
 		...(canReview(account) ? [{ key: 'nav.zone.research' as MessageKey, items: research }] : []),
-		...(account?.role === 'admin' ? [{ key: 'nav.zone.admin' as MessageKey, items: admin }] : [])
+		...(account?.role === 'admin' ? [{ key: 'nav.zone.admin' as MessageKey, items: admin }] : []),
+		...(account?.role === 'dev' && canMonitor(account) ? [{ key: 'nav.zone.monitor' as MessageKey, items: dev }] : [])
 	]);
 
 	let menuOpen = $state(false);
@@ -122,6 +126,10 @@
 		display: flex;
 		gap: 20px;
 		height: 100%;
+		/* With many zones (admin) the links scroll sideways; the language button and user menu never leave the bar. */
+		min-width: 0;
+		overflow-x: auto;
+		scrollbar-width: none;
 	}
 	.group {
 		display: flex;
@@ -284,6 +292,31 @@
 	@media (max-width: 1140px) {
 		.about {
 			display: none;
+		}
+	}
+	@media (max-width: 1040px) {
+		nav,
+		.group + .group {
+			gap: 8px;
+		}
+		.group + .group {
+			padding-left: 8px;
+		}
+		nav a {
+			padding: 0 7px;
+		}
+	}
+	@media (max-width: 1000px) {
+		nav,
+		.group + .group {
+			gap: 4px;
+		}
+		.group + .group {
+			padding-left: 6px;
+		}
+		nav a {
+			padding: 0 6px;
+			font-size: 14px;
 		}
 	}
 	@media (max-width: 900px) {
