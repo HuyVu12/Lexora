@@ -130,6 +130,12 @@ def main():
     command.add_argument("--rejected", type=int, default=30, help="rejected claims per run")
     command.add_argument("--accepted", type=int, default=10, help="accepted claims per run")
     command.add_argument("--seed", default="lexora-rejection-audit-v1")
+    command = commands.add_parser("kb-audit-import", help="put an audit sheet and its key into a workspace store so annotators label it in the app; offline")
+    command.add_argument("sheet")
+    command.add_argument("--key", required=True)
+    command.add_argument("--store", required=True)
+    command.add_argument("--name", required=True)
+    command.add_argument("--actor", required=True)
     command = commands.add_parser("kb-audit-score", help="share of wrong claims among rejected and accepted ones in a labelled audit sheet; offline")
     command.add_argument("sheet")
     command.add_argument("--key", required=True)
@@ -284,6 +290,9 @@ def main():
         elif args.command == "kb-audit-sheet":
             from legal_ai.evaluation.rejection_audit import make_sheet as audit_sheet
             print(json.dumps(audit_sheet(args.runs, args.sheet, args.key, args.rejected, args.accepted, args.seed), indent=2))
+        elif args.command == "kb-audit-import":
+            from legal_ai.research.audit import AuditStore
+            print(json.dumps(AuditStore(args.store).import_files(args.name, args.sheet, args.key, args.actor), ensure_ascii=False, indent=2))
         elif args.command == "kb-audit-score":
             from legal_ai.evaluation.rejection_audit import agreement as audit_agreement, score_sheet as audit_score
             report = audit_score(args.sheet, args.key)

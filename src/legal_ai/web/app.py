@@ -45,6 +45,7 @@ from legal_ai.ops.monitor import FEATURES, MeteredProvider, OpsStore, actor as c
 from legal_ai.rag.review_chat import ChatService
 from legal_ai.research.corpus import CorpusStore
 from legal_ai.research import proposals as question_proposals
+from legal_ai.research.audit import AuditStore
 from legal_ai.research.gold import GoldStore
 from legal_ai.research.questions import QuestionStore
 from legal_ai.providers.claude_code import ProviderError
@@ -276,6 +277,18 @@ class NotesBody(Body):
     notes: dict
 
 
+class AuditLabelBody(Body):
+    set_id: str
+    item_id: str
+    label: str
+    note: str = ""
+
+
+class AuditAcceptBody(Body):
+    set_id: str
+    other: str
+
+
 class FreezeQuestionsBody(Body):
     set_id: str
     other: str
@@ -314,6 +327,7 @@ def create_app(store, port, *, provider=None, source_catalog=None, extractor=Non
     questions = QuestionStore(store.path, corpora)
     golds = GoldStore(store.path, corpora)
     guides = Guides(guides_dir)
+    audits = AuditStore(store.path)
     store.interrupt_extractions()
     frontend = Path(frontend_dir).resolve() if frontend_dir else None
     app = FastAPI(title="Lexora", docs_url=None, redoc_url=None, openapi_url="/api/openapi.json")
@@ -812,6 +826,44 @@ def create_app(store, port, *, provider=None, source_catalog=None, extractor=Non
         folder = Path(experiments_dir)
         runs = [summarize(path) for path in kb_runs(folder)] if folder.exists() else []
         return {"runs": runs, "validator_version": VALIDATOR_VERSION, "folder": folder.as_posix()}
+
+    # Rejection audit (reviewers label; the key and the score only for admin and dev) -------------
+    @app.get("/api/audit")
+    def audit_sets(account=Depends(reviewer)):
+        return {"sets": audits.sets(), "can_score": account["role"] in MONITOR_ROLES}
+
+    @app.get("/api/audit/set")
+    def audit_set(id: str = Query(), account=Depends(reviewer)):
+        return audits.workspace(id, account["username"]) | {"can_score": account["role"] in MONITOR_ROLES}
+
+    @app.post("/api/audit/label")
+    def audit_label(body: AuditLabelBody, account=Depends(reviewer)):
+        return audits.save_label(body.set_id, body.item_id, account["username"], account["display_name"], body.label, body.note)
+
+    @app.get("/api/audit/compare")
+    def audit_compare(id: str = Query(), other: str = Query(), account=Depends(reviewer)):
+        if other == account["username"]:
+            raise ValueError("Chọn người gán nhãn còn lại để đối soát")
+        return audits.comparison(id, account["username"], other)
+
+    @app.post("/api/audit/adjudicate")
+    def audit_adjudicate(body: AuditLabelBody, account=Depends(reviewer)):
+        return audits.adjudicate(body.set_id, body.item_id, body.label, body.note, account["username"])
+
+    @app.post("/api/audit/accept-agreed")
+    def audit_accept(body: AuditAcceptBody, account=Depends(reviewer)):
+        return audits.accept_agreed(body.set_id, account["username"], body.other, account["username"])
+
+    @app.get("/api/audit/score")
+    def audit_score(id: str = Query(), source: str = Query("final"), _=Depends(monitor)):
+        return audits.score(id, source)
+
+    @app.get("/api/audit/sheet.csv")
+    def audit_sheet(id: str = Query(), source: str = Query(), account=Depends(reviewer)):
+        if source != account["username"] and account["role"] not in MONITOR_ROLES and source != "final":
+            raise Denied(403, "Chỉ tải được nhãn của chính bạn hoặc nhãn cuối")
+        return Response(audits.sheet_csv(id, source), media_type="text/csv; charset=utf-8",
+                        headers={"Content-Disposition": f'attachment; filename="audit-{id}-{source}.csv"'})
 
     # Monitoring (admin and dev; changes by dev only) -------------------------------------------
     def kb_summaries():

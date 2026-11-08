@@ -155,10 +155,10 @@ def read_labels(sheet_path):
     return labels
 
 
-def score_sheet(sheet_path, key_path):
-    """Per model and validator decision: label counts and the share of labelled claims that are wrong (`sai`)."""
-    key = json.loads(Path(key_path).read_text(encoding="utf-8"))["items"]
-    labels = read_labels(sheet_path)
+def score_labels(labels, key):
+    """Per model and validator decision: label counts and the share of decided claims that are wrong (`sai`).
+
+    `labels` maps item IDs to a label or None; `key` maps item IDs to their model, decision and automatic category."""
     unknown = sorted(set(labels) - set(key))
     if unknown:
         raise ValueError(f"items not in the key: {unknown[:3]}")
@@ -181,9 +181,17 @@ def score_sheet(sheet_path, key_path):
     return {"audit_version": AUDIT_VERSION, "by_model": report}
 
 
-def agreement(first_sheet, second_sheet):
-    a, b = read_labels(first_sheet), read_labels(second_sheet)
+def score_sheet(sheet_path, key_path):
+    return score_labels(read_labels(sheet_path), json.loads(Path(key_path).read_text(encoding="utf-8"))["items"])
+
+
+def agreement_labels(a, b):
+    """Cohen's kappa on the five labels and on wrong / not wrong, over items both annotators labelled."""
     pairs = [(a[i], b[i]) for i in sorted(set(a) & set(b)) if a[i] and b[i]]
     wrong = [(x == "sai", y == "sai") for x, y in pairs]
     return {"labels": {"kappa": kappa([p[0] for p in pairs], [p[1] for p in pairs]) if pairs else None, "n": len(pairs)},
             "wrong_or_not": {"kappa": kappa([p[0] for p in wrong], [p[1] for p in wrong]) if wrong else None, "n": len(wrong)}}
+
+
+def agreement(first_sheet, second_sheet):
+    return agreement_labels(read_labels(first_sheet), read_labels(second_sheet))
