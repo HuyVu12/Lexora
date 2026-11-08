@@ -15,6 +15,8 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     add_arguments(parser, 8765)
     parser.add_argument("--frontend", default="frontend/build", help="SvelteKit static build to serve (default: frontend/build)")
+    parser.add_argument("--bind", default="127.0.0.1", help="address to listen on; keep loopback unless a reverse proxy on a private network forwards to it")
+    parser.add_argument("--public-host", action="append", default=[], help="DNS name served over HTTPS by a reverse proxy, e.g. vlexora.duckdns.org (repeatable)")
     args = parser.parse_args()
     provider, extractor, embedder = providers(args, parser)
     import uvicorn
@@ -27,16 +29,18 @@ def main():
     question_model = proposer(args, parser)
     app = create_app(store, args.port, provider=provider, source_catalog=args.source_catalog, extractor=extractor,
                      embedder=embedder, frontend_dir=args.frontend, catalog_path=catalog_path, vbpl_dir=vbpl_dir,
-                     proposer=question_model)
+                     proposer=question_model, public_hosts=args.public_host)
     if extractor is not None and hasattr(extractor, "structured"):
         print(f"Claude Code: up to {extractor.max_calls} extraction calls with {extractor.model} ({extractor.effort})", flush=True)
     if question_model:
         print(f"Claude Code: up to {question_model.max_calls} proposal calls with {question_model.model} ({question_model.effort})", flush=True)
     if vbpl_dir:
         print("vbpl.vn: reviewers may fetch one document per confirmed request", flush=True)
-    print(f"Lexora: http://127.0.0.1:{args.port} (Ctrl+C to stop)", flush=True)
-    # Loopback only, no access log: request URLs and uploads are never logged.
-    uvicorn.run(app, host="127.0.0.1", port=args.port, access_log=False, log_level="warning", server_header=False)
+    for name in args.public_host:
+        print(f"Lexora: https://{name} (behind the reverse proxy)", flush=True)
+    print(f"Lexora: listening on http://{args.bind}:{args.port} (Ctrl+C to stop)", flush=True)
+    # No access log: request URLs and uploads are never logged.
+    uvicorn.run(app, host=args.bind, port=args.port, access_log=False, log_level="warning", server_header=False)
 
 
 if __name__ == "__main__":

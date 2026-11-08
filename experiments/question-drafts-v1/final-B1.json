@@ -1,0 +1,198 @@
+[
+ {
+  "text": "Nhân viên đi làm thêm vào chủ nhật là ngày nghỉ hằng tuần thì công ty phải trả ít nhất bao nhiêu phần trăm lương?",
+  "question_type": "lookup",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-vi/article-98/clause-1/point-b"
+  ],
+  "rationale": "Điểm b khoản 1 Điều 98 quy định làm thêm giờ vào ngày nghỉ hằng tuần được trả ít nhất bằng 200%.",
+  "paraphrase_of": null
+ },
+ {
+  "text": "Làm ca đêm thì người lao động được cộng thêm bao nhiêu so với lương ban ngày?",
+  "question_type": "lookup",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-vi/article-98/clause-2"
+  ],
+  "rationale": "Khoản 2 Điều 98 quy định làm việc vào ban đêm được trả thêm ít nhất 30% tiền lương của ngày làm việc bình thường.",
+  "paraphrase_of": null
+ },
+ {
+  "text": "Mỗi tháng công ty được trừ vào lương của tôi tối đa bao nhiêu?",
+  "question_type": "lookup",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-vi/article-102/clause-3"
+  ],
+  "rationale": "Khoản 3 Điều 102 giới hạn mức khấu trừ hằng tháng không quá 30% tiền lương thực trả sau khi trích nộp bảo hiểm và thuế thu nhập cá nhân.",
+  "paraphrase_of": null
+ },
+ {
+  "text": "Công ty trả lương qua thẻ ngân hàng thì phí mở tài khoản và phí chuyển khoản do ai chịu?",
+  "question_type": "lookup",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-vi/article-96/clause-2"
+  ],
+  "rationale": "Khoản 2 Điều 96 quy định khi trả lương qua tài khoản ngân hàng thì người sử dụng lao động phải trả các loại phí mở tài khoản và chuyển tiền lương.",
+  "paraphrase_of": null
+ },
+ {
+  "text": "Người hưởng lương tháng thì doanh nghiệp được trả lương mấy lần một tháng?",
+  "question_type": "lookup",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-vi/article-97/clause-2"
+  ],
+  "rationale": "Khoản 2 Điều 97 quy định lương tháng được trả một tháng một lần hoặc nửa tháng một lần vào thời điểm có tính chu kỳ.",
+  "paraphrase_of": null
+ },
+ {
+  "text": "Vì lý do bất khả kháng mà công ty chưa trả lương đúng hạn được thì được chậm tối đa bao lâu, và chậm bao nhiêu ngày thì phải đền bù tiền lãi cho người lao động?",
+  "question_type": "lookup",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-vi/article-97/clause-4"
+  ],
+  "rationale": "Khoản 4 Điều 97 quy định không được chậm quá 30 ngày và chậm từ 15 ngày trở lên phải đền bù ít nhất bằng tiền lãi theo lãi suất tiền gửi kỳ hạn 01 tháng.",
+  "paraphrase_of": null
+ },
+ {
+  "text": "Chúng tôi có chuyên gia nước ngoài làm việc tại Việt Nam, có được trả lương cho họ bằng đô la Mỹ không?",
+  "question_type": "lookup",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-vi/article-95/clause-2"
+  ],
+  "rationale": "Khoản 2 Điều 95 quy định lương trả bằng Đồng Việt Nam, riêng người lao động nước ngoài tại Việt Nam thì có thể trả bằng ngoại tệ.",
+  "paraphrase_of": null
+ },
+ {
+  "text": "Phiếu lương gửi cho nhân viên mỗi kỳ bắt buộc phải có những thông tin gì?",
+  "question_type": "lookup",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-vi/article-95/clause-3"
+  ],
+  "rationale": "Khoản 3 Điều 95 yêu cầu bảng kê trả lương ghi rõ tiền lương, lương làm thêm giờ, lương làm đêm, nội dung và số tiền bị khấu trừ.",
+  "paraphrase_of": null
+ },
+ {
+  "text": "Ứng trước lương thì công ty có được tính lãi trên khoản ứng đó không?",
+  "question_type": "lookup",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-vi/article-101/clause-1"
+  ],
+  "rationale": "Khoản 1 Điều 101 quy định người lao động được tạm ứng tiền lương theo thỏa thuận và không bị tính lãi.",
+  "paraphrase_of": null
+ },
+ {
+  "text": "Nhân viên tăng ca vào ban đêm đúng ngày Tết thì cách tính lương gồm những khoản nào?",
+  "question_type": "synthesis",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-vi/article-98/clause-1/point-c",
+   "45-2019-qh14/chapter-vi/article-98/clause-2",
+   "45-2019-qh14/chapter-vi/article-98/clause-3"
+  ],
+  "rationale": "Kết hợp điểm c khoản 1 (ít nhất 300%), khoản 2 (thêm ít nhất 30% làm đêm) và khoản 3 Điều 98 (thêm 20% tiền lương làm ban ngày của ngày lễ, tết).",
+  "paraphrase_of": null
+ },
+ {
+  "text": "Quy chế thưởng trong công ty do ai quyết định và có cần hỏi ý kiến công đoàn không?",
+  "question_type": "lookup",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-vi/article-104/clause-2"
+  ],
+  "rationale": "Khoản 2 Điều 104 quy định quy chế thưởng do người sử dụng lao động quyết định, công bố công khai sau khi tham khảo ý kiến tổ chức đại diện người lao động tại cơ sở (nếu có).",
+  "paraphrase_of": null
+ },
+ {
+  "text": "Xưởng phải tạm nghỉ vì lỗi của chính công ty thì công nhân có được nhận đủ lương không?",
+  "question_type": "lookup",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-vi/article-99/clause-1"
+  ],
+  "rationale": "Khoản 1 Điều 99 quy định ngừng việc do lỗi của người sử dụng lao động thì người lao động được trả đủ tiền lương theo hợp đồng.",
+  "paraphrase_of": null
+ },
+ {
+  "text": "Nhân viên làm hỏng máy của công ty, công ty có được trừ lương để bù thiệt hại không, trừ tối đa bao nhiêu và có phải cho nhân viên biết lý do không?",
+  "question_type": "synthesis",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-vi/article-102/clause-1",
+   "45-2019-qh14/chapter-vi/article-102/clause-2",
+   "45-2019-qh14/chapter-vi/article-102/clause-3"
+  ],
+  "rationale": "Khoản 1 Điều 102 cho phép khấu trừ để bồi thường hư hỏng tài sản, khoản 2 cho người lao động quyền biết lý do, khoản 3 giới hạn không quá 30% lương thực trả hằng tháng.",
+  "paraphrase_of": null
+ },
+ {
+  "text": "Nếu tôi tăng ca vào ngày nghỉ cuối tuần theo lịch của công ty thì mức lương tối thiểu được hưởng là bao nhiêu phần trăm?",
+  "question_type": "lookup",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-vi/article-98/clause-1/point-b"
+  ],
+  "rationale": "Điểm b khoản 1 Điều 98 quy định làm thêm giờ vào ngày nghỉ hằng tuần được trả ít nhất bằng 200%.",
+  "paraphrase_of": 0
+ },
+ {
+  "text": "Luật có giới hạn phần trăm tiền lương mà doanh nghiệp được khấu trừ của người lao động trong một tháng không?",
+  "question_type": "lookup",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-vi/article-102/clause-3"
+  ],
+  "rationale": "Khoản 3 Điều 102 giới hạn mức khấu trừ hằng tháng không quá 30% tiền lương thực trả sau khi trích nộp bảo hiểm và thuế thu nhập cá nhân.",
+  "paraphrase_of": 2
+ },
+ {
+  "text": "Nhà máy mất điện kéo dài, không phải lỗi của công ty, phải cho công nhân nghỉ khoảng 20 ngày làm việc. Lương những ngày nghỉ đó được tính thế nào?",
+  "question_type": "synthesis",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-vi/article-99/clause-3",
+   "45-2019-qh14/chapter-vi/article-99/clause-3/point-b"
+  ],
+  "rationale": "Khoản 3 Điều 99 áp dụng cho sự cố điện không do lỗi người sử dụng lao động, điểm b quy định ngừng việc trên 14 ngày thì hai bên thỏa thuận nhưng 14 ngày đầu không thấp hơn mức lương tối thiểu.",
+  "paraphrase_of": null
+ },
+ {
+  "text": "Nếu lương được chuyển vào tài khoản ngân hàng của người lao động thì các khoản phí ngân hàng phát sinh bên nào phải trả?",
+  "question_type": "lookup",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-vi/article-96/clause-2"
+  ],
+  "rationale": "Khoản 2 Điều 96 quy định khi trả lương qua tài khoản ngân hàng thì người sử dụng lao động phải trả các loại phí mở tài khoản và chuyển tiền lương.",
+  "paraphrase_of": 3
+ },
+ {
+  "text": "Mức lương theo chức danh ghi trong hợp đồng có được thấp hơn lương tối thiểu không, và lương tối thiểu được xác định theo vùng hay theo ngành, tính theo đơn vị thời gian nào?",
+  "question_type": "synthesis",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-vi/article-90/clause-2",
+   "45-2019-qh14/chapter-vi/article-91/clause-2"
+  ],
+  "rationale": "Khoản 2 Điều 90 cấm mức lương theo công việc thấp hơn mức lương tối thiểu, khoản 2 Điều 91 quy định mức lương tối thiểu xác lập theo vùng, ấn định theo tháng, giờ.",
+  "paraphrase_of": null
+ },
+ {
+  "text": "Một tháng người lao động được làm thêm giờ tối đa bao nhiêu tiếng?",
+  "question_type": "lookup",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-vii/section-1/article-107/clause-2/point-b"
+  ],
+  "rationale": "Điều 98 chỉ quy định tiền lương làm thêm giờ, giới hạn số giờ làm thêm không có trong đoạn trích. (Rà lại: corpus có căn cứ ở chapter-vii/section-1/article-107/clause-2/point-b.)",
+  "paraphrase_of": null
+ }
+]

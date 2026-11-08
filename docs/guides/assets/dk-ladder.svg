@@ -1,0 +1,61 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 780 440" width="780" height="440" role="img" aria-labelledby="t d">
+  <title id="t">Bốn điều kiện ĐK1-ĐK4, mỗi bậc thêm một thay đổi</title>
+  <desc id="d">ĐK1 cắt đoạn đều nhau; thêm cấu trúc Điều Khoản Điểm thành ĐK2; thêm quy phạm do AI trích xuất thành ĐK3; thêm bộ kiểm chứng thành ĐK4. Mỗi bậc đo tác dụng của đúng một thay đổi.</desc>
+  <defs>
+    <marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0 0 L10 5 L0 10 z" fill="#595e63"/>
+    </marker>
+    <style>
+      text { font-family: "Be Vietnam Pro", "Segoe UI", Roboto, Helvetica, Arial, sans-serif; fill: #222426; }
+      .b { font-size: 17px; font-weight: 700; }
+      .t { font-size: 15px; font-weight: 600; }
+      .s { font-size: 12.5px; fill: #3f4347; }
+      .m { font-size: 12.5px; fill: #595e63; }
+      .p { font-size: 13px; fill: #2f5fc4; font-weight: 600; }
+      .row { fill: #ffffff; stroke: #b6babb; stroke-width: 1.2; }
+      .line { stroke: #595e63; stroke-width: 1.6; fill: none; }
+    </style>
+  </defs>
+  <rect width="780" height="440" fill="#f4f5f4" rx="12"/>
+
+  <rect class="row" x="20" y="20" width="740" height="76" rx="10"/>
+  <rect x="34" y="36" width="76" height="44" rx="8" fill="#e4e6e6"/>
+  <text class="b" x="72" y="64" text-anchor="middle">ĐK1</text>
+  <text class="t" x="128" y="52">Cắt đoạn đều nhau</text>
+  <text class="s" x="128" y="74">384 token, gối nhau 64 token; cách RAG thông thường</text>
+  <text class="m" x="745" y="52" text-anchor="end">Mốc so sánh</text>
+  <text class="m" x="745" y="74" text-anchor="end">83 bản ghi</text>
+
+  <path class="line" d="M72 96 V130" marker-end="url(#a)"/>
+  <text class="p" x="92" y="118">+ tôn trọng cấu trúc Điều / Khoản / Điểm</text>
+
+  <rect class="row" x="20" y="134" width="740" height="76" rx="10"/>
+  <rect x="34" y="150" width="76" height="44" rx="8" fill="#cfe0ff"/>
+  <text class="b" x="72" y="178" text-anchor="middle">ĐK2</text>
+  <text class="t" x="128" y="166">Đơn vị theo cấu trúc luật</text>
+  <text class="s" x="128" y="188">Mỗi Điểm, Khoản kèm tên Điều, câu dẫn, đường dẫn cấu trúc</text>
+  <text class="m" x="745" y="166" text-anchor="end">Đo tác dụng của cấu trúc</text>
+  <text class="m" x="745" y="188" text-anchor="end">460 bản ghi</text>
+
+  <path class="line" d="M72 210 V244" marker-end="url(#a)"/>
+  <text class="p" x="92" y="232">+ biến thành quy phạm có các ô (AI trích xuất)</text>
+
+  <rect class="row" x="20" y="248" width="740" height="76" rx="10"/>
+  <rect x="34" y="264" width="76" height="44" rx="8" fill="#ffd8a3"/>
+  <text class="b" x="72" y="292" text-anchor="middle">ĐK3</text>
+  <text class="t" x="128" y="280">Quy phạm chưa kiểm chứng</text>
+  <text class="s" x="128" y="302">Chủ thể, hành vi, điều kiện, thời hạn... chép nguyên văn từ câu</text>
+  <text class="m" x="745" y="280" text-anchor="end">Đo tác dụng của biểu diễn</text>
+  <text class="m" x="745" y="302" text-anchor="end">416 bản ghi</text>
+
+  <path class="line" d="M72 324 V358" marker-end="url(#a)"/>
+  <text class="p" x="92" y="346">+ bộ kiểm chứng loại quy phạm vi phạm</text>
+
+  <rect class="row" x="20" y="362" width="740" height="62" rx="10"/>
+  <rect x="34" y="371" width="76" height="44" rx="8" fill="#b4ecbe"/>
+  <text class="b" x="72" y="399" text-anchor="middle">ĐK4</text>
+  <text class="t" x="128" y="388">Quy phạm đã kiểm chứng</text>
+  <text class="s" x="128" y="408">Tập con của ĐK3, cùng một lượt trích xuất</text>
+  <text class="m" x="745" y="388" text-anchor="end">Đo tác dụng của kiểm chứng</text>
+  <text class="m" x="745" y="408" text-anchor="end">385 bản ghi</text>
+</svg>

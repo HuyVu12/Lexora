@@ -50,6 +50,27 @@ class QuestionTests(unittest.TestCase):
         self.assertIsNone(kappa([], []))
         self.assertEqual((dice([], []), dice(["x"], ["x", "y"])), (1.0, 2 / 3))
 
+    def test_drafts_are_model_questions_with_proposals_checked_before_anything_is_written(self):
+        drafts = [{"text": "Bên B báo trước mấy ngày?", "question_type": "lookup", "expected_status": "answer", "relevant_unit_ids": [U2], "rationale": "Khoản 2"},
+                  {"text": "Thời hạn báo trước của bên B là bao lâu?", "question_type": "lookup", "expected_status": "answer", "relevant_unit_ids": [U2], "paraphrase_of": 0},
+                  {"text": "Mức đóng bảo hiểm xã hội là bao nhiêu?", "question_type": "out_of_scope", "expected_status": "refuse", "relevant_unit_ids": []}]
+        before = len(self.store.workspace(self.set["id"], "vu")["items"])
+        for bad, message in (([drafts[0] | {"relevant_unit_ids": ["luat/article-9"]}], "không có trong phiên bản"),
+                             ([drafts[2] | {"relevant_unit_ids": [U1]}], "từ chối"),
+                             ([drafts[1]], "paraphrase_of"),
+                             ([drafts[0], drafts[0]], "trùng")):
+            with self.assertRaisesRegex(ValueError, message):
+                self.store.import_drafts(self.set["id"], bad, "vu", "claude-opus-5-5")
+        self.assertEqual(len(self.store.workspace(self.set["id"], "vu")["items"]), before, "a rejected file writes nothing")
+
+        self.assertEqual(self.store.import_drafts(self.set["id"], drafts, "vu", "claude-opus-5-5"), {"added": 3, "families": 2})
+        self.store.set_mode(self.set["id"], "vu", True)
+        items = {i["text"]: i for i in self.store.workspace(self.set["id"], "vu")["items"]}
+        first, paraphrase = items[drafts[0]["text"]], items[drafts[1]["text"]]
+        self.assertEqual((first["origin"], first["origin_detail"]["author"], first["family_id"]), ("model", "claude-opus-5-5", paraphrase["family_id"]))
+        self.assertEqual(first["proposal"]["fields"]["relevant_unit_ids"], [U2])
+        self.assertIsNone(first.get("label"), "proposals are never labels")
+
     def test_labels_need_a_mode_valid_units_and_record_proposal_decisions(self):
         with self.assertRaisesRegex(ValueError, "hiện đề xuất"):
             self.label(self.store, "vu", self.q1, "lookup", "answer", [U1])

@@ -79,6 +79,37 @@ class WebApiTests(unittest.TestCase):
         self.approve_all(client, draft)
         return self.post(client, "/api/publish", {"draft_id": draft["id"], "reason": "Đối chiếu nguyên văn"}).json()
 
+    def test_public_host_behind_https_proxy_needs_https_origin_and_secure_cookie(self):
+        app = create_app(self.store, PORT, token="t0ken", frontend_dir=self.build, public_hosts=["vlexora.duckdns.org"])
+        client = TestClient(app, base_url="https://vlexora.duckdns.org")
+        self.clients.append(client)
+        login = {"username": "phapche", "password": "review password 1"}
+        refused = client.post("/api/auth/login", json=login, headers={"X-Lexora-Token": "t0ken", "Origin": "http://vlexora.duckdns.org"})
+        self.assertEqual(refused.status_code, 403, "plain-http origin is refused")
+        ok = client.post("/api/auth/login", json=login, headers={"X-Lexora-Token": "t0ken", "Origin": "https://vlexora.duckdns.org"})
+        self.assertEqual(ok.status_code, 200, ok.text)
+        self.assertIn("secure", ok.headers["set-cookie"].lower())
+        other = TestClient(app, base_url="https://evil.example")
+        self.clients.append(other)
+        self.assertEqual(other.get("/").status_code, 403, "unknown hosts are still refused")
+        with self.assertRaisesRegex(ValueError, "bare DNS"):
+            create_app(self.store, PORT, public_hosts=["https://x.duckdns.org"])
+
+    def test_audit_labels_by_reviewers_score_only_for_admin_and_dev(self):
+        from legal_ai.research.audit import AuditStore
+        rows = [{"item_id": "R1", "context": "Điều 1", "unit_text": "Câu.", "sentence": "Câu", "norm": "Chủ thể: A"}]
+        audit = AuditStore(self.store.path).create("Bảng web", rows, {"R1": {"model": "secret-model", "decision": "rejected", "automatic": "context"}}, "vu")
+        reader, vu, admin = self.client("nhansu", "reader password 1"), self.client("phapche", "review password 1"), self.client("admin", "admin password 1")
+        self.assertEqual(reader.get("/api/audit").status_code, 403)
+        workspace = vu.get("/api/audit/set", params={"id": audit["id"]})
+        self.assertNotIn("secret-model", workspace.text)
+        self.assertEqual(self.post(vu, "/api/audit/label", {"set_id": audit["id"], "item_id": "R1", "label": "sai"}).json()["label"], "sai")
+        self.assertEqual(vu.get("/api/audit/score", params={"id": audit["id"], "source": "phapche"}).status_code, 403, "annotators never see the key")
+        score = admin.get("/api/audit/score", params={"id": audit["id"], "source": "phapche"}).json()
+        self.assertEqual(score["by_model"]["secret-model"]["rejected"]["labels"], {"sai": 1})
+        self.assertEqual(vu.get("/api/audit/sheet.csv", params={"id": audit["id"], "source": "admin"}).status_code, 403)
+        self.assertIn("sai", vu.get("/api/audit/sheet.csv", params={"id": audit["id"], "source": "phapche"}).text)
+
     def test_static_build_token_headers_spa_fallback_and_no_escape(self):
         anonymous = self.client()
         page = anonymous.get("/")

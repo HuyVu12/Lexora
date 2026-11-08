@@ -1,0 +1,300 @@
+[
+ {
+  "text": "Theo luật thì một ngày làm việc bình thường được tối đa bao nhiêu tiếng, cả tuần thì bao nhiêu?",
+  "question_type": "lookup",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-vii/section-1/article-105/clause-1"
+  ],
+  "rationale": "Khoản 1 Điều 105 giới hạn thời giờ làm việc bình thường không quá 08 giờ/ngày và 48 giờ/tuần.",
+  "paraphrase_of": null
+ },
+ {
+  "text": "Làm ca đêm thì luật tính từ mấy giờ đến mấy giờ?",
+  "question_type": "lookup",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-vii/section-1/article-106"
+  ],
+  "rationale": "Điều 106 tính giờ làm việc ban đêm từ 22 giờ đến 06 giờ sáng hôm sau.",
+  "paraphrase_of": null
+ },
+ {
+  "text": "Công ty văn phòng bình thường thì một năm được cho nhân viên làm thêm tối đa bao nhiêu giờ?",
+  "question_type": "lookup",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-vii/section-1/article-107/clause-2/point-c"
+  ],
+  "rationale": "Điểm c khoản 2 Điều 107 giới hạn làm thêm không quá 200 giờ/năm, trừ trường hợp khoản 3.",
+  "paraphrase_of": null
+ },
+ {
+  "text": "Xưởng may gia công hàng xuất khẩu có được tăng ca vượt 200 giờ một năm không, trần là bao nhiêu?",
+  "question_type": "lookup",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-vii/section-1/article-107/clause-3",
+   "45-2019-qh14/chapter-vii/section-1/article-107/clause-3/point-a"
+  ],
+  "rationale": "Khoản 3 và điểm a khoản 3 Điều 107 cho phép làm thêm không quá 300 giờ/năm với sản xuất, gia công xuất khẩu hàng dệt, may.",
+  "paraphrase_of": null
+ },
+ {
+  "text": "Tết Nguyên đán người lao động được nghỉ hưởng lương mấy ngày?",
+  "question_type": "lookup",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-vii/section-2/article-112/clause-1/point-b"
+  ],
+  "rationale": "Điểm b khoản 1 Điều 112 quy định Tết Âm lịch được nghỉ 05 ngày.",
+  "paraphrase_of": null
+ },
+ {
+  "text": "Nhân viên người nước ngoài làm ở Việt Nam có được nghỉ thêm ngày lễ nào của nước họ không?",
+  "question_type": "lookup",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-vii/section-2/article-112/clause-2"
+  ],
+  "rationale": "Khoản 2 Điều 112 cho lao động nước ngoài nghỉ thêm 01 ngày Tết cổ truyền và 01 ngày Quốc khánh của nước họ.",
+  "paraphrase_of": null
+ },
+ {
+  "text": "Làm đủ một năm ở công ty, công việc bình thường thì được bao nhiêu ngày phép năm?",
+  "question_type": "lookup",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-vii/section-2/article-113/clause-1",
+   "45-2019-qh14/chapter-vii/section-2/article-113/clause-1/point-a"
+  ],
+  "rationale": "Khoản 1 và điểm a khoản 1 Điều 113 quy định 12 ngày làm việc nghỉ hằng năm cho người làm việc đủ 12 tháng trong điều kiện bình thường.",
+  "paraphrase_of": null
+ },
+ {
+  "text": "Thâm niên làm việc lâu năm có được cộng thêm ngày phép không, cộng thế nào?",
+  "question_type": "lookup",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-vii/section-2/article-114"
+  ],
+  "rationale": "Điều 114 tăng thêm 01 ngày nghỉ hằng năm cho mỗi đủ 05 năm làm việc cho một người sử dụng lao động.",
+  "paraphrase_of": null
+ },
+ {
+  "text": "Em sắp cưới, em được nghỉ mấy ngày mà vẫn có lương ạ?",
+  "question_type": "lookup",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-vii/section-2/article-115/clause-1/point-a"
+  ],
+  "rationale": "Điểm a khoản 1 Điều 115 cho nghỉ việc riêng hưởng nguyên lương 03 ngày khi kết hôn.",
+  "paraphrase_of": null
+ },
+ {
+  "text": "Ông nội của nhân viên mất thì nhân viên được nghỉ thế nào, có lương không?",
+  "question_type": "lookup",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-vii/section-2/article-115/clause-2"
+  ],
+  "rationale": "Khoản 2 Điều 115 cho nghỉ không hưởng lương 01 ngày khi ông nội, bà nội, ông ngoại, bà ngoại chết.",
+  "paraphrase_of": null
+ },
+ {
+  "text": "Có những hình thức kỷ luật lao động nào?",
+  "question_type": "lookup",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-viii/section-1/article-124/clause-1",
+   "45-2019-qh14/chapter-viii/section-1/article-124/clause-2",
+   "45-2019-qh14/chapter-viii/section-1/article-124/clause-3",
+   "45-2019-qh14/chapter-viii/section-1/article-124/clause-4"
+  ],
+  "rationale": "Các khoản 1-4 Điều 124 liệt kê khiển trách, kéo dài thời hạn nâng lương, cách chức và sa thải.",
+  "paraphrase_of": null
+ },
+ {
+  "text": "Nhân viên vi phạm từ lâu rồi thì công ty còn được kỷ luật trong bao lâu? Nếu liên quan tiền bạc thì sao?",
+  "question_type": "lookup",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-viii/section-1/article-123/clause-1"
+  ],
+  "rationale": "Khoản 1 Điều 123 quy định thời hiệu 06 tháng, hoặc 12 tháng với vi phạm liên quan trực tiếp đến tài chính, tài sản, bí mật.",
+  "paraphrase_of": null
+ },
+ {
+  "text": "Nghỉ không phép bao nhiêu ngày thì có thể bị sa thải?",
+  "question_type": "lookup",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-viii/section-1/article-125/clause-4"
+  ],
+  "rationale": "Khoản 4 Điều 125 cho sa thải khi tự ý bỏ việc 05 ngày cộng dồn trong 30 ngày hoặc 20 ngày cộng dồn trong 365 ngày không có lý do chính đáng.",
+  "paraphrase_of": null
+ },
+ {
+  "text": "Công ty tạm đình chỉ công việc để xác minh vi phạm thì được đình chỉ tối đa bao lâu, trong thời gian đó người lao động có lương không?",
+  "question_type": "lookup",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-viii/section-1/article-128/clause-2"
+  ],
+  "rationale": "Khoản 2 Điều 128 giới hạn 15 ngày, đặc biệt 90 ngày, và người lao động được tạm ứng 50% tiền lương.",
+  "paraphrase_of": null
+ },
+ {
+  "text": "Quản lý có được trừ lương nhân viên đi trễ thay cho việc kỷ luật không?",
+  "question_type": "lookup",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-viii/section-1/article-127/clause-2"
+  ],
+  "rationale": "Khoản 2 Điều 127 nghiêm cấm phạt tiền, cắt lương thay việc xử lý kỷ luật lao động.",
+  "paraphrase_of": null
+ },
+ {
+  "text": "Khi lập gia đình thì người lao động được nghỉ hưởng nguyên lương bao nhiêu ngày?",
+  "question_type": "lookup",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-vii/section-2/article-115/clause-1/point-a"
+  ],
+  "rationale": "Điểm a khoản 1 Điều 115 cho nghỉ 03 ngày hưởng nguyên lương khi kết hôn.",
+  "paraphrase_of": 8
+ },
+ {
+  "text": "Một người tự ý nghỉ làm không lý do chính đáng, cộng dồn đến mức nào thì doanh nghiệp được áp dụng hình thức sa thải?",
+  "question_type": "lookup",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-viii/section-1/article-125/clause-4"
+  ],
+  "rationale": "Khoản 4 Điều 125 quy định ngưỡng 05 ngày cộng dồn/30 ngày hoặc 20 ngày cộng dồn/365 ngày.",
+  "paraphrase_of": 12
+ },
+ {
+  "text": "Nhân viên nữ đang mang bầu vi phạm nội quy thì công ty có được xử lý kỷ luật ngay không?",
+  "question_type": "lookup",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-viii/section-1/article-122/clause-4/point-d"
+  ],
+  "rationale": "Điểm d khoản 4 Điều 122 không cho xử lý kỷ luật lao động nữ mang thai.",
+  "paraphrase_of": null
+ },
+ {
+  "text": "Nhân viên lỡ tay làm hỏng thiết bị, thiệt hại nhỏ do sơ suất thì phải đền tối đa bao nhiêu?",
+  "question_type": "lookup",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-viii/section-2/article-129/clause-1"
+  ],
+  "rationale": "Khoản 1 Điều 129 giới hạn bồi thường nhiều nhất 03 tháng tiền lương khi thiệt hại không nghiêm trọng do sơ suất, giá trị không quá 10 tháng lương tối thiểu vùng.",
+  "paraphrase_of": null
+ },
+ {
+  "text": "Trong thời gian bị tạm đình chỉ để điều tra, người lao động được nhận bao nhiêu phần trăm lương và tối đa bị đình chỉ mấy ngày?",
+  "question_type": "lookup",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-viii/section-1/article-128/clause-2"
+  ],
+  "rationale": "Khoản 2 Điều 128 quy định tạm ứng 50% tiền lương, thời hạn không quá 15 ngày, đặc biệt không quá 90 ngày.",
+  "paraphrase_of": 13
+ },
+ {
+  "text": "Năm nay ngày 30/4 rơi đúng vào Chủ nhật, là ngày nghỉ hằng tuần của công ty. Nhân viên có được nghỉ bù không?",
+  "question_type": "synthesis",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-vii/section-2/article-111/clause-3",
+   "45-2019-qh14/chapter-vii/section-2/article-112/clause-1/point-c"
+  ],
+  "rationale": "Điểm c khoản 1 Điều 112 xác định 30/4 là ngày lễ, khoản 3 Điều 111 cho nghỉ bù ngày nghỉ hằng tuần vào ngày làm việc kế tiếp.",
+  "paraphrase_of": null
+ },
+ {
+  "text": "Nhân viên mới làm được 7 tháng thì xin nghỉ việc, chưa dùng ngày phép nào. Công ty có phải trả tiền phép không và tính bao nhiêu ngày?",
+  "question_type": "synthesis",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-vii/section-2/article-113/clause-2",
+   "45-2019-qh14/chapter-vii/section-2/article-113/clause-3"
+  ],
+  "rationale": "Khoản 2 Điều 113 tính phép theo tỷ lệ số tháng làm việc, khoản 3 Điều 113 buộc thanh toán tiền lương cho ngày chưa nghỉ khi thôi việc.",
+  "paraphrase_of": null
+ },
+ {
+  "text": "Một nhân viên cùng lúc vừa đi trễ nhiều lần vừa làm lộ tài liệu nội bộ. Công ty có được vừa khiển trách vừa cách chức không?",
+  "question_type": "synthesis",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-viii/section-1/article-122/clause-2",
+   "45-2019-qh14/chapter-viii/section-1/article-122/clause-3"
+  ],
+  "rationale": "Khoản 2 Điều 122 cấm áp dụng nhiều hình thức cho một hành vi, khoản 3 chỉ áp dụng hình thức cao nhất ứng với hành vi nặng nhất khi có nhiều hành vi.",
+  "paraphrase_of": null
+ },
+ {
+  "text": "Người bị cách chức được một năm thì lại tái phạm đúng lỗi cũ. Đã được xóa kỷ luật chưa và có thể bị sa thải không?",
+  "question_type": "synthesis",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-viii/section-1/article-125/clause-3",
+   "45-2019-qh14/chapter-viii/section-1/article-126/clause-1"
+  ],
+  "rationale": "Khoản 1 Điều 126 chỉ xóa kỷ luật cách chức sau 03 năm, khoản 3 Điều 125 cho sa thải khi tái phạm trong thời gian chưa xóa kỷ luật.",
+  "paraphrase_of": null
+ },
+ {
+  "text": "Nếu người lao động nghỉ việc khi mới làm chưa tròn năm và còn phép chưa nghỉ, số ngày phép được tính ra sao và có được quy ra tiền không?",
+  "question_type": "synthesis",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-vii/section-2/article-113/clause-2",
+   "45-2019-qh14/chapter-vii/section-2/article-113/clause-3"
+  ],
+  "rationale": "Khoản 2 Điều 113 tính phép theo tỷ lệ tháng làm việc, khoản 3 Điều 113 quy định thanh toán tiền lương cho ngày chưa nghỉ.",
+  "paraphrase_of": 21
+ },
+ {
+  "text": "Bộ luật Lao động 2019 bắt đầu có hiệu lực từ ngày nào?",
+  "question_type": "temporal",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-xvii/article-220/clause-1"
+  ],
+  "rationale": "Khoản 1 Điều 220 quy định Bộ luật có hiệu lực từ ngày 01/01/2021.",
+  "paraphrase_of": null
+ },
+ {
+  "text": "Từ khi Bộ luật Lao động 45/2019 có hiệu lực thì bộ luật lao động cũ nào hết hiệu lực?",
+  "question_type": "temporal",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-xvii/article-220/clause-1"
+  ],
+  "rationale": "Khoản 1 Điều 220 quy định Bộ luật Lao động số 10/2012/QH13 hết hiệu lực kể từ ngày Bộ luật này có hiệu lực.",
+  "paraphrase_of": null
+ },
+ {
+  "text": "Đi làm vào ngày lễ Quốc khánh thì tiền lương làm thêm giờ được tính ít nhất bằng bao nhiêu phần trăm?",
+  "question_type": "lookup",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-vi/article-98/clause-1/point-c"
+  ],
+  "rationale": "Trích đoạn chỉ có ngày nghỉ lễ và giới hạn làm thêm, không có quy định về mức tiền lương làm thêm giờ. (Rà lại: corpus có căn cứ ở chapter-vi/article-98/clause-1/point-c.)",
+  "paraphrase_of": null
+ },
+ {
+  "text": "Hồ sơ đăng ký nội quy lao động nộp lên cơ quan nhà nước gồm những giấy tờ gì?",
+  "question_type": "out_of_scope",
+  "expected_status": "refuse",
+  "relevant_unit_ids": [],
+  "rationale": "Điều 121 chỉ dẫn chiếu đến Điều 119 về đăng ký nội quy, trích đoạn không chứa thành phần hồ sơ.",
+  "paraphrase_of": null
+ }
+]

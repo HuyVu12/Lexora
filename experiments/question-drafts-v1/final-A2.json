@@ -1,0 +1,311 @@
+[
+ {
+  "text": "Hết thời gian tạm hoãn hợp đồng thì tôi phải quay lại công ty trong vòng bao nhiêu ngày?",
+  "question_type": "lookup",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-iii/section-2/article-31"
+  ],
+  "rationale": "Điều 31 quy định trong 15 ngày kể từ ngày hết thời hạn tạm hoãn người lao động phải có mặt tại nơi làm việc.",
+  "paraphrase_of": null
+ },
+ {
+  "text": "Nhân viên làm part-time có được đối xử bình đẳng như nhân viên toàn thời gian không?",
+  "question_type": "lookup",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-iii/section-2/article-32/clause-3"
+  ],
+  "rationale": "Khoản 3 Điều 32 quy định người làm việc không trọn thời gian được hưởng lương và bình đẳng về quyền, nghĩa vụ, cơ hội với người làm trọn thời gian.",
+  "paraphrase_of": null
+ },
+ {
+  "text": "Công ty muốn điều chỉnh một số điều khoản trong hợp đồng lao động đang thực hiện thì phải báo trước cho nhân viên mấy ngày?",
+  "question_type": "lookup",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-iii/section-2/article-33/clause-1"
+  ],
+  "rationale": "Khoản 1 Điều 33 yêu cầu bên muốn sửa đổi, bổ sung hợp đồng báo trước ít nhất 03 ngày làm việc.",
+  "paraphrase_of": null
+ },
+ {
+  "text": "Tôi ký hợp đồng không xác định thời hạn, nếu muốn nghỉ việc thì phải báo trước cho công ty bao lâu?",
+  "question_type": "lookup",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-iii/section-3/article-35/clause-1/point-a"
+  ],
+  "rationale": "Điểm a khoản 1 Điều 35 quy định báo trước ít nhất 45 ngày với hợp đồng không xác định thời hạn.",
+  "paraphrase_of": null
+ },
+ {
+  "text": "Hợp đồng của em chỉ có 6 tháng, nếu em xin nghỉ thì cần báo trước bao lâu?",
+  "question_type": "lookup",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-iii/section-3/article-35/clause-1/point-c"
+  ],
+  "rationale": "Điểm c khoản 1 Điều 35 quy định báo trước ít nhất 03 ngày làm việc với hợp đồng xác định thời hạn dưới 12 tháng.",
+  "paraphrase_of": null
+ },
+ {
+  "text": "Công ty nợ lương và trả lương trễ hạn liên tục thì người lao động có được nghỉ ngay mà không cần báo trước không?",
+  "question_type": "lookup",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-iii/section-3/article-35/clause-2/point-b"
+  ],
+  "rationale": "Điểm b khoản 2 Điều 35 cho phép người lao động đơn phương chấm dứt không cần báo trước khi không được trả đủ lương hoặc trả lương không đúng thời hạn.",
+  "paraphrase_of": null
+ },
+ {
+  "text": "Nếu bị quấy rối tình dục ở chỗ làm thì tôi có thể nghỉ việc luôn không?",
+  "question_type": "lookup",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-iii/section-3/article-35/clause-2/point-d"
+  ],
+  "rationale": "Điểm d khoản 2 Điều 35 cho phép người lao động bị quấy rối tình dục tại nơi làm việc đơn phương chấm dứt hợp đồng không cần báo trước.",
+  "paraphrase_of": null
+ },
+ {
+  "text": "Nhân viên tự ý bỏ việc không lý do bao nhiêu ngày liên tục thì công ty được quyền chấm dứt hợp đồng?",
+  "question_type": "lookup",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-iii/section-3/article-36/clause-1/point-e"
+  ],
+  "rationale": "Điểm e khoản 1 Điều 36 cho phép người sử dụng lao động đơn phương chấm dứt khi người lao động tự ý bỏ việc không lý do chính đáng từ 05 ngày làm việc liên tục trở lên.",
+  "paraphrase_of": null
+ },
+ {
+  "text": "Công ty có được đơn phương cho nghỉ việc một nhân viên nữ đang mang thai không?",
+  "question_type": "lookup",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-iii/section-3/article-37/clause-3"
+  ],
+  "rationale": "Khoản 3 Điều 37 liệt kê lao động nữ mang thai là trường hợp người sử dụng lao động không được đơn phương chấm dứt hợp đồng.",
+  "paraphrase_of": null
+ },
+ {
+  "text": "Tôi đã nộp đơn báo nghỉ việc nhưng giờ đổi ý, có rút lại được không?",
+  "question_type": "lookup",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-iii/section-3/article-38"
+  ],
+  "rationale": "Điều 38 cho phép hủy bỏ việc đơn phương chấm dứt trước khi hết thời hạn báo trước, bằng văn bản và phải được bên kia đồng ý.",
+  "paraphrase_of": null
+ },
+ {
+  "text": "Người lao động nghỉ việc trái luật thì phải bồi thường cho doanh nghiệp bao nhiêu tiền?",
+  "question_type": "lookup",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-iii/section-3/article-40/clause-2"
+  ],
+  "rationale": "Khoản 2 Điều 40 quy định bồi thường nửa tháng tiền lương theo hợp đồng và tiền lương tương ứng những ngày không báo trước.",
+  "paraphrase_of": null
+ },
+ {
+  "text": "Những tình huống nào được xem là lý do kinh tế khi doanh nghiệp cắt giảm lao động?",
+  "question_type": "lookup",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-iii/section-3/article-42/clause-2/point-a",
+   "45-2019-qh14/chapter-iii/section-3/article-42/clause-2/point-b"
+  ],
+  "rationale": "Khoản 2 Điều 42 liệt kê khủng hoảng, suy thoái kinh tế và thực hiện chính sách khi cơ cấu lại nền kinh tế hoặc cam kết quốc tế.",
+  "paraphrase_of": null
+ },
+ {
+  "text": "Trước khi cho người lao động thôi việc vì tái cơ cấu, công ty phải thông báo cho Ủy ban nhân dân tỉnh trước bao nhiêu ngày?",
+  "question_type": "lookup",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-iii/section-3/article-42/clause-6"
+  ],
+  "rationale": "Khoản 6 Điều 42 yêu cầu trao đổi với tổ chức đại diện người lao động và thông báo trước 30 ngày cho Ủy ban nhân dân cấp tỉnh và người lao động.",
+  "paraphrase_of": null
+ },
+ {
+  "text": "Một phương án sử dụng lao động cần có những nội dung chính nào?",
+  "question_type": "lookup",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-iii/section-3/article-44/clause-1/point-a",
+   "45-2019-qh14/chapter-iii/section-3/article-44/clause-1/point-b",
+   "45-2019-qh14/chapter-iii/section-3/article-44/clause-1/point-c",
+   "45-2019-qh14/chapter-iii/section-3/article-44/clause-1/point-d",
+   "45-2019-qh14/chapter-iii/section-3/article-44/clause-1/point-đ"
+  ],
+  "rationale": "Các điểm a đến đ khoản 1 Điều 44 liệt kê nội dung chủ yếu của phương án sử dụng lao động.",
+  "paraphrase_of": null
+ },
+ {
+  "text": "Trợ cấp thôi việc được tính bao nhiêu cho mỗi năm làm việc?",
+  "question_type": "lookup",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-iii/section-3/article-46/clause-1"
+  ],
+  "rationale": "Khoản 1 Điều 46 quy định mỗi năm làm việc được trợ cấp một nửa tháng tiền lương.",
+  "paraphrase_of": null
+ },
+ {
+  "text": "Khi tính trợ cấp thôi việc thì lấy mức lương nào làm căn cứ?",
+  "question_type": "lookup",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-iii/section-3/article-46/clause-3"
+  ],
+  "rationale": "Khoản 3 Điều 46 quy định dùng tiền lương bình quân của 06 tháng liền kề theo hợp đồng trước khi thôi việc.",
+  "paraphrase_of": null
+ },
+ {
+  "text": "Người bị mất việc làm thì được nhận trợ cấp ít nhất bao nhiêu tháng lương?",
+  "question_type": "lookup",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-iii/section-3/article-47/clause-1"
+  ],
+  "rationale": "Khoản 1 Điều 47 quy định mỗi năm làm việc trả 01 tháng tiền lương nhưng ít nhất bằng 02 tháng tiền lương.",
+  "paraphrase_of": null
+ },
+ {
+  "text": "Sau khi chấm dứt hợp đồng, công ty có tối đa bao lâu để thanh toán hết các khoản tiền cho người lao động?",
+  "question_type": "lookup",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-iii/section-3/article-48/clause-1"
+  ],
+  "rationale": "Khoản 1 Điều 48 quy định thanh toán trong 14 ngày làm việc, một số trường hợp được kéo dài nhưng không quá 30 ngày.",
+  "paraphrase_of": null
+ },
+ {
+  "text": "Nghỉ việc rồi thì công ty có trách nhiệm chốt sổ bảo hiểm và trả lại giấy tờ gốc cho mình không?",
+  "question_type": "lookup",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-iii/section-3/article-48/clause-3/point-a"
+  ],
+  "rationale": "Điểm a khoản 3 Điều 48 buộc người sử dụng lao động hoàn thành thủ tục xác nhận thời gian đóng bảo hiểm và trả lại bản chính giấy tờ đã giữ.",
+  "paraphrase_of": null
+ },
+ {
+  "text": "Công ty đơn phương chấm dứt hợp đồng với tôi trái pháp luật, nhưng tôi không muốn quay lại làm nữa thì tôi được nhận những khoản gì?",
+  "question_type": "synthesis",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-iii/section-3/article-41/clause-1",
+   "45-2019-qh14/chapter-iii/section-3/article-41/clause-2"
+  ],
+  "rationale": "Khoản 2 Điều 41 cộng trợ cấp thôi việc vào các khoản phải trả theo khoản 1 Điều 41 (tiền lương, bảo hiểm những ngày không được làm việc và ít nhất 02 tháng lương).",
+  "paraphrase_of": null
+ },
+ {
+  "text": "Nhân viên hết thời gian tạm hoãn hợp đồng mà không quay lại làm thì công ty có được chấm dứt hợp đồng không, và có phải báo trước không?",
+  "question_type": "synthesis",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-iii/section-2/article-31",
+   "45-2019-qh14/chapter-iii/section-3/article-36/clause-1/point-d",
+   "45-2019-qh14/chapter-iii/section-3/article-36/clause-3"
+  ],
+  "rationale": "Điều 31 đặt thời hạn 15 ngày, điểm d khoản 1 Điều 36 cho phép chấm dứt khi quá hạn đó và khoản 3 Điều 36 miễn báo trước.",
+  "paraphrase_of": null
+ },
+ {
+  "text": "Trợ cấp thôi việc và trợ cấp mất việc làm khác nhau thế nào về mức hưởng cho mỗi năm làm việc?",
+  "question_type": "synthesis",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-iii/section-3/article-46/clause-1",
+   "45-2019-qh14/chapter-iii/section-3/article-47/clause-1"
+  ],
+  "rationale": "Khoản 1 Điều 46 cho nửa tháng lương mỗi năm, còn khoản 1 Điều 47 cho 01 tháng lương mỗi năm và tối thiểu 02 tháng lương.",
+  "paraphrase_of": null
+ },
+ {
+  "text": "Thời gian đã tham gia bảo hiểm thất nghiệp có được tính vào thời gian hưởng trợ cấp thôi việc hay trợ cấp mất việc làm không?",
+  "question_type": "synthesis",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-iii/section-3/article-46/clause-2",
+   "45-2019-qh14/chapter-iii/section-3/article-47/clause-2"
+  ],
+  "rationale": "Khoản 2 Điều 46 và khoản 2 Điều 47 đều trừ thời gian đã tham gia bảo hiểm thất nghiệp khỏi thời gian làm việc tính trợ cấp.",
+  "paraphrase_of": null
+ },
+ {
+  "text": "Thời gian thử việc tối đa cho vị trí yêu cầu trình độ đại học là bao lâu?",
+  "question_type": "lookup",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-iii/section-1/article-25/clause-2"
+  ],
+  "rationale": "Đoạn trích chỉ nhắc thử việc không đạt tại khoản 13 Điều 34, không có quy định về thời gian thử việc tối đa. (Rà lại: corpus có căn cứ ở chapter-iii/section-1/article-25/clause-2.)",
+  "paraphrase_of": null
+ },
+ {
+  "text": "Nếu đang làm hợp đồng vô thời hạn mà muốn nghỉ thì cần thông báo trước cho chỗ làm mấy ngày?",
+  "question_type": "lookup",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-iii/section-3/article-35/clause-1/point-a"
+  ],
+  "rationale": "Điểm a khoản 1 Điều 35 quy định báo trước ít nhất 45 ngày với hợp đồng không xác định thời hạn.",
+  "paraphrase_of": 3
+ },
+ {
+  "text": "Một người nghỉ làm không xin phép, không có lý do chính đáng thì phải nghỉ liền mấy ngày làm việc doanh nghiệp mới được cho thôi việc?",
+  "question_type": "lookup",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-iii/section-3/article-36/clause-1/point-e"
+  ],
+  "rationale": "Điểm e khoản 1 Điều 36 cho phép người sử dụng lao động đơn phương chấm dứt khi người lao động tự ý bỏ việc không lý do chính đáng từ 05 ngày làm việc liên tục trở lên.",
+  "paraphrase_of": 7
+ },
+ {
+  "text": "Người lao động được tạm hoãn thực hiện hợp đồng lao động trong những trường hợp nào?",
+  "question_type": "lookup",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-iii/section-2/article-30/clause-1"
+  ],
+  "rationale": "Đoạn trích chỉ có Điều 31 về nhận lại người lao động sau tạm hoãn, không có điều liệt kê các trường hợp tạm hoãn. (Rà lại: corpus có căn cứ ở chapter-iii/section-2/article-30/clause-1.)",
+  "paraphrase_of": null
+ },
+ {
+  "text": "Nếu doanh nghiệp cho tôi nghỉ việc sai luật và tôi chọn không trở lại làm việc thì tôi có quyền đòi những khoản tiền nào?",
+  "question_type": "synthesis",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-iii/section-3/article-41/clause-1",
+   "45-2019-qh14/chapter-iii/section-3/article-41/clause-2"
+  ],
+  "rationale": "Khoản 2 Điều 41 cộng trợ cấp thôi việc vào các khoản phải trả theo khoản 1 Điều 41 (tiền lương, bảo hiểm những ngày không được làm việc và ít nhất 02 tháng lương).",
+  "paraphrase_of": 19
+ },
+ {
+  "text": "Làm việc cho công ty được vài năm rồi nghỉ thì mỗi năm thâm niên được hưởng trợ cấp thôi việc là mấy tháng lương?",
+  "question_type": "lookup",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-iii/section-3/article-46/clause-1"
+  ],
+  "rationale": "Khoản 1 Điều 46 quy định mỗi năm làm việc được trợ cấp một nửa tháng tiền lương.",
+  "paraphrase_of": 14
+ },
+ {
+  "text": "Nhân viên được công ty cử đi đào tạo rồi nghỉ việc thì chi phí đào tạo phải hoàn trả được tính gồm những khoản nào?",
+  "question_type": "out_of_scope",
+  "expected_status": "refuse",
+  "relevant_unit_ids": [],
+  "rationale": "Khoản 3 Điều 40 chỉ dẫn chiếu Điều 62 về chi phí đào tạo, nhưng nội dung Điều 62 không có trong đoạn trích.",
+  "paraphrase_of": null
+ }
+]

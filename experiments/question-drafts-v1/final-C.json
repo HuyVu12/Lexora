@@ -1,0 +1,305 @@
+[
+ {
+  "text": "Năm 2026 lương tối thiểu vùng I là bao nhiêu tiền một tháng?",
+  "question_type": "lookup",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "293-2025-nd-cp/article-3/clause-1"
+  ],
+  "rationale": "Khoản 1 Điều 3 Nghị định 293/2025/NĐ-CP quy định mức lương tối thiểu tháng vùng I là 5.310.000 đồng.",
+  "paraphrase_of": null
+ },
+ {
+  "text": "Bên mình thuê nhân viên bán thời gian trả lương theo giờ, doanh nghiệp ở vùng IV thì mỗi giờ phải trả ít nhất bao nhiêu?",
+  "question_type": "lookup",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "293-2025-nd-cp/article-3/clause-1"
+  ],
+  "rationale": "Khoản 1 Điều 3 Nghị định 293/2025/NĐ-CP quy định mức lương tối thiểu giờ vùng IV là 17.800 đồng.",
+  "paraphrase_of": null
+ },
+ {
+  "text": "Công ty có trụ sở ở vùng I nhưng chi nhánh đặt ở vùng III thì chi nhánh áp dụng lương tối thiểu của vùng nào?",
+  "question_type": "lookup",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "293-2025-nd-cp/article-3/clause-3/point-b"
+  ],
+  "rationale": "Điểm b khoản 3 Điều 3 Nghị định 293/2025/NĐ-CP: chi nhánh hoạt động ở địa bàn nào áp dụng mức lương tối thiểu của địa bàn đó.",
+  "paraphrase_of": null
+ },
+ {
+  "text": "Nhà máy nằm trong khu công nghiệp trải trên hai địa bàn có mức lương tối thiểu khác nhau thì tính theo mức nào?",
+  "question_type": "lookup",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "293-2025-nd-cp/article-3/clause-3/point-c"
+  ],
+  "rationale": "Điểm c khoản 3 Điều 3 Nghị định 293/2025/NĐ-CP: áp dụng theo địa bàn có mức lương tối thiểu cao nhất.",
+  "paraphrase_of": null
+ },
+ {
+  "text": "Nhân viên được trả lương theo tuần thì quy đổi ra lương tháng thế nào để so với mức lương tối thiểu tháng?",
+  "question_type": "lookup",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "293-2025-nd-cp/article-4/clause-3/point-a"
+  ],
+  "rationale": "Điểm a khoản 3 Điều 4 Nghị định 293/2025/NĐ-CP: mức lương quy đổi theo tháng bằng mức lương theo tuần nhân 52 tuần chia 12 tháng.",
+  "paraphrase_of": null
+ },
+ {
+  "text": "Hết thử việc mà công ty không báo kết quả cho người lao động thì có bị phạt không, phạt bao nhiêu?",
+  "question_type": "lookup",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "12-2022-nd-cp/chapter-ii/article-10/clause-1/point-b"
+  ],
+  "rationale": "Điểm b khoản 1 Điều 10 Nghị định 12/2022/NĐ-CP phạt từ 500.000 đến 1.000.000 đồng khi không thông báo kết quả thử việc.",
+  "paraphrase_of": null
+ },
+ {
+  "text": "Doanh nghiệp chưa xây dựng thang lương, bảng lương thì mức phạt hành chính là bao nhiêu?",
+  "question_type": "lookup",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "12-2022-nd-cp/chapter-ii/article-17/clause-1/point-b"
+  ],
+  "rationale": "Điểm b khoản 1 Điều 17 Nghị định 12/2022/NĐ-CP phạt từ 5.000.000 đến 10.000.000 đồng khi không xây dựng thang lương, bảng lương.",
+  "paraphrase_of": null
+ },
+ {
+  "text": "Nếu trả lương thấp hơn mức lương tối thiểu do Chính phủ quy định cho 8 người lao động thì người sử dụng lao động bị phạt bao nhiêu?",
+  "question_type": "lookup",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "12-2022-nd-cp/chapter-ii/article-17/clause-3/point-a"
+  ],
+  "rationale": "Điểm a khoản 3 Điều 17 Nghị định 12/2022/NĐ-CP phạt từ 20.000.000 đến 30.000.000 đồng khi vi phạm với 01 đến 10 người lao động.",
+  "paraphrase_of": null
+ },
+ {
+  "text": "Đi làm thêm vào ngày nghỉ hằng tuần thì tiền lương làm thêm được tính ít nhất bằng bao nhiêu phần trăm lương giờ ngày thường?",
+  "question_type": "lookup",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "145-2020-nd-cp/chapter-vi/section-2/article-55/clause-1/point-b"
+  ],
+  "rationale": "Điểm b khoản 1 Điều 55 Nghị định 145/2020/NĐ-CP quy định mức ít nhất 200% cho giờ làm thêm vào ngày nghỉ hằng tuần.",
+  "paraphrase_of": null
+ },
+ {
+  "text": "Công ty trả lương qua thẻ ngân hàng thì phí mở tài khoản và phí chuyển tiền do ai chịu?",
+  "question_type": "lookup",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "145-2020-nd-cp/chapter-vi/section-2/article-54/clause-2"
+  ],
+  "rationale": "Khoản 2 Điều 54 Nghị định 145/2020/NĐ-CP: người sử dụng lao động phải trả các loại phí mở tài khoản và chuyển tiền lương.",
+  "paraphrase_of": null
+ },
+ {
+  "text": "Làm thêm vào ngày lễ, tết thì một ngày được làm tối đa bao nhiêu giờ?",
+  "question_type": "lookup",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "145-2020-nd-cp/chapter-vii/article-60/clause-4"
+  ],
+  "rationale": "Khoản 4 Điều 60 Nghị định 145/2020/NĐ-CP: tổng số giờ làm thêm không quá 12 giờ trong một ngày khi làm thêm vào ngày nghỉ lễ, tết và ngày nghỉ hằng tuần.",
+  "paraphrase_of": null
+ },
+ {
+  "text": "Nhân viên làm hỏng thiết bị của công ty thì trong bao lâu công ty còn được xử lý bồi thường thiệt hại?",
+  "question_type": "lookup",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "145-2020-nd-cp/chapter-viii/article-72/clause-1"
+  ],
+  "rationale": "Khoản 1 Điều 72 Nghị định 145/2020/NĐ-CP: thời hiệu xử lý bồi thường thiệt hại là 06 tháng kể từ ngày có hành vi.",
+  "paraphrase_of": null
+ },
+ {
+  "text": "Trước buổi họp xử lý kỷ luật lao động, công ty phải gửi thông báo trước ít nhất mấy ngày?",
+  "question_type": "lookup",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "145-2020-nd-cp/chapter-viii/article-70/clause-2/point-a"
+  ],
+  "rationale": "Điểm a khoản 2 Điều 70 Nghị định 145/2020/NĐ-CP: thông báo ít nhất 05 ngày làm việc trước ngày họp xử lý kỷ luật lao động.",
+  "paraphrase_of": null
+ },
+ {
+  "text": "Tiền lương làm căn cứ tính trợ cấp thôi việc được lấy theo tháng nào?",
+  "question_type": "lookup",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "145-2020-nd-cp/chapter-iii/section-2/article-8/clause-5/point-a"
+  ],
+  "rationale": "Điểm a khoản 5 Điều 8 Nghị định 145/2020/NĐ-CP: là tiền lương bình quân của 06 tháng liền kề theo hợp đồng trước khi thôi việc.",
+  "paraphrase_of": null
+ },
+ {
+  "text": "Phi công ký hợp đồng không xác định thời hạn muốn nghỉ việc thì phải báo trước bao lâu?",
+  "question_type": "synthesis",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "145-2020-nd-cp/chapter-iii/section-2/article-7/clause-1/point-a",
+   "145-2020-nd-cp/chapter-iii/section-2/article-7/clause-2/point-a"
+  ],
+  "rationale": "Điểm a khoản 1 Điều 7 Nghị định 145/2020/NĐ-CP xếp thành viên tổ lái tàu bay vào nghề đặc thù và điểm a khoản 2 quy định báo trước ít nhất 120 ngày với hợp đồng không xác định thời hạn.",
+  "paraphrase_of": null
+ },
+ {
+  "text": "Trả lương thử việc chỉ bằng 70% lương chính thức thì công ty bị phạt bao nhiêu và phải khắc phục thế nào?",
+  "question_type": "synthesis",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "12-2022-nd-cp/chapter-ii/article-10/clause-2/point-c",
+   "12-2022-nd-cp/chapter-ii/article-10/clause-3/point-a"
+  ],
+  "rationale": "Điểm c khoản 2 Điều 10 Nghị định 12/2022/NĐ-CP phạt 2.000.000 đến 5.000.000 đồng khi trả dưới 85%, và điểm a khoản 3 buộc trả đủ tiền lương của công việc đó.",
+  "paraphrase_of": null
+ },
+ {
+  "text": "Chúng tôi hoạt động ở địa bàn vùng II, đang ký hợp đồng với 15 lao động mức 4.500.000 đồng/tháng cho đủ thời giờ làm việc bình thường. Như vậy có thấp hơn lương tối thiểu không, nếu bị thanh tra thì phạt bao nhiêu?",
+  "question_type": "synthesis",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "293-2025-nd-cp/article-3/clause-1",
+   "293-2025-nd-cp/article-4/clause-1",
+   "12-2022-nd-cp/chapter-ii/article-17/clause-3/point-b"
+  ],
+  "rationale": "Khoản 1 Điều 3 và khoản 1 Điều 4 Nghị định 293/2025/NĐ-CP đặt mức sàn vùng II 4.730.000 đồng/tháng cho người làm đủ giờ, và điểm b khoản 3 Điều 17 Nghị định 12/2022/NĐ-CP phạt 30.000.000 đến 50.000.000 đồng khi vi phạm với 11 đến 50 người.",
+  "paraphrase_of": null
+ },
+ {
+  "text": "Ngày lễ rơi đúng vào chủ nhật mà nhân viên vẫn đi làm thêm thì được trả theo mức ngày nghỉ hằng tuần hay ngày lễ, cụ thể ít nhất bao nhiêu phần trăm?",
+  "question_type": "synthesis",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "145-2020-nd-cp/chapter-vi/section-2/article-55/clause-3",
+   "145-2020-nd-cp/chapter-vi/section-2/article-55/clause-1/point-b"
+  ],
+  "rationale": "Khoản 3 Điều 55 Nghị định 145/2020/NĐ-CP cho hưởng lương làm thêm ngày nghỉ lễ, tết và điểm b khoản 1 quy định mức ít nhất 300%.",
+  "paraphrase_of": null
+ },
+ {
+  "text": "Công ty không trả tiền lương làm thêm giờ cho 20 công nhân thì bị phạt mức nào và phải trả lại những gì?",
+  "question_type": "synthesis",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "12-2022-nd-cp/chapter-ii/article-17/clause-2",
+   "12-2022-nd-cp/chapter-ii/article-17/clause-2/point-b",
+   "12-2022-nd-cp/chapter-ii/article-17/clause-5/point-a"
+  ],
+  "rationale": "Khoản 2 Điều 17 Nghị định 12/2022/NĐ-CP nêu hành vi không trả lương làm thêm giờ, điểm b phạt 10.000.000 đến 20.000.000 đồng cho 11 đến 50 người, điểm a khoản 5 buộc trả đủ lương cộng tiền lãi.",
+  "paraphrase_of": null
+ },
+ {
+  "text": "Nghị định 293/2025/NĐ-CP về lương tối thiểu bắt đầu áp dụng từ ngày nào?",
+  "question_type": "temporal",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "293-2025-nd-cp/article-5/clause-1"
+  ],
+  "rationale": "Khoản 1 Điều 5 Nghị định 293/2025/NĐ-CP: có hiệu lực thi hành từ ngày 01/01/2026.",
+  "paraphrase_of": null
+ },
+ {
+  "text": "Từ khi có Nghị định 293/2025 thì nghị định lương tối thiểu cũ nào hết hiệu lực?",
+  "question_type": "temporal",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "293-2025-nd-cp/article-5/clause-2"
+  ],
+  "rationale": "Khoản 2 Điều 5 Nghị định 293/2025/NĐ-CP: Nghị định 74/2024/NĐ-CP hết hiệu lực từ ngày Nghị định này có hiệu lực.",
+  "paraphrase_of": null
+ },
+ {
+  "text": "Nghị định 05/2015/NĐ-CP hướng dẫn Bộ luật Lao động hiện còn được áp dụng không?",
+  "question_type": "temporal",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "145-2020-nd-cp/chapter-xi/section-4/article-114/clause-2/point-b"
+  ],
+  "rationale": "Điểm b khoản 2 Điều 114 Nghị định 145/2020/NĐ-CP liệt kê Nghị định 05/2015/NĐ-CP trong các nghị định hết hiệu lực từ khi Nghị định 145 có hiệu lực.",
+  "paraphrase_of": null
+ },
+ {
+  "text": "Sau khi điều chỉnh địa bàn, nơi công ty hoạt động bị xếp xuống vùng có lương tối thiểu thấp hơn trước. Với nhân viên tuyển trước ngày 31/12/2025 thì công ty áp dụng mức nào?",
+  "question_type": "temporal",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "293-2025-nd-cp/article-5/clause-5"
+  ],
+  "rationale": "Khoản 5 Điều 5 Nghị định 293/2025/NĐ-CP: tiếp tục thực hiện mức lương tối thiểu tại thời điểm 31/12/2025 cho người được tuyển từ ngày đó trở về trước.",
+  "paraphrase_of": null
+ },
+ {
+  "text": "Quận Cầu Giấy, Hà Nội thuộc vùng lương tối thiểu nào?",
+  "question_type": "out_of_scope",
+  "expected_status": "refuse",
+  "relevant_unit_ids": [],
+  "rationale": "Danh mục địa bàn nằm ở Phụ lục Nghị định 293/2025/NĐ-CP, không có trong corpus; khoản 2 Điều 3 chỉ dẫn chiếu đến Phụ lục.",
+  "paraphrase_of": null
+ },
+ {
+  "text": "Mức sàn lương tháng mà doanh nghiệp đặt tại vùng 1 phải tuân thủ trong năm nay (2026) là bao nhiêu?",
+  "question_type": "lookup",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "293-2025-nd-cp/article-3/clause-1"
+  ],
+  "rationale": "Khoản 1 Điều 3 Nghị định 293/2025/NĐ-CP quy định mức lương tối thiểu tháng vùng I là 5.310.000 đồng.",
+  "paraphrase_of": 0
+ },
+ {
+  "text": "Công ty em đang trả dưới lương tối thiểu vùng cho 8 nhân viên, nếu bị phát hiện thì khung tiền phạt là bao nhiêu ạ?",
+  "question_type": "lookup",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "12-2022-nd-cp/chapter-ii/article-17/clause-3/point-a"
+  ],
+  "rationale": "Điểm a khoản 3 Điều 17 Nghị định 12/2022/NĐ-CP phạt từ 20.000.000 đến 30.000.000 đồng khi vi phạm với 01 đến 10 người lao động.",
+  "paraphrase_of": 7
+ },
+ {
+  "text": "Doanh nghiệp không đóng bảo hiểm xã hội bắt buộc cho người lao động thì bị phạt bao nhiêu?",
+  "question_type": "out_of_scope",
+  "expected_status": "refuse",
+  "relevant_unit_ids": [],
+  "rationale": "Corpus chỉ có Điều 10 và Điều 17 Nghị định 12/2022/NĐ-CP; mức phạt về đóng bảo hiểm xã hội nằm ở điều khác không có trong corpus.",
+  "paraphrase_of": null
+ },
+ {
+  "text": "Xưởng của tôi ở vùng II trả 4,5 triệu một tháng cho 15 công nhân làm đủ giờ chuẩn. Mức này có trái quy định lương tối thiểu không và nếu có thì bị phạt trong khung nào?",
+  "question_type": "synthesis",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "293-2025-nd-cp/article-3/clause-1",
+   "293-2025-nd-cp/article-4/clause-1",
+   "12-2022-nd-cp/chapter-ii/article-17/clause-3/point-b"
+  ],
+  "rationale": "Khoản 1 Điều 3 và khoản 1 Điều 4 Nghị định 293/2025/NĐ-CP đặt mức sàn vùng II 4.730.000 đồng/tháng cho người làm đủ giờ, và điểm b khoản 3 Điều 17 Nghị định 12/2022/NĐ-CP phạt 30.000.000 đến 50.000.000 đồng khi vi phạm với 11 đến 50 người.",
+  "paraphrase_of": 16
+ },
+ {
+  "text": "Mức lương tối thiểu vùng mới theo Nghị định 293 có hiệu lực kể từ thời điểm nào?",
+  "question_type": "temporal",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "293-2025-nd-cp/article-5/clause-1"
+  ],
+  "rationale": "Khoản 1 Điều 5 Nghị định 293/2025/NĐ-CP: có hiệu lực thi hành từ ngày 01/01/2026.",
+  "paraphrase_of": 19
+ },
+ {
+  "text": "Không ký hợp đồng lao động bằng văn bản với nhân viên làm việc trên 1 tháng thì công ty bị phạt bao nhiêu?",
+  "question_type": "out_of_scope",
+  "expected_status": "refuse",
+  "relevant_unit_ids": [],
+  "rationale": "Mức phạt về giao kết hợp đồng lao động không thuộc Điều 10 hay Điều 17 Nghị định 12/2022/NĐ-CP trong corpus, nên không có căn cứ.",
+  "paraphrase_of": null
+ }
+]

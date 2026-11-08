@@ -33,6 +33,7 @@ from starlette.exceptions import HTTPException as StarletteHTTPException
 from legal_ai.auth import SESSION_HOURS, AccountStore, AuthError
 from legal_ai.common.io import canonical
 from legal_ai.glossary import bilingual, embed_terms
+from legal_ai.guides import Guides
 from legal_ai.ingestion.catalog import Catalog
 from legal_ai.ingestion.excerpt import excerpt as cut_excerpt, outline as article_outline
 from legal_ai.ingestion.files import MAX_FILE_BYTES, extract_text
@@ -44,6 +45,7 @@ from legal_ai.ops.monitor import FEATURES, MeteredProvider, OpsStore, actor as c
 from legal_ai.rag.review_chat import ChatService
 from legal_ai.research.corpus import CorpusStore
 from legal_ai.research import proposals as question_proposals
+from legal_ai.research.audit import AuditStore
 from legal_ai.research.gold import GoldStore
 from legal_ai.research.questions import QuestionStore
 from legal_ai.providers.claude_code import ProviderError
@@ -275,6 +277,18 @@ class NotesBody(Body):
     notes: dict
 
 
+class AuditLabelBody(Body):
+    set_id: str
+    item_id: str
+    label: str
+    note: str = ""
+
+
+class AuditAcceptBody(Body):
+    set_id: str
+    other: str
+
+
 class FreezeQuestionsBody(Body):
     set_id: str
     other: str
@@ -286,14 +300,19 @@ def error(message, status, **extra):
 
 
 def create_app(store, port, *, provider=None, source_catalog=None, extractor=None, embedder=None, token=None, frontend_dir=None,
-               catalog_path=None, vbpl_dir=None, proposer=None, experiments_dir="experiments/runs"):
+               catalog_path=None, vbpl_dir=None, proposer=None, experiments_dir="experiments/runs", public_hosts=(), guides_dir="docs/guides"):
     """Build the app for one loopback port and one workspace store; `frontend_dir` is the SvelteKit static build.
 
     `catalog_path` enables the offline document catalog. `vbpl_dir` (only with --allow-vbpl) lets reviewers fetch
     one vbpl.vn document per confirmed request into that snapshot directory. `proposer` (only with --approve-claude)
     is the structured model provider for question proposals and drafts; each call needs a confirmation."""
     token = token or secrets.token_urlsafe(32)
-    hosts = {f"127.0.0.1:{port}", f"localhost:{port}"}
+    # Loopback by default. `public_hosts` are exact names served over HTTPS by a reverse proxy (e.g. Caddy): they are
+    # accepted as Host, POSTs must come from https://<name>, and session cookies are sent over HTTPS only.
+    public = {name.strip().lower() for name in public_hosts if name and name.strip()}
+    if any(not all(c.isalnum() or c in ".-" for c in name) for name in public):
+        raise ValueError("public host names are bare DNS names, without scheme, port or path")
+    hosts = {f"127.0.0.1:{port}", f"localhost:{port}"} | public
     accounts = AccountStore(store.path)
     ops = OpsStore(store.path)
     started_at = datetime.now(timezone.utc).isoformat(timespec="seconds")
@@ -307,6 +326,8 @@ def create_app(store, port, *, provider=None, source_catalog=None, extractor=Non
     catalog = Catalog(catalog_path) if catalog_path else None
     questions = QuestionStore(store.path, corpora)
     golds = GoldStore(store.path, corpora)
+    guides = Guides(guides_dir)
+    audits = AuditStore(store.path)
     store.interrupt_extractions()
     frontend = Path(frontend_dir).resolve() if frontend_dir else None
     app = FastAPI(title="Lexora", docs_url=None, redoc_url=None, openapi_url="/api/openapi.json")
@@ -370,7 +391,7 @@ def create_app(store, port, *, provider=None, source_catalog=None, extractor=Non
                 response = error("Request exceeds local upload limit", 400)
             elif host not in hosts or request.headers.get("x-lexora-token") != token:
                 response = error("Invalid local request token", 403)
-            elif request.headers.get("origin") and request.headers["origin"] != "http://" + host:
+            elif request.headers.get("origin") and request.headers["origin"] != ("https://" if host in public else "http://") + host:
                 response = error("Invalid origin", 403)
             elif request.headers.get("content-type", "").split(";")[0].strip().lower() != "application/json":
                 response = error("Expected application/json", 400)
@@ -431,7 +452,7 @@ def create_app(store, port, *, provider=None, source_catalog=None, extractor=Non
             raise
         ops.record_event("login", result="ok", role=account["role"])
         response = JSONResponse(account)
-        response.set_cookie(COOKIE, session, max_age=SESSION_HOURS * 3600, httponly=True, samesite="strict", path="/")
+        response.set_cookie(COOKIE, session, max_age=SESSION_HOURS * 3600, httponly=True, samesite="strict", path="/", secure=bool(public))
         return response
 
     @app.post("/api/auth/logout")
@@ -472,6 +493,25 @@ def create_app(store, port, *, provider=None, source_catalog=None, extractor=Non
             value["drafts"] = []
             value["knowledge_bases"] = [k for k in value["knowledge_bases"] if k.get("current_revision")]
         return value
+
+    @app.get("/api/docs")
+    def documents(_=Depends(current)):
+        return {"documents": guides.list()}
+
+    @app.get("/api/docs/assets/{name}")
+    def document_asset(name: str, _=Depends(current)):
+        try:
+            body, media = guides.asset(name)
+        except KeyError as exc:
+            raise Denied(404, exc.args[0]) from None
+        return Response(body, media_type=media, headers={"Cache-Control": "private, max-age=300"})
+
+    @app.get("/api/docs/{slug}")
+    def document(slug: str, _=Depends(current)):
+        try:
+            return guides.get(slug)
+        except KeyError as exc:
+            raise Denied(404, exc.args[0]) from None
 
     @app.get("/api/glossary")
     def glossary():
@@ -794,6 +834,44 @@ def create_app(store, port, *, provider=None, source_catalog=None, extractor=Non
         folder = Path(experiments_dir)
         runs = [summarize(path) for path in kb_runs(folder)] if folder.exists() else []
         return {"runs": runs, "validator_version": VALIDATOR_VERSION, "folder": folder.as_posix()}
+
+    # Rejection audit (reviewers label; the key and the score only for admin and dev) -------------
+    @app.get("/api/audit")
+    def audit_sets(account=Depends(reviewer)):
+        return {"sets": audits.sets(), "can_score": account["role"] in MONITOR_ROLES}
+
+    @app.get("/api/audit/set")
+    def audit_set(id: str = Query(), account=Depends(reviewer)):
+        return audits.workspace(id, account["username"]) | {"can_score": account["role"] in MONITOR_ROLES}
+
+    @app.post("/api/audit/label")
+    def audit_label(body: AuditLabelBody, account=Depends(reviewer)):
+        return audits.save_label(body.set_id, body.item_id, account["username"], account["display_name"], body.label, body.note)
+
+    @app.get("/api/audit/compare")
+    def audit_compare(id: str = Query(), other: str = Query(), account=Depends(reviewer)):
+        if other == account["username"]:
+            raise ValueError("Chọn người gán nhãn còn lại để đối soát")
+        return audits.comparison(id, account["username"], other)
+
+    @app.post("/api/audit/adjudicate")
+    def audit_adjudicate(body: AuditLabelBody, account=Depends(reviewer)):
+        return audits.adjudicate(body.set_id, body.item_id, body.label, body.note, account["username"])
+
+    @app.post("/api/audit/accept-agreed")
+    def audit_accept(body: AuditAcceptBody, account=Depends(reviewer)):
+        return audits.accept_agreed(body.set_id, account["username"], body.other, account["username"])
+
+    @app.get("/api/audit/score")
+    def audit_score(id: str = Query(), source: str = Query("final"), _=Depends(monitor)):
+        return audits.score(id, source)
+
+    @app.get("/api/audit/sheet.csv")
+    def audit_sheet(id: str = Query(), source: str = Query(), account=Depends(reviewer)):
+        if source != account["username"] and account["role"] not in MONITOR_ROLES and source != "final":
+            raise Denied(403, "Chỉ tải được nhãn của chính bạn hoặc nhãn cuối")
+        return Response(audits.sheet_csv(id, source), media_type="text/csv; charset=utf-8",
+                        headers={"Content-Disposition": f'attachment; filename="audit-{id}-{source}.csv"'})
 
     # Monitoring (admin and dev; changes by dev only) -------------------------------------------
     def kb_summaries():

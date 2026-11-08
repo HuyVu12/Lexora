@@ -17,14 +17,17 @@
 	const results: Item = { href: '/research/results', key: 'nav.results', match: (p) => p.startsWith('/research/results') };
 	const monitor: Item = { href: '/dev', key: 'nav.monitor', match: (p) => p.startsWith('/dev') };
 	const users: Item = { href: '/admin/users', key: 'nav.users', match: (p) => p.startsWith('/admin') };
+	const docs: Item = { href: '/docs', key: 'nav.docs', match: (p) => p.startsWith('/docs') };
 	const research: Item[] = [
-		{ href: '/research', key: 'nav.corpora', match: (p) => p.startsWith('/research') && !/^\/research\/(questions|gold|results)/.test(p) },
+		{ href: '/research', key: 'nav.corpora', match: (p) => p.startsWith('/research') && !/^\/research\/(questions|gold|audit|results)/.test(p) },
 		{ href: '/research/questions', key: 'nav.questions', match: (p) => p.startsWith('/research/questions') },
 		{ href: '/research/gold', key: 'nav.gold', match: (p) => p.startsWith('/research/gold') },
+		{ href: '/research/audit', key: 'nav.audit', match: (p) => p.startsWith('/research/audit') },
 		results
 	];
 	// A dev account's work is monitoring, so its two pages stay on the bar.
 	const links = $derived(canReview(account) ? [home, chat, importing] : account?.role === 'dev' ? [home, chat, monitor, results] : [home, chat]);
+	const after = $derived(account ? [docs] : []);
 	const manage = $derived([...(account?.role === 'admin' ? [users] : []), ...(account?.role === 'admin' && canMonitor(account) ? [monitor] : [])]);
 	const inResearch = $derived(research.some((item) => item.match(page.url.pathname)));
 
@@ -85,6 +88,9 @@
 					{/if}
 				</div>
 			{/if}
+			{#each after as item (item.href)}
+				<a href={item.href} aria-current={item.match(page.url.pathname) ? 'page' : undefined}>{t(item.key)}</a>
+			{/each}
 		</nav>
 	{/if}
 	<div class="end">
@@ -106,13 +112,13 @@
 							<strong>{account.display_name}</strong>
 							<span class="small muted">@{account.username} · {t(`role.${account.role}`)}</span>
 						</div>
-						{#if manage.length}
-							<div class="menu-links">
-								{#each manage as item (item.href)}
-									<a href={item.href} aria-current={item.match(page.url.pathname) ? 'page' : undefined}>{t(item.key)}</a>
-								{/each}
-							</div>
-						{/if}
+						<div class="menu-links" class:phone-only={!manage.length}>
+							{#each manage as item (item.href)}
+								<a href={item.href} aria-current={item.match(page.url.pathname) ? 'page' : undefined}>{t(item.key)}</a>
+							{/each}
+							<!-- On phones the bar hides Documents, so the avatar menu carries it. -->
+							<a class="phone-only" href={docs.href} aria-current={docs.match(page.url.pathname) ? 'page' : undefined}>{t(docs.key)}</a>
+						</div>
 						<button type="button" class="btn quiet small" onclick={logout}><Icon name="logout" size={16} />{t('user.logout')}</button>
 					</div>
 				{/if}
@@ -378,10 +384,20 @@
 			padding: 0 9px;
 		}
 	}
+	.menu .phone-only {
+		display: none;
+	}
 	@media (max-width: 760px) {
+		.menu .menu-links.phone-only {
+			display: grid;
+		}
+		.menu .menu-links a.phone-only {
+			display: flex;
+		}
 		/* Phones are for looking things up; authoring and research open from the overview's buttons, admin from the avatar menu. */
 		nav > a[href='/import'],
 		nav > a[href='/research/results'],
+		nav > a[href='/docs'],
 		.research {
 			display: none;
 		}
