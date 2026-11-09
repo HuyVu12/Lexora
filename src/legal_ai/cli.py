@@ -92,6 +92,10 @@ def main():
     command.add_argument("--approve-router", action="store_true", help="explicit approval of the 9Router calls")
     command.add_argument("--timeout", type=int, default=300)
     command.add_argument("--max-tokens", type=int, default=8000)
+    command.add_argument("--claude-model", help="extract through the local claude CLI instead, e.g. claude-sonnet-5-5")
+    command.add_argument("--claude-effort", default="medium", choices=["low", "medium", "high", "xhigh", "max"])
+    command.add_argument("--approve-claude", action="store_true", help="explicit approval of the Claude Code calls")
+    command.add_argument("--workers", type=int, default=1, help="calls at once (Claude Code calls spend most of their time starting up)")
     command.add_argument("--materialize", action="store_true", help="only validate raw.jsonl again; offline")
     command = commands.add_parser("decompose-questions", help="split each question into legal issues with search queries, once for every condition; resumes")
     command.add_argument("questions", help="question file")
@@ -265,14 +269,20 @@ def main():
             units = read_jsonl(Path(args.bundle) / "units.jsonl")
             aliases = {"Bộ luật Lao động": "45-2019-qh14"}
             if not args.materialize:
-                if not (args.router_model and args.max_calls):
-                    parser.error("kb-relations needs --router-model, --approve-router and --max-calls (or --materialize)")
-                from legal_ai.providers.router import ChatStructured, RouterProvider, read_settings
-                settings = read_settings(Path.cwd() / ".env")
-                name = settings.get(args.router_model, args.router_model) if args.router_model.startswith("MODEL_") else args.router_model
-                chat = RouterProvider(settings, model=name, approved_route=args.approve_router, max_calls=args.max_calls, timeout=args.timeout)
-                relation_run.start(args.bundle, args.output, name, "9router", args.sample)
-                counts = relation_run.extract(units, ChatStructured(chat, max_tokens=args.max_tokens), args.output, aliases, log=lambda line: print(line, flush=True))
+                if not args.max_calls or bool(args.router_model) == bool(args.claude_model):
+                    parser.error("kb-relations needs --max-calls and one of --router-model (with --approve-router) or --claude-model (with --approve-claude)")
+                if args.claude_model:
+                    from legal_ai.providers.claude_code import ClaudeCodeProvider
+                    provider = ClaudeCodeProvider(args.claude_model, args.claude_effort, args.max_calls, approved=args.approve_claude)
+                    relation_run.start(args.bundle, args.output, args.claude_model, "claude-code", args.sample)
+                else:
+                    from legal_ai.providers.router import ChatStructured, RouterProvider, read_settings
+                    settings = read_settings(Path.cwd() / ".env")
+                    name = settings.get(args.router_model, args.router_model) if args.router_model.startswith("MODEL_") else args.router_model
+                    chat = RouterProvider(settings, model=name, approved_route=args.approve_router, max_calls=args.max_calls, timeout=args.timeout)
+                    provider = ChatStructured(chat, max_tokens=args.max_tokens)
+                    relation_run.start(args.bundle, args.output, name, "9router", args.sample)
+                counts = relation_run.extract(units, provider, args.output, aliases, log=lambda line: print(line, flush=True), workers=args.workers)
                 print(json.dumps(counts, indent=2))
             print(json.dumps(relation_run.materialize(units, args.output), ensure_ascii=False, indent=2))
         elif args.command == "decompose-questions":

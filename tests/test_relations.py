@@ -71,7 +71,7 @@ class RelationTests(unittest.TestCase):
         relation_run.start(self.root / "bundle", out, "stand-in", "9router")
         self.assertEqual(relation_run.extract(self.units, Relater(fail=True), out)["failed"], 4)
         relater = Relater()
-        counts = relation_run.extract(self.units, relater, out)
+        counts = relation_run.extract(self.units, relater, out, workers=3)
         self.assertEqual((counts["ok"], len(relater.calls)), (4, 4))
         report = relation_run.materialize(self.units, out)
         self.assertEqual(report["by_type"], {"consequence": 1, "exception": 1})

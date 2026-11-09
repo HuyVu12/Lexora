@@ -13,8 +13,10 @@ Accepted relations go to `relations.jsonl`; `report.json` counts types and rejec
 passing these checks, not a legally verified relation.
 """
 
+from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime, timezone
 import json
+import threading
 import random
 import re
 from pathlib import Path
@@ -125,7 +127,9 @@ def start(bundle, output, model, provider, sample_size=None):
     return manifest
 
 
-def extract(units, provider, output, aliases=None, log=None):
+def extract(units, provider, output, aliases=None, log=None, workers=1):
+    """Call the model for every planned article not yet answered; `workers` calls run at once (the Claude Code CLI
+    spends most of a call starting up). Rows are appended under a lock, so the file stays one JSON object per line."""
     output = Path(output)
     manifest = json.loads((output / "manifest.json").read_text(encoding="utf-8"))
     rows = articles(units)
@@ -136,30 +140,39 @@ def extract(units, provider, output, aliases=None, log=None):
     done = {r["key"] for r in read_jsonl(raw_path) if r.get("status") == "ok"} if raw_path.exists() else set()
     planned = sample(rows, manifest["sample"])
     counts = {"articles": len(planned), "already_done": 0, "ok": 0, "failed": 0}
+    lock, stop = threading.Lock(), threading.Event()
+    todo = []
+    for article in planned:
+        others = [by_id[c] for c in offered[article]]
+        text = request(by_id[article], others)
+        key = digest(canonical([article, offered[article], text]))
+        if key in done:
+            counts["already_done"] += 1
+        else:
+            todo.append((article, others, text, key))
     with raw_path.open("a", encoding="utf-8") as handle:
-        for number, article in enumerate(planned, 1):
-            others = [by_id[c] for c in offered[article]]
-            text = request(by_id[article], others)
-            key = digest(canonical([article, offered[article], text]))
-            if key in done:
-                counts["already_done"] += 1
-                continue
+        def one(item):
+            article, others, text, key = item
+            if stop.is_set():
+                return
             row = {"key": key, "article_id": article, "candidates": offered[article], "at": datetime.now(timezone.utc).isoformat(timespec="seconds")}
             try:
                 answer = provider.structured(system, text, schema(len(others)), purpose="relation-extraction")
                 row |= {"status": "ok", "output": answer["output"], "served_by": answer.get("model")}
                 if answer.get("raw_content") is not None:
                     row["raw_content"] = answer["raw_content"]
-                counts["ok"] += 1
             except ProviderError as exc:
                 row |= {"status": "error", "code": exc.code}
-                counts["failed"] += 1
-            handle.write(canonical(row) + "\n")
-            handle.flush()
-            if log:
-                log(f"{number}/{len(planned)} {article}: {row['status']}")
+            with lock:
+                counts["ok" if row["status"] == "ok" else "failed"] += 1
+                handle.write(canonical(row) + "\n")
+                handle.flush()
+                if log:
+                    log(f"{counts['ok'] + counts['failed']}/{len(todo)} {article}: {row['status']}")
             if row.get("code") in ("quota_exhausted", "budget_exhausted", "rate_limited"):
-                break
+                stop.set()
+        with ThreadPoolExecutor(max_workers=max(1, workers)) as pool:
+            list(pool.map(one, todo))
     return counts
 
 
