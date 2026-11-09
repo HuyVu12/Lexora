@@ -144,7 +144,13 @@ def run(bundle, questions_path, condition_path, shared_path, output, embedder=No
     if method != "bm25":
         from legal_ai.retrieval.embeddings import DenseIndex, rrf
         dense = DenseIndex(embedder, [row["index_text"] for row in records])
-    edges = kb_graph.graph_edges(units, graph["edges"], graph.get("source_aliases")) if graph else None
+    relations = None
+    if graph and "relation" in graph["edges"]:
+        folder = Path(graph["relation_run"])
+        if json.loads((folder / "manifest.json").read_text(encoding="utf-8"))["units_sha256"] != digest((Path(bundle) / "units.jsonl").read_bytes()):
+            raise ValueError("the relation run was made from another corpus bundle")
+        relations = [r for r in read_jsonl(folder / "relations.jsonl") if r["type"] in graph.get("relation_types", kb_graph.RELATION_TYPES)]
+    edges = kb_graph.graph_edges(units, graph["edges"], graph.get("source_aliases"), relations) if graph else None
     concepts = None
     if graph and "concept" in graph["edges"]:
         concepts = kb_graph.record_concepts(records, kb_graph.concept_keys(kb_claims(condition, Path(bundle) / "units.jsonl")))
@@ -214,7 +220,9 @@ def run(bundle, questions_path, condition_path, shared_path, output, embedder=No
         "status": "exploratory" if shared.get("status") != "frozen" or condition.get("status") != "frozen" else "frozen",
         "subqueries": ({"path": Path(shared["subqueries"]).as_posix(),
                         "sha256": digest((Path(shared["subqueries"]) / "subqueries.jsonl").read_bytes())} if shared.get("subqueries") else None),
-        "graph": ({"version": kb_graph.GRAPH_VERSION, **graph, "edge_count": sum(len(v) for v in edges.values())} if graph else None),
+        "graph": ({"version": kb_graph.GRAPH_VERSION, **graph, "edge_count": sum(len(v) for v in edges.values()),
+                   **({"relations_sha256": digest((Path(graph["relation_run"]) / "relations.jsonl").read_bytes())} if relations is not None else {})}
+                  if graph else None),
         "method": method, "dense": ({**embedder.describe(), "texts_sha256": dense.texts_sha256} if dense else None),
         "network": False, "model_calls": 0,
         "environment": {"python": platform.python_version(), "platform": platform.platform(), "git": _git_state(root)},

@@ -11,7 +11,10 @@ can bring the clause next to it, which a legal answer often needs (a rule and it
 (2-4 syllables) found in at least `min_df` and at most `max_df` claims of the knowledge base, so the keys come from
 the extracted norms themselves, never from a hand-made list or the questions. Provisions a case needs together
 (grounds for dismissal, the protected employee, the procedure, the consequence) rarely cite each other but often
-name the same act. Concept neighbours are always among the ranked candidates. The list
+name the same act. Concept neighbours are always among the ranked candidates.
+`relation` follows the typed article relations of a relation run (exception, procedure, consequence, condition,
+detail; `relation-run-v1`), in both directions, so a found rule brings its exception or consequence and a found
+consequence brings its rule. The list
 keeps its length: neighbours push lower-ranked records out instead of adding to the context, so every condition
 still hands over the same number of records. No similarity edges, no invented
 targets: pending, ambiguous and external references create no edge.
@@ -19,9 +22,10 @@ targets: pending, ambiguous and external references create no edge.
 
 from legal_ai.kb.references import detect_references
 
-GRAPH_VERSION = "reference-expansion-v4"
-EDGES = ("reference", "referenced_by", "same_article", "concept")
+GRAPH_VERSION = "reference-expansion-v5"
+EDGES = ("reference", "referenced_by", "same_article", "concept", "relation")
 CONCEPT_DF = (3, 150)
+RELATION_TYPES = ("exception", "procedure", "consequence", "condition", "detail")
 
 
 def check_config(graph):
@@ -47,8 +51,9 @@ def reference_edges(units, aliases=None):
     return {source: targets for source, targets in edges.items() if targets}
 
 
-def graph_edges(units, kinds, aliases=None):
-    """{unit_id: [neighbour unit_id, ...]} over the chosen edge kinds; `referenced_by` inverts `reference`."""
+def graph_edges(units, kinds, aliases=None, relations=None):
+    """{unit_id: [neighbour unit_id, ...]} over the chosen edge kinds; `referenced_by` inverts `reference`;
+    `relation` uses the accepted relations given (article IDs), in both directions."""
     forward = reference_edges(units, aliases)
     edges = {}
     if "reference" in kinds:
@@ -59,6 +64,11 @@ def graph_edges(units, kinds, aliases=None):
             for target in targets:
                 if source not in edges.setdefault(target, []):
                     edges[target].append(source)
+    if "relation" in kinds:
+        for row in relations or []:
+            for a, b in ((row["source_article"], row["target_article"]), (row["target_article"], row["source_article"])):
+                if b not in edges.setdefault(a, []):
+                    edges[a].append(b)
     if "same_article" in kinds:
         parents = {u["parent_id"] for u in units}
         by_article = {}

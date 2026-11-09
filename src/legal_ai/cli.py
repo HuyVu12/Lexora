@@ -83,6 +83,16 @@ def main():
     command.add_argument("--approve-router", action="store_true", help="explicit approval of the 9Router calls")
     command.add_argument("--timeout", type=int, default=300, help="seconds per 9Router call")
     command.add_argument("--max-tokens", type=int, default=8000, help="answer token limit for 9Router models")
+    command = commands.add_parser("kb-relations", help="typed relations between articles (exception, procedure, consequence, condition, detail) for the KB graph; resumes")
+    command.add_argument("bundle", help="contract bundle written by corpus-export")
+    command.add_argument("--output", required=True, help="new directory, or an earlier relation run of the same bundle")
+    command.add_argument("--sample", type=int, help="only a seeded sample of this many articles")
+    command.add_argument("--max-calls", type=int, help="call budget of this session (required unless --materialize)")
+    command.add_argument("--router-model", help="one approved 9Router model (a MODEL_* alias or a name)")
+    command.add_argument("--approve-router", action="store_true", help="explicit approval of the 9Router calls")
+    command.add_argument("--timeout", type=int, default=300)
+    command.add_argument("--max-tokens", type=int, default=8000)
+    command.add_argument("--materialize", action="store_true", help="only validate raw.jsonl again; offline")
     command = commands.add_parser("decompose-questions", help="split each question into legal issues with search queries, once for every condition; resumes")
     command.add_argument("questions", help="question file")
     command.add_argument("--output", required=True, help="new directory, or an earlier decomposition run of the same file")
@@ -249,6 +259,22 @@ def main():
                 from legal_ai.evaluation.answer_grading import judge_sheet
                 provider = ClaudeCodeProvider(config["judge_model"], config["judge_effort"], args.max_calls, approved=args.approve_claude)
                 print(json.dumps(judge_sheet(args.sheet, provider, args.output, log=log), indent=2))
+        elif args.command == "kb-relations":
+            from legal_ai.common.io import read_jsonl
+            from legal_ai.evaluation import relation_run
+            units = read_jsonl(Path(args.bundle) / "units.jsonl")
+            aliases = {"Bộ luật Lao động": "45-2019-qh14"}
+            if not args.materialize:
+                if not (args.router_model and args.max_calls):
+                    parser.error("kb-relations needs --router-model, --approve-router and --max-calls (or --materialize)")
+                from legal_ai.providers.router import ChatStructured, RouterProvider, read_settings
+                settings = read_settings(Path.cwd() / ".env")
+                name = settings.get(args.router_model, args.router_model) if args.router_model.startswith("MODEL_") else args.router_model
+                chat = RouterProvider(settings, model=name, approved_route=args.approve_router, max_calls=args.max_calls, timeout=args.timeout)
+                relation_run.start(args.bundle, args.output, name, "9router", args.sample)
+                counts = relation_run.extract(units, ChatStructured(chat, max_tokens=args.max_tokens), args.output, aliases, log=lambda line: print(line, flush=True))
+                print(json.dumps(counts, indent=2))
+            print(json.dumps(relation_run.materialize(units, args.output), ensure_ascii=False, indent=2))
         elif args.command == "decompose-questions":
             from legal_ai.evaluation.decompose import run as decompose_run
             from legal_ai.providers.router import ChatStructured, RouterProvider, read_settings
