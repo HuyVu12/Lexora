@@ -1,0 +1,394 @@
+[
+ {
+  "text": "Nhân viên làm được 4 năm rồi nghỉ theo thỏa thuận với công ty thì được trợ cấp thôi việc bao nhiêu, và lương để tính trợ cấp lấy theo những tháng nào?",
+  "question_type": "synthesis",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-iii/section-3/article-46/clause-1",
+   "145-2020-nd-cp/chapter-iii/section-2/article-8/clause-5/point-a"
+  ],
+  "rationale": "Khoản 1 Điều 46 Bộ luật Lao động: mỗi năm làm việc được trợ cấp một nửa tháng tiền lương; điểm a khoản 5 Điều 8 Nghị định 145: tiền lương tính trợ cấp là bình quân 06 tháng liền kề trước khi thôi việc.",
+  "paraphrase_of": null,
+  "complex_kind": "cross_document"
+ },
+ {
+  "text": "Thời gian thử việc và thời gian nghỉ thai sản có được tính vào thời gian làm việc để tính trợ cấp thôi việc không, còn những năm đã đóng bảo hiểm thất nghiệp thì xử lý sao?",
+  "question_type": "synthesis",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-iii/section-3/article-46/clause-2",
+   "145-2020-nd-cp/chapter-iii/section-2/article-8/clause-3/point-a",
+   "145-2020-nd-cp/chapter-iii/section-2/article-8/clause-3/point-b"
+  ],
+  "rationale": "Khoản 2 Điều 46 Bộ luật Lao động trừ thời gian đã tham gia bảo hiểm thất nghiệp; điểm a khoản 3 Điều 8 Nghị định 145 liệt kê thời gian thử việc, nghỉ thai sản vào thời gian làm việc thực tế; điểm b nêu thời gian tham gia bảo hiểm thất nghiệp bị trừ.",
+  "paraphrase_of": null,
+  "complex_kind": "cross_document"
+ },
+ {
+  "text": "Nhân viên tự ý nghỉ liền 6 ngày làm việc không có lý do, công ty chấm dứt hợp đồng thì có còn phải trả trợ cấp thôi việc cho người đó không?",
+  "question_type": "synthesis",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-iii/section-3/article-36/clause-1/point-e",
+   "145-2020-nd-cp/chapter-iii/section-2/article-8/clause-1/point-b",
+   "45-2019-qh14/chapter-iii/section-3/article-46/clause-1"
+  ],
+  "rationale": "Điểm e khoản 1 Điều 36 cho phép đơn phương chấm dứt khi tự ý bỏ việc từ 05 ngày liên tục; khoản 1 Điều 46 quy định trợ cấp thôi việc; điểm b khoản 1 Điều 8 Nghị định 145 loại trừ trường hợp này khỏi trợ cấp.",
+  "paraphrase_of": null,
+  "complex_kind": "cross_document"
+ },
+ {
+  "text": "Phi công của hãng bay ký hợp đồng không xác định thời hạn muốn nghỉ việc thì phải báo trước bao lâu, so với nhân viên văn phòng cùng loại hợp đồng thì khác thế nào?",
+  "question_type": "synthesis",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-iii/section-3/article-35/clause-1/point-a",
+   "45-2019-qh14/chapter-iii/section-3/article-35/clause-1/point-d",
+   "145-2020-nd-cp/chapter-iii/section-2/article-7/clause-1/point-a",
+   "145-2020-nd-cp/chapter-iii/section-2/article-7/clause-2/point-a"
+  ],
+  "rationale": "Điểm a khoản 1 Điều 35: báo trước ít nhất 45 ngày với hợp đồng không xác định thời hạn; điểm d giao Chính phủ quy định ngành nghề đặc thù; điểm a khoản 1 Điều 7 Nghị định 145 xếp tổ lái tàu bay vào ngành đặc thù và điểm a khoản 2 yêu cầu báo trước ít nhất 120 ngày.",
+  "paraphrase_of": null,
+  "complex_kind": "cross_document"
+ },
+ {
+  "text": "Công ty muốn đơn phương chấm dứt hợp đồng 2 năm với giám đốc điều hành (người quản lý doanh nghiệp) thì phải báo trước bao nhiêu ngày?",
+  "question_type": "synthesis",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-iii/section-3/article-36/clause-2/point-d",
+   "145-2020-nd-cp/chapter-iii/section-2/article-7/clause-1/point-b",
+   "145-2020-nd-cp/chapter-iii/section-2/article-7/clause-2/point-a"
+  ],
+  "rationale": "Điểm d khoản 2 Điều 36 dẫn tới quy định của Chính phủ cho ngành nghề đặc thù; điểm b khoản 1 Điều 7 Nghị định 145 gồm người quản lý doanh nghiệp; điểm a khoản 2 Điều 7 yêu cầu ít nhất 120 ngày với hợp đồng từ 12 tháng trở lên.",
+  "paraphrase_of": null,
+  "complex_kind": "cross_document"
+ },
+ {
+  "text": "Nhân viên hưởng lương tháng đi tăng ca vào ngày lễ thì được trả lương thế nào, và lương giờ làm căn cứ được xác định ra sao?",
+  "question_type": "synthesis",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-vi/article-98/clause-1/point-c",
+   "145-2020-nd-cp/chapter-vi/section-2/article-55/clause-1/point-a",
+   "145-2020-nd-cp/chapter-vi/section-2/article-55/clause-1/point-b"
+  ],
+  "rationale": "Điểm c khoản 1 Điều 98: làm thêm vào ngày lễ ít nhất 300%; điểm a khoản 1 Điều 55 Nghị định 145 xác định tiền lương giờ thực trả; điểm b nêu các mức tính trên lương giờ đó.",
+  "paraphrase_of": null,
+  "complex_kind": "cross_document"
+ },
+ {
+  "text": "Công ty muốn cho công nhân tăng ca thì phải được họ đồng ý về những nội dung gì, và một ngày thường được tăng ca tối đa bao nhiêu giờ?",
+  "question_type": "synthesis",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-vii/section-1/article-107/clause-2/point-a",
+   "145-2020-nd-cp/chapter-vii/article-59/clause-1",
+   "45-2019-qh14/chapter-vii/section-1/article-107/clause-2/point-b",
+   "145-2020-nd-cp/chapter-vii/article-60/clause-1"
+  ],
+  "rationale": "Điểm a khoản 2 Điều 107 yêu cầu sự đồng ý của người lao động và khoản 1 Điều 59 Nghị định 145 nêu nội dung phải đồng ý; điểm b khoản 2 Điều 107 và khoản 1 Điều 60 Nghị định 145 giới hạn không quá 50% số giờ làm việc bình thường trong ngày.",
+  "paraphrase_of": null,
+  "complex_kind": "cross_document"
+ },
+ {
+  "text": "Họp kỷ luật một nhân viên thì phải gửi thông báo trước mấy ngày, và những ai bắt buộc phải có mặt trong cuộc họp?",
+  "question_type": "synthesis",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-viii/section-1/article-122/clause-1/point-b",
+   "45-2019-qh14/chapter-viii/section-1/article-122/clause-1/point-c",
+   "145-2020-nd-cp/chapter-viii/article-70/clause-2/point-a"
+  ],
+  "rationale": "Điểm b, c khoản 1 Điều 122 Bộ luật Lao động yêu cầu có tổ chức đại diện người lao động và người lao động phải có mặt; điểm a khoản 2 Điều 70 Nghị định 145 yêu cầu thông báo ít nhất 05 ngày làm việc trước cuộc họp.",
+  "paraphrase_of": null,
+  "complex_kind": "cross_document"
+ },
+ {
+  "text": "Người lao động nghỉ việc sau khoảng 4 năm làm việc thì trợ cấp thôi việc được tính theo công thức nào, căn cứ vào mức lương của giai đoạn nào?",
+  "question_type": "synthesis",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-iii/section-3/article-46/clause-1",
+   "145-2020-nd-cp/chapter-iii/section-2/article-8/clause-5/point-a"
+  ],
+  "rationale": "Diễn đạt lại câu 0: khoản 1 Điều 46 và điểm a khoản 5 Điều 8 Nghị định 145.",
+  "paraphrase_of": 0,
+  "complex_kind": "cross_document"
+ },
+ {
+  "text": "Với nhân viên tổ lái tàu bay làm hợp đồng vô thời hạn, nếu họ tự nghỉ thì phải báo trước tối thiểu bao nhiêu ngày, dài hơn bao nhiêu so với người lao động bình thường?",
+  "question_type": "synthesis",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-iii/section-3/article-35/clause-1/point-a",
+   "45-2019-qh14/chapter-iii/section-3/article-35/clause-1/point-d",
+   "145-2020-nd-cp/chapter-iii/section-2/article-7/clause-1/point-a",
+   "145-2020-nd-cp/chapter-iii/section-2/article-7/clause-2/point-a"
+  ],
+  "rationale": "Diễn đạt lại câu 3: điểm a, d khoản 1 Điều 35 và Điều 7 Nghị định 145.",
+  "paraphrase_of": 3,
+  "complex_kind": "cross_document"
+ },
+ {
+  "text": "Công ty cho nhân viên nghỉ trái luật nhưng nhân viên không muốn quay lại làm nữa thì công ty phải trả những khoản gì?",
+  "question_type": "synthesis",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-iii/section-3/article-39",
+   "45-2019-qh14/chapter-iii/section-3/article-41/clause-1",
+   "45-2019-qh14/chapter-iii/section-3/article-41/clause-2",
+   "45-2019-qh14/chapter-iii/section-3/article-46/clause-1"
+  ],
+  "rationale": "Điều 39 định nghĩa đơn phương chấm dứt trái pháp luật; khoản 1 Điều 41 buộc trả lương, bảo hiểm những ngày không được làm và thêm ít nhất 02 tháng lương; khoản 2 Điều 41 thêm trợ cấp thôi việc theo khoản 1 Điều 46.",
+  "paraphrase_of": null,
+  "complex_kind": "multi_article"
+ },
+ {
+  "text": "Nhân viên hợp đồng không thời hạn nghỉ ngang mà không báo trước đủ ngày thì phải bồi thường gì cho công ty?",
+  "question_type": "synthesis",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-iii/section-3/article-35/clause-1/point-a",
+   "45-2019-qh14/chapter-iii/section-3/article-40/clause-1",
+   "45-2019-qh14/chapter-iii/section-3/article-40/clause-2"
+  ],
+  "rationale": "Điểm a khoản 1 Điều 35 yêu cầu báo trước ít nhất 45 ngày; khoản 1 Điều 40: không được trợ cấp thôi việc; khoản 2 Điều 40: bồi thường nửa tháng lương và tiền lương những ngày không báo trước.",
+  "paraphrase_of": null,
+  "complex_kind": "multi_article"
+ },
+ {
+  "text": "Nhân viên đang nghỉ ốm điều trị theo chỉ định của bác sĩ thì công ty có được đơn phương chấm dứt hợp đồng không, có ngoại lệ nào không?",
+  "question_type": "synthesis",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-iii/section-3/article-37/clause-1",
+   "45-2019-qh14/chapter-iii/section-3/article-36/clause-1/point-b"
+  ],
+  "rationale": "Khoản 1 Điều 37 cấm đơn phương chấm dứt khi người lao động đang điều trị, trừ trường hợp tại điểm b khoản 1 Điều 36 (đã điều trị 12 tháng liên tục với hợp đồng không xác định thời hạn...).",
+  "paraphrase_of": null,
+  "complex_kind": "multi_article"
+ },
+ {
+  "text": "Ngày nghỉ hằng tuần trùng đúng ngày Quốc khánh thì người lao động được nghỉ bù thế nào, còn nếu hôm đó vẫn phải đi làm thì lương tính bao nhiêu?",
+  "question_type": "synthesis",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-vii/section-2/article-111/clause-3",
+   "45-2019-qh14/chapter-vii/section-2/article-112/clause-1/point-đ",
+   "45-2019-qh14/chapter-vi/article-98/clause-1/point-c"
+  ],
+  "rationale": "Khoản 3 Điều 111: nghỉ bù vào ngày làm việc kế tiếp; điểm đ khoản 1 Điều 112: Quốc khánh nghỉ 02 ngày; điểm c khoản 1 Điều 98: làm thêm vào ngày lễ ít nhất 300%.",
+  "paraphrase_of": null,
+  "complex_kind": "multi_article"
+ },
+ {
+  "text": "Nhân viên văn phòng làm cho công ty được 11 năm thì mỗi năm được nghỉ phép bao nhiêu ngày?",
+  "question_type": "synthesis",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-vii/section-2/article-113/clause-1/point-a",
+   "45-2019-qh14/chapter-vii/section-2/article-114"
+  ],
+  "rationale": "Điểm a khoản 1 Điều 113: 12 ngày làm việc trong điều kiện bình thường; Điều 114: cứ đủ 05 năm tăng thêm 01 ngày, nên 11 năm được 14 ngày.",
+  "paraphrase_of": null,
+  "complex_kind": "multi_article"
+ },
+ {
+  "text": "Đi nghỉ phép năm mà chưa tới ngày lãnh lương thì có được ứng trước tiền lương không, ứng tối thiểu bao nhiêu?",
+  "question_type": "synthesis",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-vii/section-2/article-113/clause-5",
+   "45-2019-qh14/chapter-vi/article-101/clause-3"
+  ],
+  "rationale": "Khoản 5 Điều 113 cho tạm ứng tiền lương theo khoản 3 Điều 101; khoản 3 Điều 101: tạm ứng ít nhất bằng tiền lương của những ngày nghỉ.",
+  "paraphrase_of": null,
+  "complex_kind": "multi_article"
+ },
+ {
+  "text": "Nhân viên làm hỏng máy móc, công ty trừ lương để bồi thường thì có được không và mỗi tháng được trừ tối đa bao nhiêu?",
+  "question_type": "synthesis",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-viii/section-2/article-129/clause-1",
+   "45-2019-qh14/chapter-vi/article-102/clause-1",
+   "45-2019-qh14/chapter-vi/article-102/clause-3"
+  ],
+  "rationale": "Khoản 1 Điều 129: làm hư hỏng thiết bị phải bồi thường; khoản 1 Điều 102 cho khấu trừ lương để bồi thường theo Điều 129; khoản 3 Điều 102: không quá 30% tiền lương thực trả hằng tháng sau các khoản bắt buộc.",
+  "paraphrase_of": null,
+  "complex_kind": "multi_article"
+ },
+ {
+  "text": "Nhân viên đang mang thai vi phạm nội quy thì có bị xử lý kỷ luật ngay không, và sau khi nghỉ thai sản xong thì thời hiệu xử lý được tính thế nào?",
+  "question_type": "synthesis",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-viii/section-1/article-122/clause-4/point-d",
+   "45-2019-qh14/chapter-viii/section-1/article-123/clause-2"
+  ],
+  "rationale": "Điểm d khoản 4 Điều 122: không xử lý kỷ luật lao động nữ mang thai, nghỉ thai sản, nuôi con dưới 12 tháng; khoản 2 Điều 123: hết thời gian đó được kéo dài thời hiệu nhưng không quá 60 ngày.",
+  "paraphrase_of": null,
+  "complex_kind": "multi_article"
+ },
+ {
+  "text": "Nếu tòa kết luận công ty đuổi việc sai luật mà người lao động không muốn trở lại làm việc thì doanh nghiệp phải chi trả những khoản nào?",
+  "question_type": "synthesis",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-iii/section-3/article-39",
+   "45-2019-qh14/chapter-iii/section-3/article-41/clause-1",
+   "45-2019-qh14/chapter-iii/section-3/article-41/clause-2",
+   "45-2019-qh14/chapter-iii/section-3/article-46/clause-1"
+  ],
+  "rationale": "Diễn đạt lại câu 10: Điều 39, khoản 1 và 2 Điều 41, khoản 1 Điều 46.",
+  "paraphrase_of": 10,
+  "complex_kind": "multi_article"
+ },
+ {
+  "text": "Làm cho một công ty liên tục hơn 10 năm trong điều kiện bình thường thì số ngày phép năm tăng lên thành bao nhiêu?",
+  "question_type": "synthesis",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-vii/section-2/article-113/clause-1/point-a",
+   "45-2019-qh14/chapter-vii/section-2/article-114"
+  ],
+  "rationale": "Diễn đạt lại câu 14: điểm a khoản 1 Điều 113 và Điều 114.",
+  "paraphrase_of": 14,
+  "complex_kind": "multi_article"
+ },
+ {
+  "text": "Công ty muốn sa thải một nhân viên nữ đang mang thai vì tự ý nghỉ 5 ngày trong tháng mà không có lý do. Có làm được không, nếu được thì khi nào và phải họp kỷ luật theo thủ tục gì?",
+  "question_type": "synthesis",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-viii/section-1/article-125/clause-4",
+   "45-2019-qh14/chapter-viii/section-1/article-122/clause-4/point-d",
+   "45-2019-qh14/chapter-viii/section-1/article-123/clause-2",
+   "145-2020-nd-cp/chapter-viii/article-70/clause-2/point-a"
+  ],
+  "rationale": "Khoản 4 Điều 125: tự ý bỏ việc 05 ngày cộng dồn trong 30 ngày là căn cứ sa thải; điểm d khoản 4 Điều 122: không xử lý khi đang mang thai; khoản 2 Điều 123: kéo dài thời hiệu sau đó; điểm a khoản 2 Điều 70 Nghị định 145: thông báo họp trước ít nhất 05 ngày làm việc.",
+  "paraphrase_of": null,
+  "complex_kind": "situation"
+ },
+ {
+  "text": "Nhân viên làm hợp đồng không thời hạn được 3 năm muốn nghỉ việc: phải báo trước bao lâu, có được trợ cấp thôi việc không, và công ty phải thanh toán hết các khoản trong bao lâu?",
+  "question_type": "synthesis",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-iii/section-3/article-35/clause-1/point-a",
+   "45-2019-qh14/chapter-iii/section-3/article-46/clause-1",
+   "45-2019-qh14/chapter-iii/section-3/article-48/clause-1"
+  ],
+  "rationale": "Điểm a khoản 1 Điều 35: báo trước ít nhất 45 ngày; khoản 1 Điều 46: trợ cấp thôi việc khi làm từ đủ 12 tháng; khoản 1 Điều 48: thanh toán trong 14 ngày làm việc, có thể kéo dài không quá 30 ngày.",
+  "paraphrase_of": null,
+  "complex_kind": "situation"
+ },
+ {
+  "text": "Công ty thay đổi công nghệ nên phải cắt giảm 20 người: công ty phải làm gì trước khi cho nghỉ, và người bị cho nghỉ được trợ cấp bao nhiêu?",
+  "question_type": "synthesis",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-iii/section-3/article-42/clause-3",
+   "45-2019-qh14/chapter-iii/section-3/article-47/clause-1",
+   "145-2020-nd-cp/chapter-iii/section-2/article-8/clause-2"
+  ],
+  "rationale": "Khoản 3 Điều 42: phải xây dựng và thực hiện phương án sử dụng lao động; khoản 1 Điều 47: trợ cấp mất việc làm mỗi năm 01 tháng lương, ít nhất 02 tháng; khoản 2 Điều 8 Nghị định 145 xác định trách nhiệm chi trả trợ cấp mất việc làm.",
+  "paraphrase_of": null,
+  "complex_kind": "situation"
+ },
+ {
+  "text": "Nhân viên bị nghi trộm tài sản công ty, công ty muốn cho nghỉ ở nhà để điều tra rồi mới sa thải: được tạm đình chỉ bao lâu và lương trong thời gian đó trả thế nào?",
+  "question_type": "synthesis",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-viii/section-1/article-128/clause-1",
+   "45-2019-qh14/chapter-viii/section-1/article-128/clause-2",
+   "45-2019-qh14/chapter-viii/section-1/article-125/clause-1"
+  ],
+  "rationale": "Khoản 1 Điều 128 cho tạm đình chỉ khi vụ việc phức tạp; khoản 2: không quá 15 ngày, đặc biệt không quá 90 ngày, được tạm ứng 50% lương; khoản 1 Điều 125: trộm cắp là căn cứ sa thải.",
+  "paraphrase_of": null,
+  "complex_kind": "situation"
+ },
+ {
+  "text": "Công ty trả lương thử việc 80% và bắt thử việc 90 ngày cho vị trí kỹ sư tốt nghiệp đại học: sai ở chỗ nào và có thể bị phạt bao nhiêu?",
+  "question_type": "synthesis",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-iii/section-1/article-26",
+   "45-2019-qh14/chapter-iii/section-1/article-25/clause-2",
+   "12-2022-nd-cp/chapter-ii/article-10/clause-2/point-b",
+   "12-2022-nd-cp/chapter-ii/article-10/clause-2/point-c"
+  ],
+  "rationale": "Điều 26: lương thử việc ít nhất 85%; khoản 2 Điều 25: không quá 60 ngày với trình độ cao đẳng trở lên; điểm b, c khoản 2 Điều 10 Nghị định 12: phạt 2 đến 5 triệu đồng khi thử việc quá thời gian hoặc trả dưới 85%.",
+  "paraphrase_of": null,
+  "complex_kind": "situation"
+ },
+ {
+  "text": "Doanh nghiệp ở vùng I trả lương tháng cho 15 công nhân làm việc giản đơn thấp hơn lương tối thiểu vùng thì bị xử lý thế nào, và mức tối thiểu đó áp theo địa bàn nào?",
+  "question_type": "synthesis",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "293-2025-nd-cp/article-3/clause-1",
+   "293-2025-nd-cp/article-3/clause-3/point-a",
+   "12-2022-nd-cp/chapter-ii/article-17/clause-3/point-b"
+  ],
+  "rationale": "Khoản 1 Điều 3 Nghị định 293 quy định mức lương tối thiểu theo vùng; điểm a khoản 3 Điều 3: áp theo địa bàn nơi người sử dụng lao động hoạt động; điểm b khoản 3 Điều 17 Nghị định 12: phạt 30 đến 50 triệu đồng khi vi phạm với 11 đến 50 người.",
+  "paraphrase_of": null,
+  "complex_kind": "situation"
+ },
+ {
+  "text": "Công ty chậm lương 2 tháng vì khó khăn: nhân viên có được nghỉ ngay mà không cần báo trước không, công ty phải trả thêm gì và có bị phạt không?",
+  "question_type": "synthesis",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-iii/section-3/article-35/clause-2/point-b",
+   "45-2019-qh14/chapter-vi/article-97/clause-4",
+   "12-2022-nd-cp/chapter-ii/article-17/clause-2"
+  ],
+  "rationale": "Điểm b khoản 2 Điều 35: được nghỉ không cần báo trước khi không được trả lương đúng hạn, trừ trường hợp khoản 4 Điều 97; khoản 4 Điều 97: bất khả kháng cũng không chậm quá 30 ngày và chậm từ 15 ngày phải đền bù; khoản 2 Điều 17 Nghị định 12: phạt khi trả lương không đúng hạn.",
+  "paraphrase_of": null,
+  "complex_kind": "situation"
+ },
+ {
+  "text": "Nhân viên làm mất laptop công ty giao, nửa năm sau công ty mới đòi bồi thường: còn trong thời hiệu không, và nếu trừ vào lương thì trừ thế nào?",
+  "question_type": "synthesis",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-viii/section-2/article-129/clause-2",
+   "145-2020-nd-cp/chapter-viii/article-72/clause-1",
+   "45-2019-qh14/chapter-vi/article-102/clause-1",
+   "45-2019-qh14/chapter-vi/article-102/clause-3"
+  ],
+  "rationale": "Khoản 2 Điều 129: làm mất tài sản được giao phải bồi thường; khoản 1 Điều 72 Nghị định 145: thời hiệu xử lý bồi thường 06 tháng; khoản 1 Điều 102 giới hạn trường hợp được khấu trừ lương; khoản 3 Điều 102: không quá 30% lương thực trả hằng tháng.",
+  "paraphrase_of": null,
+  "complex_kind": "situation"
+ },
+ {
+  "text": "Lao động nữ có thai bỏ việc 5 ngày cộng dồn trong vòng 30 ngày, doanh nghiệp có kỷ luật sa thải ngay được không hay phải chờ, và cuộc họp kỷ luật cần chuẩn bị thế nào?",
+  "question_type": "synthesis",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-viii/section-1/article-125/clause-4",
+   "45-2019-qh14/chapter-viii/section-1/article-122/clause-4/point-d",
+   "45-2019-qh14/chapter-viii/section-1/article-123/clause-2",
+   "145-2020-nd-cp/chapter-viii/article-70/clause-2/point-a"
+  ],
+  "rationale": "Diễn đạt lại câu 20: khoản 4 Điều 125, điểm d khoản 4 Điều 122, khoản 2 Điều 123, điểm a khoản 2 Điều 70 Nghị định 145.",
+  "paraphrase_of": 20,
+  "complex_kind": "situation"
+ },
+ {
+  "text": "Nhân viên hợp đồng vô thời hạn làm 3 năm xin nghỉ: cần báo trước bao nhiêu ngày, được nhận trợ cấp gì và công ty phải trả hết tiền trong thời hạn nào?",
+  "question_type": "synthesis",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-iii/section-3/article-35/clause-1/point-a",
+   "45-2019-qh14/chapter-iii/section-3/article-46/clause-1",
+   "45-2019-qh14/chapter-iii/section-3/article-48/clause-1"
+  ],
+  "rationale": "Diễn đạt lại câu 21: điểm a khoản 1 Điều 35, khoản 1 Điều 46, khoản 1 Điều 48.",
+  "paraphrase_of": 21,
+  "complex_kind": "situation"
+ }
+]
