@@ -4,7 +4,9 @@ The edges are the resolved references of `kb.references.detect_references` ("the
 a unit points to the unit it cites (`reference`). The reverse direction (`referenced_by`) leads from a provision to
 the provisions that cite it, such as the Decree article that details a Labour Code article. After ranking, every
 retrieved record is followed by up to `max_neighbors` records reached over the configured edge types, best ranked
-first, so a cited or detailing provision reaches the generator together with the one that was found. The list
+first, so a cited or detailing provision reaches the generator together with the one that was found.
+`same_article` links the clauses and points of one Article (the knowledge base's own hierarchy), so a found clause
+can bring the clause next to it, which a legal answer often needs (a rule and its exception or consequence). The list
 keeps its length: neighbours push lower-ranked records out instead of adding to the context, so every condition
 still hands over the same number of records. No similarity edges, no invented
 targets: pending, ambiguous and external references create no edge.
@@ -12,8 +14,8 @@ targets: pending, ambiguous and external references create no edge.
 
 from legal_ai.kb.references import detect_references
 
-GRAPH_VERSION = "reference-expansion-v2"
-EDGES = ("reference", "referenced_by")
+GRAPH_VERSION = "reference-expansion-v3"
+EDGES = ("reference", "referenced_by", "same_article")
 
 
 def check_config(graph):
@@ -51,7 +53,23 @@ def graph_edges(units, kinds, aliases=None):
             for target in targets:
                 if source not in edges.setdefault(target, []):
                     edges[target].append(source)
-    return edges
+    if "same_article" in kinds:
+        parents = {u["parent_id"] for u in units}
+        by_article = {}
+        for unit in units:
+            parts = unit["unit_id"].split("/")
+            at = next((n for n, part in enumerate(parts) if part.startswith("article-")), None)
+            if unit["unit_id"] not in parents and at is not None:
+                by_article.setdefault("/".join(parts[:at + 1]), []).append(unit["unit_id"])
+        for leaves in by_article.values():
+            for leaf in leaves:
+                edges.setdefault(leaf, []).extend(other for other in leaves if other != leaf and other not in edges[leaf])
+    return {source: targets for source, targets in edges.items() if targets}
+
+
+def _prefixes(unit_id):
+    parts = unit_id.split("/")
+    return ["/".join(parts[:n]) for n in range(1, len(parts) + 1)]
 
 
 def _inside(unit_id, ancestor):
@@ -69,11 +87,15 @@ def expand(ranked, records, edges, depth, max_neighbors=2, require_match=False):
     position = {index: n for n, (index, _) in enumerate(ranked)}
     score = dict(ranked)
     result, taken = [], set()
+    under = {}  # unit or ancestor ID -> records holding a unit inside it
+    for i, row in enumerate(records):
+        for unit in row["unit_ids"]:
+            for prefix in _prefixes(unit):
+                under.setdefault(prefix, []).append(i)
 
     def cited_records(index):
-        units = records[index]["unit_ids"]
-        targets = [t for source, cited in edges.items() if any(_inside(u, source) for u in units) for t in cited]
-        found = [i for i, row in enumerate(records) if i != index and any(_inside(u, t) for u in row["unit_ids"] for t in targets)]
+        targets = {t for unit in records[index]["unit_ids"] for prefix in _prefixes(unit) for t in edges.get(prefix, [])}
+        found = {i for t in targets for i in under.get(t, []) if i != index}
         if require_match:
             found = [i for i in found if i in position]
         return sorted(found, key=lambda i: (position.get(i, len(position)), i))

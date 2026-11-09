@@ -74,7 +74,8 @@ def build_records(condition, documents, units, texts, units_path=None):
             raise ValueError(f"record must be one of {RECORD_MODES}")
         claims = kb_claims(condition, units_path)
         records = (claim_records(condition["condition"], documents, units, texts, claims) if mode == "claims" else
-                   kb_unit_records(condition["condition"], documents, units, texts, claims, condition.get("max_tokens", 384)))
+                   kb_unit_records(condition["condition"], documents, units, texts, claims, condition.get("max_tokens", 384),
+                                   condition.get("claims_view", "full")))
     if condition.get("graph") and representation not in KB_FILES:
         raise ValueError("graph expansion uses the knowledge base and applies to DK3/DK4 only")
     return check_records(records, texts)
@@ -84,7 +85,7 @@ def within_budget(top, budget):
     """The leading records whose generator tokens fit `budget`; the first is always kept, as the answer run does."""
     kept, used = [], 0
     for row in top:
-        cost = len(token_spans(row["index_text"]))
+        cost = len(token_spans(row.get("generator_text") or row["index_text"]))
         if kept and used + cost > budget:
             break
         kept.append(row)

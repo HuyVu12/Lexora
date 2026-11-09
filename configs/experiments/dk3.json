@@ -19,5 +19,6 @@
     },
     "require_match": true
   },
-  "note": "Proposed 09/11/2026 (pending supervisor): the DK2 record of every unit (exact text, path, lead text) plus every claim of the extraction run, unvalidated, and expansion over resolved cross-references in both directions (cited provisions and the provisions that cite or detail them), a neighbour only when the question also matches it. See docs/decisions.md."
+  "note": "Proposed 09/11/2026 (pending supervisor): the DK2 record of every unit (exact text, path, lead text) plus every claim of the extraction run, unvalidated, and expansion over resolved cross-references in both directions (cited provisions and the provisions that cite or detail them), a neighbour only when the question also matches it. See docs/decisions.md; the generator reads the source text plus one structure line per claim (claims_view compact). See docs/decisions.md.",
+  "claims_view": "compact"
 }

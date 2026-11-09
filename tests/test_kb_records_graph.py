@@ -91,6 +91,19 @@ class KbRecordGraphTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "outside the corpus"):
             kb_unit_records("DK3", self.documents, self.units, self.texts, [stray])
 
+    def test_compact_view_searches_full_claims_but_hands_over_one_line_each(self):
+        full = kb_unit_records("DK3", self.documents, self.units, self.texts, self.claims)
+        compact = kb_unit_records("DK3", self.documents, self.units, self.texts, self.claims, view="compact")
+        a = next(r for r in full if r["claim_ids"] == ["kb:2"])
+        b = next(r for r in compact if r["claim_ids"] == ["kb:2"])
+        self.assertEqual(a["index_text"], b["index_text"], "search reads the same full claims")
+        self.assertNotIn("generator_text", a)
+        self.assertIn("[Quy phạm 1] nghĩa vụ · Chủ thể: Bên A", b["generator_text"])
+        self.assertIn("Bên A phải thông báo kết quả thử nghiệm cho bên B", b["generator_text"], "the source text stays")
+        self.assertLess(b["token_count"], a["token_count"])
+        with self.assertRaisesRegex(ValueError, "claims_view"):
+            kb_unit_records("DK3", self.documents, self.units, self.texts, self.claims, view="short")
+
     def test_reference_edges_and_expansion_keep_the_list_length(self):
         edges = reference_edges(self.units)
         self.assertEqual(edges, {"syn/chapter-i/article-2/clause-2": ["syn/chapter-i/article-3/clause-1"]})
@@ -111,6 +124,9 @@ class KbRecordGraphTests(unittest.TestCase):
         self.assertEqual(back, {"syn/chapter-i/article-3/clause-1": ["syn/chapter-i/article-2/clause-2"]})
         result = expand([(cited, 3.0)] + [(i, 1.0) for i in others] + [(citing, 0.1)], records, back, depth=2)
         self.assertEqual([i for i, _, _ in result], [cited, citing], "a found provision brings the provision that cites it")
+        siblings = graph_edges(self.units, ["same_article"])
+        self.assertEqual(siblings["syn/chapter-i/article-1/clause-1"], ["syn/chapter-i/article-1/clause-2"])
+        self.assertNotIn("syn/chapter-i/article-4", siblings, "an Article without clauses has no sibling")
         self.assertEqual(graph_edges(self.units, ["reference", "referenced_by"]),
                          {"syn/chapter-i/article-2/clause-2": ["syn/chapter-i/article-3/clause-1"],
                           "syn/chapter-i/article-3/clause-1": ["syn/chapter-i/article-2/clause-2"]})
@@ -126,7 +142,7 @@ class KbRecordGraphTests(unittest.TestCase):
         ranked = read_jsonl(self.root / "r3g" / "predictions.jsonl")[0]["ranked"]
         self.assertTrue(any("via_reference_from" in r for r in ranked[:2]))
         manifest = json.loads((self.root / "r3g" / "manifest.json").read_text(encoding="utf-8"))
-        self.assertEqual((manifest["graph"]["version"], manifest["graph"]["edge_count"]), ("reference-expansion-v2", 1))
+        self.assertEqual((manifest["graph"]["version"], manifest["graph"]["edge_count"]), ("reference-expansion-v3", 1))
         with self.assertRaisesRegex(ValueError, "DK3/DK4 only"):
             run(self.root / "bundle", self.questions, self.condition("dk2g", "DK2", graph={"edges": ["reference"]}), self.shared, self.root / "r2g")
         with self.assertRaisesRegex(ValueError, "record must be"):

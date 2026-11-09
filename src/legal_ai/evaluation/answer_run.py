@@ -49,7 +49,7 @@ def pack(ranked, records, top_k, budget):
     blocks, seen, used = [], set(), 0
     for item in ranked[:top_k]:
         record = records[item["record_id"]]
-        text = record["index_text"]
+        text = record.get("generator_text") or record["index_text"]  # What the generator reads (compact KB claims).
         if text in seen:
             continue
         cost = len(token_spans(text))

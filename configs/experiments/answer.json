@@ -6,8 +6,8 @@
   "judge_model": "claude-sonnet-5-5",
   "judge_effort": "medium",
   "prompt": "answer-v1.md",
-  "top_k": 5,
+  "top_k": 50,
   "context_token_budget": 3000,
   "token_counter": "lexora-syllable-v1",
-  "note": "The same settings for DK1-DK4. Token budget counted in Lexora syllable tokens until the Opus tokenizer count replaces it (progress item 8)."
+  "note": "The same settings for DK1-DK4. Token budget counted in Lexora syllable tokens until the Opus tokenizer count replaces it (progress item 8). Records are taken in rank order until the 3,000-token budget is full (top_k 50 is only a cap), so every condition hands the generator the same amount of text."
 }

@@ -200,12 +200,35 @@ def claim_records(condition, documents, units, texts, claims):
     return records
 
 
-def kb_unit_records(condition, documents, units, texts, claims, max_tokens=384):
+COMPACT_SLOTS = ("actor", "beneficiary", "conditions", "exceptions", "deadlines", "quantities", "outcome")
+COMPACT_WORDS = 8
+
+
+def compact_claim(claim):
+    """One line with the norm's structure for the generator: modality and the slots that qualify the rule, each value
+    cut to a few words. The values are verbatim parts of the source text printed just above, so nothing is lost; the
+    line tells the generator who is bound, under which condition or exception and with which consequence."""
+    slots = claim.get("slots") if isinstance(claim.get("slots"), dict) else {}
+    parts = [MODALITY_LABELS.get(claim.get("modality"), str(claim.get("modality")))]
+    for name in COMPACT_SLOTS:
+        value = slots.get(name)
+        if isinstance(value, str) and value.strip():
+            words = value.split()
+            parts.append(f"{SLOT_LABELS[name]}: {' '.join(words[:COMPACT_WORDS])}{'…' if len(words) > COMPACT_WORDS else ''}")
+    return " · ".join(parts)
+
+
+def kb_unit_records(condition, documents, units, texts, claims, max_tokens=384, view="full"):
     """DK3/DK4 (`record: unit_with_claims`): the DK2 record of every leaf unit, its exact source text, path and lead
     text unchanged, followed by the serialized knowledge-base claims of that unit. A unit without a claim keeps its
     DK2 record, so the only difference to DK2 is the added norm structure (and between DK3 and DK4, which claims
     survived validation). `token_count` counts the source text and the claims, i.e. what the generator reads beyond
-    the shared title and path."""
+    the shared title and path.
+
+    With `view="compact"` the generator reads `generator_text` instead: the DK2 text and one structure line per claim
+    (`compact_claim`), while `index_text` keeps the full claims for searching; budgets count `generator_text`."""
+    if view not in ("full", "compact"):
+        raise ValueError("claims_view must be full or compact")
     by_id = {u["unit_id"]: u for u in units}
     attached = {}
     for claim in claims:
@@ -222,10 +245,15 @@ def kb_unit_records(condition, documents, units, texts, claims, max_tokens=384):
                       key=lambda c: (c["sentence"]["start"], c["claim_id"]))
         bodies = [serialize_claim(c) for c in mine]
         block = "".join(f"\n[Quy phạm {n}]\n{body}" for n, body in enumerate(bodies, 1))
-        row = {**row, "condition": condition, "index_text": row["index_text"].rstrip("\n") + block,
+        base = row["index_text"].rstrip("\n")
+        row = {**row, "condition": condition, "index_text": base + block,
                "record_id": f"{condition.lower()}:{row['record_id'].split(':', 1)[1]}",
                "token_count": row["token_count"] + sum(len(token_spans(b)) for b in bodies),
                "claim_ids": [c["claim_id"] for c in mine]}
+        if view == "compact":
+            lines = [compact_claim(c) for c in mine]
+            row["generator_text"] = base + "".join(f"\n[Quy phạm {n}] {line}" for n, line in enumerate(lines, 1))
+            row["token_count"] = len(token_spans(row["text"])) + sum(len(token_spans(line)) for line in lines)
         used.update(row["claim_ids"])
         records.append(row)
     missing = [c["claim_id"] for c in claims if c["claim_id"] not in used]

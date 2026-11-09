@@ -1,0 +1,24 @@
+{
+  "condition": "DK3",
+  "representation": "llm_kb_raw",
+  "automatic_validation": false,
+  "manual_review": false,
+  "status": "draft",
+  "kb_run": "experiments/runs/kb-scope-v2-gpt-oss-120b",
+  "kb_model_note": "Same model, prompt and settings as the v1 run, on corpus scope v2 (711 articles, 09/11/2026).",
+  "record": "unit_with_claims",
+  "max_tokens": 384,
+  "graph": {
+    "edges": [
+      "reference",
+      "referenced_by"
+    ],
+    "max_neighbors": 2,
+    "source_aliases": {
+      "Bộ luật Lao động": "45-2019-qh14"
+    },
+    "require_match": true
+  },
+  "note": "Variant: as the main design, the generator reads the source text plus one structure line per claim.",
+  "claims_view": "compact"
+}
