@@ -15,6 +15,9 @@ counts them) fit the budget, so conditions are compared on equal context too.
 DK3/DK4 records are either one serialized claim each (`record: claims`, the first design, kept as an ablation) or
 the DK2 record of each unit with its claims attached (`record: unit_with_claims`). With a `graph` block the ranking
 is expanded over the knowledge base's cross-reference edges (`retrieval.graph`), keeping the list length.
+
+With `shared.subqueries` (a decomposition run, the same for every condition) each question is ranked once as
+written and once per issue query, and the rankings are merged round-robin, so every issue gets early records.
 """
 
 from datetime import datetime, timezone
@@ -25,6 +28,7 @@ import subprocess
 
 from legal_ai.common.io import canonical, digest, read_jsonl, write_json, write_jsonl
 from legal_ai.indexing.records import RECORD_VERSION, TOKENIZER, check_records, claim_records, fixed_chunks, kb_unit_records, structural_records, token_spans
+from legal_ai.evaluation import decompose
 from legal_ai.retrieval import graph as kb_graph
 from legal_ai.retrieval.bm25 import BM25, tokens
 from legal_ai.validation.bundle import validate_bundle
@@ -140,17 +144,24 @@ def run(bundle, questions_path, condition_path, shared_path, output, embedder=No
         from legal_ai.retrieval.embeddings import DenseIndex, rrf
         dense = DenseIndex(embedder, [row["index_text"] for row in records])
     edges = kb_graph.graph_edges(units, graph["edges"], graph.get("source_aliases")) if graph else None
+    subqueries = decompose.load(shared["subqueries"], questions_path)[0] if shared.get("subqueries") else None
     # Deep enough for the largest token budget of the smallest records; predictions keep this depth.
     depth = max(max(ks), 50)
     predictions, errors = [], []
-    for question in questions:
+    def rank(text):
         if method == "bm25":
-            ranked = lexical.rank(tokens(question["question"]))[:depth]
-        elif method == "dense":
-            ranked = dense.rank(question["question"])[:depth]
-        else:
-            ranked = rrf([lexical.rank(tokens(question["question"])), dense.rank(question["question"])],
-                         retrieval.get("rrf_c", 60), retrieval.get("rrf_candidates", 30))[:depth]
+            return lexical.rank(tokens(text))[:depth]
+        if method == "dense":
+            return dense.rank(text)[:depth]
+        return rrf([lexical.rank(tokens(text)), dense.rank(text)], retrieval.get("rrf_c", 60), retrieval.get("rrf_candidates", 30))[:depth]
+
+    for question in questions:
+        issues = subqueries.get(question["question_id"]) if subqueries is not None else None
+        if subqueries is not None and issues is None:
+            errors.append({"question_id": question["question_id"], "code": "no_decomposition"})
+        ranked = rank(question["question"])
+        if issues:
+            ranked = decompose.merge([ranked] + [rank(i["query"]) for i in issues], depth)
         via = {}
         if graph:
             expanded = kb_graph.expand(ranked, records, edges, depth, graph.get("max_neighbors", 2), graph.get("require_match", False))
@@ -197,6 +208,8 @@ def run(bundle, questions_path, condition_path, shared_path, output, embedder=No
         "question_set": {"description": question_file.get("description"), "count": len(questions)},
         "records_sha256": digest("".join(canonical(r) + "\n" for r in records)),
         "status": "exploratory" if shared.get("status") != "frozen" or condition.get("status") != "frozen" else "frozen",
+        "subqueries": ({"path": Path(shared["subqueries"]).as_posix(),
+                        "sha256": digest((Path(shared["subqueries"]) / "subqueries.jsonl").read_bytes())} if shared.get("subqueries") else None),
         "graph": ({"version": kb_graph.GRAPH_VERSION, **graph, "edge_count": sum(len(v) for v in edges.values())} if graph else None),
         "method": method, "dense": ({**embedder.describe(), "texts_sha256": dense.texts_sha256} if dense else None),
         "network": False, "model_calls": 0,

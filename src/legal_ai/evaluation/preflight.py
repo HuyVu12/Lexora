@@ -51,7 +51,8 @@ def check(retrieval_dirs, answer_dirs=()):
         values = [m["inputs"][key]["sha256"] for _, m in runs]
         add(name, "pass" if _same(values) else "fail", "" if _same(values) else dict(zip(conditions, values)))
 
-    shared = [{k: m["retrieval"].get(k) for k in SHARED_KEYS} | {"top_k": m["shared"].get("top_k")} for _, m in runs]
+    shared = [{k: m["retrieval"].get(k) for k in SHARED_KEYS} | {"top_k": m["shared"].get("top_k"),
+                                                                 "subqueries": (m.get("subqueries") or {}).get("sha256")} for _, m in runs]
     add("same retrieval settings", "pass" if _same(shared) else "fail", "" if _same(shared) else dict(zip(conditions, shared)))
     dense = [({k: (m.get("dense") or {}).get(k) for k in ("model", "revision", "weights_sha256", "max_seq_length")} if m.get("dense") else None) for _, m in runs]
     add("same embedding model", "pass" if _same(dense) else "fail", "" if _same(dense) else dict(zip(conditions, dense)))

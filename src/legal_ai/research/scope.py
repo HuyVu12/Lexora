@@ -1,7 +1,8 @@
 """Experiment scope: a research corpus made of chosen articles of pinned vbpl.vn snapshots (`experiment-scope-v1`).
 
 The scope file names, per document, the snapshot SHA-256 under `data/raw/vbpl/<vbpl_id>/<sha>/` and the article
-numbers to keep ("13-48" is a range). `build_scope` adds every document to a new corpus as a verbatim excerpt of
+numbers to keep ("13-48" is a range), or "all" for every article that can be excerpted (articles holding a quoted
+amendment of another text are skipped and listed in the excerpt metadata). `build_scope` adds every document to a new corpus as a verbatim excerpt of
 those articles with their chapter/section headings, so DK1-DK4, the question set and the extraction gold set all
 read the same text. No network: the snapshots must already be on disk.
 """
@@ -12,7 +13,7 @@ from pathlib import Path
 from legal_ai.ingestion.excerpt import outline
 from legal_ai.ingestion.vbpl_api import document_text, unwrap
 
-SCOPE_VERSION = "experiment-scope-v1"
+SCOPE_VERSIONS = ("experiment-scope-v1", "experiment-scope-v2")
 
 
 def article_numbers(spec):
@@ -49,8 +50,8 @@ def outline_ids(text, numbers):
 
 def load_scope(path):
     scope = json.loads(Path(path).read_text(encoding="utf-8"))
-    if scope.get("scope_version") != SCOPE_VERSION:
-        raise ValueError(f"scope file must be {SCOPE_VERSION}")
+    if scope.get("scope_version") not in SCOPE_VERSIONS:
+        raise ValueError(f"scope file must be one of {SCOPE_VERSIONS}")
     return scope
 
 
@@ -63,7 +64,13 @@ def build_scope(store, scope_path, actor, raw_dir="data/raw/vbpl"):
         manifest = json.loads((folder / "manifest.json").read_text(encoding="utf-8"))
         raw = (folder / "document.json").read_bytes()
         text = document_text(unwrap(raw))["text"]
-        planned.append((entry["document_id"], manifest, raw, outline_ids(text, article_numbers(entry["articles"]))))
+        if entry["articles"] == "all":
+            ids = [article["id"] for article in outline(text) if not article["blocked"]]
+            if not ids:
+                raise ValueError(f"{entry['document_id']}: no article can be excerpted")
+        else:
+            ids = outline_ids(text, article_numbers(entry["articles"]))
+        planned.append((entry["document_id"], manifest, raw, ids))
     corpus = store.create(scope["name"], scope["description"], actor)
     for document_id, manifest, raw, ids in planned:
         store.add_vbpl(corpus["id"], manifest, raw, actor, document_id, ids)

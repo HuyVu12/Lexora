@@ -98,6 +98,11 @@ def run(retrieval_dir, questions_path, config_path, provider, output, *, split=N
     if split:
         questions = [q for q in questions if q.get("split") == split]
     system, system_sha = system_prompt(config["prompt"])
+    # Issues of a decomposed retrieval run go to the generator with the question, the same for every condition.
+    issues = {}
+    if retrieval.get("subqueries"):
+        from legal_ai.evaluation.decompose import load
+        issues = load(retrieval["subqueries"]["path"])[0]
     manifest = {"run_version": RUN_VERSION, "condition": retrieval["condition"]["condition"], "retrieval_run": retrieval_dir.as_posix(),
                 "retrieval_records_sha256": retrieval["records_sha256"], "questions_sha256": digest(Path(questions_path).read_bytes()),
                 "split": split, "provider": getattr(provider, "provider", "claude-code"), "model": provider.model,
@@ -125,7 +130,10 @@ def run(retrieval_dir, questions_path, config_path, provider, output, *, split=N
             if prediction is None:
                 raise ValueError(f"question not in the retrieval run: {question['question_id']}")
             blocks = pack(prediction["ranked"], records, config["top_k"], config["context_token_budget"])
-            prompt = json.dumps({"question": question["question"], "evidence": [{"id": b["id"], "text": b["text"]} for b in blocks]}, ensure_ascii=False)
+            request = {"question": question["question"]}
+            if issues.get(question["question_id"]):
+                request["issues"] = [i["issue"] for i in issues[question["question_id"]]]
+            prompt = json.dumps(request | {"evidence": [{"id": b["id"], "text": b["text"]} for b in blocks]}, ensure_ascii=False)
             row = {"question_id": question["question_id"], "condition": manifest["condition"],
                    "context": [{k: b[k] for k in ("id", "record_id", "unit_ids", "token_count")} for b in blocks],
                    "context_tokens": sum(b["token_count"] for b in blocks), "prompt_sha256": digest(prompt)}

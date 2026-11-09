@@ -51,6 +51,11 @@ class ScopeTests(unittest.TestCase):
                           "luat-gia-dinh/chapter-ii/article-3"])
         self.assertNotIn("Phạm vi", "".join(u["text"] for u in doc["units"]))
 
+    def test_all_articles_skip_only_those_with_quoted_amendments(self):
+        corpus = build_scope(self.store, self.scope("all"), "phapche", raw_dir=self.root / "raw")
+        row = corpus["documents"][0]
+        self.assertEqual(row["metadata"]["excerpt"]["article_ids"], ["chapter-i/article-1", "chapter-ii/article-2", "chapter-ii/article-3"])
+
     def test_unknown_duplicate_and_quoted_articles_are_refused(self):
         self.assertEqual(article_numbers(["1", "3-5", "4a"]), ["1", "3", "4", "5", "4a"])
         with self.assertRaisesRegex(ValueError, "twice"):
