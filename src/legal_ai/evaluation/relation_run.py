@@ -2,8 +2,9 @@
 
 A legal answer joins provisions that rarely cite each other: a rule, its exception, its procedure, its consequence.
 For every article (or a seeded sample), `extract` picks candidate articles automatically from the whole corpus
-(explicit references first, then the most similar articles by BM25 over the article text; never from questions or
-gold labels) and asks one model which candidates relate to the source and how: exception, procedure,
+(explicit references first, then the most similar articles by BM25 over the article text, plus, with `dense`, the
+nearest articles by a local embedding model, which finds provisions on the same matter worded differently; never
+from questions or gold labels) and asks one model which candidates relate to the source and how: exception, procedure,
 consequence, condition or detail, each with a short verbatim quote on both sides. Answers are appended to
 `raw.jsonl` as they arrive (keyed by the request hash) and an interrupted run resumes.
 
@@ -33,6 +34,7 @@ TYPES = ("exception", "procedure", "consequence", "condition", "detail")
 MAX_CANDIDATES = 10
 SOURCE_CHARS, CANDIDATE_CHARS, QUERY_TOKENS = 2400, 900, 300
 SEED = "lexora-relations-v1"
+DENSE_TEXT_CHARS = 1500  # What the embedding model reads of each article.
 
 
 def articles(units):
@@ -61,8 +63,9 @@ def _article_of(unit_id):
     return "/".join(parts[:at + 1]) if at is not None else None
 
 
-def candidates(units, rows, aliases=None, k=MAX_CANDIDATES):
-    """{article id: [candidate article ids]}: referenced or referencing articles first, then BM25 neighbours."""
+def candidates(units, rows, aliases=None, k=MAX_CANDIDATES, dense=0, embedder=None):
+    """{article id: [candidate article ids]}: referenced or referencing articles first, then BM25 neighbours (k in
+    all), then the `dense` nearest articles by embedding that are not chosen yet."""
     linked = {}
     for source, targets in reference_edges(units, aliases).items():
         a = _article_of(source)
@@ -81,6 +84,13 @@ def candidates(units, rows, aliases=None, k=MAX_CANDIDATES):
             if other != n and rows[other]["id"] not in chosen:
                 chosen.append(rows[other]["id"])
         found[row["id"]] = chosen
+    if dense:
+        import numpy
+        vectors = numpy.asarray(embedder.encode([r["text"][:DENSE_TEXT_CHARS] for r in rows]), dtype="float32")
+        similarity = vectors @ vectors.T
+        for n, row in enumerate(rows):
+            extra = [rows[j]["id"] for j in numpy.argsort(-similarity[n]) if j != n and rows[j]["id"] not in found[row["id"]]]
+            found[row["id"]] = found[row["id"]] + extra[:dense]
     return found
 
 
@@ -93,9 +103,9 @@ def schema(n):
                 "source_quote": {"type": "string", "maxLength": 300}, "target_quote": {"type": "string", "maxLength": 300}}}}}}
 
 
-def request(source, others):
+def request(source, others, chars=CANDIDATE_CHARS):
     return json.dumps({"source": {"heading": source["heading"], "text": source["text"][:SOURCE_CHARS]},
-                       "candidates": [{"id": f"A{i}", "heading": o["heading"], "text": o["text"][:CANDIDATE_CHARS]} for i, o in enumerate(others, 1)]},
+                       "candidates": [{"id": f"A{i}", "heading": o["heading"], "text": o["text"][:chars]} for i, o in enumerate(others, 1)]},
                       ensure_ascii=False)
 
 
@@ -107,12 +117,13 @@ def sample(rows, n):
     return sorted(random.Random(SEED).sample(ids, n), key=ids.index)
 
 
-def start(bundle, output, model, provider, sample_size=None):
+def start(bundle, output, model, provider, sample_size=None, dense=0, candidate_chars=CANDIDATE_CHARS, embedding=None):
     output = Path(output)
     units_path = Path(bundle) / "units.jsonl"
     manifest = {"run_version": RUN_VERSION, "bundle": Path(bundle).as_posix(), "units_sha256": digest(units_path.read_bytes()),
                 "provider": provider, "model": model, "prompt": PROMPT, "system_sha256": digest((PROMPTS / PROMPT).read_text(encoding="utf-8")),
                 "max_candidates": MAX_CANDIDATES, "sample": sample_size, "seed": SEED,
+                **({"dense_candidates": dense, "candidate_chars": candidate_chars, "embedding": embedding} if dense or candidate_chars != CANDIDATE_CHARS else {}),
                 "limitations": ["Candidates come from references and BM25 similarity; a relation to an article never offered is not found",
                                 "Accepted means the quotes and types pass the automatic checks, not a legally verified relation"]}
     path = output / "manifest.json"
@@ -127,14 +138,17 @@ def start(bundle, output, model, provider, sample_size=None):
     return manifest
 
 
-def extract(units, provider, output, aliases=None, log=None, workers=1):
+def extract(units, provider, output, aliases=None, log=None, workers=1, embedder=None):
     """Call the model for every planned article not yet answered; `workers` calls run at once (the Claude Code CLI
     spends most of a call starting up). Rows are appended under a lock, so the file stays one JSON object per line."""
     output = Path(output)
     manifest = json.loads((output / "manifest.json").read_text(encoding="utf-8"))
     rows = articles(units)
     by_id = {r["id"]: r for r in rows}
-    offered = candidates(units, rows, aliases)
+    dense, chars = manifest.get("dense_candidates", 0), manifest.get("candidate_chars", CANDIDATE_CHARS)
+    if dense and embedder is None:
+        raise ValueError("this relation run uses dense candidates: give the embedding model")
+    offered = candidates(units, rows, aliases, dense=dense, embedder=embedder)
     system = (PROMPTS / PROMPT).read_text(encoding="utf-8")
     raw_path = output / "raw.jsonl"
     done = {r["key"] for r in read_jsonl(raw_path) if r.get("status") == "ok"} if raw_path.exists() else set()
@@ -144,7 +158,7 @@ def extract(units, provider, output, aliases=None, log=None, workers=1):
     todo = []
     for article in planned:
         others = [by_id[c] for c in offered[article]]
-        text = request(by_id[article], others)
+        text = request(by_id[article], others, chars)
         key = digest(canonical([article, offered[article], text]))
         if key in done:
             counts["already_done"] += 1

@@ -66,6 +66,22 @@ class RelationTests(unittest.TestCase):
         self.assertNotIn(rows[0]["id"], offered[rows[0]["id"]], "an article is never its own candidate")
         self.assertIn("syn/chapter-i/article-2", offered[rows[0]["id"]])
 
+    def test_dense_candidates_add_nearest_articles_not_chosen_yet(self):
+        try:
+            import numpy
+        except ImportError:
+            self.skipTest("numpy (embeddings extra) not installed")
+
+        class Embedder:
+            def encode(self, texts):  # Articles 1 and 3 share a direction; 2 and 4 another.
+                return numpy.asarray([[1.0, 0.0] if ("Sa thải" in t or "Hậu quả" in t) else [0.0, 1.0] for t in texts], dtype="float32")
+
+        rows = relation_run.articles(self.units)
+        offered = relation_run.candidates(self.units, rows, k=1, dense=1, embedder=Embedder())
+        first = offered["syn/chapter-i/article-1"]
+        self.assertEqual(len(first), 2)
+        self.assertIn("syn/chapter-i/article-3", first, "the nearest article by embedding is added")
+
     def test_extract_validates_quotes_targets_and_types_and_resumes(self):
         out = self.root / "rel"
         relation_run.start(self.root / "bundle", out, "stand-in", "9router")
