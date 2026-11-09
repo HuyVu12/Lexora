@@ -1,0 +1,13 @@
+{
+  "answer_version": "answer-run-v1",
+  "status": "draft",
+  "model": "claude-haiku-5-5",
+  "effort": "medium",
+  "judge_model": "claude-sonnet-5-5",
+  "judge_effort": "medium",
+  "prompt": "answer-v2.md",
+  "top_k": 50,
+  "context_token_budget": 3000,
+  "token_counter": "lexora-syllable-v1",
+  "note": "Second answer model (robustness): the same prompt, budget and retrieval runs as the gpt-oss-120b answers, through Claude Code."
+}
