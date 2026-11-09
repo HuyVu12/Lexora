@@ -40,6 +40,13 @@ Các biến thể phụ được chạy và báo cáo cùng, để tách tác đ
 | ĐK3/ĐK4 không đồ thị | Bản ghi như điều kiện chính, không mở rộng theo đồ thị |
 | ĐK3 đồ thị một chiều | Chỉ theo chiều đơn vị được dẫn chiếu |
 | ĐK3/ĐK4 đồ thị không kiểm câu hỏi | Láng giềng được kéo vào kể cả khi không khớp câu hỏi |
+| ĐK3/ĐK4 quy phạm đầy đủ | Model đọc nguyên các quy phạm đã tuần tự hóa thay cho một dòng cấu trúc |
+| ĐK3/ĐK4 thêm cạnh cùng Điều | Đồ thị nối thêm các khoản, điểm cùng một Điều |
+
+Model sinh đọc nguyên văn của đơn vị cộng **một dòng cấu trúc cho mỗi quy phạm** (tính quy phạm, chủ thể, bên thụ hưởng, điều kiện, ngoại lệ, thời hạn, định lượng, hệ quả, mỗi giá trị cắt còn vài từ); chỉ mục tìm kiếm vẫn chứa đầy đủ các quy phạm.
+Lý do: các ô của quy phạm là đoạn trích nguyên văn của chính câu đó, nên in lại đầy đủ chỉ lặp lại câu luật và tốn khoảng 37% số token của bản ghi, trong khi phần có giá trị thêm cho model là cấu trúc (ai bị ràng buộc, trong điều kiện nào, ngoại lệ gì, hệ quả gì).
+Ngân sách token luôn tính trên đúng phần model đọc.
+
 Mọi bản ghi của mọi điều kiện đều ánh xạ về mã đơn vị gốc, nên các chỉ số truy xuất và trích dẫn được tính theo cùng một chuẩn.
 
 ### 4.1.3. Thiết lập dùng chung
@@ -50,9 +57,10 @@ Mọi bản ghi của mọi điều kiện đều ánh xạ về mã đơn vị 
 | BM25 | k1 = 1,2; b = 0,75; token theo âm tiết (`lexora-syllable-v1`) |
 | Embedding | BAAI/bge-m3, revision `5617a9f`, chạy cục bộ |
 | Kết hợp | RRF, c = 60, 30 ứng viên mỗi kênh |
-| Số kết quả | top-5 |
+| Số kết quả | Recall@K báo cáo ở K = 1, 3, 5, 10; khi sinh câu trả lời, lấy bản ghi theo thứ hạng cho tới khi đầy ngân sách token (trần 50 bản ghi), để mọi điều kiện đọc cùng lượng chữ |
+| Tách vấn đề | Mỗi câu hỏi được tách một lần thành tối đa 4 vấn đề pháp lý kèm câu tìm kiếm (`decompose-v1`); cả bốn điều kiện dùng chung kết quả tách; thứ hạng của câu hỏi và của từng vấn đề được trộn xoay vòng |
 | Model sinh câu trả lời | Một model cố định cho cả bốn điều kiện **[mục còn mở]** |
-| Prompt | `answer-v1` |
+| Prompt | `answer-v1` (bộ v1, bộ phức tạp); `answer-v2` trả lời theo từng vấn đề (bộ tình huống) |
 | Ngân sách ngữ cảnh | 3.000 token (đếm theo âm tiết cho tới khi thay bằng tokenizer của model) |
 | Giám khảo LLM bổ sung | Khác model sinh **[cập nhật]** |
 
@@ -105,7 +113,29 @@ Bộ phức tạp v1 bổ sung loại câu này và được báo cáo riêng.
 
 Số liệu sau khi khóa: (chờ kết quả).
 
-### 4.2.3. Gold set trích xuất v1
+### 4.2.3. Corpus v2 và bộ tình huống v1
+
+Câu hỏi của người làm pháp chế thường là một vụ việc có nhiều vấn đề (căn cứ chấm dứt, thủ tục, đối tượng được bảo vệ, hậu quả, bảo hiểm), cần căn cứ từ nhiều văn bản.
+94 Điều của phạm vi v1 không đủ cho loại câu này, nên thực nghiệm dùng thêm corpus v2 và bộ tình huống v1 làm **bộ đánh giá chính cho RQ3**; bộ v1 giữ vai trò kiểm tra cơ bản trên câu tra cứu.
+
+| Đặc điểm | Corpus v2 |
+|---|---|
+| Văn bản | Bộ luật Lao động 2019; Nghị định 145/2020, 12/2022, 293/2025, 135/2020; Thông tư 10/2020; Luật Bảo hiểm xã hội 2024; Luật Việc làm 2025; Luật An toàn, vệ sinh lao động 2015 |
+| Quy mô | 711 Điều, 5.338 đơn vị (3 Điều chứa đoạn sửa đổi văn bản khác bị bỏ) |
+| Quan hệ với v1 | Chứa nguyên 617 đơn vị của v1, cùng mã và cùng nguyên văn, nên nhãn của bộ v1 và gold v1 dùng lại được |
+| Kho tri thức | Một lượt trích xuất gpt-oss-120b cùng cấu hình với v1: 3.631 quy phạm (ĐK3), 3.451 qua kiểm chứng (ĐK4) |
+
+| Đặc điểm | Bộ tình huống v1 |
+|---|---|
+| Nguồn | 46 vụ tranh chấp lao động thật (24 bản án đã công bố, 3 án lệ, 19 bài báo), đã ẩn danh, ghi nguồn |
+| Số câu | 44 câu từ 38 vụ (8 vụ bị bỏ vì chỉ có vấn đề tố tụng hoặc trùng), 6 câu diễn đạt lại |
+| Cách viết | Câu hỏi của người làm nhân sự hoặc pháp chế trước hoặc trong tranh chấp; vụ xử theo luật cũ được đặt lại theo luật hiện hành |
+| Đơn vị đáp án | 3 đến 6 mỗi câu; 20 câu cần hai văn bản |
+| Kèm theo | Các vấn đề câu trả lời phải đề cập, kết quả xét xử để đối chiếu |
+
+Số liệu sau khi khóa: (chờ kết quả).
+
+### 4.2.4. Gold set trích xuất v1
 
 | Đặc điểm | Giá trị |
 |---|---|
@@ -116,12 +146,12 @@ Số liệu sau khi khóa: (chờ kết quả).
 
 Model không tham gia gán nhãn gold, vì gold do model gán sẽ tạo vòng tròn khi dùng để chấm chính model.
 
-### 4.2.4. Bảng kiểm tra quy phạm bị loại
+### 4.2.5. Bảng kiểm tra quy phạm bị loại
 
 104 quy phạm (80 bị loại, 24 được giữ) từ bốn model, che tên model và kết quả kiểm chứng, gán nhãn Sai, Đúng diễn đạt lại, Đúng mượn câu dẫn, Đúng nguyên văn hoặc Không rõ.
 Bảng này đo độ chính xác thật của bộ kiểm chứng: trong số quy phạm bị loại, bao nhiêu thực sự sai.
 
-### 4.2.5. Độ tin cậy của nhãn
+### 4.2.6. Độ tin cậy của nhãn
 
 | Bộ nhãn | Chỉ số đồng thuận | Kết quả |
 |---|---|---|
@@ -321,7 +351,8 @@ Phần này kèm các ví dụ cụ thể, mỗi ví dụ có câu hỏi, đơn 
 
 | Mục | Nội dung cần chốt | Thời điểm phải chốt |
 |---|---|---|
-| Cách biểu diễn ĐK3 và ĐK4 | Đề xuất 09/11: bản ghi ĐK2 cộng quy phạm, đồ thị dẫn chiếu hai chiều có kiểm câu hỏi; chờ giảng viên duyệt | Trước khi khóa bộ câu hỏi và chạy thật |
+| Cách biểu diễn ĐK3 và ĐK4 | Đề xuất 09/11: bản ghi ĐK2 cộng quy phạm, model đọc một dòng cấu trúc mỗi quy phạm, đồ thị dẫn chiếu hai chiều có kiểm câu hỏi; chờ giảng viên duyệt | Trước khi khóa bộ câu hỏi và chạy thật |
+| Bộ tình huống làm bộ đánh giá chính | Đề xuất 09/11, cùng corpus v2 và bước tách vấn đề; chờ giảng viên duyệt | Trước khi gán nhãn |
 | Model sinh câu trả lời | Một model cố định cho cả bốn điều kiện | Trước lượt chạy câu trả lời trên tập dev |
 | Giám khảo LLM | Model khác model sinh | Cùng lúc với model sinh |
 | Phương pháp truy xuất | BM25, BGE-M3 hay kết hợp | Sau khi chạy trên tập dev, trước held-out |
