@@ -146,6 +146,8 @@ def run(retrieval_dir, questions_path, config_path, provider, output, *, split=N
                 counts["answered"] += 1
             except ProviderError as exc:
                 row |= {"error": exc.code}
+                if getattr(exc, "detail", ""):
+                    row["error_detail"] = str(exc.detail)[-300:]  # e.g. the CLI's stderr, to tell a usage limit from a bad answer.
                 counts["failed"] += 1
             handle.write(canonical(row) + "\n")
             handle.flush()

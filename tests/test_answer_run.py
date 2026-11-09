@@ -102,6 +102,19 @@ class AnswerRunTests(unittest.TestCase):
         self.assertIn("```json", rows["q1"]["raw_content"])
         self.assertEqual(rows["q3"]["error"], "invalid_output")
 
+    def test_a_provider_error_detail_is_kept_for_diagnosis(self):
+        from legal_ai.providers.claude_code import ProviderError as CliError
+
+        class Limited(StandIn):
+            def structured(self, system, prompt, schema, purpose="structured"):
+                raise CliError("invalid_output", "x" * 400 + "usage limit reached")
+
+        run(self.retrieval["DK2"], self.questions, self.config, Limited(), self.root / "limited")
+        row = read_jsonl(self.root / "limited" / "answers.jsonl")[0]
+        self.assertEqual(row["error"], "invalid_output")
+        self.assertTrue(row["error_detail"].endswith("usage limit reached"))
+        self.assertEqual(len(row["error_detail"]), 300)
+
     def test_gate_removes_uncited_statements_and_downgrades_empty_answers(self):
         blocks = [{"id": "E01", "record_id": "r1", "unit_ids": ["u1"]}]
         kept = gate({"status": "answered", "statements": [{"text": "A", "evidence_ids": ["E01", "E01"]}, {"text": "B", "evidence_ids": []}]}, blocks)
@@ -121,6 +134,8 @@ class AnswerRunTests(unittest.TestCase):
         output = self.root / "answers-DK2"
         counts = run(self.retrieval["DK2"], self.questions, self.config, StandIn(fail=["Tiền lương"]), output)
         self.assertEqual((counts["answered"], counts["failed"]), (2, 1))
+        failed = [r for r in read_jsonl(output / "answers.jsonl") if r.get("error")]
+        self.assertNotIn("error_detail", failed[0], "a provider error without detail stores none")
         provider = StandIn()
         counts = run(self.retrieval["DK2"], self.questions, self.config, provider, output)
         self.assertEqual((counts["already_done"], counts["answered"], len(provider.prompts)), (2, 1, 1))
