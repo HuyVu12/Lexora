@@ -6,7 +6,12 @@ the provisions that cite it, such as the Decree article that details a Labour Co
 retrieved record is followed by up to `max_neighbors` records reached over the configured edge types, best ranked
 first, so a cited or detailing provision reaches the generator together with the one that was found.
 `same_article` links the clauses and points of one Article (the knowledge base's own hierarchy), so a found clause
-can bring the clause next to it, which a legal answer often needs (a rule and its exception or consequence). The list
+can bring the clause next to it, which a legal answer often needs (a rule and its exception or consequence).
+`concept` links records whose knowledge-base claims share a legal act: word sequences of the claims' Action slot
+(2-4 syllables) found in at least `min_df` and at most `max_df` claims of the knowledge base, so the keys come from
+the extracted norms themselves, never from a hand-made list or the questions. Provisions a case needs together
+(grounds for dismissal, the protected employee, the procedure, the consequence) rarely cite each other but often
+name the same act. Concept neighbours are always among the ranked candidates. The list
 keeps its length: neighbours push lower-ranked records out instead of adding to the context, so every condition
 still hands over the same number of records. No similarity edges, no invented
 targets: pending, ambiguous and external references create no edge.
@@ -14,8 +19,9 @@ targets: pending, ambiguous and external references create no edge.
 
 from legal_ai.kb.references import detect_references
 
-GRAPH_VERSION = "reference-expansion-v3"
-EDGES = ("reference", "referenced_by", "same_article")
+GRAPH_VERSION = "reference-expansion-v4"
+EDGES = ("reference", "referenced_by", "same_article", "concept")
+CONCEPT_DF = (3, 150)
 
 
 def check_config(graph):
@@ -67,6 +73,32 @@ def graph_edges(units, kinds, aliases=None):
     return {source: targets for source, targets in edges.items() if targets}
 
 
+def concept_keys(claims, min_df=CONCEPT_DF[0], max_df=CONCEPT_DF[1]):
+    """{claim_id: keys}: the 2-4 syllable sequences of each claim's Action slot kept when min_df <= claims holding
+    them <= max_df (rare enough to mean one act, common enough to link provisions)."""
+    from legal_ai.retrieval.bm25 import tokens
+    grams = {}
+    for claim in claims:
+        action = (claim.get("slots") or {}).get("action")
+        words = tokens(action) if isinstance(action, str) else []
+        grams[claim["claim_id"]] = {" ".join(words[i:i + n]) for n in (2, 3, 4) for i in range(len(words) - n + 1)}
+    df = {}
+    for keys in grams.values():
+        for key in keys:
+            df[key] = df.get(key, 0) + 1
+    return {claim_id: {k for k in keys if min_df <= df[k] <= max_df} for claim_id, keys in grams.items()}
+
+
+def record_concepts(records, claim_keys):
+    """{record index: keys of the claims attached to the record} for records that have any."""
+    found = {}
+    for i, row in enumerate(records):
+        keys = set().union(*(claim_keys.get(c, set()) for c in row.get("claim_ids", [])))
+        if keys:
+            found[i] = keys
+    return found
+
+
 def _prefixes(unit_id):
     parts = unit_id.split("/")
     return ["/".join(parts[:n]) for n in range(1, len(parts) + 1)]
@@ -76,7 +108,7 @@ def _inside(unit_id, ancestor):
     return unit_id == ancestor or unit_id.startswith(ancestor + "/")
 
 
-def expand(ranked, records, edges, depth, max_neighbors=2, require_match=False):
+def expand(ranked, records, edges, depth, max_neighbors=2, require_match=False, concepts=None):
     """[(record index, score, via)] of length <= depth: each ranked record, then the records of the units it cites.
 
     `ranked` is the full [(index, score)] ranking. A unit cites through its own edges and those of its ancestors
@@ -96,6 +128,8 @@ def expand(ranked, records, edges, depth, max_neighbors=2, require_match=False):
     def cited_records(index):
         targets = {t for unit in records[index]["unit_ids"] for prefix in _prefixes(unit) for t in edges.get(prefix, [])}
         found = {i for t in targets for i in under.get(t, []) if i != index}
+        if concepts and index in concepts:
+            found |= {i for i in position if i != index and concepts.get(i, set()) & concepts[index]}
         if require_match:
             found = [i for i in found if i in position]
         return sorted(found, key=lambda i: (position.get(i, len(position)), i))

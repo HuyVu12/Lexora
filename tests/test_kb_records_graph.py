@@ -17,7 +17,7 @@ from legal_ai.evaluation.answer_run import char_precision
 from legal_ai.evaluation.preflight import check
 from legal_ai.evaluation.retrieval_run import run
 from legal_ai.indexing.records import kb_unit_records, structural_records
-from legal_ai.retrieval.graph import expand, graph_edges, reference_edges
+from legal_ai.retrieval.graph import concept_keys, expand, graph_edges, record_concepts, reference_edges
 
 LAW = ("Chương I\nQUY ĐỊNH GIẢ ĐỊNH\n"
        "Điều 1. Thời gian thử nghiệm\n"
@@ -104,6 +104,22 @@ class KbRecordGraphTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "claims_view"):
             kb_unit_records("DK3", self.documents, self.units, self.texts, self.claims, view="short")
 
+    def test_concept_keys_come_from_claim_actions_and_link_ranked_candidates(self):
+        claims = [{"claim_id": c, "slots": {"action": a}} for c, a in
+                  (("a", "đơn phương chấm dứt hợp đồng"), ("b", "không được đơn phương chấm dứt hợp đồng"), ("c", "trả lương"), ("d", "trả lương làm thêm"))]
+        keys = concept_keys(claims, min_df=2, max_df=2)
+        self.assertIn("đơn phương chấm dứt", keys["a"] & keys["b"])
+        self.assertEqual(keys["c"] & keys["a"], set())
+        self.assertEqual(concept_keys(claims, min_df=3, max_df=9)["a"], set(), "a sequence in too few claims is no key")
+        records = [{"unit_ids": [f"u{n}"], "claim_ids": ids} for n, ids in enumerate((["a"], ["c"], ["d"], ["b"], []))]
+        concepts = record_concepts(records, keys)
+        self.assertNotIn(4, concepts, "a record without claims has no concept")
+        ranked = [(0, 5.0), (1, 4.0), (2, 3.0), (3, 2.0)]
+        self.assertEqual([i for i, _, _ in expand(ranked, records, {}, depth=3, concepts=concepts)], [0, 3, 1],
+                         "the provision naming the same act moves up next to the one found")
+        self.assertEqual([i for i, _, _ in expand(ranked[:3], records, {}, depth=3, concepts=concepts)], [0, 1, 2],
+                         "a concept neighbour outside the candidates is never pulled in")
+
     def test_reference_edges_and_expansion_keep_the_list_length(self):
         edges = reference_edges(self.units)
         self.assertEqual(edges, {"syn/chapter-i/article-2/clause-2": ["syn/chapter-i/article-3/clause-1"]})
@@ -142,7 +158,7 @@ class KbRecordGraphTests(unittest.TestCase):
         ranked = read_jsonl(self.root / "r3g" / "predictions.jsonl")[0]["ranked"]
         self.assertTrue(any("via_reference_from" in r for r in ranked[:2]))
         manifest = json.loads((self.root / "r3g" / "manifest.json").read_text(encoding="utf-8"))
-        self.assertEqual((manifest["graph"]["version"], manifest["graph"]["edge_count"]), ("reference-expansion-v3", 1))
+        self.assertEqual((manifest["graph"]["version"], manifest["graph"]["edge_count"]), ("reference-expansion-v4", 1))
         with self.assertRaisesRegex(ValueError, "DK3/DK4 only"):
             run(self.root / "bundle", self.questions, self.condition("dk2g", "DK2", graph={"edges": ["reference"]}), self.shared, self.root / "r2g")
         with self.assertRaisesRegex(ValueError, "record must be"):

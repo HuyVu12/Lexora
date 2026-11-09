@@ -145,6 +145,9 @@ def run(bundle, questions_path, condition_path, shared_path, output, embedder=No
         from legal_ai.retrieval.embeddings import DenseIndex, rrf
         dense = DenseIndex(embedder, [row["index_text"] for row in records])
     edges = kb_graph.graph_edges(units, graph["edges"], graph.get("source_aliases")) if graph else None
+    concepts = None
+    if graph and "concept" in graph["edges"]:
+        concepts = kb_graph.record_concepts(records, kb_graph.concept_keys(kb_claims(condition, Path(bundle) / "units.jsonl")))
     subqueries = decompose.load(shared["subqueries"], questions_path)[0] if shared.get("subqueries") else None
     # Deep enough for the largest token budget of the smallest records; predictions keep this depth.
     depth = max(max(ks), 50)
@@ -165,7 +168,7 @@ def run(bundle, questions_path, condition_path, shared_path, output, embedder=No
             ranked = decompose.merge([ranked] + [rank(i["query"]) for i in issues], depth)
         via = {}
         if graph:
-            expanded = kb_graph.expand(ranked, records, edges, depth, graph.get("max_neighbors", 2), graph.get("require_match", False))
+            expanded = kb_graph.expand(ranked, records, edges, depth, graph.get("max_neighbors", 2), graph.get("require_match", False), concepts)
             via = {i: v for i, _, v in expanded if v is not None}
             ranked = [(i, s) for i, s, _ in expanded]
         top = [records[i] for i, _ in ranked]
