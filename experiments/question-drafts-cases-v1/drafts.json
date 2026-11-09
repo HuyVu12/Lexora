@@ -1,0 +1,1085 @@
+[
+ {
+  "text": "Trường mầm non của chúng tôi không còn được giao vị trí và không có nguồn trả lương cho một nhân viên cấp dưỡng làm hợp đồng không xác định thời hạn, vì trẻ nghỉ học kéo dài do dịch bệnh. Chị ấy không đồng ý tạm hoãn hợp đồng và trường cũng không còn vị trí khác để bố trí. Trường có được đơn phương chấm dứt hợp đồng không, phải báo trước bao lâu và phải thanh toán những khoản gì?",
+  "question_type": "synthesis",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-iii/section-3/article-36/clause-1/point-c",
+   "45-2019-qh14/chapter-iii/section-3/article-36/clause-2/point-a",
+   "45-2019-qh14/chapter-iii/section-3/article-46/clause-1",
+   "45-2019-qh14/chapter-iii/section-3/article-48/clause-1"
+  ],
+  "rationale": "Điểm c khoản 1 Điều 36: được đơn phương chấm dứt khi do dịch bệnh nguy hiểm mà buộc phải giảm chỗ làm việc; điểm a khoản 2 Điều 36: báo trước ít nhất 45 ngày với hợp đồng không xác định thời hạn; khoản 1 Điều 46: trợ cấp thôi việc khi chấm dứt theo khoản 10 Điều 34; khoản 1 Điều 48: thanh toán đầy đủ trong 14 ngày làm việc.",
+  "paraphrase_of": null,
+  "complex_kind": "case",
+  "case_id": "c01",
+  "source_ref": "Bản án số 01/2023/LĐ-PT ngày 09/01/2023 của TAND tỉnh Lâm Đồng",
+  "issues": [
+   "Căn cứ đơn phương chấm dứt vì dịch bệnh, không còn chỗ làm việc",
+   "Thời hạn báo trước với hợp đồng không xác định thời hạn",
+   "Trợ cấp thôi việc",
+   "Thời hạn thanh toán khi chấm dứt"
+  ],
+  "reference_outcome": "Tòa phúc thẩm không chấp nhận kháng cáo, giữ nguyên bản án sơ thẩm bác toàn bộ yêu cầu của người lao động. Tòa xác định việc chấm dứt đúng điểm c khoản 1 và điểm a khoản 2 Điều 36 Bộ luật Lao động 2019 vì đã báo trước đủ 45 ngày, đúng thẩm quyền và đã thanh toán đủ các khoản theo Điều 48.",
+  "notes": "Quy định riêng về vị trí việc làm trong đơn vị sự nghiệp công lập (thông tư liên tịch của ngành giáo dục) không có trong corpus."
+ },
+ {
+  "text": "Một nhân viên bảo vệ ký văn bản gọi là \"thỏa ước lao động\" thời vụ 03 tháng; hết hạn anh vẫn làm thêm 16 tháng mà không ký hợp đồng mới. Công ty không đóng bảo hiểm xã hội vì anh nói không muốn bị trừ lương. Nay công ty muốn cho anh nghỉ ngay vì nhiều lần ngủ trong ca trực, khách hàng phản ánh. Quan hệ hiện tại là hợp đồng gì, việc không đóng bảo hiểm theo ý người lao động có được không, và cho nghỉ ngay như vậy có rủi ro gì?",
+  "question_type": "synthesis",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-iii/section-1/article-13/clause-1",
+   "45-2019-qh14/chapter-iii/section-1/article-20/clause-2/point-b",
+   "41-2024-qh15/chapter-i/article-2/clause-1/point-a",
+   "41-2024-qh15/chapter-ii/section-1/article-13/clause-4",
+   "45-2019-qh14/chapter-iii/section-3/article-39",
+   "45-2019-qh14/chapter-iii/section-3/article-41/clause-1"
+  ],
+  "rationale": "Khoản 1 Điều 13: văn bản tên gọi khác nhưng có việc làm trả lương, quản lý thì là hợp đồng lao động; điểm b khoản 2 Điều 20: quá 30 ngày sau khi hết hạn không ký mới thì thành hợp đồng không xác định thời hạn; điểm a khoản 1 Điều 2 Luật BHXH: người có hợp đồng từ đủ 01 tháng thuộc diện bắt buộc; khoản 4 Điều 13 Luật BHXH: trách nhiệm đóng và trích của người sử dụng lao động; Điều 39 và khoản 1 Điều 41: chấm dứt không đúng căn cứ là trái pháp luật và hậu quả.",
+  "paraphrase_of": null,
+  "complex_kind": "case",
+  "case_id": "c02",
+  "source_ref": "Bản án số 168/2023/LĐ-PT ngày 17/02/2023 của TAND Thành phố Hồ Chí Minh",
+  "issues": [
+   "Loại hợp đồng khi hết hạn vẫn tiếp tục làm việc",
+   "Nghĩa vụ đóng bảo hiểm xã hội bắt buộc dù người lao động không muốn",
+   "Cho nghỉ việc không qua xử lý kỷ luật hay căn cứ luật định",
+   "Hậu quả chấm dứt trái pháp luật"
+  ],
+  "reference_outcome": "Sơ thẩm chấp nhận một phần yêu cầu, buộc công ty trả 18.120.000 đồng. Tại phiên phúc thẩm hai bên tự thỏa thuận công ty trả đúng số tiền này, tòa phúc thẩm sửa bản án sơ thẩm và công nhận sự thỏa thuận. (theo luật cũ)",
+  "notes": "Vụ việc 2019-2020 theo Bộ luật Lao động 2012 và Luật BHXH 2014; câu hỏi đặt lại theo luật hiện hành."
+ },
+ {
+  "text": "Đơn hàng giảm do suy thoái, công ty bao bì cho thôi việc một nhân viên quản lý chất lượng làm hợp đồng 01 năm. Công ty đã lập phương án sử dụng lao động, báo trước 30 ngày, trao đổi với công đoàn cơ sở nhưng không gửi thông báo cho Ủy ban nhân dân cấp tỉnh vì chỉ cắt giảm một người. Việc cho thôi việc có hợp pháp không và nếu bị kiện công ty phải trả những gì?",
+  "question_type": "synthesis",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-iii/section-3/article-42/clause-2/point-a",
+   "45-2019-qh14/chapter-iii/section-3/article-42/clause-6",
+   "45-2019-qh14/chapter-iii/section-3/article-47/clause-1",
+   "45-2019-qh14/chapter-iii/section-3/article-39",
+   "45-2019-qh14/chapter-iii/section-3/article-41/clause-1"
+  ],
+  "rationale": "Điểm a khoản 2 Điều 42: suy thoái kinh tế là lý do kinh tế; khoản 6 Điều 42: chỉ cho thôi việc sau khi trao đổi với tổ chức đại diện và thông báo trước 30 ngày cho Ủy ban nhân dân cấp tỉnh và người lao động; khoản 1 Điều 47: trợ cấp mất việc làm; Điều 39, khoản 1 Điều 41: chấm dứt trái pháp luật và các khoản phải trả.",
+  "paraphrase_of": null,
+  "complex_kind": "case",
+  "case_id": "c03",
+  "source_ref": "Bản án số 21/2023/LĐ-PT ngày 23/11/2023 của TAND tỉnh Bình Dương",
+  "issues": [
+   "Lý do kinh tế",
+   "Thủ tục thông báo Ủy ban nhân dân cấp tỉnh kể cả khi cắt giảm một người",
+   "Trợ cấp mất việc làm",
+   "Hậu quả nếu cho thôi việc trái pháp luật"
+  ],
+  "reference_outcome": "Tòa phúc thẩm giữ nguyên bản án sơ thẩm: việc cho thôi việc là trái pháp luật vì công ty không thông báo cho Ủy ban nhân dân tỉnh theo khoản 6 Điều 42, dù đã chứng minh có lý do kinh tế. Công ty phải bồi thường 27.050.000 đồng (lương những ngày không được làm việc và 02 tháng lương) và đóng bảo hiểm cho thời gian đến hết hạn hợp đồng; yêu cầu thưởng tháng 13 bị bác.",
+  "notes": "Tòa nêu chưa có hướng dẫn về áp dụng khoản 6 Điều 42 khi chỉ cắt giảm một người."
+ },
+ {
+  "text": "Một thợ lái máy khoan làm cho công ty từ năm 2016 chỉ theo thỏa thuận miệng nhưng vẫn được đóng bảo hiểm. Khi công trình kết thúc, quản lý họp miệng với nhóm thợ và mọi người đồng ý nghỉ; công ty ra quyết định thôi việc, chốt sổ và trả trợ cấp thôi việc, anh đã nhận. Nay anh cho rằng bị đơn phương chấm dứt trái luật. Hợp đồng miệng như vậy có hợp lệ không, chấm dứt bằng thỏa thuận miệng có giá trị không và công ty cần lưu ý gì về hồ sơ?",
+  "question_type": "synthesis",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-iii/section-1/article-14/clause-1",
+   "45-2019-qh14/chapter-iii/section-1/article-14/clause-2",
+   "45-2019-qh14/chapter-iii/section-3/article-34/clause-3",
+   "45-2019-qh14/chapter-iii/section-3/article-45/clause-1",
+   "45-2019-qh14/chapter-iii/section-3/article-46/clause-1"
+  ],
+  "rationale": "Khoản 1, 2 Điều 14: hợp đồng phải bằng văn bản, chỉ được bằng lời nói khi dưới 01 tháng; khoản 3 Điều 34: hai bên thỏa thuận chấm dứt; khoản 1 Điều 45: phải thông báo bằng văn bản việc chấm dứt; khoản 1 Điều 46: trợ cấp thôi việc khi thỏa thuận chấm dứt.",
+  "paraphrase_of": null,
+  "complex_kind": "case",
+  "case_id": "c04",
+  "source_ref": "Bản án số 319/2023/LĐ-PT ngày 17/03/2023 của TAND Thành phố Hồ Chí Minh",
+  "issues": [
+   "Hình thức hợp đồng lao động",
+   "Chấm dứt theo thỏa thuận và chứng minh thỏa thuận",
+   "Thông báo chấm dứt bằng văn bản",
+   "Trợ cấp thôi việc đã nhận"
+  ],
+  "reference_outcome": "Tòa phúc thẩm giữ nguyên bản án sơ thẩm, bác yêu cầu hủy quyết định thôi việc và các khoản bồi thường. Tòa đánh giá người lao động đã đồng ý nghỉ khi công việc không còn, đã nhận trợ cấp thôi việc, nên không có căn cứ xác định công ty đơn phương chấm dứt trái pháp luật. (theo luật cũ)",
+  "notes": "Vụ việc năm 2019 theo Bộ luật Lao động 2012; việc chứng minh thỏa thuận là vấn đề chứng cứ (tố tụng) không có trong corpus."
+ },
+ {
+  "text": "Một nhân viên đã ký hợp đồng 01 năm sau 02 tháng thử việc, rồi đề nghị công ty cho ký lại hợp đồng thử việc mới ở vị trí khác và ký lại hợp đồng 01 năm mới để chị tiện làm hồ sơ trợ cấp thất nghiệp từ chỗ làm cũ. Gần hết hạn, công ty thông báo không ký tiếp thì chị nộp đơn xin nghỉ. Việc cho thử việc lần hai có vi phạm không, có bị phạt không, và hợp đồng chấm dứt theo căn cứ nào?",
+  "question_type": "synthesis",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-iii/section-1/article-25",
+   "12-2022-nd-cp/chapter-ii/article-10/clause-2/point-a",
+   "45-2019-qh14/chapter-iii/section-3/article-34/clause-1",
+   "45-2019-qh14/chapter-iii/section-3/article-34/clause-3"
+  ],
+  "rationale": "Điều 25 (đoạn dẫn): chỉ được thử việc một lần đối với một công việc; điểm a khoản 2 Điều 10 Nghị định 12/2022: phạt khi yêu cầu thử việc quá 01 lần; khoản 1 và khoản 3 Điều 34: chấm dứt do hết hạn hoặc do hai bên thỏa thuận.",
+  "paraphrase_of": null,
+  "complex_kind": "case",
+  "case_id": "c05",
+  "source_ref": "Bản án số 07/2024/LĐ-PT ngày 28/3/2024 của TAND tỉnh Bình Dương",
+  "issues": [
+   "Thử việc lần hai sau khi đã ký hợp đồng",
+   "Chế tài hành chính khi thử việc quá một lần",
+   "Căn cứ chấm dứt: hết hạn hay thỏa thuận"
+  ],
+  "reference_outcome": "Tòa phúc thẩm giữ nguyên bản án sơ thẩm bác toàn bộ yêu cầu. Tòa nhận định việc ký lại hợp đồng là không đúng quy định nhưng xuất phát từ yêu cầu và lợi ích của người lao động nên không cần tuyên vô hiệu; quan hệ chấm dứt theo đơn xin thôi việc được công ty chấp thuận là đúng khoản 3 Điều 34 Bộ luật Lao động 2019.",
+  "notes": "Nghị định 12/2022 đã hết hiệu lực từ 10/09/2026; mức phạt chỉ đúng cho hành vi xảy ra khi nghị định còn hiệu lực. Tình tiết lạm dụng trợ cấp thất nghiệp không được tòa xử lý riêng."
+ },
+ {
+  "text": "Công ty dịch vụ kỹ thuật cử một kỹ thuật viên làm tại nhà máy của khách hàng; kèm hợp đồng lao động anh ký cam kết soạn sẵn là trong 12 tháng sau khi nghỉ không làm việc cho bất kỳ ai tại nhà máy đó. Anh nghỉ việc và 3 tháng sau ký hợp đồng thẳng với nhà máy. Công ty có đòi bồi thường được không, và thỏa thuận như vậy có giá trị đến đâu?",
+  "question_type": "synthesis",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-ii/article-10/clause-1",
+   "45-2019-qh14/chapter-iii/section-1/article-21/clause-2",
+   "45-2019-qh14/chapter-iii/section-1/article-15/clause-2",
+   "45-2019-qh14/chapter-iii/section-4/article-49/clause-2"
+  ],
+  "rationale": "Khoản 1 Điều 10: người lao động được tự do lựa chọn việc làm; khoản 2 Điều 21: chỉ được thỏa thuận bảo vệ bí mật kinh doanh, công nghệ khi công việc liên quan trực tiếp đến bí mật đó, kèm quyền lợi và bồi thường; khoản 2 Điều 15: tự do giao kết nhưng không trái pháp luật; khoản 2 Điều 49: vô hiệu từng phần.",
+  "paraphrase_of": null,
+  "complex_kind": "case",
+  "case_id": "c06",
+  "source_ref": "Bản án số 03/2023/LĐ-PT ngày 10/01/2023 của TAND tỉnh Thanh Hóa",
+  "issues": [
+   "Giới hạn của thỏa thuận không cạnh tranh sau khi nghỉ việc",
+   "Điều kiện thỏa thuận bảo vệ bí mật kinh doanh",
+   "Hiệu lực của điều khoản trái quyền tự do việc làm",
+   "Điều kiện để đòi bồi thường"
+  ],
+  "reference_outcome": "Tòa phúc thẩm chấp nhận kháng cáo của người lao động và kháng nghị của Viện kiểm sát, sửa bản án sơ thẩm, bác toàn bộ yêu cầu bồi thường của công ty. Tòa nhận định thỏa thuận cấm làm việc tại nhà máy trái quyền tự do lựa chọn việc làm và công ty không chứng minh được người lao động đã sử dụng hay làm lộ bí mật nào.",
+  "notes": "Chế định phạt vi phạm và bồi thường theo Bộ luật Dân sự, quyền tự do việc làm theo Hiến pháp không có trong corpus. Án lệ 69/2023/AL coi thỏa thuận không cạnh tranh là thỏa thuận độc lập (thẩm quyền trọng tài)."
+ },
+ {
+  "text": "Một nữ công nhân may được chuyển sang tổ khác sau khi kiểm tra tay nghề không đạt; chị đã đồng ý trong cuộc họp có công đoàn. Sau đó chị tự nghỉ hơn một tháng, chỉ nói miệng với quản đốc và bảo đã gửi đơn nghỉ ốm qua bảo vệ nhưng không có giấy tờ. Công ty có được chấm dứt hợp đồng với chị không, có phải báo trước không, và việc điều chuyển trước đó có hợp lệ không?",
+  "question_type": "synthesis",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-iii/section-3/article-36/clause-1/point-e",
+   "45-2019-qh14/chapter-iii/section-3/article-36/clause-3",
+   "45-2019-qh14/chapter-viii/section-1/article-125/clause-4",
+   "45-2019-qh14/chapter-iii/section-2/article-29/clause-1",
+   "45-2019-qh14/chapter-iii/section-2/article-29/clause-2"
+  ],
+  "rationale": "Điểm e khoản 1 Điều 36: tự ý bỏ việc không có lý do chính đáng từ 05 ngày làm việc liên tục; khoản 3 Điều 36: không phải báo trước; khoản 4 Điều 125: lý do chính đáng gồm bản thân ốm có xác nhận của cơ sở khám bệnh; khoản 1, 2 Điều 29: điều kiện tạm thời chuyển làm công việc khác.",
+  "paraphrase_of": null,
+  "complex_kind": "case",
+  "case_id": "c07",
+  "source_ref": "Bản án số 04/2024/LĐ-PT ngày 17/9/2024 của TAND thành phố Đà Nẵng",
+  "issues": [
+   "Tự ý bỏ việc 05 ngày làm việc liên tục",
+   "Lý do chính đáng và chứng cứ nghỉ ốm",
+   "Không phải báo trước",
+   "Điều chuyển công việc"
+  ],
+  "reference_outcome": "Tòa phúc thẩm giữ nguyên bản án sơ thẩm, bác toàn bộ yêu cầu của người lao động. Tòa xác định việc điều chuyển đã được người lao động đồng ý nên phù hợp Điều 29, việc nghỉ không có lý do chính đáng từ 05 ngày trở lên nên công ty được chấm dứt hợp đồng mà không phải báo trước.",
+  "notes": "Bản án ghi căn cứ điểm c khoản 1 Điều 36; trường hợp này thuộc điểm e khoản 1 Điều 36."
+ },
+ {
+  "text": "Doanh số giảm gần 70%, công ty ô tô quyết định tái cấu trúc: đã lập phương án sử dụng lao động, đối thoại, lấy ý kiến ban chấp hành công đoàn và đề nghị thỏa thuận nghỉ với người dôi dư. Một kỹ sư làm từ năm 2011 không đồng ý thỏa thuận. Công ty có được cho anh thôi việc không, phải làm đủ những bước nào, có cần tiêu chí lựa chọn người bị cắt giảm không và phải trả trợ cấp gì?",
+  "question_type": "synthesis",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-iii/section-3/article-42/clause-1/point-a",
+   "45-2019-qh14/chapter-iii/section-3/article-42/clause-3",
+   "45-2019-qh14/chapter-iii/section-3/article-44/clause-1/point-c",
+   "45-2019-qh14/chapter-iii/section-3/article-44/clause-2",
+   "45-2019-qh14/chapter-iii/section-3/article-42/clause-6",
+   "45-2019-qh14/chapter-iii/section-3/article-47/clause-1"
+  ],
+  "rationale": "Điểm a khoản 1 Điều 42: thay đổi cơ cấu tổ chức; khoản 3 Điều 42: phải xây dựng phương án sử dụng lao động; điểm c khoản 1 Điều 44: phương án có danh sách người phải chấm dứt; khoản 2 Điều 44: trao đổi với tổ chức đại diện, công khai phương án; khoản 6 Điều 42: thông báo Ủy ban nhân dân cấp tỉnh và người lao động trước 30 ngày; khoản 1 Điều 47: trợ cấp mất việc làm.",
+  "paraphrase_of": null,
+  "complex_kind": "case",
+  "case_id": "c08",
+  "source_ref": "Bản án số 49/2025/LĐ-PT ngày 23/5/2025 của TAND Thành phố Hồ Chí Minh",
+  "issues": [
+   "Thay đổi cơ cấu và phương án sử dụng lao động",
+   "Trao đổi với tổ chức đại diện, thông báo cơ quan nhà nước",
+   "Tiêu chí lựa chọn người bị cắt giảm",
+   "Trợ cấp mất việc làm"
+  ],
+  "reference_outcome": "Tòa phúc thẩm giữ nguyên bản án sơ thẩm, bác toàn bộ yêu cầu hủy quyết định, nhận trở lại làm việc và bồi thường, vì công ty đã chứng minh lý do kinh tế và thực hiện đúng Điều 42, Điều 44. Người lao động vẫn phải chịu án phí sơ thẩm do không có đơn xin miễn án phí.",
+  "notes": "Luật không quy định riêng tiêu chí lựa chọn ngoài nội dung phương án; câu trả lời cần nêu giới hạn đó."
+ },
+ {
+  "text": "Công ty tuyển một trưởng phòng tài chính, hết 60 ngày thử việc thì gửi hợp đồng 01 năm nhưng chị chưa ký mà vẫn đi làm, nhận lương. Sau đó công ty xác minh với các nơi cũ và phát hiện hồ sơ kê thời gian làm việc ở các doanh nghiệp lớn dài hơn thực tế 1-2 năm. Quan hệ hiện tại là gì, công ty có được đơn phương chấm dứt không và phải báo trước bao lâu?",
+  "question_type": "synthesis",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-iii/section-1/article-27/clause-1",
+   "45-2019-qh14/chapter-iii/section-1/article-16/clause-2",
+   "45-2019-qh14/chapter-iii/section-3/article-36/clause-1/point-g",
+   "45-2019-qh14/chapter-iii/section-3/article-36/clause-2/point-b"
+  ],
+  "rationale": "Khoản 1 Điều 27: thử việc đạt thì tiếp tục thực hiện hợp đồng lao động; khoản 2 Điều 16: nghĩa vụ cung cấp thông tin trung thực về trình độ, kinh nghiệm; điểm g khoản 1 Điều 36: được đơn phương chấm dứt khi người lao động khai không trung thực làm ảnh hưởng đến tuyển dụng; điểm b khoản 2 Điều 36: báo trước ít nhất 30 ngày với hợp đồng 12-36 tháng.",
+  "paraphrase_of": null,
+  "complex_kind": "case",
+  "case_id": "c09",
+  "source_ref": "Bản án số 03/2024/LĐ-PT ngày 19/01/2024 của TAND tỉnh Bắc Ninh",
+  "issues": [
+   "Quan hệ lao động sau thử việc khi chưa ký hợp đồng",
+   "Khai không trung thực khi giao kết",
+   "Thời hạn báo trước"
+  ],
+  "reference_outcome": "Tòa phúc thẩm bác kháng cáo của cả hai bên, giữ nguyên bản án sơ thẩm: việc chấm dứt là đúng điểm g khoản 1 Điều 36 vì người lao động khai sai kinh nghiệm; bác các yêu cầu bồi thường của người lao động (kể cả về dữ liệu cá nhân) và bác phản tố của công ty. Ghi nhận công ty tự nguyện hỗ trợ một tháng lương.",
+  "notes": "Thời hạn báo trước phụ thuộc loại hợp đồng được xác lập; tòa áp dụng điểm b khoản 2 Điều 36."
+ },
+ {
+  "text": "Hội đồng quản trị không bổ nhiệm lại kế toán trưởng (hợp đồng không xác định thời hạn từ năm 2010) và ra quyết định chấm dứt hợp đồng có hiệu lực từ trước ngày ký, với lý do không đủ năng lực và không đồng ý ký lại hợp đồng. Quyết định giao chậm hơn một tháng, trong thời gian đó bà vẫn đi làm. Việc chấm dứt có hợp pháp không và công ty phải trả những gì?",
+  "question_type": "synthesis",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-iii/section-3/article-36/clause-1",
+   "45-2019-qh14/chapter-iii/section-3/article-36/clause-2/point-a",
+   "45-2019-qh14/chapter-iii/section-3/article-39",
+   "45-2019-qh14/chapter-iii/section-3/article-41/clause-1",
+   "45-2019-qh14/chapter-iii/section-3/article-48/clause-1"
+  ],
+  "rationale": "Khoản 1 Điều 36 liệt kê các căn cứ đơn phương chấm dứt (không có \"không được bổ nhiệm lại\"); điểm a khoản 2 Điều 36: báo trước 45 ngày; Điều 39, khoản 1 Điều 41: chấm dứt trái pháp luật và hậu quả; khoản 1 Điều 48: thanh toán trong 14 ngày làm việc, gồm tiền lương những ngày vẫn làm việc.",
+  "paraphrase_of": null,
+  "complex_kind": "case",
+  "case_id": "c10",
+  "source_ref": "Bản án số 06/2022/LĐ-PT ngày 02/12/2022 của TAND tỉnh Long An",
+  "issues": [
+   "Không được bổ nhiệm lại có phải căn cứ chấm dứt",
+   "Báo trước và quyết định có hiệu lực hồi tố",
+   "Hậu quả chấm dứt trái pháp luật",
+   "Thanh toán tiền lương những ngày vẫn làm việc"
+  ],
+  "reference_outcome": "Tại phiên phúc thẩm hai bên thỏa thuận chấm dứt hợp đồng từ 01/11/2020 và công ty trả trọn gói 400 triệu đồng (lương, bảo hiểm, trợ cấp). Tòa sửa bản án sơ thẩm, công nhận thỏa thuận. (theo luật cũ)",
+  "notes": "Sự việc tháng 11/2020, trước khi Bộ luật Lao động 2019 có hiệu lực; hai bên thỏa thuận tại phiên phúc thẩm nên bản án không phân tích tính hợp pháp."
+ },
+ {
+  "text": "Bệnh viện tư cử một bác sĩ đi học chuyên khoa 09 tháng, có cam kết làm việc 05 năm sau khóa học, vi phạm thì bồi thường gấp 04 lần chi phí đào tạo. Học xong được một năm thì chị xin nghỉ, có báo trước. Bệnh viện được đòi những khoản nào, những chi phí nào được tính là chi phí đào tạo và mức gấp 04 lần có được không?",
+  "question_type": "synthesis",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-iv/article-62/clause-1",
+   "45-2019-qh14/chapter-iv/article-62/clause-2/point-e",
+   "45-2019-qh14/chapter-iv/article-62/clause-3",
+   "45-2019-qh14/chapter-iii/section-3/article-35/clause-1/point-a",
+   "45-2019-qh14/chapter-iii/section-3/article-40/clause-3"
+  ],
+  "rationale": "Khoản 1 Điều 62: phải ký hợp đồng đào tạo khi đào tạo bằng kinh phí của người sử dụng lao động; điểm e khoản 2 Điều 62: hợp đồng đào tạo ghi trách nhiệm của người lao động; khoản 3 Điều 62: chi phí đào tạo gồm khoản nào; điểm a khoản 1 Điều 35: người lao động được đơn phương chấm dứt khi báo trước 45 ngày; khoản 3 Điều 40: hoàn trả chi phí đào tạo khi chấm dứt trái pháp luật.",
+  "paraphrase_of": null,
+  "complex_kind": "case",
+  "case_id": "c11",
+  "source_ref": "Bản án số 01/2021/LĐ-PT ngày 29/3/2021 của TAND tỉnh Thái Nguyên",
+  "issues": [
+   "Hợp đồng đào tạo và cam kết thời gian làm việc",
+   "Phạm vi chi phí đào tạo phải hoàn trả",
+   "Nghỉ đúng luật hay trái luật và nghĩa vụ hoàn trả",
+   "Hiệu lực của mức phạt gấp nhiều lần"
+  ],
+  "reference_outcome": "Tòa phúc thẩm sửa một phần bản án sơ thẩm: đình chỉ phần yêu cầu về tiền bảo hiểm do nguyên đơn đã rút, buộc người lao động trả khoảng 111,9 triệu đồng theo mức gấp 02 lần chi phí đào tạo mà hai bên đã tự nguyện cam kết năm 2019; không chấp nhận mức gấp 04 lần. (theo luật cũ)",
+  "notes": "Vụ việc 2016-2018 theo Bộ luật Lao động 2012; hiệu lực của mức phạt vi phạm theo Bộ luật Dân sự, không có trong corpus."
+ },
+ {
+  "text": "Một công nhân kỹ thuật được cử sang nhà máy mẹ ở nước ngoài học 67 ngày theo hợp đồng đào tạo, cam kết làm việc ít nhất 01 năm sau đào tạo. Một tuần sau khi sang, anh bỏ khóa học, không về nước và công ty không liên lạc được. Công ty nên xử lý thế nào, chấm dứt hợp đồng hay sa thải, và được đòi những khoản gì?",
+  "question_type": "synthesis",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-iii/section-3/article-36/clause-1/point-e",
+   "45-2019-qh14/chapter-viii/section-1/article-125/clause-4",
+   "45-2019-qh14/chapter-iii/section-3/article-40/clause-2",
+   "45-2019-qh14/chapter-iii/section-3/article-40/clause-3",
+   "45-2019-qh14/chapter-iv/article-62/clause-3"
+  ],
+  "rationale": "Điểm e khoản 1 Điều 36: được đơn phương chấm dứt khi tự ý bỏ việc từ 05 ngày làm việc liên tục; khoản 4 Điều 125: sa thải khi tự ý bỏ việc 05 ngày cộng dồn trong 30 ngày; khoản 2, 3 Điều 40: người lao động chấm dứt trái pháp luật phải bồi thường nửa tháng lương, tiền lương những ngày không báo trước và hoàn trả chi phí đào tạo; khoản 3 Điều 62: chi phí đào tạo.",
+  "paraphrase_of": null,
+  "complex_kind": "case",
+  "case_id": "c12",
+  "source_ref": "Bản án số 02/2025/LĐ-ST ngày 31/3/2025 của TAND thành phố Hải Phòng",
+  "issues": [
+   "Lựa chọn giữa đơn phương chấm dứt và sa thải",
+   "Nghĩa vụ của người lao động chấm dứt trái pháp luật",
+   "Chi phí đào tạo được hoàn trả"
+  ],
+  "reference_outcome": "Tòa sơ thẩm chấp nhận toàn bộ yêu cầu còn lại, buộc người lao động trả khoảng 89,3 triệu đồng gồm chi phí đào tạo thực tế và tiền phạt gấp 02 lần theo hợp đồng đào tạo; đình chỉ phần yêu cầu đã rút. Hợp đồng bảo lãnh của người vợ chưa được yêu cầu nên tòa không xem xét.",
+  "notes": "Mức phạt gấp 02 lần và bảo lãnh của người thân theo Bộ luật Dân sự, không có trong corpus."
+ },
+ {
+  "text": "Một kỹ thuật viên lắp ráp vào làm theo thỏa thuận miệng, thử việc 01 tháng; hết thử việc công ty không thông báo kết quả, anh vẫn làm tiếp. Một hôm anh từ chối tăng ca vì mệt; hôm sau quản lý bắt anh chọn bị phạt 01 triệu đồng hoặc viết đơn xin nghỉ, anh từ chối nhưng vẫn bị giao phiếu ra cổng. Công ty xử lý như vậy có đúng không và có rủi ro gì?",
+  "question_type": "synthesis",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-iii/section-1/article-27/clause-1",
+   "45-2019-qh14/chapter-vii/section-1/article-107/clause-2/point-a",
+   "45-2019-qh14/chapter-viii/section-1/article-127/clause-2",
+   "45-2019-qh14/chapter-iii/section-3/article-39",
+   "45-2019-qh14/chapter-iii/section-3/article-41/clause-1"
+  ],
+  "rationale": "Khoản 1 Điều 27: hết thử việc phải thông báo kết quả, đạt thì tiếp tục hợp đồng; điểm a khoản 2 Điều 107: làm thêm giờ phải được người lao động đồng ý; khoản 2 Điều 127: cấm phạt tiền thay xử lý kỷ luật; Điều 39, khoản 1 Điều 41: cho nghỉ không đúng căn cứ là chấm dứt trái pháp luật và hậu quả.",
+  "paraphrase_of": null,
+  "complex_kind": "case",
+  "case_id": "c14",
+  "source_ref": "Bản án số 16/2024/LĐ-PT ngày 06/9/2024 của TAND tỉnh Bình Dương",
+  "issues": [
+   "Hết thử việc không thông báo kết quả",
+   "Từ chối làm thêm giờ",
+   "Phạt tiền thay xử lý kỷ luật",
+   "Hậu quả đơn phương chấm dứt trái pháp luật"
+  ],
+  "reference_outcome": "Tòa phúc thẩm chấp nhận một phần kháng cáo, sửa bản án sơ thẩm (sơ thẩm cho rằng hai bên thỏa thuận chấm dứt): xác định công ty đơn phương chấm dứt trái pháp luật, buộc bồi thường khoảng 69,7 triệu đồng (lương 9 tháng không được làm việc, 02 tháng lương theo mức yêu cầu, 30 ngày lương vi phạm báo trước) và truy đóng bảo hiểm xã hội. Yêu cầu đòi số tiền lương bị thất lạc bị bác vì lỗi người lao động.",
+  "notes": "Tòa tính tiền lương bồi thường gồm lương cơ bản và các phụ cấp gắn với công việc."
+ },
+ {
+  "text": "Công ty cao su ký với công nhân cạo mủ mỗi năm một hợp đồng dưới 12 tháng theo mùa vụ, giữa các hợp đồng nghỉ 2-3 tháng, và không giao bản hợp đồng cho họ. Năm nay đội sản xuất không xếp một công nhân vào lô cạo mới và công ty báo chấm dứt hợp đồng khi hết hạn. Cách ký hợp đồng như vậy có đúng không, khi hết hạn công ty phải làm gì?",
+  "question_type": "synthesis",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-iii/section-1/article-20/clause-1/point-b",
+   "45-2019-qh14/chapter-iii/section-1/article-20/clause-2/point-c",
+   "45-2019-qh14/chapter-iii/section-1/article-14/clause-1",
+   "45-2019-qh14/chapter-iii/section-3/article-34/clause-1",
+   "45-2019-qh14/chapter-iii/section-3/article-45/clause-1"
+  ],
+  "rationale": "Điểm b khoản 1 Điều 20: hợp đồng xác định thời hạn tối đa 36 tháng; điểm c khoản 2 Điều 20: chỉ được ký thêm hợp đồng xác định thời hạn 01 lần; khoản 1 Điều 14: lập 02 bản, người lao động giữ 01 bản; khoản 1 Điều 34: chấm dứt khi hết hạn; khoản 1 Điều 45: thông báo bằng văn bản.",
+  "paraphrase_of": null,
+  "complex_kind": "case",
+  "case_id": "c15",
+  "source_ref": "Bản án số 01/2024/LĐ-PT ngày 16/4/2024 của TAND tỉnh Bà Rịa - Vũng Tàu",
+  "issues": [
+   "Giới hạn số lần ký hợp đồng xác định thời hạn",
+   "Nghĩa vụ giao một bản hợp đồng",
+   "Chấm dứt khi hết hạn và thông báo"
+  ],
+  "reference_outcome": "Tòa phúc thẩm giữ nguyên bản án sơ thẩm, bác toàn bộ yêu cầu. Tòa xác định hợp đồng chấm dứt do hết hạn theo khoản 1 Điều 34, người lao động không chứng minh được việc tiếp tục làm việc sau khi hết hạn và không thuộc trường hợp thành viên ban lãnh đạo tổ chức đại diện người lao động, nên không có vi phạm thời hạn báo trước.",
+  "notes": "Bản án không phân tích việc số lần ký liên tiếp đã vượt giới hạn; khoảng gián đoạn giữa các hợp đồng làm việc áp dụng điểm c khoản 2 Điều 20 không rõ."
+ },
+ {
+  "text": "Một lễ tân nhà khách đang nuôi con dưới 12 tháng tuổi bị xếp trực ca 24 giờ cả ngày lẫn đêm, và phải làm thêm nhiều giờ khi ca trực giảm từ 3 xuống 2 người mà không được trả tiền làm thêm đúng mức. Nay đơn vị thay đổi mô hình, giải thể bộ phận nhà khách và muốn chấm dứt hợp đồng không xác định thời hạn của chị. Việc bố trí ca trước đây có vi phạm không, phải trả làm thêm giờ thế nào, và chấm dứt hợp đồng theo căn cứ nào?",
+  "question_type": "synthesis",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-x/article-137/clause-1/point-b",
+   "45-2019-qh14/chapter-vi/article-98/clause-1/point-a",
+   "45-2019-qh14/chapter-vii/section-1/article-107/clause-2/point-b",
+   "45-2019-qh14/chapter-iii/section-3/article-42/clause-1/point-a",
+   "45-2019-qh14/chapter-iii/section-3/article-36/clause-1/point-c"
+  ],
+  "rationale": "Điểm b khoản 1 Điều 137: không sử dụng người nuôi con dưới 12 tháng làm đêm, làm thêm giờ trừ khi người lao động đồng ý; điểm a khoản 1 Điều 98: làm thêm ngày thường ít nhất 150%; điểm b khoản 2 Điều 107: giới hạn giờ làm thêm; điểm a khoản 1 Điều 42: thay đổi cơ cấu tổ chức; điểm c khoản 1 Điều 36: căn cứ tòa đã áp dụng.",
+  "paraphrase_of": null,
+  "complex_kind": "case",
+  "case_id": "c16",
+  "source_ref": "Bản án số 01/2024/LĐ-PT ngày 11/4/2024 của TAND tỉnh Bạc Liêu",
+  "issues": [
+   "Bảo vệ lao động nuôi con dưới 12 tháng tuổi",
+   "Tiền lương và giới hạn làm thêm giờ",
+   "Căn cứ chấm dứt khi giải thể bộ phận: Điều 36 hay Điều 42"
+  ],
+  "reference_outcome": "Tòa phúc thẩm giữ nguyên bản án sơ thẩm: việc chấm dứt hợp đồng không trái pháp luật nên bác yêu cầu hủy quyết định, nhận lại làm việc, lương, bảo hiểm và 02 tháng lương; chỉ buộc đơn vị trả thêm một khoản nhỏ tiền làm thêm giờ do giảm người trong ca trực (600.000 đồng), bác các khoản phụ cấp và tiền trực lễ do thiếu chứng cứ.",
+  "notes": "Tòa áp dụng điểm c khoản 1 Điều 36; bản án không phân tích riêng Điều 137."
+ },
+ {
+  "text": "Công ty vẫn trừ tiền bảo hiểm vào lương tháng 11 và 12 của một công nhân nhưng không nộp cho cơ quan bảo hiểm xã hội; khi chị nghỉ việc, công ty không giao quyết định nghỉ việc, không chốt và trả sổ. Hành vi này bị coi là gì, công ty phải khắc phục ra sao và có trách nhiệm gì khi người lao động nghỉ việc?",
+  "question_type": "synthesis",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "41-2024-qh15/chapter-ii/section-1/article-13/clause-4",
+   "41-2024-qh15/chapter-iv/section-2/article-38/clause-1",
+   "41-2024-qh15/chapter-iv/section-2/article-39/clause-1/point-đ",
+   "41-2024-qh15/chapter-iv/section-2/article-41/clause-1",
+   "45-2019-qh14/chapter-iii/section-3/article-48/clause-3/point-a"
+  ],
+  "rationale": "Khoản 4 Điều 13 Luật BHXH: trích và đóng bảo hiểm hằng tháng; khoản 1 Điều 38: chậm đóng; điểm đ khoản 1 Điều 39: không đóng số đã đăng ký sau 60 ngày là trốn đóng; khoản 1 Điều 41: buộc đóng đủ và nộp 0,03%/ngày; điểm a khoản 3 Điều 48 Bộ luật Lao động: hoàn thành xác nhận thời gian đóng bảo hiểm khi chấm dứt.",
+  "paraphrase_of": null,
+  "complex_kind": "case",
+  "case_id": "c17",
+  "source_ref": "Bản án số 70/2024/LĐ-ST ngày 23/5/2024 của TAND thành phố Thuận An, tỉnh Bình Dương",
+  "issues": [
+   "Trích lương mà không nộp bảo hiểm: chậm đóng hay trốn đóng",
+   "Biện pháp buộc đóng và tiền lãi",
+   "Trách nhiệm xác nhận thời gian đóng, trả giấy tờ khi chấm dứt"
+  ],
+  "reference_outcome": "Tòa sơ thẩm chấp nhận yêu cầu, buộc công ty đóng các khoản bảo hiểm xã hội còn nợ tháng 11 và 12/2022 cho người lao động tại cơ quan bảo hiểm xã hội và chịu án phí.",
+  "notes": "Vụ việc theo Luật BHXH 2014; từ 01/7/2025 áp dụng Luật BHXH 2024 trong corpus."
+ },
+ {
+  "text": "Một cô gái 17 tuổi mượn căn cước của người khác để ký hợp đồng 12 tháng làm công nhân may, bảo hiểm cũng đóng dưới tên người cho mượn. Khi phát hiện, công ty phải xử lý hợp đồng này thế nào, ai có quyền tuyên bố hợp đồng vô hiệu, và nếu muốn tiếp tục sử dụng chị thì cần điều kiện gì?",
+  "question_type": "synthesis",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-iii/section-1/article-18/clause-1",
+   "45-2019-qh14/chapter-iii/section-1/article-18/clause-4/point-b",
+   "45-2019-qh14/chapter-iii/section-4/article-49/clause-1/point-b",
+   "45-2019-qh14/chapter-iii/section-4/article-50",
+   "145-2020-nd-cp/chapter-iii/section-3/article-10/clause-1"
+  ],
+  "rationale": "Khoản 1 Điều 18: người lao động trực tiếp giao kết; điểm b khoản 4 Điều 18: người từ đủ 15 đến dưới 18 tuổi giao kết khi có văn bản đồng ý của người đại diện; điểm b khoản 1 Điều 49: vô hiệu toàn bộ khi người giao kết không đúng thẩm quyền; Điều 50: Tòa án có quyền tuyên bố vô hiệu; khoản 1 Điều 10 Nghị định 145: ký lại hợp đồng theo đúng quy định.",
+  "paraphrase_of": null,
+  "complex_kind": "case",
+  "case_id": "c18",
+  "source_ref": "Bản án số 1020/2023/LĐ-ST ngày 12/4/2023 của TAND thành phố Thủ Đức, Thành phố Hồ Chí Minh",
+  "issues": [
+   "Hợp đồng ký bằng giấy tờ của người khác",
+   "Giao kết với người chưa thành niên",
+   "Thẩm quyền tuyên bố vô hiệu và xử lý hợp đồng vô hiệu"
+  ],
+  "reference_outcome": "Tòa sơ thẩm chấp nhận yêu cầu, tuyên bố hợp đồng lao động ký dưới tên người cho mượn giấy tờ trong thời gian tháng 7-8/2011 là vô hiệu vì không đúng người lao động giao kết; hậu quả của hợp đồng vô hiệu không được giải quyết do nguyên đơn không yêu cầu. (theo luật cũ)",
+  "notes": "Vụ việc năm 2011 theo Bộ luật Lao động 1994; xử lý bảo hiểm ghi trùng không có quy định cụ thể trong corpus."
+ },
+ {
+  "text": "Công ty muốn kỷ luật cách chức trưởng phòng nhân sự (hợp đồng không xác định thời hạn) vì nhiều lần phát tán email thông tin chưa kiểm chứng về đồng nghiệp, đi trễ về sớm, từ chối việc được giao, và chuyển chị xuống nhân viên với lương thấp hơn nhiều. Cần đáp ứng điều kiện, thủ tục gì để cách chức hợp lệ, và chị có còn được thưởng tháng 13 theo quy chế không?",
+  "question_type": "synthesis",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-viii/section-1/article-124/clause-3",
+   "45-2019-qh14/chapter-viii/section-1/article-122/clause-1/point-a",
+   "45-2019-qh14/chapter-viii/section-1/article-122/clause-1/point-b",
+   "45-2019-qh14/chapter-viii/section-1/article-118/clause-2/point-g",
+   "145-2020-nd-cp/chapter-viii/article-70/clause-2/point-a",
+   "45-2019-qh14/chapter-vi/article-104/clause-2"
+  ],
+  "rationale": "Khoản 3 Điều 124: cách chức là một hình thức kỷ luật; điểm a, b khoản 1 Điều 122: phải chứng minh lỗi, có sự tham gia của tổ chức đại diện; điểm g khoản 2 Điều 118: nội quy phải quy định hành vi vi phạm và hình thức xử lý; điểm a khoản 2 Điều 70 Nghị định 145: thông báo họp trước ít nhất 05 ngày làm việc; khoản 2 Điều 104: thưởng theo quy chế do người sử dụng lao động ban hành.",
+  "paraphrase_of": null,
+  "complex_kind": "case",
+  "case_id": "c19",
+  "source_ref": "Bản án số 02/2022/LĐ-PT ngày 30/6/2022 của TAND tỉnh Lâm Đồng",
+  "issues": [
+   "Điều kiện áp dụng hình thức cách chức",
+   "Trình tự họp xử lý kỷ luật",
+   "Thưởng theo quy chế"
+  ],
+  "reference_outcome": "Tòa phúc thẩm giữ nguyên bản án sơ thẩm, bác toàn bộ yêu cầu: quyết định cách chức có căn cứ và đúng trình tự; lương tháng 13 và thưởng năm không đủ tiêu chí theo quy chế thưởng; trợ cấp ốm đau thuộc trách nhiệm cơ quan bảo hiểm xã hội và không có giấy tờ chứng minh; lãi chậm trả tính theo lãi suất tiền gửi kỳ hạn 1 tháng, không phải 3%/tháng, và công ty đã thanh toán xong các khoản còn nợ.",
+  "notes": "Bản án ít trích dẫn điều luật về kỷ luật; trợ cấp ốm đau thuộc cơ quan bảo hiểm xã hội."
+ },
+ {
+  "text": "Công ty muốn điều chuyển một quản lý cấp cao xuống làm nhân viên xưởng, tạm đình chỉ công việc 30 ngày để xác minh, rồi sa thải vì tự ý nghỉ việc; người này đang là ủy viên ban chấp hành công đoàn cơ sở. Công ty phải tuân thủ những gì, và việc xếp anh ngồi riêng, không giao việc trong thời gian chờ có rủi ro gì?",
+  "question_type": "synthesis",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-xiii/article-177/clause-3",
+   "45-2019-qh14/chapter-viii/section-1/article-128/clause-1",
+   "45-2019-qh14/chapter-viii/section-1/article-128/clause-2",
+   "45-2019-qh14/chapter-iii/section-2/article-29/clause-1",
+   "45-2019-qh14/chapter-i/article-8/clause-2",
+   "45-2019-qh14/chapter-viii/section-1/article-125/clause-4"
+  ],
+  "rationale": "Khoản 3 Điều 177: phải thỏa thuận bằng văn bản với ban lãnh đạo tổ chức đại diện khi chuyển việc, sa thải thành viên ban lãnh đạo; khoản 1, 2 Điều 128: tạm đình chỉ phải tham khảo ý kiến tổ chức đại diện, tối đa 15 ngày (đặc biệt 90 ngày); khoản 1 Điều 29: giới hạn tạm chuyển việc; khoản 2 Điều 8: cấm ngược đãi người lao động; khoản 4 Điều 125: sa thải vì tự ý bỏ việc khi không có lý do chính đáng.",
+  "paraphrase_of": null,
+  "complex_kind": "case",
+  "case_id": "c20",
+  "source_ref": "Quyết định giám đốc thẩm số 01/2025/LĐ-GĐT ngày 11/3/2025 của TAND cấp cao tại Thành phố Hồ Chí Minh",
+  "issues": [
+   "Bảo vệ cán bộ công đoàn khi chuyển việc, sa thải",
+   "Tạm đình chỉ công việc",
+   "Điều chuyển trá hình",
+   "Cô lập người lao động và lý do chính đáng khi vắng mặt"
+  ],
+  "reference_outcome": "Hội đồng giám đốc thẩm chấp nhận kháng nghị, hủy cả bản án sơ thẩm và phúc thẩm (vốn bác yêu cầu của người lao động), giao hồ sơ xét xử lại. Tòa nhận định quyết định sa thải trái pháp luật vì không thỏa thuận với công đoàn, việc điều chuyển thực chất là cách chức trái thủ tục, tạm đình chỉ không tham khảo công đoàn và công ty đã ngược đãi người lao động. (theo luật cũ)",
+  "notes": "Vụ việc năm 2020 theo Bộ luật Lao động 2012 (Điều 192, 125, 129 cũ)."
+ },
+ {
+  "text": "Một trưởng phòng tạo mẫu nói rằng từ năm 2016 đến hết năm 2021 gần như ngày nào cũng tăng ca theo máy chấm công khuôn mặt nhưng không được trả tiền; bảng đề nghị làm thêm giờ do chính anh ký thì ghi ít hơn. Đầu năm 2022 anh yêu cầu hòa giải rồi khởi kiện đòi toàn bộ tiền làm thêm giờ. Anh còn quyền đòi khoảng thời gian nào, tiền làm thêm tính theo mức nào, và công ty có vi phạm giới hạn làm thêm giờ không?",
+  "question_type": "synthesis",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-vi/article-98/clause-1/point-a",
+   "45-2019-qh14/chapter-vi/article-98/clause-1/point-b",
+   "45-2019-qh14/chapter-vii/section-1/article-107/clause-2/point-c",
+   "45-2019-qh14/chapter-xiv/section-2/article-190/clause-3",
+   "145-2020-nd-cp/chapter-vi/section-2/article-55"
+  ],
+  "rationale": "Điểm a, b khoản 1 Điều 98: làm thêm ngày thường ít nhất 150%, ngày nghỉ hằng tuần 200%; điểm c khoản 2 Điều 107: không quá 200 giờ trong 01 năm; khoản 3 Điều 190: thời hiệu yêu cầu Tòa án là 01 năm; Điều 55 Nghị định 145: cách tính tiền lương làm thêm giờ.",
+  "paraphrase_of": null,
+  "complex_kind": "case",
+  "case_id": "c21",
+  "source_ref": "Bản án số 04/2024/LĐ-PT ngày 24/5/2024 của TAND tỉnh Đồng Nai",
+  "issues": [
+   "Thời hiệu yêu cầu giải quyết tranh chấp",
+   "Mức tiền lương làm thêm giờ",
+   "Giới hạn số giờ làm thêm",
+   "Chứng cứ số giờ làm thêm"
+  ],
+  "reference_outcome": "Tòa phúc thẩm bác kháng cáo của người lao động, chấp nhận một phần kháng cáo của công ty, sửa bản án sơ thẩm: phần yêu cầu từ tháng 6/2016 đến tháng 3/2021 đã hết thời hiệu; với phần còn thời hiệu, chỉ chấp nhận số giờ làm thêm thể hiện trên bảng chấm công và đề nghị làm thêm giờ, buộc công ty trả khoảng 2,8 triệu đồng thay vì khoảng 33,2 triệu đồng như sơ thẩm.",
+  "notes": "Việc đánh giá chứng cứ (máy chấm công hay bảng chấm công) là vấn đề tố tụng không có trong corpus."
+ },
+ {
+  "text": "Công ty phát hiện giám đốc điều hành không kê khai theo nội quy mối quan hệ với thành viên của đối tác cung cấp nông sản, ký hợp tác phát triển vùng nguyên liệu và lập một hợp tác xã cùng ngành trong thời gian bị đình chỉ. Công ty có thể sa thải không, trong thời hạn nào, và trong thời gian tạm đình chỉ phải trả lương thế nào?",
+  "question_type": "synthesis",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-viii/section-1/article-125/clause-2",
+   "45-2019-qh14/chapter-viii/section-1/article-123/clause-1",
+   "45-2019-qh14/chapter-viii/section-1/article-128/clause-2",
+   "45-2019-qh14/chapter-viii/section-1/article-128/clause-3",
+   "145-2020-nd-cp/chapter-viii/article-70/clause-4"
+  ],
+  "rationale": "Khoản 2 Điều 125: sa thải khi gây thiệt hại nghiêm trọng hoặc đe dọa gây thiệt hại đặc biệt nghiêm trọng được quy định trong nội quy; khoản 1 Điều 123: thời hiệu 06 tháng, 12 tháng với vi phạm liên quan tài chính, tài sản, bí mật; khoản 2, 3 Điều 128: tạm ứng 50% tiền lương, không phải trả lại nếu bị kỷ luật; khoản 4 Điều 70 Nghị định 145: người có thẩm quyền ban hành quyết định trong thời hiệu.",
+  "paraphrase_of": null,
+  "complex_kind": "case",
+  "case_id": "c23",
+  "source_ref": "Bản án số 01/2023/LĐ-PT ngày 14/02/2023 của TAND thành phố Cần Thơ",
+  "issues": [
+   "Căn cứ sa thải vì gây thiệt hại, xung đột lợi ích",
+   "Thời hiệu xử lý kỷ luật",
+   "Tiền lương trong thời gian tạm đình chỉ",
+   "Thẩm quyền ban hành quyết định"
+  ],
+  "reference_outcome": "Tòa phúc thẩm giữ nguyên bản án sơ thẩm: quyết định sa thải đúng căn cứ, thời hiệu, thẩm quyền và trình tự nên bác yêu cầu hủy quyết định và bồi thường. Công ty phải trả lương tháng 01/2020 còn nợ và 50% lương căn bản trong thời gian tạm đình chỉ, tổng khoảng 115,5 triệu đồng, và trả sổ bảo hiểm xã hội. (theo luật cũ)",
+  "notes": "Vụ việc năm 2020 theo Bộ luật Lao động 2012 và Nghị định 148/2018."
+ },
+ {
+  "text": "Một công nhân xưởng nhựa làm từ năm 2013 không có hợp đồng và không được đóng bảo hiểm; khi xử lý vật liệu bị kẹt trong dây chuyền, máy cuốn cánh tay phải phải cắt bỏ, suy giảm khả năng lao động 65%. Công ty mới hỗ trợ viện phí. Công ty phải chịu những trách nhiệm gì khi không đóng bảo hiểm tai nạn lao động, và mức bồi thường tối thiểu là bao nhiêu?",
+  "question_type": "synthesis",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "84-2015-qh13/chapter-iii/section-2/article-38/clause-4/point-a",
+   "84-2015-qh13/chapter-iii/section-2/article-38/clause-3",
+   "84-2015-qh13/chapter-iii/section-2/article-38/clause-2/point-c",
+   "84-2015-qh13/chapter-iii/section-2/article-39/clause-4",
+   "45-2019-qh14/chapter-iii/section-1/article-13/clause-2"
+  ],
+  "rationale": "Điểm a khoản 4 Điều 38 Luật ATVSLĐ: bồi thường ít nhất 1,5 tháng lương cho 5-10% và cộng 0,4 tháng cho mỗi 1% từ 11% đến 80%; khoản 3 Điều 38: trả đủ lương trong thời gian điều trị; điểm c khoản 2 Điều 38: thanh toán toàn bộ chi phí y tế nếu không có bảo hiểm y tế; khoản 4 Điều 39: không đóng bảo hiểm tai nạn lao động thì phải trả khoản tiền bằng mức hưởng từ quỹ; khoản 2 Điều 13 Bộ luật Lao động: phải giao kết hợp đồng trước khi nhận vào làm.",
+  "paraphrase_of": null,
+  "complex_kind": "case",
+  "case_id": "c24",
+  "source_ref": "Bản án số 13/2020/LĐ-ST ngày 29/9/2020 của TAND huyện Bình Chánh, Thành phố Hồ Chí Minh",
+  "issues": [
+   "Mức bồi thường tai nạn lao động theo mức suy giảm",
+   "Chi phí y tế và tiền lương khi điều trị",
+   "Hậu quả không đóng bảo hiểm tai nạn lao động",
+   "Không giao kết hợp đồng"
+  ],
+  "reference_outcome": "Tòa sơ thẩm chấp nhận một phần: buộc công ty bồi thường 141 triệu đồng theo mức suy giảm khả năng lao động 65%; bác yêu cầu trả lương do đơn phương chấm dứt trái pháp luật vì người thông báo không có thẩm quyền và không có chứng cứ công ty chấm dứt hợp đồng; đình chỉ phần yêu cầu đã rút. (theo luật cũ)",
+  "notes": "Vụ việc năm 2016 theo Bộ luật Lao động 2012 và Thông tư 04/2015; Luật ATVSLĐ 2015 vẫn áp dụng."
+ },
+ {
+  "text": "Hợp đồng 12 tháng của một nhân viên sắp hết hạn; trước đó anh được chỉ định làm chủ tịch công đoàn lâm thời và hai bên đã gia hạn hợp đồng đến hết nhiệm kỳ lâm thời. Khi hợp đồng chỉ còn một tháng, đại hội công đoàn vẫn bầu anh làm chủ tịch nhiệm kỳ mới dù anh không đủ tiêu chuẩn vì hợp đồng sắp hết. Công ty có buộc phải gia hạn hợp đồng đến hết nhiệm kỳ mới không, hay được chấm dứt khi hết hạn?",
+  "question_type": "synthesis",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-xiii/article-177/clause-4",
+   "45-2019-qh14/chapter-iii/section-3/article-34/clause-1",
+   "45-2019-qh14/chapter-iii/section-3/article-45/clause-1"
+  ],
+  "rationale": "Khoản 4 Điều 177: phải gia hạn hợp đồng đến hết nhiệm kỳ cho thành viên ban lãnh đạo tổ chức đại diện đang trong nhiệm kỳ; khoản 1 Điều 34: chấm dứt khi hết hạn, trừ trường hợp khoản 4 Điều 177; khoản 1 Điều 45: thông báo chấm dứt bằng văn bản.",
+  "paraphrase_of": null,
+  "complex_kind": "case",
+  "case_id": "c25",
+  "source_ref": "Án lệ số 70/2023/AL về việc chấm dứt hợp đồng lao động đối với người lao động là cán bộ công đoàn không chuyên trách (nguồn: Quyết định giám đốc thẩm số 06/2022/LĐ-GĐT ngày 26/9/2022 của TAND cấp cao tại Thành phố Hồ Chí Minh)",
+  "issues": [
+   "Nghĩa vụ gia hạn hợp đồng cho cán bộ công đoàn",
+   "Trúng cử không hợp lệ",
+   "Chấm dứt khi hết hạn"
+  ],
+  "reference_outcome": "Giám đốc thẩm hủy bản án phúc thẩm, giữ nguyên bản án sơ thẩm bác yêu cầu của người lao động. Giải pháp pháp lý của án lệ: khi người lao động trúng cử chủ tịch công đoàn cơ sở không hợp lệ trong thời hạn hợp đồng, việc người sử dụng lao động chấm dứt hợp đồng khi hết hạn là đúng. (theo luật cũ)",
+  "notes": "Án lệ 70/2023/AL: trúng cử không hợp lệ trong thời hạn hợp đồng thì chấm dứt khi hết hạn không trái pháp luật. Tiêu chuẩn cán bộ công đoàn theo Luật Công đoàn, không có trong corpus."
+ },
+ {
+  "text": "Công ty tuyển trưởng bộ phận siêu thị với thư mời ghi hợp đồng xác định thời hạn 12 tháng, thử việc 02 tháng. Hết thử việc, công ty không thông báo kết quả, không ký hợp đồng nhưng anh vẫn làm; sau đó công ty muốn \"thử việc thêm 01 tháng\" rồi chấm dứt vì không hoàn thành công việc, trong khi chưa có quy chế đánh giá. Quan hệ hiện tại là gì và công ty có chấm dứt được không?",
+  "question_type": "synthesis",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-iii/section-1/article-27/clause-1",
+   "45-2019-qh14/chapter-iii/section-1/article-25",
+   "45-2019-qh14/chapter-iii/section-3/article-36/clause-1/point-a",
+   "45-2019-qh14/chapter-iii/section-3/article-36/clause-2/point-b"
+  ],
+  "rationale": "Khoản 1 Điều 27: hết thử việc đạt thì tiếp tục hợp đồng; Điều 25 (đoạn dẫn): chỉ thử việc một lần; điểm a khoản 1 Điều 36: thường xuyên không hoàn thành công việc phải theo tiêu chí trong quy chế của người sử dụng lao động; điểm b khoản 2 Điều 36: báo trước 30 ngày.",
+  "paraphrase_of": null,
+  "complex_kind": "case",
+  "case_id": "c26",
+  "source_ref": "Án lệ số 20/2018/AL về xác lập quan hệ hợp đồng lao động sau khi hết thời gian thử việc (nguồn: Quyết định giám đốc thẩm số 01/2017/LĐ-GĐT ngày 09/8/2017 của Hội đồng Thẩm phán TAND tối cao)",
+  "issues": [
+   "Quan hệ lao động khi hết thử việc mà vẫn tiếp tục làm",
+   "Kéo dài thử việc đơn phương",
+   "Căn cứ không hoàn thành công việc khi chưa có quy chế"
+  ],
+  "reference_outcome": "Giám đốc thẩm hủy cả bản án sơ thẩm và phúc thẩm (vốn bác yêu cầu của người lao động), giao xét xử sơ thẩm lại. Giải pháp pháp lý của án lệ: trường hợp này phải xác định hai bên đã xác lập quan hệ hợp đồng lao động; chứng cứ của công ty chưa đủ để kết luận người lao động thường xuyên không hoàn thành công việc. (theo luật cũ)",
+  "notes": "Án lệ 20/2018/AL theo Bộ luật Lao động 2012; vấn đề tương ứng Điều 24-27 và điểm a khoản 1 Điều 36 Bộ luật 2019."
+ },
+ {
+  "text": "Năm 2025 công ty rà soát hồ sơ và phát hiện một chuyên viên làm việc từ năm 2016 (hợp đồng không xác định thời hạn từ 2019) đã khai trình độ kỹ sư đại học trong khi bằng chuyên ngành thực chất là cao đẳng. Công ty có được đơn phương chấm dứt vì khai không trung thực sau ngần ấy năm không, cần chứng minh gì, và nếu bị xác định trái luật thì phải bồi thường gì?",
+  "question_type": "synthesis",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-iii/section-1/article-16/clause-2",
+   "45-2019-qh14/chapter-iii/section-3/article-36/clause-1/point-g",
+   "45-2019-qh14/chapter-iii/section-3/article-36/clause-2/point-a",
+   "45-2019-qh14/chapter-iii/section-3/article-39",
+   "45-2019-qh14/chapter-iii/section-3/article-41/clause-1"
+  ],
+  "rationale": "Khoản 2 Điều 16: nghĩa vụ cung cấp thông tin trung thực về trình độ; điểm g khoản 1 Điều 36: chỉ chấm dứt khi khai không trung thực làm ảnh hưởng đến việc tuyển dụng; điểm a khoản 2 Điều 36: báo trước 45 ngày; Điều 39, khoản 1 Điều 41: hậu quả nếu trái pháp luật.",
+  "paraphrase_of": null,
+  "complex_kind": "case",
+  "case_id": "c28",
+  "source_ref": "VietNamNet 09/10/2026: \"Lật lại hồ sơ tuyển dụng 9 năm trước để sa thải nhân sự, DN phải đền hơn nửa tỷ\" (đưa tin Bản án số 08/2026/LĐ-PT ngày 08/9/2026 của TAND TP Hải Phòng)",
+  "issues": [
+   "Căn cứ chấm dứt vì khai không trung thực",
+   "Mức độ sai lệch và ảnh hưởng đến tuyển dụng",
+   "Báo trước",
+   "Hậu quả nếu trái pháp luật"
+  ],
+  "reference_outcome": "Sơ thẩm bác yêu cầu, cho rằng công ty có căn cứ theo khoản 2 Điều 16 Bộ luật Lao động 2019. Phúc thẩm sửa án: sai lệch chưa đủ chứng minh cố ý gian dối, và Bộ luật Lao động 2012 áp dụng cho hợp đồng ký năm 2019 không cho phép chấm dứt vì lý do này; buộc công ty nhận lại người lao động, trả lương khoảng 374,3 triệu đồng, tiếp tục đóng bảo hiểm và trả thêm khoảng 137,3 triệu đồng, tổng hơn 511,6 triệu đồng.",
+  "notes": "Phúc thẩm cho rằng Bộ luật Lao động 2012 áp dụng cho hợp đồng ký năm 2019; câu hỏi đặt theo luật hiện hành. Thông tin từ bài báo."
+ },
+ {
+  "text": "Một kỹ thuật viên vận hành bị chóng mặt hai lần trong giờ làm, được theo dõi ở phòng y tế nhà máy rồi mới đưa đi cấp cứu, chẩn đoán nhồi máu não. Công ty cho rằng đây là bệnh lý nên chưa điều tra, chưa lập hồ sơ bảo hiểm, và đang định chấm dứt hợp đồng khi anh còn điều trị. Trường hợp này có thể là tai nạn lao động không, công ty phải làm gì, và có được chấm dứt hợp đồng lúc này không?",
+  "question_type": "synthesis",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "84-2015-qh13/chapter-i/article-3/clause-8",
+   "84-2015-qh13/chapter-iii/section-3/article-45/clause-1/point-a",
+   "84-2015-qh13/chapter-iii/section-2/article-38/clause-1",
+   "84-2015-qh13/chapter-iii/section-1/article-35/clause-1",
+   "84-2015-qh13/chapter-iii/section-2/article-38/clause-9",
+   "45-2019-qh14/chapter-iii/section-3/article-37/clause-1"
+  ],
+  "rationale": "Khoản 8 Điều 3 Luật ATVSLĐ: định nghĩa tai nạn lao động; điểm a khoản 1 Điều 45: tai nạn tại nơi làm việc, trong giờ làm việc; khoản 1 Điều 38: sơ cứu, cấp cứu kịp thời, tạm ứng chi phí; khoản 1 Điều 35: thành lập đoàn điều tra cấp cơ sở; khoản 9 Điều 38: lập hồ sơ hưởng chế độ; khoản 1 Điều 37 Bộ luật Lao động: không được đơn phương chấm dứt khi đang điều trị.",
+  "paraphrase_of": null,
+  "complex_kind": "case",
+  "case_id": "c29",
+  "source_ref": "Báo Người Lao Động 10/05/2025: \"Một người lao động thắng kiện được bồi thường gần 1,8 tỉ đồng\" (sơ thẩm TAND thị xã Phú Mỹ, phúc thẩm TAND tỉnh Bà Rịa - Vũng Tàu ngày 09/5/2025)",
+  "issues": [
+   "Đột quỵ trong giờ làm có phải tai nạn lao động",
+   "Sơ cứu, điều tra, lập hồ sơ bảo hiểm",
+   "Cấm đơn phương chấm dứt khi đang điều trị"
+  ],
+  "reference_outcome": "Sơ thẩm buộc công ty bồi thường hơn 1,24 tỷ đồng (khoảng 1,019 tỷ tiền bồi thường tai nạn lao động và 222 triệu chi phí điều trị). Tại phúc thẩm hai bên hòa giải thành: công ty trả thêm 550 triệu đồng và lập đầy đủ hồ sơ gửi cơ quan bảo hiểm xã hội; tổng gần 1,8 tỷ đồng.",
+  "notes": "Bài báo không viện dẫn điều luật; việc xác định đột quỵ là tai nạn lao động còn tranh luận, cần kết luận điều tra."
+ },
+ {
+  "text": "Công ty đóng tàu ký hợp đồng khoán nhân công với một cai thầu; cai thầu thuê công nhật để sơn phà tại xưởng của công ty. Xe cuốc của công ty làm tuột cáp, bàn phà rơi đè nát tay một công nhân, suy giảm 51% khả năng lao động. Công ty có phải bồi thường không, hay trách nhiệm thuộc cai thầu như hợp đồng khoán ghi, và mức tối thiểu là bao nhiêu?",
+  "question_type": "synthesis",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-i/article-3/clause-2",
+   "45-2019-qh14/chapter-iii/section-1/article-13/clause-1",
+   "84-2015-qh13/chapter-i/article-7/clause-2/point-b",
+   "84-2015-qh13/chapter-iii/section-2/article-38/clause-4/point-a",
+   "84-2015-qh13/chapter-iii/section-2/article-38/clause-1"
+  ],
+  "rationale": "Khoản 2 Điều 3: người sử dụng lao động là bên thuê mướn, sử dụng người lao động làm việc cho mình; khoản 1 Điều 13: quan hệ có trả công và quản lý là hợp đồng lao động; điểm b khoản 2 Điều 7 Luật ATVSLĐ: nghĩa vụ bảo đảm an toàn, trang bị phương tiện; điểm a khoản 4 Điều 38: mức bồi thường; khoản 1 Điều 38: sơ cứu, tạm ứng chi phí.",
+  "paraphrase_of": null,
+  "complex_kind": "case",
+  "case_id": "c30",
+  "source_ref": "Báo Pháp Luật TP.HCM 07/08/2020: \"Dập nát 1 tay được bồi thường 300 triệu đồng\" (sơ thẩm TAND quận Ninh Kiều, phúc thẩm TAND TP Cần Thơ)",
+  "issues": [
+   "Xác định người sử dụng lao động khi thuê qua cai thầu",
+   "Nghĩa vụ bảo đảm an toàn của chủ cơ sở",
+   "Mức bồi thường tai nạn lao động",
+   "Khấu trừ khoản đã hỗ trợ"
+  ],
+  "reference_outcome": "Sơ thẩm buộc công ty bồi thường hơn 313 triệu đồng sau khi khấu trừ khoản đã hỗ trợ. Phúc thẩm giữ nguyên: người cai thầu chỉ là trung gian, công ty là người sử dụng lao động chính và không bảo đảm an toàn; công ty có thể khởi kiện người cai thầu trong vụ án khác. (theo luật cũ)",
+  "notes": "Vụ việc năm 2016 theo Bộ luật Lao động 2012; Bộ luật 2019 không còn điều riêng về cai thầu. Thông tin từ bài báo."
+ },
+ {
+  "text": "Một nhà cung cấp tố cáo giám đốc hành chính nhân sự (hợp đồng 01 năm) đòi tiền không chính đáng. Phó tổng giám đốc thông báo miệng chấm dứt và 20 phút sau giao văn bản yêu cầu bàn giao, không họp kỷ luật. Lương trong hợp đồng là 32 triệu đồng nhưng lương đóng bảo hiểm thấp hơn. Nếu bị kiện, công ty phải trả những khoản gì và tính trên mức lương nào?",
+  "question_type": "synthesis",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-viii/section-1/article-122/clause-1/point-a",
+   "45-2019-qh14/chapter-iii/section-3/article-39",
+   "45-2019-qh14/chapter-iii/section-3/article-41/clause-1",
+   "45-2019-qh14/chapter-iii/section-3/article-36/clause-2/point-b",
+   "45-2019-qh14/chapter-vi/article-90/clause-1"
+  ],
+  "rationale": "Điểm a khoản 1 Điều 122: muốn kỷ luật phải chứng minh lỗi theo trình tự; Điều 39, khoản 1 Điều 41: chấm dứt không đúng căn cứ là trái pháp luật, phải trả lương những ngày không làm việc và ít nhất 02 tháng lương theo hợp đồng; điểm b khoản 2 Điều 36: báo trước 30 ngày; khoản 1 Điều 90: tiền lương gồm mức lương, phụ cấp và khoản bổ sung.",
+  "paraphrase_of": null,
+  "complex_kind": "case",
+  "case_id": "c31",
+  "source_ref": "VietNamNet 21/06/2026: \"Một tố cáo khiến người lao động mất việc, DN phải bồi thường gần 346 triệu đồng\" (sơ thẩm TAND thị xã Trảng Bàng, phúc thẩm TAND tỉnh Tây Ninh)",
+  "issues": [
+   "Xử lý khi người lao động bị tố cáo: kỷ luật theo trình tự",
+   "Báo trước với hợp đồng xác định thời hạn",
+   "Tiền lương làm căn cứ bồi thường",
+   "Truy đóng bảo hiểm"
+  ],
+  "reference_outcome": "Sơ thẩm xác định chấm dứt trái pháp luật nhưng tính bồi thường theo lương đóng bảo hiểm, khoảng 175 triệu đồng. Phúc thẩm chấp nhận kháng cáo và kháng nghị của Viện kiểm sát, tính theo lương hợp đồng 32 triệu đồng: 32 triệu tiền vi phạm báo trước, gần 250 triệu lương đến hết hạn hợp đồng, 64 triệu (02 tháng lương), tổng hơn 345,8 triệu đồng, cùng hơn 24 triệu đồng truy đóng bảo hiểm.",
+  "notes": "Phúc thẩm tính theo lương hợp đồng 32 triệu đồng. Thông tin từ bài báo."
+ },
+ {
+  "text": "Công ty bất động sản muốn sa thải trưởng bộ phận bán hàng vì lập hồ sơ chi hoa hồng 300 triệu đồng cho một khách (dùng chữ ký scan) mà công ty cho là không đủ điều kiện, và giữ hộ một phiếu quà tặng; chị giải thích có căn cứ và công ty chưa bị thiệt hại thực tế. Công ty cần chứng minh gì để sa thải, và nếu sa thải sai thì hậu quả thế nào?",
+  "question_type": "synthesis",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-viii/section-1/article-122/clause-1/point-a",
+   "45-2019-qh14/chapter-viii/section-1/article-127/clause-3",
+   "45-2019-qh14/chapter-viii/section-1/article-125/clause-2",
+   "45-2019-qh14/chapter-viii/section-1/article-122/clause-3",
+   "45-2019-qh14/chapter-iii/section-3/article-41/clause-1"
+  ],
+  "rationale": "Điểm a khoản 1 Điều 122: phải chứng minh lỗi; khoản 3 Điều 127: cấm kỷ luật hành vi không quy định trong nội quy; khoản 2 Điều 125: sa thải khi gây thiệt hại nghiêm trọng hoặc đe dọa thiệt hại đặc biệt nghiêm trọng được quy định trong nội quy; khoản 3 Điều 122: nhiều vi phạm chỉ áp dụng hình thức cao nhất; khoản 1 Điều 41: hậu quả (áp dụng tương tự khi sa thải trái pháp luật).",
+  "paraphrase_of": null,
+  "complex_kind": "case",
+  "case_id": "c33",
+  "source_ref": "Pháp Luật TP.HCM (đăng trên Tuổi Trẻ Online) 22/12/2017: \"Công ty thua kiện nhân viên, phải bồi thường hơn 1,2 tỉ\" (sơ thẩm TAND quận 2, phúc thẩm TAND TP.HCM)",
+  "issues": [
+   "Nghĩa vụ chứng minh lỗi",
+   "Căn cứ sa thải phải có trong nội quy",
+   "Hành vi chưa gây thiệt hại",
+   "Hậu quả sa thải trái pháp luật"
+  ],
+  "reference_outcome": "Sơ thẩm bác toàn bộ yêu cầu. Phúc thẩm sửa án, chấp nhận toàn bộ yêu cầu: công ty không chứng minh được lỗi và thiệt hại, hành vi không thuộc trường hợp sa thải theo nội quy; buộc công ty nhận chị trở lại làm việc, trả lương khoảng 80 triệu đồng/tháng cho thời gian không được làm việc và đóng bảo hiểm (tổng yêu cầu hơn 1,2 tỷ đồng). (theo luật cũ)",
+  "notes": "Vụ việc năm 2016 theo Bộ luật Lao động 2012. Hậu quả sa thải trái pháp luật được tòa xử như chấm dứt trái pháp luật."
+ },
+ {
+  "text": "Công ty mẹ chấm dứt hợp đồng theo thỏa thuận với một nhân viên làm từ năm 2001 để anh chuyển sang công ty con 100% vốn, hứa miệng là công ty con sẽ trả trợ cấp thôi việc sau này. Nay công ty con từ chối. Ai phải trả trợ cấp thôi việc, thời gian nào được tính và tiền lương nào làm căn cứ?",
+  "question_type": "synthesis",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-iii/section-3/article-34/clause-3",
+   "45-2019-qh14/chapter-iii/section-3/article-46/clause-1",
+   "45-2019-qh14/chapter-iii/section-3/article-46/clause-2",
+   "145-2020-nd-cp/chapter-iii/section-2/article-8/clause-3/point-a",
+   "145-2020-nd-cp/chapter-iii/section-2/article-8/clause-5/point-a"
+  ],
+  "rationale": "Khoản 3 Điều 34: chấm dứt theo thỏa thuận; khoản 1 Điều 46: người sử dụng lao động có hợp đồng chấm dứt phải trả trợ cấp thôi việc; khoản 2 Điều 46: thời gian làm việc trừ thời gian tham gia bảo hiểm thất nghiệp; điểm a khoản 3 Điều 8 Nghị định 145: thời gian làm việc thực tế; điểm a khoản 5 Điều 8: tiền lương bình quân 06 tháng liền kề.",
+  "paraphrase_of": null,
+  "complex_kind": "case",
+  "case_id": "c35",
+  "source_ref": "VietNamNet 26/09/2026: \"Chấm dứt hợp đồng, người lao động vẫn đòi được trợ cấp thôi việc từ công ty cũ\" (đưa tin Bản án số 18/2026/LĐ-ST ngày 24/7/2026 của TAND khu vực 9 - An Giang)",
+  "issues": [
+   "Ai có nghĩa vụ trả trợ cấp thôi việc",
+   "Thời gian làm việc tính trợ cấp",
+   "Tiền lương tính trợ cấp",
+   "Thỏa thuận miệng chuyển giao nghĩa vụ"
+  ],
+  "reference_outcome": "Tòa sơ thẩm bác lập luận hết thời hiệu vì việc chuyển tiền năm 2025 là thừa nhận nghĩa vụ, thời hiệu bắt đầu lại; xác định không có thỏa thuận hợp lệ chuyển giao nghĩa vụ nên công ty mẹ phải trả. Buộc công ty mẹ trả 17.523.000 đồng trợ cấp thôi việc còn thiếu, kèm lãi nếu chậm thi hành án. (theo luật cũ)",
+  "notes": "Chấm dứt cuối năm 2020, trước khi Bộ luật Lao động 2019 có hiệu lực; chuyển giao nghĩa vụ và thời hiệu bắt đầu lại theo Bộ luật Dân sự, không có trong corpus."
+ },
+ {
+  "text": "Một chuyên viên kinh doanh (hợp đồng không xác định thời hạn) từng nói muốn nghỉ để về quê, sau đó lại xin làm tiếp; quản lý đề xuất làm đến hết 31/12, anh ký biên bản bàn giao khách hàng và trả lời \"Ok em\" qua Zalo khi nhân sự nhắc nộp đơn, nhưng chưa bao giờ nộp đơn. Công ty cho anh nghỉ từ 01/01. Đây là hai bên thỏa thuận chấm dứt hay công ty đơn phương chấm dứt, và rủi ro là gì?",
+  "question_type": "synthesis",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-iii/section-3/article-34/clause-3",
+   "45-2019-qh14/chapter-iii/section-3/article-39",
+   "45-2019-qh14/chapter-iii/section-3/article-41/clause-1",
+   "45-2019-qh14/chapter-iii/section-3/article-36/clause-2/point-a"
+  ],
+  "rationale": "Khoản 3 Điều 34: chấm dứt theo thỏa thuận; Điều 39: đơn phương chấm dứt không đúng Điều 36 là trái pháp luật; khoản 1 Điều 41: các khoản phải trả; điểm a khoản 2 Điều 36: báo trước 45 ngày.",
+  "paraphrase_of": null,
+  "complex_kind": "case",
+  "case_id": "c36",
+  "source_ref": "VietNamNet 09/09/2026: \"Nhân viên bị cho thôi việc dù không có đơn, công ty phải bồi thường 442 triệu\" (đưa tin Bản án số 134/2026/LĐ-PT ngày 12/8/2026 của TAND TP.HCM)",
+  "issues": [
+   "Chứng minh thỏa thuận chấm dứt qua tin nhắn, biên bản",
+   "Bày tỏ ý định nghỉ khác với thỏa thuận chấm dứt",
+   "Hậu quả nếu bị xác định đơn phương chấm dứt trái pháp luật"
+  ],
+  "reference_outcome": "Sơ thẩm buộc công ty bồi thường hơn 442 triệu đồng (lương đến ngày xét xử khoảng 310,7 triệu, 02 tháng lương 47,8 triệu, 45 ngày báo trước khoảng 35,8 triệu, thêm 02 tháng lương do không nhận lại 47,8 triệu) và đóng bảo hiểm bắt buộc từ 01/2025 đến 01/2026. Phúc thẩm giữ nguyên vì không có chứng cứ về thỏa thuận chấm dứt; quyết định thôi việc dựa trên trao đổi nội bộ là đơn phương chấm dứt trái pháp luật.",
+  "notes": "Thông tin từ bài báo; giá trị chứng cứ của vi bằng là vấn đề tố tụng."
+ },
+ {
+  "text": "Ban lãnh đạo kết luận giám đốc truyền thông (hợp đồng 12 tháng) không hoàn thành nhiệm vụ và đề nghị chuyển xuống quản lý phòng; chị không đồng ý nên công ty báo chấm dứt sau 30 ngày với lý do \"không phù hợp định hướng phát triển\". Công ty chưa có quy chế đánh giá mức độ hoàn thành công việc. Việc chấm dứt có hợp pháp không, và nếu phải bồi thường thì khoản thưởng thành tích có tính vào tiền lương không?",
+  "question_type": "synthesis",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-iii/section-3/article-36/clause-1/point-a",
+   "45-2019-qh14/chapter-iii/section-3/article-39",
+   "45-2019-qh14/chapter-iii/section-3/article-41/clause-1",
+   "45-2019-qh14/chapter-vi/article-90/clause-1",
+   "45-2019-qh14/chapter-vi/article-104/clause-1"
+  ],
+  "rationale": "Điểm a khoản 1 Điều 36: không hoàn thành công việc phải theo tiêu chí trong quy chế; Điều 39, khoản 1 Điều 41: hậu quả trái pháp luật tính theo tiền lương hợp đồng; khoản 1 Điều 90: tiền lương gồm mức lương, phụ cấp, khoản bổ sung; khoản 1 Điều 104: thưởng căn cứ kết quả kinh doanh, mức độ hoàn thành công việc.",
+  "paraphrase_of": null,
+  "complex_kind": "case",
+  "case_id": "c37",
+  "source_ref": "VietNamNet 05/07/2026: \"Bị cho nghỉ việc vì không hoàn thành nhiệm vụ, nữ giám đốc truyền thông kiện công ty\"",
+  "issues": [
+   "Căn cứ không hoàn thành công việc khi không có quy chế",
+   "Thưởng có phải tiền lương",
+   "Hậu quả khi hợp đồng xác định thời hạn"
+  ],
+  "reference_outcome": "Sơ thẩm xác định công ty đơn phương chấm dứt trái pháp luật. Phúc thẩm giữ kết luận đó, nhưng tính theo lương cơ bản 24 triệu đồng vì thưởng không phải khoản đương nhiên được hưởng: buộc trả 180 triệu đồng lương từ 01/9/2024 đến 18/4/2025 và 48 triệu đồng (02 tháng lương), hai bên đóng bảo hiểm theo mức 24 triệu; bác yêu cầu lương tháng 8, nhận lại làm việc và bác phản tố của công ty.",
+  "notes": "Phúc thẩm tính theo lương cơ bản vì thưởng không phải khoản đương nhiên được hưởng. Thông tin từ bài báo."
+ },
+ {
+  "text": "Công ty muốn chấm dứt hợp đồng 12 tháng với một nữ giám đốc điều hành đang nuôi con dưới 12 tháng tuổi; trước đó hai bên đã ký biên bản thanh lý hợp đồng rồi công ty lại đề nghị hủy để chị làm tiếp. Lương hợp đồng 110 triệu đồng nhưng công ty đóng bảo hiểm trên mức thấp hơn. Công ty có được chấm dứt không, và có rủi ro gì về bảo hiểm?",
+  "question_type": "synthesis",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-iii/section-3/article-37/clause-3",
+   "45-2019-qh14/chapter-x/article-137/clause-3",
+   "45-2019-qh14/chapter-iii/section-3/article-41/clause-1",
+   "41-2024-qh15/chapter-iv/section-2/article-39/clause-1/point-c",
+   "41-2024-qh15/chapter-iv/section-2/article-41/clause-1"
+  ],
+  "rationale": "Khoản 3 Điều 37: không được đơn phương chấm dứt với người nuôi con dưới 12 tháng tuổi; khoản 3 Điều 137: không được chấm dứt vì lý do nuôi con nhỏ; khoản 1 Điều 41: hậu quả; điểm c khoản 1 Điều 39 Luật BHXH: đăng ký tiền lương đóng thấp hơn quy định là trốn đóng; khoản 1 Điều 41 Luật BHXH: buộc đóng đủ và nộp 0,03%/ngày.",
+  "paraphrase_of": null,
+  "complex_kind": "case",
+  "case_id": "c39",
+  "source_ref": "VietNamNet 13/06/2026: \"Bị công ty cho nghỉ việc trái luật, người lao động thắng kiện, nhận 1,3 tỷ đồng\" (phúc thẩm TAND tỉnh Đồng Nai)",
+  "issues": [
+   "Cấm đơn phương chấm dứt khi nuôi con dưới 12 tháng",
+   "Biên bản thanh lý đã hủy",
+   "Đóng bảo hiểm trên mức lương thấp hơn"
+  ],
+  "reference_outcome": "Sơ thẩm xác định đơn phương chấm dứt trái pháp luật, buộc công ty trả 1,308 tỷ đồng (lương còn thiếu tháng 9-11/2019, 990 triệu lương đến hết hạn hợp đồng, 220 triệu là 02 tháng lương), truy đóng phần chênh lệch bảo hiểm theo mức 110 triệu đồng và đóng bảo hiểm đến 06/9/2020. Phúc thẩm giữ nguyên. (theo luật cũ)",
+  "notes": "Vụ việc năm 2019 theo Bộ luật Lao động 2012 và Luật BHXH 2014."
+ },
+ {
+  "text": "Công ty cho giám đốc kiêm người đại diện theo pháp luật nghỉ hưởng nguyên lương để rà soát, rồi chấm dứt hợp đồng với lý do thay đổi cơ cấu, tổ chức lại vị trí quản lý, và trả hơn 2,8 tỷ đồng trợ cấp mất việc làm. Nếu không chứng minh được thay đổi cơ cấu theo luật, công ty phải trả những gì, và khoản trợ cấp mất việc làm đã trả được xử lý thế nào?",
+  "question_type": "synthesis",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-iii/section-3/article-42/clause-1/point-a",
+   "45-2019-qh14/chapter-iii/section-3/article-42/clause-3",
+   "45-2019-qh14/chapter-iii/section-3/article-44/clause-1/point-c",
+   "45-2019-qh14/chapter-iii/section-3/article-41/clause-1",
+   "45-2019-qh14/chapter-iii/section-3/article-47/clause-1"
+  ],
+  "rationale": "Điểm a khoản 1 Điều 42: thay đổi cơ cấu tổ chức; khoản 3 Điều 42 và điểm c khoản 1 Điều 44: phương án sử dụng lao động; khoản 1 Điều 41: phải nhận lại, trả lương những ngày không làm việc và người lao động hoàn trả trợ cấp mất việc làm đã nhận khi được nhận lại; khoản 1 Điều 47: trợ cấp mất việc làm.",
+  "paraphrase_of": null,
+  "complex_kind": "case",
+  "case_id": "c40",
+  "source_ref": "Thanh Niên 19/09/2026: \"Đề nghị hủy án vụ công ty bồi thường 21 tỉ đồng vì chấm dứt hợp đồng lao động\" (sơ thẩm TAND TP.HCM; phúc thẩm Tòa phúc thẩm TAND tối cao tại TP.HCM xét xử ngày 18/9)",
+  "issues": [
+   "Điều kiện thay đổi cơ cấu với vị trí quản lý cấp cao",
+   "Phạm vi lương những ngày không được làm việc",
+   "Hoàn trả trợ cấp mất việc làm khi được nhận lại"
+  ],
+  "reference_outcome": "Sơ thẩm xác định công ty không chứng minh được thay đổi cơ cấu theo luật, chấm dứt trái pháp luật và chấp nhận các yêu cầu với tổng hơn 21 tỷ đồng. Tại phiên phúc thẩm, Viện kiểm sát đề nghị hủy án để thu thập thêm chứng cứ về việc làm và thu nhập sau khi nghỉ; ngày 25/9/2026 tòa phúc thẩm bác kháng cáo của công ty, không chấp nhận đề nghị hủy án và giữ nguyên bản án sơ thẩm.",
+  "notes": "Thông tin từ bài báo; phúc thẩm kết thúc theo bài tiếp theo."
+ },
+ {
+  "text": "Một kiện hàng 60 triệu đồng bị thất lạc mà không xác định được người làm mất; công ty tự chịu một phần và trừ thẳng 30 triệu đồng vào lương tháng của 111 công nhân khâu hoàn thành theo chức vụ, hệ số và ngày công, không họp, không thông báo bằng văn bản. Việc trừ lương như vậy có đúng không, và nếu muốn đòi bồi thường thì phải làm thế nào?",
+  "question_type": "synthesis",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-vi/article-102/clause-1",
+   "45-2019-qh14/chapter-vi/article-102/clause-3",
+   "45-2019-qh14/chapter-viii/section-2/article-130/clause-1",
+   "145-2020-nd-cp/chapter-viii/article-71/clause-2/point-a",
+   "45-2019-qh14/chapter-viii/section-1/article-127/clause-2"
+  ],
+  "rationale": "Khoản 1 Điều 102: chỉ khấu trừ lương để bồi thường thiệt hại theo Điều 129; khoản 3 Điều 102: tối đa 30% tiền lương thực trả sau khi trích bảo hiểm và thuế; khoản 1 Điều 130: mức bồi thường căn cứ lỗi, thiệt hại thực tế, hoàn cảnh; điểm a khoản 2 Điều 71 Nghị định 145: thông báo họp xử lý bồi thường trước 05 ngày làm việc; khoản 2 Điều 127: cấm cắt lương thay việc xử lý kỷ luật.",
+  "paraphrase_of": null,
+  "complex_kind": "case",
+  "case_id": "c42",
+  "source_ref": "Thanh Niên 09/05/2024: \"Bị mất kiện hàng, công ty trừ thẳng lương của 111 công nhân ở TP.HCM\"",
+  "issues": [
+   "Điều kiện khấu trừ tiền lương",
+   "Trách nhiệm bồi thường dựa trên lỗi cá nhân",
+   "Trình tự xử lý bồi thường",
+   "Mức khấu trừ tối đa"
+  ],
+  "reference_outcome": "Bài báo không có phán quyết của tòa; vụ việc đang ở giai đoạn công nhân phản ánh với công đoàn cơ sở và công đoàn cấp trên. Luật sư được trích dẫn cho rằng việc trừ lương khi chưa chứng minh lỗi và chia theo chức vụ, hệ số, ngày công là không phù hợp quy định.",
+  "notes": "Chưa có phán quyết; căn cứ do bài báo và luật sư nêu."
+ },
+ {
+  "text": "Công ty mẹ ở nước ngoài quyết định giải thể công ty tại Việt Nam và ra quyết định chấm dứt hợp đồng với giám đốc điều hành (hợp đồng không xác định thời hạn, đã đóng bảo hiểm thất nghiệp suốt thời gian làm việc). Hợp đồng chấm dứt từ thời điểm nào, có phải báo trước và trả trợ cấp thôi việc không, và thời hạn thanh toán là bao lâu?",
+  "question_type": "synthesis",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-iii/section-3/article-34/clause-7",
+   "45-2019-qh14/chapter-iii/section-3/article-45/clause-2",
+   "45-2019-qh14/chapter-iii/section-3/article-46/clause-2",
+   "145-2020-nd-cp/chapter-iii/section-2/article-8/clause-3/point-b",
+   "45-2019-qh14/chapter-iii/section-3/article-48/clause-1/point-a"
+  ],
+  "rationale": "Khoản 7 Điều 34: chấm dứt khi người sử dụng lao động chấm dứt hoạt động; khoản 2 Điều 45: thời điểm chấm dứt tính từ thông báo chấm dứt hoạt động; khoản 2 Điều 46 và điểm b khoản 3 Điều 8 Nghị định 145: thời gian tính trợ cấp trừ thời gian tham gia bảo hiểm thất nghiệp; điểm a khoản 1 Điều 48: được kéo dài thời hạn thanh toán khi chấm dứt hoạt động.",
+  "paraphrase_of": null,
+  "complex_kind": "case",
+  "case_id": "c44",
+  "source_ref": "VietNamNet 30/10/2026: \"Giám đốc đòi 780 triệu sau khi chấm dứt hợp đồng, chỉ được trả gần 79 triệu đồng\" (đưa tin Bản án số 13/2026/LĐ-PT ngày 25/3/2026 của TAND TP. Hà Nội)",
+  "issues": [
+   "Thời điểm chấm dứt khi giải thể",
+   "Báo trước khi giải thể",
+   "Trợ cấp thôi việc khi đã đóng bảo hiểm thất nghiệp",
+   "Thời hạn thanh toán"
+  ],
+  "reference_outcome": "Sơ thẩm cho hợp đồng chấm dứt từ ngày xét xử (17/9/2025), buộc công ty trả 780 triệu đồng và đóng bảo hiểm đến 9/2025, bác yêu cầu với công ty con. Phúc thẩm sửa án: hợp đồng chấm dứt từ 30/12/2024 (ngày thông báo giải thể), chỉ buộc trả lương tháng 12/2024 và thưởng Tết 38,77 triệu đồng, tổng hơn 78,7 triệu đồng; bác tiền vi phạm báo trước và trợ cấp thôi việc; không có quan hệ lao động với công ty con.",
+  "notes": "Thông tin từ bài báo; phúc thẩm xác định chấm dứt từ ngày thông báo giải thể."
+ },
+ {
+  "text": "Một nữ giám đốc chi nhánh (hợp đồng 12 tháng) đang mang thai tháng thứ năm bị công ty cáo buộc nghỉ không phép, đi trễ, nhắn tin đe dọa đồng nghiệp; công ty tạm đình chỉ công việc, gửi email mời họp trước một ngày, không lập biên bản vi phạm, rồi ra quyết định sa thải. Công ty sai ở đâu và phải chịu hậu quả gì?",
+  "question_type": "synthesis",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-viii/section-1/article-122/clause-4/point-d",
+   "45-2019-qh14/chapter-x/article-137/clause-3",
+   "145-2020-nd-cp/chapter-viii/article-70/clause-1",
+   "145-2020-nd-cp/chapter-viii/article-70/clause-2/point-a",
+   "45-2019-qh14/chapter-viii/section-1/article-128/clause-1",
+   "45-2019-qh14/chapter-iii/section-3/article-41/clause-1"
+  ],
+  "rationale": "Điểm d khoản 4 Điều 122: không được xử lý kỷ luật người lao động nữ mang thai; khoản 3 Điều 137: không được sa thải vì lý do mang thai; khoản 1 Điều 70 Nghị định 145: lập biên bản vi phạm; điểm a khoản 2 Điều 70: thông báo họp trước ít nhất 05 ngày làm việc; khoản 1 Điều 128: điều kiện tạm đình chỉ; khoản 1 Điều 41: hậu quả.",
+  "paraphrase_of": null,
+  "complex_kind": "case",
+  "case_id": "c45",
+  "source_ref": "Pháp Luật TP.HCM (đăng trên Tuổi Trẻ Online) 15/06/2018: \"Nữ giám đốc mang thai bị sa thải thắng kiện\" (TAND quận 7, TP.HCM)",
+  "issues": [
+   "Cấm xử lý kỷ luật lao động nữ mang thai",
+   "Trình tự lập biên bản, thông báo họp",
+   "Tạm đình chỉ công việc",
+   "Hậu quả sa thải trái pháp luật"
+  ],
+  "reference_outcome": "Tòa chấp nhận toàn bộ yêu cầu: hủy quyết định sa thải vì không lập biên bản vi phạm, vi phạm quy trình thông báo và xử lý kỷ luật lao động nữ đang mang thai; buộc công ty trả 226 triệu đồng (đã trừ 14 triệu đã trả) và hai bên đóng bảo hiểm xã hội, y tế theo quy định. (theo luật cũ)",
+  "notes": "Vụ việc năm 2017 theo Bộ luật Lao động 2012; vấn đề không thay đổi căn bản."
+ },
+ {
+  "text": "Công ty tuyển giám đốc kinh doanh, thử việc 02 tháng hưởng 85% lương, rồi thỏa thuận miệng kéo dài thử việc thêm một tháng; chưa ký hợp đồng lao động và chưa đóng bảo hiểm. Cuối tháng thứ ba công ty muốn chấm dứt. Thời gian thử việc như vậy có hợp lệ không, công ty có phải báo trước hay bồi thường không?",
+  "question_type": "synthesis",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-iii/section-1/article-25/clause-1",
+   "45-2019-qh14/chapter-iii/section-1/article-26",
+   "45-2019-qh14/chapter-iii/section-1/article-27/clause-2",
+   "45-2019-qh14/chapter-iii/section-1/article-24/clause-1",
+   "12-2022-nd-cp/chapter-ii/article-10/clause-2/point-b"
+  ],
+  "rationale": "Khoản 1 Điều 25: không quá 180 ngày với người quản lý doanh nghiệp; Điều 26: lương thử việc ít nhất 85%; khoản 2 Điều 27: trong thời gian thử việc được hủy bỏ không cần báo trước, không bồi thường; khoản 1 Điều 24: thỏa thuận thử việc; điểm b khoản 2 Điều 10 Nghị định 12/2022: phạt khi thử việc quá thời gian quy định.",
+  "paraphrase_of": null,
+  "complex_kind": "case",
+  "case_id": "c46",
+  "source_ref": "VietNamNet 15/06/2026: \"Kiện công ty đòi gần 1 tỷ đồng vì bị cho nghỉ việc, người lao động thua kiện\" (sơ thẩm TAND huyện Long Điền, phúc thẩm TAND TP.HCM)",
+  "issues": [
+   "Thời gian thử việc tối đa theo vị trí",
+   "Lương thử việc",
+   "Hủy bỏ thỏa thuận thử việc",
+   "Chứng minh đã ký hợp đồng"
+  ],
+  "reference_outcome": "Sơ thẩm và phúc thẩm bác toàn bộ yêu cầu: người lao động không chứng minh được đã ký hợp đồng; bảng lương, chứng từ ngân hàng và dữ liệu bảo hiểm cho thấy vẫn đang thử việc; kéo dài thử việc thêm một tháng không vượt giới hạn với vị trí quản lý nên việc chấm dứt thử việc là hợp pháp.",
+  "notes": "Giám đốc kinh doanh có phải người quản lý doanh nghiệp theo Luật Doanh nghiệp hay không là chưa chắc; nếu không thì thời hạn tối đa là 60 ngày (khoản 2 Điều 25)."
+ },
+ {
+  "text": "Đơn hàng giảm, công ty chỉ cắt giảm đúng một nhân viên (hợp đồng 01 năm); đã có phương án, báo trước 30 ngày và trao đổi với công đoàn, nhưng không gửi thông báo cho Ủy ban nhân dân tỉnh vì nghĩ cắt một người thì không cần. Như vậy có ổn không, nếu bị kiện thì thua ở đâu và phải trả gì?",
+  "question_type": "synthesis",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-iii/section-3/article-42/clause-2/point-a",
+   "45-2019-qh14/chapter-iii/section-3/article-42/clause-6",
+   "45-2019-qh14/chapter-iii/section-3/article-47/clause-1",
+   "45-2019-qh14/chapter-iii/section-3/article-39",
+   "45-2019-qh14/chapter-iii/section-3/article-41/clause-1"
+  ],
+  "rationale": "Điểm a khoản 2 Điều 42: suy thoái kinh tế là lý do kinh tế; khoản 6 Điều 42: chỉ cho thôi việc sau khi trao đổi với tổ chức đại diện và thông báo trước 30 ngày cho Ủy ban nhân dân cấp tỉnh và người lao động; khoản 1 Điều 47: trợ cấp mất việc làm; Điều 39, khoản 1 Điều 41: chấm dứt trái pháp luật và các khoản phải trả.",
+  "paraphrase_of": 2,
+  "complex_kind": "case",
+  "case_id": "c03",
+  "source_ref": "Bản án số 21/2023/LĐ-PT ngày 23/11/2023 của TAND tỉnh Bình Dương",
+  "issues": [
+   "Lý do kinh tế",
+   "Thủ tục thông báo Ủy ban nhân dân cấp tỉnh kể cả khi cắt giảm một người",
+   "Trợ cấp mất việc làm",
+   "Hậu quả nếu cho thôi việc trái pháp luật"
+  ],
+  "reference_outcome": "Tòa phúc thẩm giữ nguyên bản án sơ thẩm: việc cho thôi việc là trái pháp luật vì công ty không thông báo cho Ủy ban nhân dân tỉnh theo khoản 6 Điều 42, dù đã chứng minh có lý do kinh tế. Công ty phải bồi thường 27.050.000 đồng (lương những ngày không được làm việc và 02 tháng lương) và đóng bảo hiểm cho thời gian đến hết hạn hợp đồng; yêu cầu thưởng tháng 13 bị bác.",
+  "notes": "Tòa nêu chưa có hướng dẫn về áp dụng khoản 6 Điều 42 khi chỉ cắt giảm một người. Câu diễn đạt lại."
+ },
+ {
+  "text": "Hết 01 tháng thử việc theo thỏa thuận miệng, công ty không báo kết quả mà vẫn để anh làm; sau một lần anh không chịu tăng ca, quản lý ép viết đơn nghỉ hoặc nộp phạt 01 triệu đồng, anh không viết nhưng bị đưa phiếu ra cổng. Công ty có thể bị buộc trả những khoản nào?",
+  "question_type": "synthesis",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-iii/section-1/article-27/clause-1",
+   "45-2019-qh14/chapter-vii/section-1/article-107/clause-2/point-a",
+   "45-2019-qh14/chapter-viii/section-1/article-127/clause-2",
+   "45-2019-qh14/chapter-iii/section-3/article-39",
+   "45-2019-qh14/chapter-iii/section-3/article-41/clause-1"
+  ],
+  "rationale": "Khoản 1 Điều 27: hết thử việc phải thông báo kết quả, đạt thì tiếp tục hợp đồng; điểm a khoản 2 Điều 107: làm thêm giờ phải được người lao động đồng ý; khoản 2 Điều 127: cấm phạt tiền thay xử lý kỷ luật; Điều 39, khoản 1 Điều 41: cho nghỉ không đúng căn cứ là chấm dứt trái pháp luật và hậu quả.",
+  "paraphrase_of": 12,
+  "complex_kind": "case",
+  "case_id": "c14",
+  "source_ref": "Bản án số 16/2024/LĐ-PT ngày 06/9/2024 của TAND tỉnh Bình Dương",
+  "issues": [
+   "Hết thử việc không thông báo kết quả",
+   "Từ chối làm thêm giờ",
+   "Phạt tiền thay xử lý kỷ luật",
+   "Hậu quả đơn phương chấm dứt trái pháp luật"
+  ],
+  "reference_outcome": "Tòa phúc thẩm chấp nhận một phần kháng cáo, sửa bản án sơ thẩm (sơ thẩm cho rằng hai bên thỏa thuận chấm dứt): xác định công ty đơn phương chấm dứt trái pháp luật, buộc bồi thường khoảng 69,7 triệu đồng (lương 9 tháng không được làm việc, 02 tháng lương theo mức yêu cầu, 30 ngày lương vi phạm báo trước) và truy đóng bảo hiểm xã hội. Yêu cầu đòi số tiền lương bị thất lạc bị bác vì lỗi người lao động.",
+  "notes": "Tòa tính tiền lương bồi thường gồm lương cơ bản và các phụ cấp gắn với công việc. Câu diễn đạt lại."
+ },
+ {
+  "text": "Kế toán cũ đã trích tiền bảo hiểm của một người lao động hai tháng cuối năm mà không nộp; người đó nghỉ việc và không lấy được sổ để làm thủ tục. Bây giờ công ty phải làm gì cho đúng và có thể bị xử lý thế nào?",
+  "question_type": "synthesis",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "41-2024-qh15/chapter-ii/section-1/article-13/clause-4",
+   "41-2024-qh15/chapter-iv/section-2/article-38/clause-1",
+   "41-2024-qh15/chapter-iv/section-2/article-39/clause-1/point-đ",
+   "41-2024-qh15/chapter-iv/section-2/article-41/clause-1",
+   "45-2019-qh14/chapter-iii/section-3/article-48/clause-3/point-a"
+  ],
+  "rationale": "Khoản 4 Điều 13 Luật BHXH: trích và đóng bảo hiểm hằng tháng; khoản 1 Điều 38: chậm đóng; điểm đ khoản 1 Điều 39: không đóng số đã đăng ký sau 60 ngày là trốn đóng; khoản 1 Điều 41: buộc đóng đủ và nộp 0,03%/ngày; điểm a khoản 3 Điều 48 Bộ luật Lao động: hoàn thành xác nhận thời gian đóng bảo hiểm khi chấm dứt.",
+  "paraphrase_of": 15,
+  "complex_kind": "case",
+  "case_id": "c17",
+  "source_ref": "Bản án số 70/2024/LĐ-ST ngày 23/5/2024 của TAND thành phố Thuận An, tỉnh Bình Dương",
+  "issues": [
+   "Trích lương mà không nộp bảo hiểm: chậm đóng hay trốn đóng",
+   "Biện pháp buộc đóng và tiền lãi",
+   "Trách nhiệm xác nhận thời gian đóng, trả giấy tờ khi chấm dứt"
+  ],
+  "reference_outcome": "Tòa sơ thẩm chấp nhận yêu cầu, buộc công ty đóng các khoản bảo hiểm xã hội còn nợ tháng 11 và 12/2022 cho người lao động tại cơ quan bảo hiểm xã hội và chịu án phí.",
+  "notes": "Vụ việc theo Luật BHXH 2014; từ 01/7/2025 áp dụng Luật BHXH 2024 trong corpus. Câu diễn đạt lại."
+ },
+ {
+  "text": "Nhân viên đột quỵ ngay trong ca làm việc tại nhà máy: công ty có phải coi là tai nạn lao động, điều tra và làm hồ sơ bảo hiểm không, và có được cho nghỉ việc khi người đó chưa điều trị xong không?",
+  "question_type": "synthesis",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "84-2015-qh13/chapter-i/article-3/clause-8",
+   "84-2015-qh13/chapter-iii/section-3/article-45/clause-1/point-a",
+   "84-2015-qh13/chapter-iii/section-2/article-38/clause-1",
+   "84-2015-qh13/chapter-iii/section-1/article-35/clause-1",
+   "84-2015-qh13/chapter-iii/section-2/article-38/clause-9",
+   "45-2019-qh14/chapter-iii/section-3/article-37/clause-1"
+  ],
+  "rationale": "Khoản 8 Điều 3 Luật ATVSLĐ: định nghĩa tai nạn lao động; điểm a khoản 1 Điều 45: tai nạn tại nơi làm việc, trong giờ làm việc; khoản 1 Điều 38: sơ cứu, cấp cứu kịp thời, tạm ứng chi phí; khoản 1 Điều 35: thành lập đoàn điều tra cấp cơ sở; khoản 9 Điều 38: lập hồ sơ hưởng chế độ; khoản 1 Điều 37 Bộ luật Lao động: không được đơn phương chấm dứt khi đang điều trị.",
+  "paraphrase_of": 25,
+  "complex_kind": "case",
+  "case_id": "c29",
+  "source_ref": "Báo Người Lao Động 10/05/2025: \"Một người lao động thắng kiện được bồi thường gần 1,8 tỉ đồng\" (sơ thẩm TAND thị xã Phú Mỹ, phúc thẩm TAND tỉnh Bà Rịa - Vũng Tàu ngày 09/5/2025)",
+  "issues": [
+   "Đột quỵ trong giờ làm có phải tai nạn lao động",
+   "Sơ cứu, điều tra, lập hồ sơ bảo hiểm",
+   "Cấm đơn phương chấm dứt khi đang điều trị"
+  ],
+  "reference_outcome": "Sơ thẩm buộc công ty bồi thường hơn 1,24 tỷ đồng (khoảng 1,019 tỷ tiền bồi thường tai nạn lao động và 222 triệu chi phí điều trị). Tại phúc thẩm hai bên hòa giải thành: công ty trả thêm 550 triệu đồng và lập đầy đủ hồ sơ gửi cơ quan bảo hiểm xã hội; tổng gần 1,8 tỷ đồng.",
+  "notes": "Bài báo không viện dẫn điều luật; việc xác định đột quỵ là tai nạn lao động còn tranh luận, cần kết luận điều tra. Câu diễn đạt lại."
+ },
+ {
+  "text": "Một quản lý nữ đang mang thai vi phạm nội quy nhiều lần: công ty có được sa thải ngay không, nếu muốn xử lý thì phải theo trình tự nào, và nếu làm sai thì hậu quả là gì?",
+  "question_type": "synthesis",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-viii/section-1/article-122/clause-4/point-d",
+   "45-2019-qh14/chapter-x/article-137/clause-3",
+   "145-2020-nd-cp/chapter-viii/article-70/clause-1",
+   "145-2020-nd-cp/chapter-viii/article-70/clause-2/point-a",
+   "45-2019-qh14/chapter-viii/section-1/article-128/clause-1",
+   "45-2019-qh14/chapter-iii/section-3/article-41/clause-1"
+  ],
+  "rationale": "Điểm d khoản 4 Điều 122: không được xử lý kỷ luật người lao động nữ mang thai; khoản 3 Điều 137: không được sa thải vì lý do mang thai; khoản 1 Điều 70 Nghị định 145: lập biên bản vi phạm; điểm a khoản 2 Điều 70: thông báo họp trước ít nhất 05 ngày làm việc; khoản 1 Điều 128: điều kiện tạm đình chỉ; khoản 1 Điều 41: hậu quả.",
+  "paraphrase_of": 36,
+  "complex_kind": "case",
+  "case_id": "c45",
+  "source_ref": "Pháp Luật TP.HCM (đăng trên Tuổi Trẻ Online) 15/06/2018: \"Nữ giám đốc mang thai bị sa thải thắng kiện\" (TAND quận 7, TP.HCM)",
+  "issues": [
+   "Cấm xử lý kỷ luật lao động nữ mang thai",
+   "Trình tự lập biên bản, thông báo họp",
+   "Tạm đình chỉ công việc",
+   "Hậu quả sa thải trái pháp luật"
+  ],
+  "reference_outcome": "Tòa chấp nhận toàn bộ yêu cầu: hủy quyết định sa thải vì không lập biên bản vi phạm, vi phạm quy trình thông báo và xử lý kỷ luật lao động nữ đang mang thai; buộc công ty trả 226 triệu đồng (đã trừ 14 triệu đã trả) và hai bên đóng bảo hiểm xã hội, y tế theo quy định. (theo luật cũ)",
+  "notes": "Vụ việc năm 2017 theo Bộ luật Lao động 2012; vấn đề không thay đổi căn bản. Câu diễn đạt lại."
+ },
+ {
+  "text": "Không biết ai làm mất hàng, công ty có được chia đều tiền hàng cho cả tổ và trừ vào lương tháng này của mọi người không? Mức trừ tối đa và thủ tục ra sao?",
+  "question_type": "synthesis",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-vi/article-102/clause-1",
+   "45-2019-qh14/chapter-vi/article-102/clause-3",
+   "45-2019-qh14/chapter-viii/section-2/article-130/clause-1",
+   "145-2020-nd-cp/chapter-viii/article-71/clause-2/point-a",
+   "45-2019-qh14/chapter-viii/section-1/article-127/clause-2"
+  ],
+  "rationale": "Khoản 1 Điều 102: chỉ khấu trừ lương để bồi thường thiệt hại theo Điều 129; khoản 3 Điều 102: tối đa 30% tiền lương thực trả sau khi trích bảo hiểm và thuế; khoản 1 Điều 130: mức bồi thường căn cứ lỗi, thiệt hại thực tế, hoàn cảnh; điểm a khoản 2 Điều 71 Nghị định 145: thông báo họp xử lý bồi thường trước 05 ngày làm việc; khoản 2 Điều 127: cấm cắt lương thay việc xử lý kỷ luật.",
+  "paraphrase_of": 34,
+  "complex_kind": "case",
+  "case_id": "c42",
+  "source_ref": "Thanh Niên 09/05/2024: \"Bị mất kiện hàng, công ty trừ thẳng lương của 111 công nhân ở TP.HCM\"",
+  "issues": [
+   "Điều kiện khấu trừ tiền lương",
+   "Trách nhiệm bồi thường dựa trên lỗi cá nhân",
+   "Trình tự xử lý bồi thường",
+   "Mức khấu trừ tối đa"
+  ],
+  "reference_outcome": "Bài báo không có phán quyết của tòa; vụ việc đang ở giai đoạn công nhân phản ánh với công đoàn cơ sở và công đoàn cấp trên. Luật sư được trích dẫn cho rằng việc trừ lương khi chưa chứng minh lỗi và chia theo chức vụ, hệ số, ngày công là không phù hợp quy định.",
+  "notes": "Chưa có phán quyết; căn cứ do bài báo và luật sư nêu. Câu diễn đạt lại."
+ }
+]
