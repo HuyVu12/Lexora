@@ -355,7 +355,7 @@ def main():
             if shared["retrieval"].get("method") in ("dense", "hybrid"):
                 from legal_ai.retrieval.embeddings import LocalEmbedder
                 model = shared["embedding_model"]
-                embedder = LocalEmbedder(model["path"], model["name"], model["revision"], model.get("max_seq_length", 1024))
+                embedder = LocalEmbedder(model["path"], model["name"], model["revision"], model.get("max_seq_length", 1024), cache=model.get("cache"))
             print(json.dumps(run(args.bundle, args.questions, args.condition, args.shared, args.output, embedder), ensure_ascii=False, indent=2))
         elif args.command == "graph-build":
             from legal_ai.kb.graph import GRAPH_VERSION, build_graph
