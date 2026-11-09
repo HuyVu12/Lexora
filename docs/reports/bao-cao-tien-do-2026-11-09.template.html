@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<title>Báo cáo tiến độ đồ án tốt nghiệp - Lexora - 09/11/2026</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,600;8..60,700&display=swap" rel="stylesheet">
+<style>
+  @page { size: A4; margin: 18mm 17mm 18mm 17mm; }
+  :root { --ink:#1f2328; --muted:#5b616a; --rule:#d5d8dc; --soft:#f3f4f5; --accent:#2c5a85; --good:#1f7342; --warn:#8a5300; --todo:#6b7280; }
+  * { box-sizing: border-box; }
+  html { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  body { margin: 0; color: var(--ink); font: 10.5pt/1.55 "Be Vietnam Pro", "Segoe UI", Arial, sans-serif; }
+  h1, h2, h3 { font-family: "Source Serif 4", Georgia, serif; margin: 0; page-break-after: avoid; }
+  h1 { font-size: 20pt; line-height: 1.25; }
+  h2 { font-size: 13.5pt; margin: 18pt 0 6pt; padding-bottom: 3pt; border-bottom: 1.2pt solid var(--ink); }
+  h3 { font-size: 11pt; margin: 10pt 0 4pt; font-family: "Be Vietnam Pro", "Segoe UI", sans-serif; font-weight: 600; }
+  p { margin: 0 0 6pt; }
+  ul, ol { margin: 0 0 6pt; padding-left: 16pt; }
+  li { margin: 2pt 0; }
+  .head { border-bottom: 2pt solid var(--ink); padding-bottom: 10pt; margin-bottom: 10pt; }
+  .kicker { font-size: 9pt; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); font-weight: 600; margin-bottom: 4pt; }
+  .topic { font-size: 11pt; margin-top: 6pt; color: #30353b; }
+  .topic.en { margin-top: 0; font-style: italic; color: var(--muted); }
+  .meta { display: grid; grid-template-columns: 1fr 1fr; gap: 2pt 18pt; margin-top: 8pt; font-size: 9.5pt; }
+  .meta b { font-weight: 600; }
+  .summary { background: var(--soft); border-radius: 6pt; padding: 9pt 12pt; margin: 8pt 0; }
+  .summary ul { margin: 0; }
+  table { width: 100%; border-collapse: collapse; margin: 4pt 0 8pt; font-size: 9.3pt; page-break-inside: avoid; }
+  th, td { text-align: left; vertical-align: top; padding: 4pt 6pt; border-bottom: .6pt solid var(--rule); }
+  thead th { font-weight: 600; color: var(--muted); border-bottom: 1pt solid #9aa0a6; font-size: 8.6pt; }
+  td.n, th.n { text-align: right; white-space: nowrap; font-variant-numeric: tabular-nums; }
+  .pill { display: inline-block; padding: 0 6pt; border: .8pt solid currentColor; border-radius: 99pt; font-size: 8.3pt; font-weight: 600; white-space: nowrap; }
+  .good { color: var(--good); } .warn { color: var(--warn); } .todo { color: var(--todo); }
+  .note { font-size: 8.8pt; color: var(--muted); }
+  figure { margin: 6pt 0 10pt; page-break-inside: avoid; }
+  figure img { width: 100%; display: block; }
+  figcaption { font-size: 8.8pt; color: var(--muted); margin-top: 3pt; }
+  .callout { border-left: 2.5pt solid var(--accent); padding: 2pt 0 2pt 9pt; margin: 6pt 0; }
+  .cols { display: grid; grid-template-columns: 1fr 1fr; gap: 14pt; }
+  .ask li { margin: 4pt 0; }
+  .break { page-break-before: always; }
+  .foot { margin-top: 14pt; padding-top: 6pt; border-top: .6pt solid var(--rule); font-size: 8.8pt; color: var(--muted); }
+  code { font-size: 8.8pt; background: var(--soft); padding: 0 3pt; border-radius: 3pt; }
+</style>
+</head>
+<body>
+
+<div class="head">
+  <div class="kicker">Báo cáo tiến độ đồ án tốt nghiệp · 09/11/2026</div>
+  <h1>Lexora: hỏi đáp pháp luật lao động dựa trên RAG với kho tri thức có cấu trúc và kiểm chứng</h1>
+  <p class="topic">Đề tài: Nghiên cứu và xây dựng hệ thống hỏi đáp pháp luật dựa trên RAG với Legal Knowledge Base có cấu trúc và kiểm chứng</p>
+  <p class="topic en">Research and Development of a Legal Question Answering System Based on RAG with a Structured and Verifiable Legal Knowledge Base</p>
+  <div class="meta">
+    <div><b>Sinh viên:</b> Nguyễn Thanh Kha (22IT130), Nguyễn Trần Huy Vũ (22IT346)</div>
+    <div><b>Người hướng dẫn:</b> TS. Hồ Phan Hiếu</div>
+    <div><b>Kỳ báo cáo:</b> kết thúc giai đoạn 3 (mốc 08/11/2026)</div>
+    <div><b>Bản chạy thử:</b> https://vlexora.duckdns.org</div>
+  </div>
+</div>
+
+<div class="summary">
+  <ul>
+    <li><b>Đạt mốc giai đoạn 3:</b> đã có kho tri thức sơ bộ (ĐK3/ĐK4) trích xuất từ 7 model, baseline bộ quy tắc, và hệ thống hỏi đáp chạy đầu cuối có trích dẫn tới đúng câu luật.</li>
+    <li><b>RQ2 đã có số liệu sơ bộ:</b> bộ kiểm chứng bắt 97-100% lỗi kỹ thuật được chèn có chủ đích; với các model mở, 7-32% quy phạm bị loại.</li>
+    <li><b>Dữ liệu đánh giá đã dựng xong:</b> bộ câu hỏi 152 câu, gold trích xuất 290 câu, bảng kiểm tra 104 quy phạm; đang chờ hai thành viên gán nhãn.</li>
+    <li><b>Chậm so với kế hoạch:</b> bộ câu hỏi lẽ ra khóa ở giai đoạn 2; nhóm dự kiến gán nhãn và khóa trong khoảng một tuần, trước mốc MVP 27/11.</li>
+  </ul>
+</div>
+
+<h2>1. Tiến độ so với đề cương</h2>
+<table>
+  <thead><tr><th style="width:30%">Giai đoạn</th><th style="width:14%">Trạng thái</th><th>Ghi chú</th></tr></thead>
+  <tbody>
+    <tr><td>GĐ1-2 (24/09-19/10): khảo sát, phạm vi dữ liệu, schema, pilot</td><td><span class="pill good">Xong</span></td><td>Phạm vi chốt 5 văn bản, 94 Điều; bộ câu hỏi chưa khóa đúng hạn</td></tr>
+    <tr><td>GĐ3 (20/10-08/11): pipeline trích xuất, baseline, chuẩn bị gold, RAG tối thiểu</td><td><span class="pill good">Đạt mốc</span></td><td>Bàn giao KB sơ bộ cho phần RAG; gold đã dựng, chờ gán nhãn</td></tr>
+    <tr><td>GĐ4 (09-27/11): hoàn thiện validation, tích hợp RAG, đo sớm trên gold</td><td><span class="pill warn">Đang làm</span></td><td>Công cụ đủ; chờ nhãn để đo RQ1 và chạy RQ3</td></tr>
+    <tr><td>GĐ5 (28/11-09/12): thực nghiệm ĐK1-ĐK4, đánh giá</td><td><span class="pill todo">Chưa đến</span></td><td>Truy xuất, sinh câu trả lời, chấm mù đã có công cụ</td></tr>
+    <tr><td>GĐ6 (10-20/12): hoàn thiện báo cáo, demo</td><td><span class="pill todo">Chưa đến</span></td><td>Đã có kịch bản demo và tài liệu dự án</td></tr>
+  </tbody>
+</table>
+
+<h2>2. Sản phẩm đã hoàn thành</h2>
+<ul>
+  <li><b>Corpus thực nghiệm:</b> Bộ luật Lao động 45/2019/QH14 và 4 văn bản hướng dẫn (Nghị định 145/2020, 293/2025, 12/2022, Thông tư 10/2020), 94 Điều, lấy từ vbpl.vn, khóa phiên bản, có mã băm và ngày truy cập.</li>
+  <li><b>Pipeline:</b> tách Chương/Điều/Khoản/Điểm; trích xuất quy phạm bằng bộ quy tắc và bằng model; bộ kiểm chứng tự động; bằng chứng nguyên văn tới vị trí ký tự.</li>
+  <li><b>Hệ thống hỏi đáp:</b> truy xuất BM25, BGE-M3 (chạy cục bộ) và kết hợp; sinh câu trả lời có cổng trích dẫn, từ chối khi thiếu căn cứ.</li>
+  <li><b>Ứng dụng web cho người dùng thật:</b> ba vai trò (quản trị, người duyệt, người tra cứu) và vai trò giám sát; người duyệt xem và duyệt từng quy phạm trước khi công bố.</li>
+  <li><b>Công cụ đánh giá:</b> gán nhãn hai người độc lập, Cohen's kappa, đối soát, chia dev/held-out; chèn lỗi có chủ đích; kiểm tra công bằng giữa các điều kiện (preflight); chấm mù và chấm bổ sung bằng model.</li>
+  <li><b>Tài liệu:</b> tổng quan dự án, hướng dẫn gán nhãn bộ câu hỏi, gold và bảng kiểm tra, đều xem được trong ứng dụng.</li>
+</ul>
+
+<h2>3. Phương pháp: bốn điều kiện đối chứng</h2>
+<p>Bốn điều kiện dùng cùng 94 Điều, cùng bộ câu hỏi, cùng cách truy xuất và cùng model sinh câu trả lời; mỗi bậc chỉ thêm đúng một thay đổi để đo tác dụng của thay đổi đó.</p>
+<figure>
+  <img src="{{DK_LADDER}}" alt="Bốn điều kiện ĐK1-ĐK4">
+  <figcaption>Hình 1. ĐK1 là cách RAG thông thường (cắt đoạn đều); ĐK2 thêm cấu trúc luật; ĐK3 thêm quy phạm do AI trích xuất; ĐK4 thêm bộ kiểm chứng.</figcaption>
+</figure>
+
+<div class="break"></div>
+<figure>
+  <img src="{{PIPELINE}}" alt="Toàn bộ quy trình">
+  <figcaption>Hình 2. Toàn bộ quy trình: dữ liệu, bốn cách biểu diễn, và phần truy xuất, sinh câu trả lời, chấm điểm dùng chung.</figcaption>
+</figure>
+
+<h2>4. Kết quả sơ bộ (RQ2)</h2>
+<h3>So sánh model trích xuất</h3>
+<p>Cùng phạm vi, cùng prompt, nhiệt độ 0, cùng bộ kiểm chứng; mỗi model một lượt.</p>
+<table>
+  <thead><tr><th>Model</th><th class="n">Lô OK / 95</th><th class="n">Câu có trả lời</th><th class="n">ĐK3</th><th class="n">ĐK4</th><th class="n">Bị loại</th><th class="n">Bắt lỗi chèn</th><th class="n">Lượt gọi lỗi</th></tr></thead>
+  <tbody>
+    <tr><td><b>gpt-oss-120b</b> (model chính)</td><td class="n">95</td><td class="n">100%</td><td class="n">416</td><td class="n">385</td><td class="n">7,5%</td><td class="n">100%</td><td class="n">0%</td></tr>
+    <tr><td>gemma4:31b (lượt lặp lại)</td><td class="n">93</td><td class="n">93,6%</td><td class="n">446</td><td class="n">304</td><td class="n">31,8%</td><td class="n">98,1%</td><td class="n">2,1%</td></tr>
+    <tr><td>nemotron-3-ultra</td><td class="n">88</td><td class="n">86,5%</td><td class="n">380</td><td class="n">325</td><td class="n">14,5%</td><td class="n">97,4%</td><td class="n">33,3%</td></tr>
+    <tr><td>nemotron-3-super</td><td class="n">95</td><td class="n">88,6%</td><td class="n">331</td><td class="n">308</td><td class="n">6,9%</td><td class="n">98,0%</td><td class="n">7,8%</td></tr>
+    <tr><td>beam</td><td class="n">76</td><td class="n">62,2%</td><td class="n">265</td><td class="n">247</td><td class="n">6,8%</td><td class="n">98,9%</td><td class="n">39,7%</td></tr>
+    <tr><td>claude-opus-5-5 (đối chứng)</td><td class="n">95</td><td class="n">100%</td><td class="n">450</td><td class="n">450</td><td class="n">0%</td><td class="n">98,9%</td><td class="n">0%</td></tr>
+  </tbody>
+</table>
+<p class="note">"Bắt lỗi chèn": tỉ lệ bị loại trong các loại lỗi kỹ thuật được chèn có chủ đích (sai đơn vị, sai phiên bản, sửa trích dẫn, đổi số, chủ thể và từ tình thái bịa; 30 lỗi mỗi loại). Lỗi ngữ nghĩa khi chữ vẫn nguyên văn (bỏ phủ định, bỏ điều kiện, bỏ ngoại lệ) gần như không bị bắt, đúng như thiết kế. Lượt gọi lỗi của các model qua 9Router chủ yếu do quá tải dịch vụ.</p>
+
+<h3>Bị loại chưa chắc là sai</h3>
+<p>Phân tích tự động chỗ tìm thấy các cụm từ không nguyên văn trong số quy phạm bị loại:</p>
+<table>
+  <thead><tr><th style="width:24%">Model</th><th class="n">Bị loại</th><th class="n" style="white-space:normal">Mượn chữ câu dẫn</th><th class="n" style="white-space:normal">Không tìm thấy trong luật</th><th class="n" style="white-space:normal">Chỉ sai từ tình thái</th></tr></thead>
+  <tbody>
+    <tr><td>gpt-oss-120b</td><td class="n">31</td><td class="n">10 (32%)</td><td class="n">12 (39%)</td><td class="n">7 (23%)</td></tr>
+    <tr><td>gemma4:31b</td><td class="n">142</td><td class="n">117 (82%)</td><td class="n">9 (6%)</td><td class="n">16 (11%)</td></tr>
+    <tr><td>nemotron-3-ultra</td><td class="n">55</td><td class="n">25 (45%)</td><td class="n">21 (38%)</td><td class="n">9 (16%)</td></tr>
+    <tr><td>nemotron-3-super</td><td class="n">23</td><td class="n">9 (39%)</td><td class="n">14 (61%)</td><td class="n">0</td></tr>
+  </tbody>
+</table>
+<div class="callout">Phần lớn quy phạm bị loại của gemma4 chỉ lấy chữ từ câu dẫn của khoản, thường đúng về luật. Vì vậy nhóm gán nhãn tay 104 quy phạm (80 bị loại, 24 được giữ, che nguồn) để đo độ chính xác thật của bộ kiểm chứng trước khi kết luận.</div>
+<p><b>RQ1 và RQ3 chưa có số liệu:</b> công cụ đã hoàn thành, đang chờ gold và bộ câu hỏi được gán nhãn.</p>
+
+<h2>5. Quyết định và điều chỉnh so với đề cương</h2>
+<table>
+  <thead><tr><th style="width:32%">Nội dung</th><th>Quyết định và lý do</th></tr></thead>
+  <tbody>
+    <tr><td>Model chính cho ĐK3/ĐK4</td><td>gpt-oss-120b (mã nguồn mở, khớp đề cương mục 3): phủ 100% câu, không lỗi gọi, phần lớn quy phạm bị loại là lỗi thật. Không chọn theo độ chênh ĐK3/ĐK4 để tránh thiên lệch; sẽ kiểm lại bằng F1 trên gold.</td></tr>
+    <tr><td>Quy mô dữ liệu</td><td>5 văn bản thay vì 8-12; 94 Điều, vẫn trong khoảng 60-100 điều khoản của đề cương.</td></tr>
+    <tr><td>Bộ câu hỏi</td><td>152 câu (99 tra cứu, 25 tổng hợp, 9 hiệu lực, 19 ngoài phạm vi; 21 câu cần từ chối), do model soạn nháp, ghi nguồn; nhãn do hai người gán độc lập, giữ 30% held-out.</td></tr>
+    <tr><td>Gold trích xuất</td><td>40 Điều lấy mẫu có hạt giống, 290 câu; trong khoảng 40-60 điều khoản của đề cương.</td></tr>
+    <tr><td>Phạm vi kiểm chứng</td><td>Kiểm cấu trúc, toàn vẹn đơn vị, bằng chứng nguyên văn, từ tình thái, trùng lặp; chưa kiểm hiệu lực theo thời gian và mâu thuẫn giữa văn bản (báo cáo như giới hạn).</td></tr>
+    <tr><td>RQ1 entity/relation</td><td>Đo theo quy phạm có các ô; trình bày ánh xạ: ô chủ thể, đối tượng là entity, quy phạm là relation có kiểu (nghĩa vụ, quyền, cấm); báo P/R/F1 ở cả hai mức.</td></tr>
+  </tbody>
+</table>
+
+<h2>6. Giới hạn đã biết</h2>
+<ul>
+  <li>Bộ kiểm chứng không bắt lỗi ngữ nghĩa khi chữ vẫn nguyên văn; quy tắc "nguyên văn theo câu" có thể loại cả quy phạm đúng.</li>
+  <li>Mỗi model chạy một lượt; phiên bản model qua dịch vụ trung gian không ghim được.</li>
+  <li>Một số công thức trong Nghị định 145/2020 là hình ảnh nên không có trong văn bản.</li>
+  <li>Đồng thuận giữa hai sinh viên không thay thế xác nhận của chuyên gia pháp lý.</li>
+</ul>
+
+<h2>7. Kế hoạch tiếp theo</h2>
+<table>
+  <thead><tr><th style="width:20%">Thời gian</th><th>Việc</th></tr></thead>
+  <tbody>
+    <tr><td>Đến 16/11</td><td>Gán nhãn, đối soát và khóa bộ câu hỏi; chốt cấu hình truy xuất trên tập dev</td></tr>
+    <tr><td>Đến 27/11</td><td>Gán nhãn gold và bảng kiểm tra; đo RQ1, RQ2; hoàn thiện MVP</td></tr>
+    <tr><td>28/11-09/12</td><td>Chạy ĐK1-ĐK4 trên bộ câu hỏi đã khóa (cả held-out); sinh câu trả lời; chấm tự động và chấm tay một mẫu theo rubric</td></tr>
+    <tr><td>10-20/12</td><td>Phân tích lỗi, viết báo cáo, diễn tập demo</td></tr>
+  </tbody>
+</table>
+
+<div class="foot">Số liệu lấy từ các lượt chạy trong kho mã dự án (<code>docs/results/extraction-models.md</code>) và ứng dụng tại https://vlexora.duckdns.org. Kết quả RQ1, RQ3 sẽ được báo cáo trung thực, kể cả khi không ủng hộ giả thuyết.</div>
+
+</body>
+</html>
