@@ -152,6 +152,32 @@ def _covers(unit_ids, gold):
     return any(unit == gold or unit.startswith(gold + "/") for unit in unit_ids)
 
 
+def _merge(spans):
+    merged = []
+    for start, end in sorted(spans):
+        if merged and start <= merged[-1][1]:
+            merged[-1] = (merged[-1][0], max(merged[-1][1], end))
+        else:
+            merged.append((start, end))
+    return merged
+
+
+def char_precision(cited_records, gold_units):
+    """Share of the cited source text (characters, overlaps counted once) that lies inside gold units. Unlike
+    "a cited record covers a gold unit", it does not reward a long chunk for containing the answer somewhere."""
+    cited, gold = {}, {}
+    for row in cited_records:
+        cited.setdefault(row["document_id"], []).append((row["source_start"], row["source_end"]))
+    for unit in gold_units:
+        gold.setdefault(unit["document_id"], []).append((unit["source_start"], unit["source_end"]))
+    total = inside = 0
+    for document, spans in cited.items():
+        for start, end in _merge(spans):
+            total += end - start
+            inside += sum(max(0, min(end, g_end) - max(start, g_start)) for g_start, g_end in _merge(gold.get(document, [])))
+    return inside / total if total else None
+
+
 def latest_answers(path):
     """The last successful answer per question (a resumed run may hold earlier failed attempts)."""
     rows = {}
@@ -170,13 +196,21 @@ def score(answer_dir, questions_path):
     ok = [(q, a) for q, a in rows if a.get("error") is None]
     refuse = [(q, a) for q, a in ok if q.get("expected_status") == "refuse"]
     answer = [(q, a) for q, a in ok if q.get("expected_status") == "answer"]
-    precision, recall = [], []
+    manifest = json.loads((answer_dir / "manifest.json").read_text(encoding="utf-8"))
+    retrieval = Path(manifest["retrieval_run"])
+    records = {r["record_id"]: r for r in read_jsonl(retrieval / "records.jsonl")} if (retrieval / "records.jsonl").exists() else {}
+    units_path = Path(json.loads((retrieval / "manifest.json").read_text(encoding="utf-8"))["inputs"]["units"]["path"]) if records else None
+    units = {u["unit_id"]: u for u in read_jsonl(units_path)} if units_path and units_path.exists() else {}
+    precision, recall, chars = [], [], []
     for q, a in answer:
         gold = q.get("relevant_unit_ids") or []
         cited = [s["unit_ids"] for s in a["statements"]]
         if a["status"] in ANSWERED and gold and cited:
             precision.append(sum(any(_covers(units, g) for g in gold) for units in cited) / len(cited))
             recall.append(sum(any(_covers(units, g) for units in cited) for g in gold) / len(gold))
+            ids = {r for s in a["statements"] for r in s.get("record_ids", [])}
+            if units and ids <= records.keys() and all(g in units for g in gold):
+                chars.append(char_precision([records[r] for r in ids], [units[g] for g in gold]))
     mean = lambda values: sum(values) / len(values) if values else None
     metrics = {
         "run_version": RUN_VERSION, "questions": len(rows), "errors": len(rows) - len(ok),
@@ -184,11 +218,14 @@ def score(answer_dir, questions_path):
         "false_refusal_rate": mean([a["status"] in REFUSED for _, a in answer]), "expected_answers": len(answer),
         "answered_rate": mean([a["status"] in ANSWERED for _, a in ok]),
         "citation_gold_precision": mean(precision), "citation_gold_recall": mean(recall), "citation_scored_answers": len(precision),
+        "citation_gold_char_precision": mean([c for c in chars if c is not None]),
         "uncited_statements_removed": sum(a["gate"]["uncited_removed"] for _, a in ok),
         "downgraded_to_insufficient": sum(a["gate"]["downgraded_to_insufficient"] for _, a in ok),
         "mean_statements": mean([len(a["statements"]) for _, a in ok]), "mean_context_tokens": mean([a["context_tokens"] for _, a in ok]),
         "cost_usd": round(sum(a.get("cost_usd") or 0 for _, a in ok), 4),
         "notes": ["citation_gold_* compares cited records with gold units; it is a proxy, not human-judged citation support",
+                  "citation_gold_precision counts a record as right when it contains a gold unit, which favours long records; "
+                  "citation_gold_char_precision is the share of cited source characters inside gold units",
                   "grounding and correctness come from the human answer sheet"],
     }
     write_json(answer_dir / "metrics.json", metrics)

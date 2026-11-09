@@ -200,6 +200,40 @@ def claim_records(condition, documents, units, texts, claims):
     return records
 
 
+def kb_unit_records(condition, documents, units, texts, claims, max_tokens=384):
+    """DK3/DK4 (`record: unit_with_claims`): the DK2 record of every leaf unit, its exact source text, path and lead
+    text unchanged, followed by the serialized knowledge-base claims of that unit. A unit without a claim keeps its
+    DK2 record, so the only difference to DK2 is the added norm structure (and between DK3 and DK4, which claims
+    survived validation). `token_count` counts the source text and the claims, i.e. what the generator reads beyond
+    the shared title and path."""
+    by_id = {u["unit_id"]: u for u in units}
+    attached = {}
+    for claim in claims:
+        unit = by_id.get(claim.get("unit_id"))
+        sentence = claim.get("sentence") or {}
+        if unit is None or not unit["source_start"] <= sentence.get("start", -1) < sentence.get("end", -1) <= unit["source_end"]:
+            raise ValueError(f"claim outside the corpus: {claim.get('claim_id')}")
+        attached.setdefault(unit["unit_id"], []).append(claim)
+    records, used = [], set()
+    for row in structural_records(documents, units, texts, max_tokens):
+        unit_id = row["unit_ids"][0]
+        # A long leaf split into parts gets each claim on the part that holds its sentence.
+        mine = sorted((c for c in attached.get(unit_id, []) if row["source_start"] <= c["sentence"]["start"] < row["source_end"]),
+                      key=lambda c: (c["sentence"]["start"], c["claim_id"]))
+        bodies = [serialize_claim(c) for c in mine]
+        block = "".join(f"\n[Quy phạm {n}]\n{body}" for n, body in enumerate(bodies, 1))
+        row = {**row, "condition": condition, "index_text": row["index_text"].rstrip("\n") + block,
+               "record_id": f"{condition.lower()}:{row['record_id'].split(':', 1)[1]}",
+               "token_count": row["token_count"] + sum(len(token_spans(b)) for b in bodies),
+               "claim_ids": [c["claim_id"] for c in mine]}
+        used.update(row["claim_ids"])
+        records.append(row)
+    missing = [c["claim_id"] for c in claims if c["claim_id"] not in used]
+    if missing:
+        raise ValueError(f"claims not attached to any record: {missing[:5]}")
+    return records
+
+
 def check_records(records, texts):
     """Raise if any record's text is not its exact source span or its hash does not match."""
     seen = set()

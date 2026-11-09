@@ -1,0 +1,23 @@
+{
+  "condition": "DK4",
+  "representation": "llm_kb_validated",
+  "automatic_validation": true,
+  "manual_review": false,
+  "status": "draft",
+  "kb_run": "experiments/runs/kb-scope-v1-gpt-oss-120b",
+  "kb_model_note": "Main extraction model gpt-oss-120b (open-weight, via 9Router), chosen 08/11/2026; gemma4:31b is the replication run. See docs/decisions.md.",
+  "record": "unit_with_claims",
+  "max_tokens": 384,
+  "graph": {
+    "edges": [
+      "reference",
+      "referenced_by"
+    ],
+    "max_neighbors": 2,
+    "source_aliases": {
+      "Bộ luật Lao động": "45-2019-qh14"
+    },
+    "require_match": false
+  },
+  "note": "Ablation: graph expansion in both directions without the question check (neighbours pulled in even when the question does not match them)."
+}

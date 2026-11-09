@@ -3,8 +3,21 @@
   "representation": "llm_kb_validated",
   "automatic_validation": true,
   "manual_review": false,
-  "shared_config": "configs/pilot.json",
   "status": "draft",
   "kb_run": "experiments/runs/kb-scope-v1-gpt-oss-120b",
-  "kb_model_note": "Main extraction model gpt-oss-120b (open-weight, via 9Router), chosen 08/11/2026; gemma4:31b is the replication run. See docs/decisions.md."
+  "kb_model_note": "Main extraction model gpt-oss-120b (open-weight, via 9Router), chosen 08/11/2026; gemma4:31b is the replication run. See docs/decisions.md.",
+  "record": "unit_with_claims",
+  "max_tokens": 384,
+  "graph": {
+    "edges": [
+      "reference",
+      "referenced_by"
+    ],
+    "max_neighbors": 2,
+    "source_aliases": {
+      "Bộ luật Lao động": "45-2019-qh14"
+    },
+    "require_match": true
+  },
+  "note": "Proposed 09/11/2026 (pending supervisor): the DK2 record of every unit (exact text, path, lead text) plus only claims that pass kb-validator-v3, and expansion over resolved cross-references in both directions (cited provisions and the provisions that cite or detail them), a neighbour only when the question also matches it. See docs/decisions.md."
 }

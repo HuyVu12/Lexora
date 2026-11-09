@@ -80,6 +80,9 @@ def check(retrieval_dirs, answer_dirs=()):
             dk4 = {c["claim_id"] for c in read_jsonl(Path(kb["DK4"]) / "dk4.jsonl")}
             extra = sorted(dk4 - dk3)
             add("DK4 is a subset of DK3", "fail" if extra else "pass", f"{len(extra)} DK4 claims not in DK3" if extra else f"{len(dk4)} of {len(dk3)} kept")
+        # DK3 and DK4 may differ only in which claims survived validation.
+        shape = {c: {k: m["condition"].get(k) for k in ("record", "max_tokens", "graph")} for (_, m), c in zip(runs, conditions) if c in ("DK3", "DK4")}
+        add("DK3 and DK4 use the same record shape and graph", "pass" if _same(list(shape.values())) else "fail", "" if _same(list(shape.values())) else shape)
 
     held = []
     for (_, manifest), condition in zip(runs, conditions):
