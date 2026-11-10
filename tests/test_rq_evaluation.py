@@ -61,6 +61,26 @@ class RqEvaluationTests(unittest.TestCase):
         again = error_injection.inject(read_jsonl(self.kb / "dk4.jsonl"), self.units, per_type=5)
         self.assertEqual([c["claim_id"] for c in again], [c["claim_id"] for c in read_jsonl(self.root / "inject" / "injected.jsonl")], "seeded")
 
+    def test_planted_kb_replaces_target_claims_and_dk4_is_the_validator_on_that_dk3(self):
+        dk3 = read_jsonl(self.kb / "dk3.jsonl")
+        targets = {c["unit_id"] for c in dk3 if c["modality"] == "prohibition"}
+        out = self.root / "planted"
+        report = error_injection.plant(self.kb, self.units, out, targets)
+        self.assertEqual(report["target_claims"], report["planted"])
+        self.assertGreater(report["planted"], 0)
+        planted = read_jsonl(out / "dk3.jsonl")
+        self.assertEqual(len(planted), len(dk3), "claims are replaced, not added")
+        changed = [c for c in planted if c.get("injection")]
+        self.assertEqual({c["unit_id"] for c in changed}, targets)
+        self.assertEqual({c["claim_id"] for c in changed}, {r["claim_id"] for r in read_jsonl(out / "planted.jsonl")}, "the claim keeps its ID")
+        dk4_ids = {c["claim_id"] for c in read_jsonl(out / "dk4.jsonl")}
+        self.assertEqual(report["removed_from_dk4"], sum(c["claim_id"] not in dk4_ids for c in changed))
+        self.assertEqual(report["removed_from_dk4"], report["planted"], "every planted type here is visible to the validator")
+        manifest = __import__("json").loads((out / "manifest.json").read_text(encoding="utf-8"))
+        self.assertEqual(manifest["bundle"], __import__("json").loads((self.kb / "manifest.json").read_text(encoding="utf-8"))["bundle"])
+        with self.assertRaisesRegex(ValueError, "empty"):
+            error_injection.plant(self.kb, self.units, out, targets)
+
     def test_gold_template_check_agreement_and_scores(self):
         articles = gold.sample_articles(self.units, 1)
         self.assertEqual(len(articles), 1)

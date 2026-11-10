@@ -9,5 +9,6 @@ Sửa nội dung thì tạo tệp phiên bản mới (`-v2`), không sửa tệp
 - `decompose-v1.md`: tách câu hỏi hoặc tình huống thành tối đa 4 vấn đề pháp lý kèm câu tìm kiếm; chạy một lần, mọi điều kiện ĐK1-ĐK4 dùng chung (`src/legal_ai/evaluation/decompose.py`).
 - `answer-v2.md`: như `answer-v1.md`, trả lời theo từng vấn đề đã tách và áp tình tiết vào điều kiện, ngoại lệ của quy định (bộ tình huống).
 - `judge-v1.md`: giám khảo bổ sung chấm câu trả lời theo cùng rubric với người chấm (`src/legal_ai/evaluation/answer_grading.py`).
+- `judge-v2.md`: giám khảo bổ sung cho câu hỏi tình huống và xung đột: như `judge-v1.md`, thêm lỗi luật theo phát biểu, điểm theo từng vấn đề pháp lý và độ khớp với kết luận chuẩn (`src/legal_ai/evaluation/outcome_judge.py`).
 
 Trích xuất cho ĐK3/ĐK4 dùng prompt `norm-llm-v1` trong `src/legal_ai/extraction/llm_norms.py` (đã chạy thật với Opus 5.5 ngày 07/11).

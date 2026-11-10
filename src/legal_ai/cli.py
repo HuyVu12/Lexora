@@ -125,6 +125,20 @@ def main():
     command.add_argument("--config", default="configs/experiments/answer.json")
     command.add_argument("--max-calls", type=int, required=True)
     command.add_argument("--approve-claude", action="store_true")
+    command = commands.add_parser("answer-outcome-judge", help="Claude Code judge of case answers against the real outcome and issues (supplement to people); resumes")
+    command.add_argument("sheet", help="blinded sheet from answer-sheet")
+    command.add_argument("--key", required=True)
+    command.add_argument("--questions", required=True, help="question file whose questions carry issues and reference_outcome")
+    command.add_argument("--output", required=True, help="new directory, or an earlier judge run of the same inputs")
+    command.add_argument("--model", required=True, help="judge model, e.g. claude-sonnet-5-5")
+    command.add_argument("--effort", default="medium")
+    command.add_argument("--workers", type=int, default=1)
+    command.add_argument("--max-calls", type=int, required=True)
+    command.add_argument("--approve-claude", action="store_true")
+    command = commands.add_parser("answer-outcome-score", help="per-model, per-condition scores and paired differences of an outcome judge run; offline")
+    command.add_argument("judge_run")
+    command.add_argument("--sheet", required=True)
+    command.add_argument("--key", required=True)
     command = commands.add_parser("demo-build", help="new demo store: three accounts with printed random passwords and the frozen experiment-scope corpus; offline")
     command.add_argument("--store", required=True, help="new SQLite file")
     command.add_argument("--scope", default="configs/experiment-scope-v1.json")
@@ -141,6 +155,11 @@ def main():
     command.add_argument("--output", required=True, help="new, empty directory")
     command.add_argument("--per-type", type=int, default=30)
     command.add_argument("--seed", default="lexora-inject-v1")
+    command = commands.add_parser("kb-plant", help="stress test: a copy of a knowledge-base run with visible errors planted in the claims of the questions' gold units; DK4 re-validated; offline")
+    command.add_argument("run", help="knowledge-base run directory")
+    command.add_argument("--questions", required=True, help="question file; its relevant_unit_ids are the targets")
+    command.add_argument("--output", required=True, help="new, empty directory")
+    command.add_argument("--seed", default="lexora-plant-v1")
     command = commands.add_parser("question-drafts", help="add model-drafted questions with proposed labels to a question set (new or existing); offline")
     command.add_argument("drafts", nargs="+", help="JSON files, each a list of drafted questions")
     command.add_argument("--store", required=True)
@@ -314,6 +333,15 @@ def main():
             if args.compare:
                 report["agreement"] = agreement(args.sheet, args.compare)
             print(json.dumps(report, ensure_ascii=False, indent=2))
+        elif args.command == "answer-outcome-judge":
+            from legal_ai.evaluation.outcome_judge import judge as outcome_judge
+            from legal_ai.providers.claude_code import ClaudeCodeProvider
+            provider = ClaudeCodeProvider(args.model, args.effort, args.max_calls, approved=args.approve_claude)
+            print(json.dumps(outcome_judge(args.sheet, args.key, args.questions, provider, args.output, workers=args.workers,
+                                           log=lambda line: print(line, flush=True)), indent=2))
+        elif args.command == "answer-outcome-score":
+            from legal_ai.evaluation.outcome_judge import score as outcome_score
+            print(json.dumps(outcome_score(args.judge_run, args.sheet, args.key), ensure_ascii=False, indent=2))
         elif args.command == "demo-build":
             from legal_ai.demo_setup import build as demo_build
             result = demo_build(args.store, args.scope)
@@ -342,6 +370,13 @@ def main():
             from legal_ai.evaluation.error_injection import run as inject_run
             bundle = json.loads((Path(args.run) / "manifest.json").read_text(encoding="utf-8"))["bundle"]
             print(json.dumps(inject_run(args.run, read_jsonl(Path(bundle) / "units.jsonl"), args.output, args.per_type, args.seed), ensure_ascii=False, indent=2))
+        elif args.command == "kb-plant":
+            from legal_ai.common.io import read_jsonl
+            from legal_ai.evaluation.error_injection import plant
+            bundle = json.loads((Path(args.run) / "manifest.json").read_text(encoding="utf-8"))["bundle"]
+            questions = json.loads(Path(args.questions).read_text(encoding="utf-8"))["questions"]
+            targets = {u for q in questions for u in q.get("relevant_unit_ids") or []}
+            print(json.dumps(plant(args.run, read_jsonl(Path(bundle) / "units.jsonl"), args.output, targets, args.seed), ensure_ascii=False, indent=2))
         elif args.command == "question-drafts":
             from legal_ai.research.corpus import CorpusStore
             from legal_ai.research.questions import QuestionStore
