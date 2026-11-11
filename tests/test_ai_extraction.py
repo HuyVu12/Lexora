@@ -10,6 +10,7 @@ import sys
 import tempfile
 import unittest
 from unittest.mock import patch
+from urllib.error import HTTPError
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
@@ -332,6 +333,27 @@ class HybridRetrievalTests(unittest.TestCase):
         self.assertEqual(result["retrieval"]["reason"], "embedding_error")
         self.assertTrue(result["citations"])
 
+    def test_batches_received_before_a_rate_limit_stay_cached(self):
+        from legal_ai.rag.dense import DenseIndex
+
+        class Limited(FakeEmbedder):
+            MAX_BATCH = 2
+
+            def embed(self, texts):
+                if len(self.calls) == 2:
+                    raise ProviderError("quota_exhausted")
+                return super().embed(texts)
+
+        texts = [f"đoạn {n}" for n in range(5)]
+        limited = Limited()
+        with self.assertRaises(ProviderError):
+            DenseIndex(self.store, limited).vectors(texts)
+        self.assertEqual(limited.calls, [texts[:2], texts[2:4]], "one request per batch")
+        resumed = FakeEmbedder()
+        resumed.MAX_BATCH = 2
+        self.assertEqual(len(DenseIndex(self.store, resumed).vectors(texts)), 5)
+        self.assertEqual(resumed.calls, [texts[4:]], "only the batch that failed is sent again")
+
     def test_keyword_match_far_below_best_similarity_is_dropped(self):
         passages = [{"claim_id": n, "evidence": {"quote": q}, "scope": []} for n, q in
                     (("a", "Người sử dụng lao động phải thông báo kết quả thử việc"), ("b", "Thời gian thử việc do hai bên thỏa thuận"))]
@@ -366,8 +388,15 @@ class HybridRetrievalTests(unittest.TestCase):
             opener.return_value.open.return_value = Response(json.dumps({"data": [{"index": 0, "embedding": [1.0]}]}).encode())
             with self.assertRaises(ProviderError):
                 embedder.embed(["a"])
-            with self.assertRaises(ProviderError):
+            with self.assertRaises(ProviderError) as spent:
                 embedder.embed(["a"])  # budget of 2 calls is spent
+            self.assertEqual(spent.exception.code, "quota_exhausted")
+        limited = RouterEmbeddings(settings, model="m", approved_route=True, max_calls=2, dimensions=64)
+        with patch("legal_ai.providers.router.build_opener") as opener:
+            opener.return_value.open.side_effect = HTTPError("https://example.test/v1/embeddings", 429, "Too Many Requests", {}, None)
+            with self.assertRaises(ProviderError) as refused:
+                limited.embed(["a"])
+            self.assertEqual(refused.exception.code, "rate_limited", "a provider 429 is not Lexora's own budget")
         with self.assertRaises(ValueError):
             RouterEmbeddings({"9ROUTER_URL": "http://34.0.0.1:20128", "9ROUTER_KEY": "k"}, model="m", approved_route=True)
 

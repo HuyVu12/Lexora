@@ -13,7 +13,7 @@ from legal_ai.ingestion.source_library import SourceLibrary
 from legal_ai.kb.import_review import ReviewStore, empty_graph
 from legal_ai.providers.pilot import ProviderError
 from legal_ai.providers.router import RouterProvider, api_url, read_settings
-from legal_ai.rag.review_chat import ChatService, approved_passages, validate_generation
+from legal_ai.rag.review_chat import ChatService, approved_passages, query_terms, validate_generation
 
 TEXT = "Điều 1. DỮ LIỆU TỔNG HỢP KHÔNG PHẢI LUẬT\n1. Người lao động phải thông báo kết quả thử việc cho người lao động. Người sử dụng lao động phải trả khoản bí mật.\n"
 
@@ -48,6 +48,13 @@ class ReviewChatTests(unittest.TestCase):
         decisions = {n["id"]: ("reject" if reject_secret and "bí mật" in n["payload"]["slots"]["action"].get("text", "") else "approve")
                      for n in draft["graph"]["nodes"] if n["kind"] == "NormClaim"}
         return self.store.publish(draft["id"], "test", "synthetic offline review", decisions=decisions)
+
+    def test_stopwords_do_not_remove_words_that_only_look_alike_without_accents(self):
+        # "tôi" is a stopword, "tối" (as in "tối đa") is not; "người lao động" is, "hợp đồng" is not.
+        self.assertEqual(query_terms("Thời gian thử việc tối đa bao lâu?"), {"thoi", "gian", "thu", "viec", "toi", "da", "lau"})
+        self.assertIn("dong", query_terms("Hợp đồng của người lao động"))
+        self.assertNotIn("toi", query_terms("Tôi muốn hỏi về hợp đồng"))
+        self.assertNotIn("toi", query_terms("toi muon hoi ve hop dong"), "unaccented input still drops the folded stopword")
 
     def test_unconfirmed_baseline_and_draft_cannot_start_chat(self):
         seed = self.root / "seed.json"
@@ -96,6 +103,11 @@ class ReviewChatTests(unittest.TestCase):
         result = chat.ask(session["id"], "thông báo kết quả", "llm", True)
         self.assertEqual(result["status"], "answer_rejected")
         self.assertEqual(result["statements"], [])
+        provider.content = '{"status":"insufficient_evidence","statements":[]}'
+        result = chat.ask(session["id"], "thông báo kết quả", "llm", True)
+        self.assertEqual(result["status"], "model_insufficient", "passages were found; the model judged them not enough")
+        self.assertTrue(result["citations"])
+        self.assertIn("chưa đủ", result["note"])
 
     def test_provider_disabled_error_and_no_evidence_statuses(self):
         session = self.chat.start([self.publish()["kb_id"]])

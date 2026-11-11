@@ -532,7 +532,7 @@ class ReviewStore:
                     raise ValueError("Quyết định không hợp lệ cho thực thể")
             else:
                 raise ValueError("Không tìm thấy mục cần duyệt trong bản nháp")
-        return self.draft_view(draft_id)
+        return self.draft_view(draft_id, draft)  # Committed above; `draft` holds every change made to the body.
 
     def _add_claim(self, db, draft, payload):
         """A reviewer-created claim anchored to an exact sentence; its slots are then filled with Sửa."""
@@ -649,9 +649,10 @@ class ReviewStore:
             body["reviewer_note"] = note
         return body
 
-    def draft_view(self, draft_id):
+    def draft_view(self, draft_id, draft=None):
+        """Review view of a draft; `draft` is the body review() already parsed (a full draft is several MB of JSON)."""
         with self.connect() as db:
-            draft = self._draft(db, draft_id)
+            draft = draft if draft is not None and draft.get("id") == draft_id else self._draft(db, draft_id)
             saved = self._decisions(db, draft_id)
             base = self.revision(draft["base_revision"]) if draft["base_revision"] else None
             kb = self._kb(db, draft["kb_id"], active=False) if draft.get("kb_id") else None

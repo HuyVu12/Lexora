@@ -31,7 +31,19 @@ def terms(text):
     return tokens(folded)
 
 
-STOP = set(terms(" ".join(STOP)))
+# Stopwords are matched on the accented word, so "tôi" goes but "tối" (tối đa), and "động" (người lao động) goes but
+# "đồng" (hợp đồng) stays. Only a word typed without any accent is compared accent-folded, as it cannot be told apart.
+STOP_FOLDED = set(terms(" ".join(STOP)))
+
+
+def query_terms(question):
+    kept = []
+    for word in tokens(question.casefold()):
+        folded = terms(word)
+        if word in STOP or (word.isascii() and folded and folded[0] in STOP_FOLDED):
+            continue
+        kept.extend(folded)
+    return set(kept)
 
 
 def approved_passages(graph):
@@ -69,7 +81,7 @@ def approved_passages(graph):
 
 def lexical_scores(passages, question):
     """(BM25 score, passage index) for passages matching enough query terms."""
-    query = set(terms(question)) - STOP
+    query = query_terms(question)
     if not query or not passages:
         return []
     docs = [Counter(terms(p["evidence"]["quote"] + " " + " ".join(s["quote"] for s in p["scope"]))) for p in passages]
@@ -260,6 +272,10 @@ class ChatService:
                         validated = validate_generation(result["content"], citations)
                         response.update(**validated, usage=result.get("usage", {}),
                                         note="Câu trả lời do model tạo. Đã kiểm tra citation thuộc bundle, chưa xác minh ngữ nghĩa hoặc hiệu lực pháp luật.")
+                        if validated["status"] == "insufficient_evidence":
+                            # Passages were found; the model judged that they do not answer the question.
+                            response.update(status="model_insufficient",
+                                            note="Model cho rằng các đoạn tìm được chưa đủ để trả lời. Hãy xem nguyên văn bên dưới hoặc hỏi cụ thể hơn.")
                     except ProviderError as exc:
                         response.update(status="provider_error", error_code=exc.code, note="Model chưa trả lời được; có thể xem các đoạn nguồn local bên dưới.")
                     except (ValueError, TypeError):

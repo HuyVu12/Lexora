@@ -79,6 +79,18 @@ def main():
     command.add_argument("--split", choices=["dev", "held_out"], help="answer only this split")
     command.add_argument("--max-calls", type=int, required=True, help="call budget of this session")
     command.add_argument("--approve-claude", action="store_true", help="explicit approval of the model calls")
+    command.add_argument("--router-model", help="answer with one approved 9Router model instead of the config's Claude model (a MODEL_* alias or a name)")
+    command.add_argument("--approve-router", action="store_true", help="explicit approval of the 9Router calls")
+    command.add_argument("--timeout", type=int, default=300, help="seconds per 9Router call")
+    command.add_argument("--max-tokens", type=int, default=8000, help="answer token limit for 9Router models")
+    command = commands.add_parser("decompose-questions", help="split each question into legal issues with search queries, once for every condition; resumes")
+    command.add_argument("questions", help="question file")
+    command.add_argument("--output", required=True, help="new directory, or an earlier decomposition run of the same file")
+    command.add_argument("--max-calls", type=int, required=True, help="call budget of this session")
+    command.add_argument("--router-model", required=True, help="one approved 9Router model (a MODEL_* alias or a name)")
+    command.add_argument("--approve-router", action="store_true", help="explicit approval of the 9Router calls")
+    command.add_argument("--timeout", type=int, default=300, help="seconds per 9Router call")
+    command.add_argument("--max-tokens", type=int, default=4000)
     command = commands.add_parser("answer-score", help="automatic metrics of an answer run (refusals, citations against gold units); offline")
     command.add_argument("answer_run")
     command.add_argument("--questions", required=True)
@@ -224,12 +236,27 @@ def main():
             log = lambda line: print(line, flush=True)
             if args.command == "answer-run":
                 from legal_ai.evaluation.answer_run import run as answer_run
-                provider = ClaudeCodeProvider(config["model"], config["effort"], args.max_calls, approved=args.approve_claude)
+                if args.router_model:
+                    from legal_ai.providers.router import ChatStructured, RouterProvider, read_settings
+                    settings = read_settings(Path.cwd() / ".env")
+                    name = settings.get(args.router_model, args.router_model) if args.router_model.startswith("MODEL_") else args.router_model
+                    chat = RouterProvider(settings, model=name, approved_route=args.approve_router, max_calls=args.max_calls, timeout=args.timeout)
+                    provider = ChatStructured(chat, max_tokens=args.max_tokens)
+                else:
+                    provider = ClaudeCodeProvider(config["model"], config["effort"], args.max_calls, approved=args.approve_claude)
                 print(json.dumps(answer_run(args.retrieval_run, args.questions, args.config, provider, args.output, split=args.split, log=log), indent=2))
             else:
                 from legal_ai.evaluation.answer_grading import judge_sheet
                 provider = ClaudeCodeProvider(config["judge_model"], config["judge_effort"], args.max_calls, approved=args.approve_claude)
                 print(json.dumps(judge_sheet(args.sheet, provider, args.output, log=log), indent=2))
+        elif args.command == "decompose-questions":
+            from legal_ai.evaluation.decompose import run as decompose_run
+            from legal_ai.providers.router import ChatStructured, RouterProvider, read_settings
+            settings = read_settings(Path.cwd() / ".env")
+            name = settings.get(args.router_model, args.router_model) if args.router_model.startswith("MODEL_") else args.router_model
+            chat = RouterProvider(settings, model=name, approved_route=args.approve_router, max_calls=args.max_calls, timeout=args.timeout)
+            counts = decompose_run(args.questions, ChatStructured(chat, max_tokens=args.max_tokens), args.output, log=lambda line: print(line, flush=True))
+            print(json.dumps(counts, indent=2))
         elif args.command == "answer-score":
             from legal_ai.evaluation.answer_run import score
             print(json.dumps(score(args.answer_run, args.questions), ensure_ascii=False, indent=2))
@@ -328,7 +355,7 @@ def main():
             if shared["retrieval"].get("method") in ("dense", "hybrid"):
                 from legal_ai.retrieval.embeddings import LocalEmbedder
                 model = shared["embedding_model"]
-                embedder = LocalEmbedder(model["path"], model["name"], model["revision"], model.get("max_seq_length", 1024))
+                embedder = LocalEmbedder(model["path"], model["name"], model["revision"], model.get("max_seq_length", 1024), cache=model.get("cache"))
             print(json.dumps(run(args.bundle, args.questions, args.condition, args.shared, args.output, embedder), ensure_ascii=False, indent=2))
         elif args.command == "graph-build":
             from legal_ai.kb.graph import GRAPH_VERSION, build_graph

@@ -6,7 +6,9 @@ budget. No retry, no fallback model, no redirects, no streaming.
 
 import json
 import math
+import re
 import threading
+import time
 from pathlib import Path
 from urllib.error import HTTPError, URLError
 from urllib.parse import urlsplit
@@ -93,7 +95,8 @@ class _Transport:
                 raise ProviderError("invalid_provider_response")
             return result
         except HTTPError as exc:
-            raise ProviderError("quota_exhausted" if exc.code == 429 else "provider_http_error") from None
+            # 429 is the provider refusing a call that was sent, not Lexora's own budget (quota_exhausted, no call made).
+            raise ProviderError("rate_limited" if exc.code == 429 else "provider_http_error") from None
         except (URLError, OSError):
             raise ProviderError("provider_unavailable") from None
         except ValueError:
@@ -173,3 +176,51 @@ class RouterEmbeddings(_Transport):
             except (KeyError, TypeError, ValueError):
                 raise ProviderError("invalid_provider_response") from None
         return vectors
+
+
+def json_object(content):
+    """The first JSON object in a chat answer (a ```json fence or the outermost braces); raises ValueError otherwise."""
+    text = (content or "").strip()
+    fence = re.search(r"```(?:json)?\s*(.*?)```", text, re.DOTALL)
+    if fence:
+        text = fence.group(1).strip()
+    start, end = text.find("{"), text.rfind("}")
+    if start < 0 or end <= start:
+        raise ValueError("no_json_object")
+    value = json.loads(text[start:end + 1])
+    if not isinstance(value, dict):
+        raise ValueError("not_an_object")
+    return value
+
+
+class ChatStructured:
+    """`structured()` over a chat provider, so code written for Claude Code structured output runs on a 9Router model.
+
+    The JSON schema is appended to the system prompt, the answer is parsed as one JSON object and returned in the
+    same shape as `ClaudeCodeProvider.structured` (output, usage, cost_usd, model, duration_ms) plus the raw text.
+    Callers still validate the content themselves (the answer run's citation gate does). Temperature 0, no retry."""
+
+    provider = "9router"
+    INSTRUCTION = "\n\nTrả về đúng một đối tượng JSON hợp lệ theo JSON Schema dưới đây, không thêm chữ nào ngoài JSON:\n"
+
+    def __init__(self, chat, max_tokens=8000):
+        self.chat, self.max_tokens = chat, max_tokens
+        self.model, self.effort = chat.model, "temperature-0"
+
+    @property
+    def calls(self):
+        return self.chat.calls
+
+    @property
+    def max_calls(self):
+        return self.chat.max_calls
+
+    def structured(self, system, prompt, schema, purpose="structured"):
+        started = time.monotonic()
+        answer = self.chat.complete(system + self.INSTRUCTION + json.dumps(schema, ensure_ascii=False), prompt, max_tokens=self.max_tokens)
+        try:
+            output = json_object(answer["content"])
+        except ValueError:
+            raise ProviderError("invalid_output") from None
+        return {"output": output, "usage": answer.get("usage", {}), "cost_usd": None, "model": self.model,
+                "duration_ms": round((time.monotonic() - started) * 1000), "raw_content": answer["content"]}

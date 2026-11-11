@@ -1,0 +1,11 @@
+{
+  "condition": "DK4",
+  "representation": "llm_kb_validated",
+  "automatic_validation": true,
+  "manual_review": false,
+  "status": "draft",
+  "kb_run": "experiments/runs/kb-scope-v1-gpt-oss-120b",
+  "kb_model_note": "Main extraction model gpt-oss-120b (open-weight, via 9Router), chosen 08/11/2026; gemma4:31b is the replication run. See docs/decisions.md.",
+  "record": "claims",
+  "note": "Ablation and first design (07/11): one record per serialized claim, without the source sentence."
+}

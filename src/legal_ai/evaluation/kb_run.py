@@ -90,7 +90,7 @@ def extract(bundle_units, provider, output, *, log=None, max_tokens=CHAT_MAX_TOK
             handle.flush()
             if log:
                 log(f"{number}/{len(planned)} {article_id}: {entry['status']}")
-            if entry["status"] == "error" and entry["code"] in ("budget_exhausted", "quota_exhausted"):
+            if entry["status"] == "error" and entry["code"] in ("budget_exhausted", "quota_exhausted", "rate_limited"):  # Further calls would only fail too.
                 break
     write_jsonl(output / "ledger.jsonl", getattr(provider, "ledger", []))  # Calls of this session, with hashes and usage.
     return counts

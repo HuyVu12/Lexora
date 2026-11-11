@@ -1,0 +1,13 @@
+{
+  "answer_version": "answer-run-v1",
+  "status": "draft",
+  "model": "claude-opus-5-5",
+  "effort": "medium",
+  "judge_model": "claude-sonnet-5-5",
+  "judge_effort": "medium",
+  "prompt": "answer-v2.md",
+  "top_k": 50,
+  "context_token_budget": 3000,
+  "token_counter": "lexora-syllable-v1",
+  "note": "Scenario questions (case set v1): issues from one shared decomposition run go to the generator; top-8 records within the same 3,000-token budget for DK1-DK4. Records are taken in rank order until the 3,000-token budget is full (top_k 50 is only a cap), so every condition hands the generator the same amount of text."
+}
