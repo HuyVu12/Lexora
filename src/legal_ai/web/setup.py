@@ -34,6 +34,9 @@ def add_arguments(parser, default_port):
 def providers(args, parser):
     """Build the opt-in (provider, extractor, embedder); each stays None unless its flag is given."""
     provider = extractor = embedder = None
+    # Flag conflicts first, so a wrong combination is reported as such even on a machine without Lexora's .env.
+    if args.extract_claude_model and args.extract_model:
+        parser.error("choose one extractor: --extract-model (9Router) or --extract-claude-model (Claude Code)")
     if args.router_model or args.extract_model or args.embedding_model:
         from legal_ai.providers.router import RouterEmbeddings, RouterProvider, read_settings
         settings = read_settings(Path.cwd() / ".env")
@@ -53,8 +56,6 @@ def providers(args, parser):
     elif args.approve_router:
         parser.error("--approve-router requires --router-model, --extract-model or --embedding-model")
     if args.extract_claude_model:
-        if args.extract_model:
-            parser.error("choose one extractor: --extract-model (9Router) or --extract-claude-model (Claude Code)")
         if not args.approve_claude:
             parser.error("--extract-claude-model requires --approve-claude")
         from legal_ai.providers.claude_code import ClaudeCodeProvider

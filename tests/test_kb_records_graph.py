@@ -158,7 +158,7 @@ class KbRecordGraphTests(unittest.TestCase):
         ranked = read_jsonl(self.root / "r3g" / "predictions.jsonl")[0]["ranked"]
         self.assertTrue(any("via_reference_from" in r for r in ranked[:2]))
         manifest = json.loads((self.root / "r3g" / "manifest.json").read_text(encoding="utf-8"))
-        self.assertEqual((manifest["graph"]["version"], manifest["graph"]["edge_count"]), ("reference-expansion-v4", 1))
+        self.assertEqual((manifest["graph"]["version"], manifest["graph"]["edge_count"]), ("reference-expansion-v5", 1))
         with self.assertRaisesRegex(ValueError, "DK3/DK4 only"):
             run(self.root / "bundle", self.questions, self.condition("dk2g", "DK2", graph={"edges": ["reference"]}), self.shared, self.root / "r2g")
         with self.assertRaisesRegex(ValueError, "record must be"):

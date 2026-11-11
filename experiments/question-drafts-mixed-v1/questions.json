@@ -1,0 +1,1682 @@
+{
+ "description": "Mixed set for the neighbour-selection test (11/11/2026): 25 simple lookups and 5 out-of-scope questions sampled (seed lexora-mixed-v1) from dryrun-v1, 30 complex synthesis questions (dryrun-complex-v1) and 25 conflict questions (dryrun-conflict-v1), shuffled; labels are unreviewed model proposals, gold of the corpus-v1 sets may miss corpus-v2 provisions.",
+ "questions": [
+  {
+   "question_id": "m-cq08",
+   "question": "Người lao động nghỉ việc sau khoảng 4 năm làm việc thì trợ cấp thôi việc được tính theo công thức nào, căn cứ vào mức lương của giai đoạn nào?",
+   "question_type": "synthesis",
+   "complex_kind": "cross_document",
+   "family_id": "m-cf00",
+   "split": "dev",
+   "expected_status": "answer",
+   "relevant_unit_ids": [
+    "45-2019-qh14/chapter-iii/section-3/article-46/clause-1",
+    "145-2020-nd-cp/chapter-iii/section-2/article-8/clause-5/point-a"
+   ],
+   "annotation_status": "model_proposal",
+   "level": "complex",
+   "source_set": "dryrun-complex-v1"
+  },
+  {
+   "question_id": "x-x17",
+   "question": "Công ty có hai trường hợp chưa được giới thiệu đi giám định suy giảm khả năng lao động: một công nhân bị tai nạn lao động đã điều trị ổn định nhưng còn di chứng, và một nhân viên bị bệnh thông thường muốn giám định để nghỉ hưu do suy giảm khả năng lao động. Nếu thanh tra kiểm tra năm 2026, công ty có thể bị phạt theo căn cứ nào và căn cứ nào còn vướng?",
+   "question_type": "synthesis",
+   "complex_kind": "amended_or_superseded",
+   "family_id": "x-xf17",
+   "split": "dev",
+   "expected_status": "answer",
+   "relevant_unit_ids": [
+    "84-2015-qh13/chapter-iii/section-3/article-47/clause-1/point-a",
+    "12-2022-nd-cp/chapter-ii/article-23/clause-1/point-d",
+    "12-2022-nd-cp/chapter-iii/article-41/clause-4/point-c",
+    "41-2024-qh15/chapter-ii/section-1/article-13/clause-5",
+    "41-2024-qh15/chapter-xi/article-140/clause-2"
+   ],
+   "issues": [
+    "Nghĩa vụ giới thiệu người bị TNLĐ đi giám định và chế tài còn hiệu lực",
+    "Hai điều khoản của NĐ 12/2022 cùng xử phạt hành vi đối với người bị TNLĐ",
+    "Dẫn chiếu Điều 55 Luật BHXH 2014 sau khi luật này hết hiệu lực",
+    "Nghĩa vụ tương ứng tại khoản 5 Điều 13 Luật BHXH 2024"
+   ],
+   "reference_outcome": "Với công nhân bị TNLĐ, nghĩa vụ theo Luật ATVSLĐ vẫn nguyên hiệu lực và công ty có thể bị phạt 2 - 4 triệu đồng mỗi người (mức cá nhân, doanh nghiệp gấp đôi) theo điểm d khoản 1 Điều 23 hoặc điểm c khoản 4 Điều 41 NĐ 12, nhưng chỉ bị phạt một lần cho một hành vi. Với nhân viên muốn nghỉ hưu do suy giảm khả năng lao động, NĐ 12 dẫn chiếu Điều 55 của Luật BHXH 2014 đã hết hiệu lực; nghĩa vụ hiện nay là 'xem xét giới thiệu' theo khoản 5 Điều 13 Luật BHXH 2024 (dẫn chiếu Điều 65), nên việc dùng chế tài cũ cho nghĩa vụ mới không chắc chắn và cần đối chiếu văn bản xử phạt cập nhật ngoài corpus.",
+   "documents": [
+    "12-2022-nd-cp",
+    "41-2024-qh15",
+    "84-2015-qh13"
+   ],
+   "annotation_status": "model_proposal",
+   "level": "complex",
+   "source_set": "dryrun-conflict-v1"
+  },
+  {
+   "question_id": "s-qq49f73cfc71f9",
+   "family_id": "s-f49f73cfc71f9",
+   "question": "Một tháng người lao động được làm thêm giờ tối đa bao nhiêu tiếng?",
+   "split": "dev",
+   "question_type": "lookup",
+   "expected_status": "answer",
+   "relevant_unit_ids": [
+    "45-2019-qh14/chapter-vii/section-1/article-107/clause-2/point-b"
+   ],
+   "annotation_status": "model_proposal_not_reviewed",
+   "level": "simple",
+   "source_set": "dryrun-v1"
+  },
+  {
+   "question_id": "s-qq8bd76b17c42e",
+   "family_id": "s-f8bd76b17c42e",
+   "question": "Công ty yêu cầu nhân viên nộp 5 triệu tiền cọc khi ký hợp đồng để đảm bảo không nghỉ ngang, như vậy có đúng luật không?",
+   "split": "dev",
+   "question_type": "lookup",
+   "expected_status": "answer",
+   "relevant_unit_ids": [
+    "45-2019-qh14/chapter-iii/section-1/article-17/clause-2"
+   ],
+   "annotation_status": "model_proposal_not_reviewed",
+   "level": "simple",
+   "source_set": "dryrun-v1"
+  },
+  {
+   "question_id": "m-cq00",
+   "question": "Nhân viên làm được 4 năm rồi nghỉ theo thỏa thuận với công ty thì được trợ cấp thôi việc bao nhiêu, và lương để tính trợ cấp lấy theo những tháng nào?",
+   "question_type": "synthesis",
+   "complex_kind": "cross_document",
+   "family_id": "m-cf00",
+   "split": "dev",
+   "expected_status": "answer",
+   "relevant_unit_ids": [
+    "45-2019-qh14/chapter-iii/section-3/article-46/clause-1",
+    "145-2020-nd-cp/chapter-iii/section-2/article-8/clause-5/point-a"
+   ],
+   "annotation_status": "model_proposal",
+   "level": "complex",
+   "source_set": "dryrun-complex-v1"
+  },
+  {
+   "question_id": "s-qqac87135429be",
+   "family_id": "s-fac87135429be",
+   "question": "Luật lao động Nhật Bản cho phép làm tối đa bao nhiêu giờ một tuần?",
+   "split": "dev",
+   "question_type": "out_of_scope",
+   "expected_status": "refuse",
+   "relevant_unit_ids": [],
+   "annotation_status": "model_proposal_not_reviewed",
+   "level": "out_of_scope",
+   "source_set": "dryrun-v1"
+  },
+  {
+   "question_id": "m-cq05",
+   "question": "Nhân viên hưởng lương tháng đi tăng ca vào ngày lễ thì được trả lương thế nào, và lương giờ làm căn cứ được xác định ra sao?",
+   "question_type": "synthesis",
+   "complex_kind": "cross_document",
+   "family_id": "m-cf05",
+   "split": "dev",
+   "expected_status": "answer",
+   "relevant_unit_ids": [
+    "45-2019-qh14/chapter-vi/article-98/clause-1/point-c",
+    "145-2020-nd-cp/chapter-vi/section-2/article-55/clause-1/point-a",
+    "145-2020-nd-cp/chapter-vi/section-2/article-55/clause-1/point-b"
+   ],
+   "annotation_status": "model_proposal",
+   "level": "complex",
+   "source_set": "dryrun-complex-v1"
+  },
+  {
+   "question_id": "s-qq5c4ceeb4b508",
+   "family_id": "s-f5c4ceeb4b508",
+   "question": "Người bị mất việc làm thì được nhận trợ cấp ít nhất bao nhiêu tháng lương?",
+   "split": "dev",
+   "question_type": "lookup",
+   "expected_status": "answer",
+   "relevant_unit_ids": [
+    "45-2019-qh14/chapter-iii/section-3/article-47/clause-1"
+   ],
+   "annotation_status": "model_proposal_not_reviewed",
+   "level": "simple",
+   "source_set": "dryrun-v1"
+  },
+  {
+   "question_id": "x-x02",
+   "question": "Một trưởng phòng làm việc cho công ty có trụ sở ở Hà Nội (vùng I), lương tháng ghi trong hợp đồng 50 triệu đồng và đã đóng bảo hiểm thất nghiệp đủ 60 tháng trên mức lương đó, nghỉ việc hợp pháp vào tháng 3/2026. Anh ấy sẽ nhận trợ cấp thất nghiệp mỗi tháng bao nhiêu và trong bao lâu?",
+   "question_type": "synthesis",
+   "complex_kind": "law_and_detail",
+   "family_id": "x-xf02",
+   "split": "dev",
+   "expected_status": "answer",
+   "relevant_unit_ids": [
+    "74-2025-qh15/chapter-vii/section-4/article-39/clause-1",
+    "74-2025-qh15/chapter-vii/section-4/article-39/clause-2",
+    "74-2025-qh15/chapter-vii/section-2/article-34/clause-2",
+    "293-2025-nd-cp/article-3/clause-1",
+    "293-2025-nd-cp/article-3/clause-3/point-a"
+   ],
+   "issues": [
+    "Trần tiền lương làm căn cứ đóng BHTN",
+    "Mức hưởng 60% và trần 05 lần lương tối thiểu vùng",
+    "Lương tối thiểu vùng I theo NĐ 293 dùng để tính trần",
+    "Số tháng hưởng theo số tháng đã đóng"
+   ],
+   "reference_outcome": "Tiền lương đóng 50 triệu đồng thấp hơn trần 20 lần (106,2 triệu) nên giữ nguyên; 60% là 30 triệu đồng nhưng bị giới hạn ở 05 lần lương tối thiểu vùng I theo NĐ 293, tức 26.550.000 đồng/tháng. 60 tháng đóng cho 03 tháng (36 tháng đầu) cộng 02 tháng (24 tháng tiếp theo), tổng 05 tháng; Luật Việc làm 2025 đặt công thức, NĐ 293 cung cấp mức lương tối thiểu vùng để tính trần.",
+   "documents": [
+    "293-2025-nd-cp",
+    "74-2025-qh15"
+   ],
+   "annotation_status": "model_proposal",
+   "level": "complex",
+   "source_set": "dryrun-conflict-v1"
+  },
+  {
+   "question_id": "x-x05",
+   "question": "Nhân viên kế toán thử việc 2 tháng theo hợp đồng thử việc riêng, sau đó ký hợp đồng không xác định thời hạn và được công ty đóng bảo hiểm thất nghiệp đủ 6 năm. Nay chị nghỉ việc đúng luật, có báo trước 45 ngày. Công ty còn phải trả trợ cấp thôi việc không, tính thế nào, và chị có được hưởng trợ cấp thất nghiệp không?",
+   "question_type": "synthesis",
+   "complex_kind": "cross_law",
+   "family_id": "x-xf05",
+   "split": "dev",
+   "expected_status": "answer",
+   "relevant_unit_ids": [
+    "45-2019-qh14/chapter-iii/section-3/article-46/clause-2",
+    "145-2020-nd-cp/chapter-iii/section-2/article-8/clause-3/point-a",
+    "145-2020-nd-cp/chapter-iii/section-2/article-8/clause-3/point-c",
+    "74-2025-qh15/chapter-vii/section-1/article-31/clause-2",
+    "74-2025-qh15/chapter-vii/section-4/article-38/clause-1/point-a"
+   ],
+   "issues": [
+    "Thời gian thử việc có tính vào thời gian làm việc thực tế không",
+    "Trừ thời gian đã tham gia BHTN khi tính trợ cấp thôi việc",
+    "Người đang thử việc không thuộc diện tham gia BHTN",
+    "Điều kiện hưởng trợ cấp thất nghiệp khi người lao động tự nghỉ đúng luật"
+   ],
+   "reference_outcome": "Công ty vẫn phải trả trợ cấp thôi việc cho 2 tháng thử việc, vì thời gian này tính vào thời gian làm việc thực tế nhưng không được đóng BHTN (người thử việc không thuộc diện tham gia); 2 tháng được tính là 1/2 năm, tức trợ cấp bằng 1/4 tháng tiền lương bình quân 06 tháng liền kề. 6 năm đã đóng BHTN không tính trợ cấp thôi việc mà được bù bằng chế độ BHTN: chị nghỉ đúng luật nên không bị loại theo điểm a khoản 1 Điều 38 Luật Việc làm 2025.",
+   "documents": [
+    "145-2020-nd-cp",
+    "45-2019-qh14",
+    "74-2025-qh15"
+   ],
+   "annotation_status": "model_proposal",
+   "level": "complex",
+   "source_set": "dryrun-conflict-v1"
+  },
+  {
+   "question_id": "s-qq763dff012f22",
+   "family_id": "s-f763dff012f22",
+   "question": "Tết Nguyên đán người lao động được nghỉ hưởng lương mấy ngày?",
+   "split": "dev",
+   "question_type": "lookup",
+   "expected_status": "answer",
+   "relevant_unit_ids": [
+    "45-2019-qh14/chapter-vii/section-2/article-112/clause-1/point-b"
+   ],
+   "annotation_status": "model_proposal_not_reviewed",
+   "level": "simple",
+   "source_set": "dryrun-v1"
+  },
+  {
+   "question_id": "s-qqf39163bcbae9",
+   "family_id": "s-ff39163bcbae9",
+   "question": "Chúng tôi có chuyên gia nước ngoài làm việc tại Việt Nam, có được trả lương cho họ bằng đô la Mỹ không?",
+   "split": "dev",
+   "question_type": "lookup",
+   "expected_status": "answer",
+   "relevant_unit_ids": [
+    "45-2019-qh14/chapter-vi/article-95/clause-2"
+   ],
+   "annotation_status": "model_proposal_not_reviewed",
+   "level": "simple",
+   "source_set": "dryrun-v1"
+  },
+  {
+   "question_id": "m-cq10",
+   "question": "Công ty cho nhân viên nghỉ trái luật nhưng nhân viên không muốn quay lại làm nữa thì công ty phải trả những khoản gì?",
+   "question_type": "synthesis",
+   "complex_kind": "multi_article",
+   "family_id": "m-cf10",
+   "split": "dev",
+   "expected_status": "answer",
+   "relevant_unit_ids": [
+    "45-2019-qh14/chapter-iii/section-3/article-39",
+    "45-2019-qh14/chapter-iii/section-3/article-41/clause-1",
+    "45-2019-qh14/chapter-iii/section-3/article-41/clause-2",
+    "45-2019-qh14/chapter-iii/section-3/article-46/clause-1"
+   ],
+   "annotation_status": "model_proposal",
+   "level": "complex",
+   "source_set": "dryrun-complex-v1"
+  },
+  {
+   "question_id": "m-cq09",
+   "question": "Với nhân viên tổ lái tàu bay làm hợp đồng vô thời hạn, nếu họ tự nghỉ thì phải báo trước tối thiểu bao nhiêu ngày, dài hơn bao nhiêu so với người lao động bình thường?",
+   "question_type": "synthesis",
+   "complex_kind": "cross_document",
+   "family_id": "m-cf03",
+   "split": "dev",
+   "expected_status": "answer",
+   "relevant_unit_ids": [
+    "45-2019-qh14/chapter-iii/section-3/article-35/clause-1/point-a",
+    "45-2019-qh14/chapter-iii/section-3/article-35/clause-1/point-d",
+    "145-2020-nd-cp/chapter-iii/section-2/article-7/clause-1/point-a",
+    "145-2020-nd-cp/chapter-iii/section-2/article-7/clause-2/point-a"
+   ],
+   "annotation_status": "model_proposal",
+   "level": "complex",
+   "source_set": "dryrun-complex-v1"
+  },
+  {
+   "question_id": "m-cq25",
+   "question": "Doanh nghiệp ở vùng I trả lương tháng cho 15 công nhân làm việc giản đơn thấp hơn lương tối thiểu vùng thì bị xử lý thế nào, và mức tối thiểu đó áp theo địa bàn nào?",
+   "question_type": "synthesis",
+   "complex_kind": "situation",
+   "family_id": "m-cf25",
+   "split": "dev",
+   "expected_status": "answer",
+   "relevant_unit_ids": [
+    "293-2025-nd-cp/article-3/clause-1",
+    "293-2025-nd-cp/article-3/clause-3/point-a",
+    "12-2022-nd-cp/chapter-ii/article-17/clause-3/point-b"
+   ],
+   "annotation_status": "model_proposal",
+   "level": "complex",
+   "source_set": "dryrun-complex-v1"
+  },
+  {
+   "question_id": "s-qq4ec87b527758",
+   "family_id": "s-f4ec87b527758",
+   "question": "Trong thời gian thử việc công ty được trả lương thấp nhất là bao nhiêu so với lương chính thức?",
+   "split": "dev",
+   "question_type": "lookup",
+   "expected_status": "answer",
+   "relevant_unit_ids": [
+    "45-2019-qh14/chapter-iii/section-1/article-26"
+   ],
+   "annotation_status": "model_proposal_not_reviewed",
+   "level": "simple",
+   "source_set": "dryrun-v1"
+  },
+  {
+   "question_id": "s-qqa2804466735e",
+   "family_id": "s-fdcedaa17a698",
+   "question": "Nếu tôi tăng ca vào ngày nghỉ cuối tuần theo lịch của công ty thì mức lương tối thiểu được hưởng là bao nhiêu phần trăm?",
+   "split": "dev",
+   "question_type": "lookup",
+   "expected_status": "answer",
+   "relevant_unit_ids": [
+    "45-2019-qh14/chapter-vi/article-98/clause-1/point-b"
+   ],
+   "annotation_status": "model_proposal_not_reviewed",
+   "level": "simple",
+   "source_set": "dryrun-v1"
+  },
+  {
+   "question_id": "s-qq81d78ae50916",
+   "family_id": "s-f81d78ae50916",
+   "question": "Lao động nữ sinh con được nghỉ thai sản mấy tháng?",
+   "split": "dev",
+   "question_type": "out_of_scope",
+   "expected_status": "refuse",
+   "relevant_unit_ids": [],
+   "annotation_status": "model_proposal_not_reviewed",
+   "level": "out_of_scope",
+   "source_set": "dryrun-v1"
+  },
+  {
+   "question_id": "x-x16",
+   "question": "Một nữ nhân viên đủ tuổi nghỉ hưu theo lộ trình trong năm 2026 nhưng chỉ có 17 năm đóng BHXH bắt buộc. Phòng nhân sự đọc khoản 1 Điều 7 NĐ 135/2020 thấy dẫn chiếu Điều 54, Điều 55 Luật BHXH về điều kiện hưởng lương hưu và lo chị chưa đủ điều kiện. Hiện nay chị có được hưởng lương hưu không, tỷ lệ bao nhiêu?",
+   "question_type": "synthesis",
+   "complex_kind": "amended_or_superseded",
+   "family_id": "x-xf16",
+   "split": "dev",
+   "expected_status": "answer",
+   "relevant_unit_ids": [
+    "45-2019-qh14/chapter-xii/article-169/clause-1",
+    "135-2020-nd-cp/article-7/clause-1",
+    "41-2024-qh15/chapter-xi/article-140/clause-2",
+    "41-2024-qh15/chapter-v/section-3/article-64/clause-1/point-a",
+    "41-2024-qh15/chapter-v/section-3/article-66/clause-1/point-a"
+   ],
+   "issues": [
+    "BLLĐ dẫn chiếu điều kiện thời gian đóng sang pháp luật BHXH",
+    "NĐ 135 dẫn chiếu các điều của Luật BHXH 2014 đã hết hiệu lực",
+    "Điều kiện từ đủ 15 năm đóng theo Luật BHXH 2024",
+    "Tỷ lệ lương hưu của lao động nữ có 17 năm đóng"
+   ],
+   "reference_outcome": "Chị được hưởng lương hưu: Điều 54, Điều 55 Luật BHXH 2014 mà NĐ 135 dẫn chiếu đã hết hiệu lực từ 01/7/2025 theo khoản 2 Điều 140 Luật BHXH 2024, nên điều kiện thời gian đóng mà khoản 1 Điều 169 BLLĐ dẫn chiếu nay là 'từ đủ 15 năm' tại điểm a khoản 1 Điều 64. Tỷ lệ hưởng là 45% + 2 x 2% = 49% mức bình quân tiền lương đóng BHXH; phần lộ trình tuổi của NĐ 135 vẫn dùng được vì nó chi tiết Điều 169 BLLĐ chứ không phải Luật BHXH cũ.",
+   "documents": [
+    "135-2020-nd-cp",
+    "41-2024-qh15",
+    "45-2019-qh14"
+   ],
+   "annotation_status": "model_proposal",
+   "level": "complex",
+   "source_set": "dryrun-conflict-v1"
+  },
+  {
+   "question_id": "s-qqd1ef6bb43b2f",
+   "family_id": "s-fd1ef6bb43b2f",
+   "question": "Làm thêm vào ngày lễ, tết thì một ngày được làm tối đa bao nhiêu giờ?",
+   "split": "dev",
+   "question_type": "lookup",
+   "expected_status": "answer",
+   "relevant_unit_ids": [
+    "145-2020-nd-cp/chapter-vii/article-60/clause-4"
+   ],
+   "annotation_status": "model_proposal_not_reviewed",
+   "level": "simple",
+   "source_set": "dryrun-v1"
+  },
+  {
+   "question_id": "m-cq28",
+   "question": "Lao động nữ có thai bỏ việc 5 ngày cộng dồn trong vòng 30 ngày, doanh nghiệp có kỷ luật sa thải ngay được không hay phải chờ, và cuộc họp kỷ luật cần chuẩn bị thế nào?",
+   "question_type": "synthesis",
+   "complex_kind": "situation",
+   "family_id": "m-cf20",
+   "split": "dev",
+   "expected_status": "answer",
+   "relevant_unit_ids": [
+    "45-2019-qh14/chapter-viii/section-1/article-125/clause-4",
+    "45-2019-qh14/chapter-viii/section-1/article-122/clause-4/point-d",
+    "45-2019-qh14/chapter-viii/section-1/article-123/clause-2",
+    "145-2020-nd-cp/chapter-viii/article-70/clause-2/point-a"
+   ],
+   "annotation_status": "model_proposal",
+   "level": "complex",
+   "source_set": "dryrun-complex-v1"
+  },
+  {
+   "question_id": "x-x11",
+   "question": "Một nhân viên bị xe máy khác tông khi đang trên đường từ nhà đến công ty, đúng tuyến đường và thời gian hợp lý. Anh nằm viện 3 tuần, sau đó được giám định suy giảm 12% khả năng lao động. Thời gian nằm viện anh được hưởng chế độ gì, sau đó có được hưởng chế độ tai nạn lao động không, và công ty có trách nhiệm gì?",
+   "question_type": "synthesis",
+   "complex_kind": "lex_specialis_or_exception",
+   "family_id": "x-xf11",
+   "split": "dev",
+   "expected_status": "answer",
+   "relevant_unit_ids": [
+    "41-2024-qh15/chapter-v/section-1/article-42/clause-1/point-c",
+    "41-2024-qh15/chapter-v/section-1/article-42/clause-2/point-c",
+    "84-2015-qh13/chapter-iii/section-3/article-45/clause-1/point-c",
+    "84-2015-qh13/chapter-iii/section-3/article-45/clause-2",
+    "84-2015-qh13/chapter-iii/section-2/article-39/clause-2"
+   ],
+   "issues": [
+    "Chế độ trong thời gian điều trị tai nạn trên đường đi làm: ốm đau hay TNLĐ",
+    "Quan hệ giữa quy định riêng tại điểm c khoản 1 và loại trừ tại điểm c khoản 2 Điều 42 Luật BHXH 2024",
+    "Điều kiện hưởng chế độ TNLĐ từ quỹ khi suy giảm 12%",
+    "Trợ cấp của người sử dụng lao động khi tai nạn do người khác gây ra"
+   ],
+   "reference_outcome": "Thời gian nằm viện anh hưởng chế độ ốm đau, vì điểm c khoản 1 Điều 42 Luật BHXH 2024 quy định riêng cho tai nạn trên đường đi làm, không rơi vào loại trừ dành cho thời gian điều trị TNLĐ lần đầu. Sau khi giám định 12% (từ 5% trở lên) anh đủ điều kiện hưởng chế độ TNLĐ từ quỹ theo điểm c khoản 1 và khoản 2 Điều 45 Luật ATVSLĐ; do người khác gây ra nên công ty chỉ phải trợ cấp theo khoản 5 Điều 38 (ít nhất 40% mức bồi thường tương ứng), không phải bồi thường như tai nạn tại nơi làm việc.",
+   "documents": [
+    "41-2024-qh15",
+    "84-2015-qh13"
+   ],
+   "annotation_status": "model_proposal",
+   "level": "complex",
+   "source_set": "dryrun-conflict-v1"
+  },
+  {
+   "question_id": "x-x07",
+   "question": "Công ty muốn chấm dứt hợp đồng với một nhân viên bảo vệ nam đã đủ tuổi nghỉ hưu theo lộ trình năm 2026. Anh có tổng cộng 16 năm đóng BHXH bắt buộc và đã làm cho công ty 9 năm. Anh có được hưởng lương hưu không, tỷ lệ bao nhiêu, và công ty có phải trả trợ cấp thôi việc cho 9 năm đó không?",
+   "question_type": "synthesis",
+   "complex_kind": "cross_law",
+   "family_id": "x-xf07",
+   "split": "dev",
+   "expected_status": "answer",
+   "relevant_unit_ids": [
+    "45-2019-qh14/chapter-iii/section-3/article-36/clause-1/point-đ",
+    "41-2024-qh15/chapter-v/section-3/article-64/clause-1/point-a",
+    "41-2024-qh15/chapter-v/section-3/article-66/clause-1/point-b",
+    "45-2019-qh14/chapter-iii/section-3/article-46/clause-1",
+    "145-2020-nd-cp/chapter-iii/section-2/article-8/clause-1/point-a"
+   ],
+   "issues": [
+    "Căn cứ chấm dứt hợp đồng khi người lao động đủ tuổi nghỉ hưu",
+    "Điều kiện từ đủ 15 năm đóng BHXH theo Luật BHXH 2024",
+    "Tỷ lệ lương hưu của lao động nam có từ 15 đến dưới 20 năm đóng",
+    "Loại trừ trợ cấp thôi việc khi đủ điều kiện hưởng lương hưu"
+   ],
+   "reference_outcome": "Anh đủ điều kiện lương hưu vì đủ tuổi và có 16 năm đóng (từ đủ 15 năm theo Luật BHXH 2024), tỷ lệ hưởng là 40% + 1% = 41% mức bình quân tiền lương đóng BHXH. Vì đủ điều kiện hưởng lương hưu, công ty không phải trả trợ cấp thôi việc theo khoản 1 Điều 46 BLLĐ và điểm a khoản 1 Điều 8 NĐ 145; ngoại lệ của BLLĐ chỉ xác định được khi đọc cùng điều kiện lương hưu của Luật BHXH 2024.",
+   "documents": [
+    "145-2020-nd-cp",
+    "41-2024-qh15",
+    "45-2019-qh14"
+   ],
+   "annotation_status": "model_proposal",
+   "level": "complex",
+   "source_set": "dryrun-conflict-v1"
+  },
+  {
+   "question_id": "s-qq65f372701dad",
+   "family_id": "s-f65f372701dad",
+   "question": "Nhân viên vi phạm từ lâu rồi thì công ty còn được kỷ luật trong bao lâu? Nếu liên quan tiền bạc thì sao?",
+   "split": "dev",
+   "question_type": "lookup",
+   "expected_status": "answer",
+   "relevant_unit_ids": [
+    "45-2019-qh14/chapter-viii/section-1/article-123/clause-1"
+   ],
+   "annotation_status": "model_proposal_not_reviewed",
+   "level": "simple",
+   "source_set": "dryrun-v1"
+  },
+  {
+   "question_id": "x-x08",
+   "question": "Một công nhân bị máy dập cắt vào tay ngay tại xưởng, nghỉ điều trị 2 tháng rồi được Hội đồng giám định y khoa kết luận suy giảm 25% khả năng lao động; biên bản điều tra xác định anh không có lỗi. Trong 2 tháng điều trị ai trả tiền cho anh, anh có được trợ cấp ốm đau không, và công ty phải bồi thường tối thiểu bao nhiêu?",
+   "question_type": "synthesis",
+   "complex_kind": "cross_law",
+   "family_id": "x-xf08",
+   "split": "dev",
+   "expected_status": "answer",
+   "relevant_unit_ids": [
+    "84-2015-qh13/chapter-iii/section-2/article-38/clause-3",
+    "84-2015-qh13/chapter-iii/section-2/article-38/clause-4/point-a",
+    "41-2024-qh15/chapter-v/section-1/article-42/clause-2/point-c",
+    "84-2015-qh13/chapter-iii/section-3/article-45/clause-2"
+   ],
+   "issues": [
+    "Ai trả lương trong thời gian điều trị tai nạn lao động lần đầu",
+    "Loại trừ trợ cấp ốm đau trong thời gian điều trị TNLĐ lần đầu",
+    "Mức bồi thường tối thiểu của người sử dụng lao động theo tỷ lệ suy giảm",
+    "Quyền hưởng chế độ bảo hiểm TNLĐ từ quỹ khi suy giảm từ 5%"
+   ],
+   "reference_outcome": "Trong 2 tháng điều trị công ty phải trả đủ tiền lương theo khoản 3 Điều 38 Luật ATVSLĐ, còn quỹ BHXH không trả trợ cấp ốm đau vì điểm c khoản 2 Điều 42 Luật BHXH 2024 loại trừ thời gian điều trị TNLĐ lần đầu. Với 25% suy giảm và không có lỗi, công ty phải bồi thường ít nhất 1,5 + 15 x 0,4 = 7,5 tháng tiền lương; ngoài ra anh còn được hưởng chế độ TNLĐ từ Quỹ bảo hiểm TNLĐ, BNN vì suy giảm từ 5%, hai khoản này cộng dồn chứ không thay thế nhau.",
+   "documents": [
+    "41-2024-qh15",
+    "84-2015-qh13"
+   ],
+   "annotation_status": "model_proposal",
+   "level": "complex",
+   "source_set": "dryrun-conflict-v1"
+  },
+  {
+   "question_id": "s-qqd33d730ddefa",
+   "family_id": "s-fc2b383261baf",
+   "question": "Đóng bảo hiểm xã hội bắt buộc thì người lao động bị trừ bao nhiêu phần trăm lương?",
+   "split": "dev",
+   "question_type": "out_of_scope",
+   "expected_status": "refuse",
+   "relevant_unit_ids": [],
+   "annotation_status": "model_proposal_not_reviewed",
+   "level": "out_of_scope",
+   "source_set": "dryrun-v1"
+  },
+  {
+   "question_id": "m-cq16",
+   "question": "Nhân viên làm hỏng máy móc, công ty trừ lương để bồi thường thì có được không và mỗi tháng được trừ tối đa bao nhiêu?",
+   "question_type": "synthesis",
+   "complex_kind": "multi_article",
+   "family_id": "m-cf16",
+   "split": "dev",
+   "expected_status": "answer",
+   "relevant_unit_ids": [
+    "45-2019-qh14/chapter-viii/section-2/article-129/clause-1",
+    "45-2019-qh14/chapter-vi/article-102/clause-1",
+    "45-2019-qh14/chapter-vi/article-102/clause-3"
+   ],
+   "annotation_status": "model_proposal",
+   "level": "complex",
+   "source_set": "dryrun-complex-v1"
+  },
+  {
+   "question_id": "x-x12",
+   "question": "Một công nhân nam sinh tháng 6/1970 đã làm 17 năm công việc đặc biệt nặng nhọc, độc hại thuộc danh mục của Bộ, tổng thời gian đóng BHXH bắt buộc 25 năm, muốn nghỉ hưu sớm. Anh có được nghỉ hưu trước tuổi chung không, sớm nhất khi nào, và có được hưởng lương hưu không?",
+   "question_type": "synthesis",
+   "complex_kind": "lex_specialis_or_exception",
+   "family_id": "x-xf12",
+   "split": "dev",
+   "expected_status": "answer",
+   "relevant_unit_ids": [
+    "45-2019-qh14/chapter-xii/article-169/clause-3",
+    "135-2020-nd-cp/article-5/clause-1/point-a",
+    "135-2020-nd-cp/article-5/clause-2",
+    "135-2020-nd-cp/article-3/clause-1",
+    "41-2024-qh15/chapter-v/section-3/article-64/clause-1/point-b"
+   ],
+   "issues": [
+    "Ngoại lệ nghỉ hưu ở tuổi thấp hơn cho nghề đặc biệt nặng nhọc, độc hại",
+    "Tuổi nghỉ hưu thấp nhất theo bảng lộ trình",
+    "Điều kiện 15 năm làm nghề nặng nhọc, độc hại để hưởng lương hưu",
+    "Thời điểm nghỉ hưu"
+   ],
+   "reference_outcome": "Anh được nghỉ hưu sớm theo ngoại lệ khoản 3 Điều 169 BLLĐ, do NĐ 135 cụ thể hóa: năm 2025 anh chưa đủ 56 tuổi 3 tháng, còn tuổi thấp nhất năm 2026 là 56 tuổi 6 tháng, anh đủ vào tháng 12/2026 nên thời điểm nghỉ hưu sớm nhất là kết thúc ngày 31/12/2026. Anh hưởng lương hưu theo điểm b khoản 1 Điều 64 Luật BHXH 2024 vì có từ đủ 15 năm đóng BHXH khi làm nghề nặng nhọc, độc hại; quy định riêng này thay cho tuổi nghỉ hưu chung tại khoản 2 Điều 169.",
+   "documents": [
+    "135-2020-nd-cp",
+    "41-2024-qh15",
+    "45-2019-qh14"
+   ],
+   "annotation_status": "model_proposal",
+   "level": "complex",
+   "source_set": "dryrun-conflict-v1"
+  },
+  {
+   "question_id": "m-cq06",
+   "question": "Công ty muốn cho công nhân tăng ca thì phải được họ đồng ý về những nội dung gì, và một ngày thường được tăng ca tối đa bao nhiêu giờ?",
+   "question_type": "synthesis",
+   "complex_kind": "cross_document",
+   "family_id": "m-cf06",
+   "split": "dev",
+   "expected_status": "answer",
+   "relevant_unit_ids": [
+    "45-2019-qh14/chapter-vii/section-1/article-107/clause-2/point-a",
+    "145-2020-nd-cp/chapter-vii/article-59/clause-1",
+    "45-2019-qh14/chapter-vii/section-1/article-107/clause-2/point-b",
+    "145-2020-nd-cp/chapter-vii/article-60/clause-1"
+   ],
+   "annotation_status": "model_proposal",
+   "level": "complex",
+   "source_set": "dryrun-complex-v1"
+  },
+  {
+   "question_id": "s-qq456034af962d",
+   "family_id": "s-f456034af962d",
+   "question": "Làm ca đêm thì luật tính từ mấy giờ đến mấy giờ?",
+   "split": "dev",
+   "question_type": "lookup",
+   "expected_status": "answer",
+   "relevant_unit_ids": [
+    "45-2019-qh14/chapter-vii/section-1/article-106"
+   ],
+   "annotation_status": "model_proposal_not_reviewed",
+   "level": "simple",
+   "source_set": "dryrun-v1"
+  },
+  {
+   "question_id": "s-qq94c2ce99dc4c",
+   "family_id": "s-f94c2ce99dc4c",
+   "question": "Thâm niên làm việc lâu năm có được cộng thêm ngày phép không, cộng thế nào?",
+   "split": "dev",
+   "question_type": "lookup",
+   "expected_status": "answer",
+   "relevant_unit_ids": [
+    "45-2019-qh14/chapter-vii/section-2/article-114"
+   ],
+   "annotation_status": "model_proposal_not_reviewed",
+   "level": "simple",
+   "source_set": "dryrun-v1"
+  },
+  {
+   "question_id": "x-x18",
+   "question": "Một nhân viên nghỉ việc ngày 15/12/2025 và nộp hồ sơ hưởng trợ cấp thất nghiệp ngày 22/12/2025, nhưng đến đầu tháng 1/2026 vẫn chưa có quyết định vì công ty chưa hoàn thành thủ tục xác nhận thời gian đóng bảo hiểm thất nghiệp. Hồ sơ của anh được giải quyết theo luật nào, và công ty có bị xử lý gì không?",
+   "question_type": "synthesis",
+   "complex_kind": "amended_or_superseded",
+   "family_id": "x-xf18",
+   "split": "dev",
+   "expected_status": "answer",
+   "relevant_unit_ids": [
+    "74-2025-qh15/chapter-viii/article-54/clause-1",
+    "74-2025-qh15/chapter-viii/article-54/clause-2",
+    "74-2025-qh15/chapter-viii/article-55/clause-4",
+    "45-2019-qh14/chapter-iii/section-3/article-48/clause-3/point-a",
+    "12-2022-nd-cp/chapter-iii/article-39/clause-3"
+   ],
+   "issues": [
+    "Thời điểm Luật Việc làm 2025 có hiệu lực và Luật Việc làm 2013 hết hiệu lực",
+    "Quy định chuyển tiếp cho hồ sơ nộp trước 01/01/2026 chưa có quyết định",
+    "Nghĩa vụ xác nhận thời gian đóng BHTN khi chấm dứt hợp đồng",
+    "Chế tài trong NĐ 12/2022 ban hành dưới luật cũ"
+   ],
+   "reference_outcome": "Hồ sơ chưa có quyết định trước 01/01/2026 nên được giải quyết theo Luật Việc làm 2025 (khoản 4 Điều 55), dù anh nghỉ việc và nộp hồ sơ khi luật cũ còn hiệu lực. Công ty vi phạm nghĩa vụ tại điểm a khoản 3 Điều 48 BLLĐ và có thể bị phạt 1 - 3 triệu đồng cho mỗi người lao động (mức cá nhân, doanh nghiệp gấp đôi) theo khoản 3 Điều 39 NĐ 12; quy định phạt này mô tả hành vi chung, không dẫn chiếu điều cụ thể của Luật Việc làm 2013, nên vẫn áp dụng được.",
+   "documents": [
+    "12-2022-nd-cp",
+    "45-2019-qh14",
+    "74-2025-qh15"
+   ],
+   "annotation_status": "model_proposal",
+   "level": "complex",
+   "source_set": "dryrun-conflict-v1"
+  },
+  {
+   "question_id": "s-qq24a9f9565f2f",
+   "family_id": "s-f24a9f9565f2f",
+   "question": "Quy chế thưởng trong công ty do ai quyết định và có cần hỏi ý kiến công đoàn không?",
+   "split": "dev",
+   "question_type": "lookup",
+   "expected_status": "answer",
+   "relevant_unit_ids": [
+    "45-2019-qh14/chapter-vi/article-104/clause-2"
+   ],
+   "annotation_status": "model_proposal_not_reviewed",
+   "level": "simple",
+   "source_set": "dryrun-v1"
+  },
+  {
+   "question_id": "s-qq5e9746529838",
+   "family_id": "s-f5e9746529838",
+   "question": "Tiền lương làm căn cứ tính trợ cấp thôi việc được lấy theo tháng nào?",
+   "split": "dev",
+   "question_type": "lookup",
+   "expected_status": "answer",
+   "relevant_unit_ids": [
+    "145-2020-nd-cp/chapter-iii/section-2/article-8/clause-5/point-a"
+   ],
+   "annotation_status": "model_proposal_not_reviewed",
+   "level": "simple",
+   "source_set": "dryrun-v1"
+  },
+  {
+   "question_id": "x-x06",
+   "question": "Một nhân viên mới vào công ty được 5 tháng thì sinh đôi; trước đó chị chưa từng tham gia BHXH. Chồng chị làm ở công ty khác và đã đóng BHXH bắt buộc liên tục 3 năm. Chị được nghỉ sinh bao lâu, có được BHXH trả trợ cấp thai sản không, và gia đình có được nhận khoản trợ cấp một lần nào không?",
+   "question_type": "synthesis",
+   "complex_kind": "cross_law",
+   "family_id": "x-xf06",
+   "split": "dev",
+   "expected_status": "answer",
+   "relevant_unit_ids": [
+    "45-2019-qh14/chapter-x/article-139/clause-1",
+    "41-2024-qh15/chapter-v/section-2/article-53/clause-1",
+    "41-2024-qh15/chapter-v/section-2/article-50/clause-2",
+    "41-2024-qh15/chapter-v/section-2/article-58/clause-1",
+    "41-2024-qh15/chapter-v/section-2/article-58/clause-4"
+   ],
+   "issues": [
+    "Thời gian nghỉ thai sản khi sinh đôi theo BLLĐ",
+    "Điều kiện 06 tháng đóng BHXH trong 12 tháng để hưởng chế độ thai sản",
+    "Quyền nghỉ theo BLLĐ tách khỏi quyền hưởng trợ cấp BHXH",
+    "Trợ cấp một lần chuyển sang người chồng"
+   ],
+   "reference_outcome": "Theo BLLĐ chị được nghỉ 07 tháng (06 tháng cộng 01 tháng cho con thứ hai), và Luật BHXH 2024 dẫn chiếu thẳng khoản 1 Điều 139 nên hai luật thống nhất về thời gian. Nhưng chị mới đóng 5 tháng nên không đủ điều kiện khoản 2 Điều 50, quỹ BHXH không trả trợ cấp thai sản và trợ cấp một lần cho chị; vì chồng đủ điều kiện khoản 2 Điều 50, chồng được trợ cấp một lần bằng 02 lần mức tham chiếu cho mỗi con, tức 04 lần mức tham chiếu.",
+   "documents": [
+    "41-2024-qh15",
+    "45-2019-qh14"
+   ],
+   "annotation_status": "model_proposal",
+   "level": "complex",
+   "source_set": "dryrun-conflict-v1"
+  },
+  {
+   "question_id": "m-cq29",
+   "question": "Nhân viên hợp đồng vô thời hạn làm 3 năm xin nghỉ: cần báo trước bao nhiêu ngày, được nhận trợ cấp gì và công ty phải trả hết tiền trong thời hạn nào?",
+   "question_type": "synthesis",
+   "complex_kind": "situation",
+   "family_id": "m-cf21",
+   "split": "dev",
+   "expected_status": "answer",
+   "relevant_unit_ids": [
+    "45-2019-qh14/chapter-iii/section-3/article-35/clause-1/point-a",
+    "45-2019-qh14/chapter-iii/section-3/article-46/clause-1",
+    "45-2019-qh14/chapter-iii/section-3/article-48/clause-1"
+   ],
+   "annotation_status": "model_proposal",
+   "level": "complex",
+   "source_set": "dryrun-complex-v1"
+  },
+  {
+   "question_id": "s-qqd8e1f473d841",
+   "family_id": "s-fd8e1f473d841",
+   "question": "Trước khi cho người lao động thôi việc vì tái cơ cấu, công ty phải thông báo cho Ủy ban nhân dân tỉnh trước bao nhiêu ngày?",
+   "split": "dev",
+   "question_type": "lookup",
+   "expected_status": "answer",
+   "relevant_unit_ids": [
+    "45-2019-qh14/chapter-iii/section-3/article-42/clause-6"
+   ],
+   "annotation_status": "model_proposal_not_reviewed",
+   "level": "simple",
+   "source_set": "dryrun-v1"
+  },
+  {
+   "question_id": "x-x21",
+   "question": "Một nữ công nhân mang thai tháng thứ 7 bị tổ trưởng xếp làm ca đêm và tăng ca; khi chị từ chối, công ty ra quyết định đơn phương chấm dứt hợp đồng với lý do không chấp hành phân công. Công ty sai ở đâu, bị phạt thế nào và phải khắc phục ra sao?",
+   "question_type": "synthesis",
+   "complex_kind": "obligation_and_sanction",
+   "family_id": "x-xf21",
+   "split": "dev",
+   "expected_status": "answer",
+   "relevant_unit_ids": [
+    "45-2019-qh14/chapter-x/article-137/clause-1/point-a",
+    "45-2019-qh14/chapter-x/article-137/clause-3",
+    "12-2022-nd-cp/chapter-ii/article-28/clause-2/point-a",
+    "12-2022-nd-cp/chapter-ii/article-28/clause-2/point-i",
+    "12-2022-nd-cp/chapter-ii/article-28/clause-3/point-c"
+   ],
+   "issues": [
+    "Cấm làm đêm, làm thêm giờ với lao động nữ mang thai từ tháng thứ 07",
+    "Từ chối công việc bị cấm không phải là vi phạm",
+    "Cấm đơn phương chấm dứt vì lý do mang thai",
+    "Mức phạt và biện pháp khắc phục"
+   ],
+   "reference_outcome": "Công ty vi phạm hai lần: phân công ca đêm, tăng ca cho người mang thai tháng thứ 7 trái điểm a khoản 1 Điều 137, và chấm dứt hợp đồng mà thực chất vì chị mang thai và từ chối công việc bị cấm, trái khoản 3 Điều 137 BLLĐ. Mỗi hành vi có khung 10 - 20 triệu đồng mức cá nhân nên doanh nghiệp chịu 20 - 40 triệu đồng mỗi hành vi, và bị buộc nhận chị trở lại làm việc theo điểm c khoản 3 Điều 28 NĐ 12.",
+   "documents": [
+    "12-2022-nd-cp",
+    "45-2019-qh14"
+   ],
+   "annotation_status": "model_proposal",
+   "level": "complex",
+   "source_set": "dryrun-conflict-v1"
+  },
+  {
+   "question_id": "s-qqd59d6b6d2b7a",
+   "family_id": "s-fd59d6b6d2b7a",
+   "question": "Ký hợp đồng lao động online bằng chữ ký điện tử thì có giá trị như bản giấy không?",
+   "split": "dev",
+   "question_type": "lookup",
+   "expected_status": "answer",
+   "relevant_unit_ids": [
+    "45-2019-qh14/chapter-iii/section-1/article-14/clause-1"
+   ],
+   "annotation_status": "model_proposal_not_reviewed",
+   "level": "simple",
+   "source_set": "dryrun-v1"
+  },
+  {
+   "question_id": "s-qq0f5a0ed3ee8a",
+   "family_id": "s-f0f5a0ed3ee8a",
+   "question": "Tôi nên ký hợp đồng có thời hạn hay không thời hạn thì có lợi cho tôi hơn?",
+   "split": "dev",
+   "question_type": "out_of_scope",
+   "expected_status": "refuse",
+   "relevant_unit_ids": [],
+   "annotation_status": "model_proposal_not_reviewed",
+   "level": "out_of_scope",
+   "source_set": "dryrun-v1"
+  },
+  {
+   "question_id": "s-qq0ea0ed250a82",
+   "family_id": "s-f0ea0ed250a82",
+   "question": "Nhân viên được công ty cử đi đào tạo rồi nghỉ việc thì chi phí đào tạo phải hoàn trả được tính gồm những khoản nào?",
+   "split": "dev",
+   "question_type": "out_of_scope",
+   "expected_status": "refuse",
+   "relevant_unit_ids": [],
+   "annotation_status": "model_proposal_not_reviewed",
+   "level": "out_of_scope",
+   "source_set": "dryrun-v1"
+  },
+  {
+   "question_id": "m-cq19",
+   "question": "Làm cho một công ty liên tục hơn 10 năm trong điều kiện bình thường thì số ngày phép năm tăng lên thành bao nhiêu?",
+   "question_type": "synthesis",
+   "complex_kind": "multi_article",
+   "family_id": "m-cf14",
+   "split": "dev",
+   "expected_status": "answer",
+   "relevant_unit_ids": [
+    "45-2019-qh14/chapter-vii/section-2/article-113/clause-1/point-a",
+    "45-2019-qh14/chapter-vii/section-2/article-114"
+   ],
+   "annotation_status": "model_proposal",
+   "level": "complex",
+   "source_set": "dryrun-complex-v1"
+  },
+  {
+   "question_id": "m-cq21",
+   "question": "Nhân viên làm hợp đồng không thời hạn được 3 năm muốn nghỉ việc: phải báo trước bao lâu, có được trợ cấp thôi việc không, và công ty phải thanh toán hết các khoản trong bao lâu?",
+   "question_type": "synthesis",
+   "complex_kind": "situation",
+   "family_id": "m-cf21",
+   "split": "dev",
+   "expected_status": "answer",
+   "relevant_unit_ids": [
+    "45-2019-qh14/chapter-iii/section-3/article-35/clause-1/point-a",
+    "45-2019-qh14/chapter-iii/section-3/article-46/clause-1",
+    "45-2019-qh14/chapter-iii/section-3/article-48/clause-1"
+   ],
+   "annotation_status": "model_proposal",
+   "level": "complex",
+   "source_set": "dryrun-complex-v1"
+  },
+  {
+   "question_id": "s-qqc58193db2835",
+   "family_id": "s-f91ca44cc1e04",
+   "question": "Vị trí yêu cầu bằng cao đẳng trở lên thì thời gian thử việc dài nhất là mấy ngày?",
+   "split": "dev",
+   "question_type": "lookup",
+   "expected_status": "answer",
+   "relevant_unit_ids": [
+    "45-2019-qh14/chapter-iii/section-1/article-25/clause-2"
+   ],
+   "annotation_status": "model_proposal_not_reviewed",
+   "level": "simple",
+   "source_set": "dryrun-v1"
+  },
+  {
+   "question_id": "m-cq02",
+   "question": "Nhân viên tự ý nghỉ liền 6 ngày làm việc không có lý do, công ty chấm dứt hợp đồng thì có còn phải trả trợ cấp thôi việc cho người đó không?",
+   "question_type": "synthesis",
+   "complex_kind": "cross_document",
+   "family_id": "m-cf02",
+   "split": "dev",
+   "expected_status": "answer",
+   "relevant_unit_ids": [
+    "45-2019-qh14/chapter-iii/section-3/article-36/clause-1/point-e",
+    "145-2020-nd-cp/chapter-iii/section-2/article-8/clause-1/point-b",
+    "45-2019-qh14/chapter-iii/section-3/article-46/clause-1"
+   ],
+   "annotation_status": "model_proposal",
+   "level": "complex",
+   "source_set": "dryrun-complex-v1"
+  },
+  {
+   "question_id": "x-x03",
+   "question": "Công ty phần mềm muốn ràng buộc một kỹ sư R&D không được tiết lộ mã nguồn và thuật toán của công ty, kể cả trong 2 năm sau khi nghỉ việc. Thỏa thuận này lập ở đâu, nên có những nội dung gì, và nếu kỹ sư vi phạm thì công ty xử lý theo thủ tục nào khi vi phạm xảy ra lúc còn làm việc và khi đã nghỉ?",
+   "question_type": "synthesis",
+   "complex_kind": "law_and_detail",
+   "family_id": "x-xf03",
+   "split": "dev",
+   "expected_status": "answer",
+   "relevant_unit_ids": [
+    "45-2019-qh14/chapter-iii/section-1/article-21/clause-2",
+    "10-2020-tt-bldtbxh/chapter-ii/article-4/clause-1",
+    "10-2020-tt-bldtbxh/chapter-ii/article-4/clause-2/point-c",
+    "10-2020-tt-bldtbxh/chapter-ii/article-4/clause-3/point-a",
+    "10-2020-tt-bldtbxh/chapter-ii/article-4/clause-3/point-b"
+   ],
+   "issues": [
+    "Hình thức của thỏa thuận bảo vệ bí mật kinh doanh, bí mật công nghệ",
+    "Các nội dung chủ yếu, gồm thời hạn bảo vệ kéo dài sau khi nghỉ việc",
+    "Thủ tục xử lý vi phạm khi hợp đồng còn hiệu lực",
+    "Thủ tục xử lý vi phạm sau khi chấm dứt hợp đồng"
+   ],
+   "reference_outcome": "BLLĐ cho phép thỏa thuận bằng văn bản, TT 10 chi tiết rằng có thể ghi ngay trong hợp đồng lao động hoặc văn bản riêng, với danh mục bí mật, phạm vi sử dụng, thời hạn bảo vệ, phương thức bảo vệ, quyền nghĩa vụ và xử lý vi phạm. Vi phạm khi hợp đồng còn hiệu lực thì xử lý bồi thường theo trình tự khoản 2 Điều 130 BLLĐ; vi phạm sau khi đã nghỉ việc không còn theo thủ tục lao động mà xử lý theo pháp luật dân sự và pháp luật liên quan.",
+   "documents": [
+    "10-2020-tt-bldtbxh",
+    "45-2019-qh14"
+   ],
+   "annotation_status": "model_proposal",
+   "level": "complex",
+   "source_set": "dryrun-conflict-v1"
+  },
+  {
+   "question_id": "x-x13",
+   "question": "Công ty tự ý điều chuyển một nhân viên kế toán từ trụ sở Hà Nội vào chi nhánh Đà Nẵng làm việc lâu dài, trong khi hợp đồng ghi địa điểm làm việc là Hà Nội; chị nghỉ việc ngay mà không báo trước. Chị có được trợ cấp thôi việc và trợ cấp thất nghiệp không? Nếu chị nghỉ ngang không báo trước chỉ vì đã tìm được việc mới thì kết quả khác thế nào?",
+   "question_type": "synthesis",
+   "complex_kind": "lex_specialis_or_exception",
+   "family_id": "x-xf13",
+   "split": "dev",
+   "expected_status": "answer",
+   "relevant_unit_ids": [
+    "45-2019-qh14/chapter-iii/section-3/article-35/clause-2/point-a",
+    "45-2019-qh14/chapter-iii/section-3/article-46/clause-1",
+    "45-2019-qh14/chapter-iii/section-3/article-40/clause-1",
+    "74-2025-qh15/chapter-vii/section-4/article-38/clause-1/point-a"
+   ],
+   "issues": [
+    "Quyền nghỉ không cần báo trước khi bị bố trí sai địa điểm làm việc",
+    "Trợ cấp thôi việc khi người lao động đơn phương chấm dứt đúng luật",
+    "Luật Việc làm 2025 dựa vào BLLĐ để xác định tính hợp pháp của việc nghỉ",
+    "Hậu quả khi nghỉ ngang không có căn cứ"
+   ],
+   "reference_outcome": "Điều chuyển lâu dài sai địa điểm đã thỏa thuận (không phải tạm chuyển theo Điều 29) cho phép chị nghỉ ngay không cần báo trước, nên việc chấm dứt là hợp pháp: chị được trợ cấp thôi việc cho phần thời gian chưa tham gia BHTN và không bị loại khỏi trợ cấp thất nghiệp theo điểm a khoản 1 Điều 38 Luật Việc làm 2025. Nếu chị nghỉ ngang chỉ vì có việc mới mà không báo trước theo khoản 1 Điều 35 thì đó là đơn phương chấm dứt trái pháp luật: mất trợ cấp thôi việc (khoản 1 Điều 40 BLLĐ) và không được hưởng trợ cấp thất nghiệp.",
+   "documents": [
+    "45-2019-qh14",
+    "74-2025-qh15"
+   ],
+   "annotation_status": "model_proposal",
+   "level": "complex",
+   "source_set": "dryrun-conflict-v1"
+  },
+  {
+   "question_id": "m-cq07",
+   "question": "Họp kỷ luật một nhân viên thì phải gửi thông báo trước mấy ngày, và những ai bắt buộc phải có mặt trong cuộc họp?",
+   "question_type": "synthesis",
+   "complex_kind": "cross_document",
+   "family_id": "m-cf07",
+   "split": "dev",
+   "expected_status": "answer",
+   "relevant_unit_ids": [
+    "45-2019-qh14/chapter-viii/section-1/article-122/clause-1/point-b",
+    "45-2019-qh14/chapter-viii/section-1/article-122/clause-1/point-c",
+    "145-2020-nd-cp/chapter-viii/article-70/clause-2/point-a"
+   ],
+   "annotation_status": "model_proposal",
+   "level": "complex",
+   "source_set": "dryrun-complex-v1"
+  },
+  {
+   "question_id": "s-qqb8de2f304272",
+   "family_id": "s-fb8de2f304272",
+   "question": "Đang thử việc mà thấy không hợp, em có thể nghỉ luôn mà không cần báo trước hay bồi thường gì không?",
+   "split": "dev",
+   "question_type": "lookup",
+   "expected_status": "answer",
+   "relevant_unit_ids": [
+    "45-2019-qh14/chapter-iii/section-1/article-27/clause-2"
+   ],
+   "annotation_status": "model_proposal_not_reviewed",
+   "level": "simple",
+   "source_set": "dryrun-v1"
+  },
+  {
+   "question_id": "s-qq5d2f8624d15e",
+   "family_id": "s-f5d2f8624d15e",
+   "question": "Doanh nghiệp chưa xây dựng thang lương, bảng lương thì mức phạt hành chính là bao nhiêu?",
+   "split": "dev",
+   "question_type": "lookup",
+   "expected_status": "answer",
+   "relevant_unit_ids": [
+    "12-2022-nd-cp/chapter-ii/article-17/clause-1/point-b"
+   ],
+   "annotation_status": "model_proposal_not_reviewed",
+   "level": "simple",
+   "source_set": "dryrun-v1"
+  },
+  {
+   "question_id": "x-x22",
+   "question": "Một chuỗi nhà hàng tuyển 20 nhân viên phục vụ thời vụ làm 3 tháng dịp Tết, chỉ thỏa thuận miệng và trả lương tiền mặt, không ký hợp đồng và không đóng BHXH. Doanh nghiệp vi phạm những gì, và riêng việc không ký hợp đồng bằng văn bản bị phạt bao nhiêu?",
+   "question_type": "synthesis",
+   "complex_kind": "obligation_and_sanction",
+   "family_id": "x-xf22",
+   "split": "dev",
+   "expected_status": "answer",
+   "relevant_unit_ids": [
+    "45-2019-qh14/chapter-iii/section-1/article-14/clause-1",
+    "45-2019-qh14/chapter-iii/section-1/article-14/clause-2",
+    "12-2022-nd-cp/chapter-ii/article-9/clause-1/point-b",
+    "12-2022-nd-cp/chapter-ii/article-9/clause-3/point-a",
+    "41-2024-qh15/chapter-i/article-2/clause-1/point-a"
+   ],
+   "issues": [
+    "Hình thức bằng văn bản với hợp đồng từ đủ 01 tháng",
+    "Mức phạt theo số người lao động và nhân hai đối với tổ chức",
+    "Biện pháp khắc phục",
+    "Nghĩa vụ BHXH bắt buộc phát sinh dù không ký hợp đồng bằng văn bản"
+   ],
+   "reference_outcome": "Hợp đồng 3 tháng phải lập bằng văn bản; thỏa thuận miệng chỉ hợp lệ với hợp đồng dưới 01 tháng. Với 20 người, khung phạt cá nhân là 5 - 10 triệu đồng nên doanh nghiệp bị phạt 10 - 20 triệu đồng và buộc ký hợp đồng bằng văn bản; đồng thời quan hệ từ đủ 01 tháng vẫn thuộc diện BHXH bắt buộc theo Luật BHXH 2024, nên việc không đóng là một vi phạm riêng, xử lý theo quy định về đóng BHXH.",
+   "documents": [
+    "12-2022-nd-cp",
+    "41-2024-qh15",
+    "45-2019-qh14"
+   ],
+   "annotation_status": "model_proposal",
+   "level": "complex",
+   "source_set": "dryrun-conflict-v1"
+  },
+  {
+   "question_id": "x-x23",
+   "question": "Công ty tuyển 5 nhân viên chính thức từ ngày 01/3/2026 nhưng đến giữa tháng 6/2026 vẫn chưa nộp hồ sơ đăng ký tham gia BHXH cho họ. Hạn đăng ký là khi nào, đến thời điểm này hành vi bị xác định là gì, và mức phạt có thể ra sao?",
+   "question_type": "synthesis",
+   "complex_kind": "obligation_and_sanction",
+   "family_id": "x-xf23",
+   "split": "dev",
+   "expected_status": "answer",
+   "relevant_unit_ids": [
+    "41-2024-qh15/chapter-iv/section-1/article-28/clause-1",
+    "41-2024-qh15/chapter-iv/section-2/article-39/clause-1/point-a",
+    "12-2022-nd-cp/chapter-iii/article-41/clause-4/point-a",
+    "12-2022-nd-cp/chapter-iii/article-39/clause-7/point-a",
+    "12-2022-nd-cp/chapter-iii/article-39/clause-10/point-a"
+   ],
+   "issues": [
+    "Thời hạn 30 ngày đăng ký tham gia BHXH",
+    "Mốc 60 ngày sau thời hạn để bị coi là trốn đóng theo Luật BHXH 2024",
+    "Chế tài không lập hồ sơ đúng hạn và chế tài trốn đóng trong NĐ 12/2022",
+    "Biện pháp khắc phục"
+   ],
+   "reference_outcome": "Hạn đăng ký là 30 ngày kể từ 01/3/2026 (khoảng 31/3/2026); quá thêm 60 ngày (khoảng 30/5/2026) mà vẫn chưa đăng ký thì theo điểm a khoản 1 Điều 39 Luật BHXH 2024 hành vi đã là trốn đóng, không chỉ là chậm lập hồ sơ. NĐ 12 cho phép phạt việc không lập hồ sơ đúng hạn 2 - 4 triệu đồng mỗi người và hành vi trốn đóng 50 - 75 triệu đồng (mức cá nhân, doanh nghiệp gấp đôi), kèm buộc đóng đủ; khái niệm trốn đóng mà NĐ 12 xử phạt nay được xác định theo Luật BHXH 2024.",
+   "documents": [
+    "12-2022-nd-cp",
+    "41-2024-qh15"
+   ],
+   "annotation_status": "model_proposal",
+   "level": "complex",
+   "source_set": "dryrun-conflict-v1"
+  },
+  {
+   "question_id": "m-cq27",
+   "question": "Nhân viên làm mất laptop công ty giao, nửa năm sau công ty mới đòi bồi thường: còn trong thời hiệu không, và nếu trừ vào lương thì trừ thế nào?",
+   "question_type": "synthesis",
+   "complex_kind": "situation",
+   "family_id": "m-cf27",
+   "split": "dev",
+   "expected_status": "answer",
+   "relevant_unit_ids": [
+    "45-2019-qh14/chapter-viii/section-2/article-129/clause-2",
+    "145-2020-nd-cp/chapter-viii/article-72/clause-1",
+    "45-2019-qh14/chapter-vi/article-102/clause-1",
+    "45-2019-qh14/chapter-vi/article-102/clause-3"
+   ],
+   "annotation_status": "model_proposal",
+   "level": "complex",
+   "source_set": "dryrun-complex-v1"
+  },
+  {
+   "question_id": "m-cq22",
+   "question": "Công ty thay đổi công nghệ nên phải cắt giảm 20 người: công ty phải làm gì trước khi cho nghỉ, và người bị cho nghỉ được trợ cấp bao nhiêu?",
+   "question_type": "synthesis",
+   "complex_kind": "situation",
+   "family_id": "m-cf22",
+   "split": "dev",
+   "expected_status": "answer",
+   "relevant_unit_ids": [
+    "45-2019-qh14/chapter-iii/section-3/article-42/clause-3",
+    "45-2019-qh14/chapter-iii/section-3/article-47/clause-1",
+    "145-2020-nd-cp/chapter-iii/section-2/article-8/clause-2"
+   ],
+   "annotation_status": "model_proposal",
+   "level": "complex",
+   "source_set": "dryrun-complex-v1"
+  },
+  {
+   "question_id": "x-x04",
+   "question": "Nhà máy gia công linh kiện điện tử xuất khẩu dự kiến cho công nhân tăng ca tổng cộng khoảng 280 giờ trong năm 2026, rải đều các tháng. Công ty có được làm vậy không, phải thông báo cho cơ quan nào và chậm nhất khi nào?",
+   "question_type": "synthesis",
+   "complex_kind": "law_and_detail",
+   "family_id": "x-xf04",
+   "split": "dev",
+   "expected_status": "answer",
+   "relevant_unit_ids": [
+    "45-2019-qh14/chapter-vii/section-1/article-107/clause-3/point-a",
+    "45-2019-qh14/chapter-vii/section-1/article-107/clause-2/point-b",
+    "45-2019-qh14/chapter-vii/section-1/article-107/clause-4",
+    "145-2020-nd-cp/chapter-vii/article-62/clause-1/point-a",
+    "145-2020-nd-cp/chapter-vii/article-62/clause-2"
+   ],
+   "issues": [
+    "Gia công xuất khẩu hàng điện tử có thuộc diện làm thêm đến 300 giờ/năm",
+    "Giới hạn làm thêm theo tháng vẫn phải tuân thủ",
+    "Cơ quan nhận thông báo và thời hạn thông báo"
+   ],
+   "reference_outcome": "Được, vì gia công xuất khẩu hàng điện tử thuộc điểm a khoản 3 Điều 107 BLLĐ, miễn là mỗi tháng không quá 40 giờ (280 giờ chia 12 tháng khoảng 23 giờ) và người lao động đồng ý. Công ty phải thông báo bằng văn bản cho cơ quan chuyên môn về lao động cấp tỉnh nơi tổ chức làm thêm (và nơi đặt trụ sở chính nếu khác tỉnh), chậm nhất 15 ngày kể từ ngày bắt đầu làm thêm vượt 200 giờ, theo NĐ 145 chi tiết khoản 4 Điều 107.",
+   "documents": [
+    "145-2020-nd-cp",
+    "45-2019-qh14"
+   ],
+   "annotation_status": "model_proposal",
+   "level": "complex",
+   "source_set": "dryrun-conflict-v1"
+  },
+  {
+   "question_id": "s-qqdedd535ed402",
+   "family_id": "s-f4ec87b527758",
+   "question": "Lương thử việc tối thiểu phải đạt bao nhiêu phần trăm mức lương của vị trí đó?",
+   "split": "dev",
+   "question_type": "lookup",
+   "expected_status": "answer",
+   "relevant_unit_ids": [
+    "45-2019-qh14/chapter-iii/section-1/article-26"
+   ],
+   "annotation_status": "model_proposal_not_reviewed",
+   "level": "simple",
+   "source_set": "dryrun-v1"
+  },
+  {
+   "question_id": "s-qq839b27c7d56e",
+   "family_id": "s-f839b27c7d56e",
+   "question": "Công ty tạm đình chỉ công việc để xác minh vi phạm thì được đình chỉ tối đa bao lâu, trong thời gian đó người lao động có lương không?",
+   "split": "dev",
+   "question_type": "lookup",
+   "expected_status": "answer",
+   "relevant_unit_ids": [
+    "45-2019-qh14/chapter-viii/section-1/article-128/clause-2"
+   ],
+   "annotation_status": "model_proposal_not_reviewed",
+   "level": "simple",
+   "source_set": "dryrun-v1"
+  },
+  {
+   "question_id": "x-x15",
+   "question": "Công ty TNHH của chúng tôi chậm đóng BHXH bắt buộc và bảo hiểm thất nghiệp cho nhân viên từ tháng 3/2025 đến nay, chưa bị cơ quan nào đôn đốc. Tháng 2/2026 thanh tra lập biên bản. Ngoài việc đóng bù, công ty bị phạt tiền khoảng bao nhiêu, và tiền lãi chậm đóng tính theo NĐ 12/2022 (gấp 2 lần lãi suất đầu tư quỹ) hay theo Luật BHXH 2024?",
+   "question_type": "synthesis",
+   "complex_kind": "amended_or_superseded",
+   "family_id": "x-xf15",
+   "split": "dev",
+   "expected_status": "answer",
+   "relevant_unit_ids": [
+    "12-2022-nd-cp/chapter-iii/article-39/clause-5/point-a",
+    "12-2022-nd-cp/chapter-i/article-6/clause-1",
+    "12-2022-nd-cp/chapter-iii/article-39/clause-10/point-b",
+    "41-2024-qh15/chapter-iv/section-2/article-40/clause-1",
+    "41-2024-qh15/chapter-xi/article-141/clause-12"
+   ],
+   "issues": [
+    "Mức phạt tiền đối với hành vi chậm đóng BHXH, BHTN",
+    "Mức phạt đối với tổ chức gấp 2 lần cá nhân",
+    "Xung đột giữa cách tính lãi của NĐ 12/2022 và khoản 1 Điều 40 Luật BHXH 2024",
+    "Xử lý phần nợ phát sinh trước 01/7/2025"
+   ],
+   "reference_outcome": "Công ty bị phạt từ 24% đến 30% tổng số tiền phải đóng, tối đa 150 triệu đồng (gấp 2 lần mức cá nhân tại điểm a khoản 5 Điều 39 NĐ 12), và buộc đóng đủ. Về tiền chậm đóng, khoản 1 Điều 40 Luật BHXH 2024 (hiệu lực từ 01/7/2025) quy định 0,03%/ngày, khác cách tính 02 lần lãi suất đầu tư quỹ của NĐ 12; luật có hiệu lực pháp lý cao hơn và ban hành sau nên áp dụng 0,03%/ngày, kể cả cho phần nợ từ tháng 3 đến tháng 6/2025 theo khoản 12 Điều 141.",
+   "documents": [
+    "12-2022-nd-cp",
+    "41-2024-qh15"
+   ],
+   "annotation_status": "model_proposal",
+   "level": "complex",
+   "source_set": "dryrun-conflict-v1"
+  },
+  {
+   "question_id": "x-x09",
+   "question": "Hợp đồng của một trưởng ca ghi: mức lương 12 triệu đồng, phụ cấp trách nhiệm 2 triệu đồng và phụ cấp độc hại 1 triệu đồng trả cố định hằng tháng, cộng thưởng KPI theo quý tùy kết quả. Công ty muốn đăng ký đóng BHXH và BHTN chỉ trên 12 triệu đồng. Làm vậy có đúng không?",
+   "question_type": "synthesis",
+   "complex_kind": "cross_law",
+   "family_id": "x-xf09",
+   "split": "dev",
+   "expected_status": "answer",
+   "relevant_unit_ids": [
+    "10-2020-tt-bldtbxh/chapter-ii/article-3/clause-5/point-b",
+    "10-2020-tt-bldtbxh/chapter-ii/article-3/clause-5/point-c",
+    "41-2024-qh15/chapter-iv/section-2/article-31/clause-1/point-b",
+    "74-2025-qh15/chapter-vii/section-2/article-34/clause-1/point-b",
+    "41-2024-qh15/chapter-iv/section-2/article-39/clause-1/point-c"
+   ],
+   "issues": [
+    "Phân loại phụ cấp lương và khoản bổ sung trong hợp đồng theo TT 10",
+    "Tiền lương làm căn cứ đóng BHXH và BHTN",
+    "Thưởng KPI không cố định có tính vào căn cứ đóng không",
+    "Hậu quả của việc đăng ký thấp hơn"
+   ],
+   "reference_outcome": "Không đúng: hai khoản phụ cấp trả cố định là phụ cấp lương theo TT 10 và phải cộng vào căn cứ đóng theo Luật BHXH 2024 và Luật Việc làm 2025, nên căn cứ đóng tối thiểu là 15 triệu đồng; thưởng KPI không xác định trước mức tiền và không trả ổn định mỗi kỳ nên không thuộc căn cứ đóng. Đăng ký 12 triệu đồng là thấp hơn khoản 1 Điều 31 và bị coi là trốn đóng theo điểm c khoản 1 Điều 39 Luật BHXH 2024.",
+   "documents": [
+    "10-2020-tt-bldtbxh",
+    "41-2024-qh15",
+    "74-2025-qh15"
+   ],
+   "annotation_status": "model_proposal",
+   "level": "complex",
+   "source_set": "dryrun-conflict-v1"
+  },
+  {
+   "question_id": "m-cq12",
+   "question": "Nhân viên đang nghỉ ốm điều trị theo chỉ định của bác sĩ thì công ty có được đơn phương chấm dứt hợp đồng không, có ngoại lệ nào không?",
+   "question_type": "synthesis",
+   "complex_kind": "multi_article",
+   "family_id": "m-cf12",
+   "split": "dev",
+   "expected_status": "answer",
+   "relevant_unit_ids": [
+    "45-2019-qh14/chapter-iii/section-3/article-37/clause-1",
+    "45-2019-qh14/chapter-iii/section-3/article-36/clause-1/point-b"
+   ],
+   "annotation_status": "model_proposal",
+   "level": "complex",
+   "source_set": "dryrun-complex-v1"
+  },
+  {
+   "question_id": "m-cq26",
+   "question": "Công ty chậm lương 2 tháng vì khó khăn: nhân viên có được nghỉ ngay mà không cần báo trước không, công ty phải trả thêm gì và có bị phạt không?",
+   "question_type": "synthesis",
+   "complex_kind": "situation",
+   "family_id": "m-cf26",
+   "split": "dev",
+   "expected_status": "answer",
+   "relevant_unit_ids": [
+    "45-2019-qh14/chapter-iii/section-3/article-35/clause-2/point-b",
+    "45-2019-qh14/chapter-vi/article-97/clause-4",
+    "12-2022-nd-cp/chapter-ii/article-17/clause-2"
+   ],
+   "annotation_status": "model_proposal",
+   "level": "complex",
+   "source_set": "dryrun-complex-v1"
+  },
+  {
+   "question_id": "x-x01",
+   "question": "Nhà máy của công ty đặt trong một khu công nghiệp nằm vắt qua hai địa bàn, một bên thuộc vùng I, một bên thuộc vùng II. Từ tháng 1/2026 công ty định thuê sinh viên làm bán thời gian, trả lương theo giờ 23.000 đồng. Mức này có hợp pháp không và phải căn cứ mức lương tối thiểu của vùng nào?",
+   "question_type": "synthesis",
+   "complex_kind": "law_and_detail",
+   "family_id": "x-xf01",
+   "split": "dev",
+   "expected_status": "answer",
+   "relevant_unit_ids": [
+    "45-2019-qh14/chapter-vi/article-91/clause-2",
+    "45-2019-qh14/chapter-vi/article-90/clause-2",
+    "293-2025-nd-cp/article-3/clause-1",
+    "293-2025-nd-cp/article-3/clause-3/point-c",
+    "293-2025-nd-cp/article-4/clause-2"
+   ],
+   "issues": [
+    "Xác định vùng áp dụng khi khu công nghiệp nằm trên nhiều địa bàn",
+    "Mức lương tối thiểu giờ áp dụng từ 01/01/2026",
+    "Người làm bán thời gian hưởng lương theo giờ có phải tuân thủ lương tối thiểu giờ không"
+   ],
+   "reference_outcome": "Công ty phải áp dụng mức vùng I là 25.500 đồng/giờ, vì điểm c khoản 3 Điều 3 NĐ 293 chọn địa bàn có mức cao nhất cho khu công nghiệp nằm trên nhiều vùng. Mức 23.000 đồng/giờ tuy cao hơn mức vùng II nhưng thấp hơn mức tối thiểu giờ vùng I nên trái khoản 2 Điều 90 BLLĐ và khoản 2 Điều 4 NĐ 293; BLLĐ đặt nguyên tắc, NĐ 293 (chi tiết khoản 4 Điều 91 BLLĐ) quyết định con số và quy tắc chọn vùng.",
+   "documents": [
+    "293-2025-nd-cp",
+    "45-2019-qh14"
+   ],
+   "annotation_status": "model_proposal",
+   "level": "complex",
+   "source_set": "dryrun-conflict-v1"
+  },
+  {
+   "question_id": "m-cq15",
+   "question": "Đi nghỉ phép năm mà chưa tới ngày lãnh lương thì có được ứng trước tiền lương không, ứng tối thiểu bao nhiêu?",
+   "question_type": "synthesis",
+   "complex_kind": "multi_article",
+   "family_id": "m-cf15",
+   "split": "dev",
+   "expected_status": "answer",
+   "relevant_unit_ids": [
+    "45-2019-qh14/chapter-vii/section-2/article-113/clause-5",
+    "45-2019-qh14/chapter-vi/article-101/clause-3"
+   ],
+   "annotation_status": "model_proposal",
+   "level": "complex",
+   "source_set": "dryrun-complex-v1"
+  },
+  {
+   "question_id": "x-x10",
+   "question": "Công ty muốn ký hợp đồng 2 năm với một kế toán trưởng đã nghỉ hưu và đang nhận lương hưu. Công ty có phải đóng BHXH bắt buộc và bảo hiểm thất nghiệp cho ông không, và nếu không đóng thì có phải trả thêm khoản gì cho ông?",
+   "question_type": "synthesis",
+   "complex_kind": "lex_specialis_or_exception",
+   "family_id": "x-xf10",
+   "split": "dev",
+   "expected_status": "answer",
+   "relevant_unit_ids": [
+    "45-2019-qh14/chapter-xi/section-2/article-149/clause-2",
+    "41-2024-qh15/chapter-i/article-2/clause-7/point-a",
+    "74-2025-qh15/chapter-vii/section-1/article-31/clause-2",
+    "45-2019-qh14/chapter-xii/article-168/clause-3",
+    "12-2022-nd-cp/chapter-ii/article-17/clause-4/point-a"
+   ],
+   "issues": [
+    "Người đang hưởng lương hưu có thuộc đối tượng BHXH bắt buộc không",
+    "Người đang hưởng lương hưu có thuộc đối tượng BHTN không",
+    "Nghĩa vụ trả thêm khoản tiền tương đương mức đóng cho người không thuộc diện tham gia",
+    "Chế tài khi không trả khoản tiền đó"
+   ],
+   "reference_outcome": "Công ty không đóng BHXH bắt buộc và BHTN cho người đang hưởng lương hưu, vì Luật BHXH 2024 và Luật Việc làm 2025 đều loại trừ đối tượng này, và ông vẫn giữ nguyên lương hưu theo khoản 2 Điều 149 BLLĐ. Bù lại, theo khoản 3 Điều 168 BLLĐ công ty phải trả thêm cùng kỳ lương một khoản tương đương mức người sử dụng lao động lẽ ra phải đóng cho các loại bảo hiểm mà ông không thuộc diện tham gia; không trả thì bị phạt theo khoản 4 Điều 17 NĐ 12/2022.",
+   "documents": [
+    "12-2022-nd-cp",
+    "41-2024-qh15",
+    "45-2019-qh14",
+    "74-2025-qh15"
+   ],
+   "annotation_status": "model_proposal",
+   "level": "complex",
+   "source_set": "dryrun-conflict-v1"
+  },
+  {
+   "question_id": "m-cq11",
+   "question": "Nhân viên hợp đồng không thời hạn nghỉ ngang mà không báo trước đủ ngày thì phải bồi thường gì cho công ty?",
+   "question_type": "synthesis",
+   "complex_kind": "multi_article",
+   "family_id": "m-cf11",
+   "split": "dev",
+   "expected_status": "answer",
+   "relevant_unit_ids": [
+    "45-2019-qh14/chapter-iii/section-3/article-35/clause-1/point-a",
+    "45-2019-qh14/chapter-iii/section-3/article-40/clause-1",
+    "45-2019-qh14/chapter-iii/section-3/article-40/clause-2"
+   ],
+   "annotation_status": "model_proposal",
+   "level": "complex",
+   "source_set": "dryrun-complex-v1"
+  },
+  {
+   "question_id": "x-x00",
+   "question": "Một kỹ sư nam sinh tháng 5/1965, làm việc trong điều kiện lao động bình thường và đã đóng BHXH bắt buộc 22 năm. Phòng nhân sự cần xác định chính xác ngày anh nghỉ hưu và ngày bắt đầu hưởng lương hưu để chuẩn bị quyết định chấm dứt hợp đồng. Hai mốc đó là ngày nào?",
+   "question_type": "synthesis",
+   "complex_kind": "law_and_detail",
+   "family_id": "x-xf00",
+   "split": "dev",
+   "expected_status": "answer",
+   "relevant_unit_ids": [
+    "45-2019-qh14/chapter-xii/article-169/clause-2",
+    "135-2020-nd-cp/article-4/clause-2",
+    "135-2020-nd-cp/article-3/clause-1",
+    "135-2020-nd-cp/article-3/clause-2",
+    "41-2024-qh15/chapter-v/section-3/article-64/clause-1/point-a"
+   ],
+   "issues": [
+    "Tuổi nghỉ hưu của lao động nam theo lộ trình năm 2025 và năm 2026",
+    "Thời điểm nghỉ hưu tính theo tháng đủ tuổi",
+    "Thời điểm bắt đầu hưởng lương hưu",
+    "Điều kiện thời gian đóng BHXH để hưởng lương hưu"
+   ],
+   "reference_outcome": "Năm 2025 anh chưa đủ 61 tuổi 3 tháng (phải đến tháng 8/2026 mới đủ), nên áp dụng mức của năm 2026 là 61 tuổi 6 tháng, đủ vào tháng 11/2026. Thời điểm nghỉ hưu là kết thúc ngày 30/11/2026 và lương hưu được hưởng từ ngày 01/12/2026; với 22 năm đóng anh đủ điều kiện theo điểm a khoản 1 Điều 64 Luật BHXH 2024, còn NĐ 135 chỉ cụ thể hóa lộ trình của Điều 169 BLLĐ.",
+   "documents": [
+    "135-2020-nd-cp",
+    "41-2024-qh15",
+    "45-2019-qh14"
+   ],
+   "annotation_status": "model_proposal",
+   "level": "complex",
+   "source_set": "dryrun-conflict-v1"
+  },
+  {
+   "question_id": "m-cq04",
+   "question": "Công ty muốn đơn phương chấm dứt hợp đồng 2 năm với giám đốc điều hành (người quản lý doanh nghiệp) thì phải báo trước bao nhiêu ngày?",
+   "question_type": "synthesis",
+   "complex_kind": "cross_document",
+   "family_id": "m-cf04",
+   "split": "dev",
+   "expected_status": "answer",
+   "relevant_unit_ids": [
+    "45-2019-qh14/chapter-iii/section-3/article-36/clause-2/point-d",
+    "145-2020-nd-cp/chapter-iii/section-2/article-7/clause-1/point-b",
+    "145-2020-nd-cp/chapter-iii/section-2/article-7/clause-2/point-a"
+   ],
+   "annotation_status": "model_proposal",
+   "level": "complex",
+   "source_set": "dryrun-complex-v1"
+  },
+  {
+   "question_id": "m-cq17",
+   "question": "Nhân viên đang mang thai vi phạm nội quy thì có bị xử lý kỷ luật ngay không, và sau khi nghỉ thai sản xong thì thời hiệu xử lý được tính thế nào?",
+   "question_type": "synthesis",
+   "complex_kind": "multi_article",
+   "family_id": "m-cf17",
+   "split": "dev",
+   "expected_status": "answer",
+   "relevant_unit_ids": [
+    "45-2019-qh14/chapter-viii/section-1/article-122/clause-4/point-d",
+    "45-2019-qh14/chapter-viii/section-1/article-123/clause-2"
+   ],
+   "annotation_status": "model_proposal",
+   "level": "complex",
+   "source_set": "dryrun-complex-v1"
+  },
+  {
+   "question_id": "s-qqc8c1053a2184",
+   "family_id": "s-fc8c1053a2184",
+   "question": "Nhân viên tự ý bỏ việc không lý do bao nhiêu ngày liên tục thì công ty được quyền chấm dứt hợp đồng?",
+   "split": "dev",
+   "question_type": "lookup",
+   "expected_status": "answer",
+   "relevant_unit_ids": [
+    "45-2019-qh14/chapter-iii/section-3/article-36/clause-1/point-e"
+   ],
+   "annotation_status": "model_proposal_not_reviewed",
+   "level": "simple",
+   "source_set": "dryrun-v1"
+  },
+  {
+   "question_id": "x-x19",
+   "question": "Sau khi sắp xếp lại đơn vị hành chính, địa bàn nơi xưởng may của chúng tôi hoạt động bị xếp vào vùng có lương tối thiểu thấp hơn theo Phụ lục NĐ 293/2025. Từ 01/01/2026 công ty có được hạ mức lương tối thiểu áp dụng cho công nhân cũ không, còn công nhân tuyển từ năm 2026 thì sao?",
+   "question_type": "synthesis",
+   "complex_kind": "amended_or_superseded",
+   "family_id": "x-xf19",
+   "split": "dev",
+   "expected_status": "answer",
+   "relevant_unit_ids": [
+    "293-2025-nd-cp/article-5/clause-1",
+    "293-2025-nd-cp/article-5/clause-2",
+    "293-2025-nd-cp/article-5/clause-5",
+    "45-2019-qh14/chapter-vi/article-90/clause-2"
+   ],
+   "issues": [
+    "NĐ 293/2025 thay thế NĐ 74/2024 từ 01/01/2026",
+    "Bảo lưu mức lương tối thiểu cũ cho người tuyển dụng đến hết 31/12/2025",
+    "Mức áp dụng cho người tuyển dụng từ năm 2026",
+    "Nguyên tắc lương không thấp hơn lương tối thiểu"
+   ],
+   "reference_outcome": "Không được hạ đối với công nhân tuyển dụng từ ngày 31/12/2025 trở về trước: khoản 5 Điều 5 NĐ 293 buộc tiếp tục áp dụng mức lương tối thiểu tại ngày 31/12/2025 (mức theo NĐ 74/2024 đã hết hiệu lực) cho đến khi Chính phủ có quy định mới. Công nhân tuyển từ năm 2026 áp dụng mức của vùng mới theo NĐ 293; trong mọi trường hợp mức lương theo công việc không được thấp hơn mức tối thiểu áp dụng cho người đó theo khoản 2 Điều 90 BLLĐ.",
+   "documents": [
+    "293-2025-nd-cp",
+    "45-2019-qh14"
+   ],
+   "annotation_status": "model_proposal",
+   "level": "complex",
+   "source_set": "dryrun-conflict-v1"
+  },
+  {
+   "question_id": "s-qqee768fe9bce3",
+   "family_id": "s-fee768fe9bce3",
+   "question": "Công ty trả lương qua thẻ ngân hàng thì phí mở tài khoản và phí chuyển tiền do ai chịu?",
+   "split": "dev",
+   "question_type": "lookup",
+   "expected_status": "answer",
+   "relevant_unit_ids": [
+    "145-2020-nd-cp/chapter-vi/section-2/article-54/clause-2"
+   ],
+   "annotation_status": "model_proposal_not_reviewed",
+   "level": "simple",
+   "source_set": "dryrun-v1"
+  },
+  {
+   "question_id": "m-cq23",
+   "question": "Nhân viên bị nghi trộm tài sản công ty, công ty muốn cho nghỉ ở nhà để điều tra rồi mới sa thải: được tạm đình chỉ bao lâu và lương trong thời gian đó trả thế nào?",
+   "question_type": "synthesis",
+   "complex_kind": "situation",
+   "family_id": "m-cf23",
+   "split": "dev",
+   "expected_status": "answer",
+   "relevant_unit_ids": [
+    "45-2019-qh14/chapter-viii/section-1/article-128/clause-1",
+    "45-2019-qh14/chapter-viii/section-1/article-128/clause-2",
+    "45-2019-qh14/chapter-viii/section-1/article-125/clause-1"
+   ],
+   "annotation_status": "model_proposal",
+   "level": "complex",
+   "source_set": "dryrun-complex-v1"
+  },
+  {
+   "question_id": "m-cq18",
+   "question": "Nếu tòa kết luận công ty đuổi việc sai luật mà người lao động không muốn trở lại làm việc thì doanh nghiệp phải chi trả những khoản nào?",
+   "question_type": "synthesis",
+   "complex_kind": "multi_article",
+   "family_id": "m-cf10",
+   "split": "dev",
+   "expected_status": "answer",
+   "relevant_unit_ids": [
+    "45-2019-qh14/chapter-iii/section-3/article-39",
+    "45-2019-qh14/chapter-iii/section-3/article-41/clause-1",
+    "45-2019-qh14/chapter-iii/section-3/article-41/clause-2",
+    "45-2019-qh14/chapter-iii/section-3/article-46/clause-1"
+   ],
+   "annotation_status": "model_proposal",
+   "level": "complex",
+   "source_set": "dryrun-complex-v1"
+  },
+  {
+   "question_id": "m-cq01",
+   "question": "Thời gian thử việc và thời gian nghỉ thai sản có được tính vào thời gian làm việc để tính trợ cấp thôi việc không, còn những năm đã đóng bảo hiểm thất nghiệp thì xử lý sao?",
+   "question_type": "synthesis",
+   "complex_kind": "cross_document",
+   "family_id": "m-cf01",
+   "split": "dev",
+   "expected_status": "answer",
+   "relevant_unit_ids": [
+    "45-2019-qh14/chapter-iii/section-3/article-46/clause-2",
+    "145-2020-nd-cp/chapter-iii/section-2/article-8/clause-3/point-a",
+    "145-2020-nd-cp/chapter-iii/section-2/article-8/clause-3/point-b"
+   ],
+   "annotation_status": "model_proposal",
+   "level": "complex",
+   "source_set": "dryrun-complex-v1"
+  },
+  {
+   "question_id": "m-cq13",
+   "question": "Ngày nghỉ hằng tuần trùng đúng ngày Quốc khánh thì người lao động được nghỉ bù thế nào, còn nếu hôm đó vẫn phải đi làm thì lương tính bao nhiêu?",
+   "question_type": "synthesis",
+   "complex_kind": "multi_article",
+   "family_id": "m-cf13",
+   "split": "dev",
+   "expected_status": "answer",
+   "relevant_unit_ids": [
+    "45-2019-qh14/chapter-vii/section-2/article-111/clause-3",
+    "45-2019-qh14/chapter-vii/section-2/article-112/clause-1/point-đ",
+    "45-2019-qh14/chapter-vi/article-98/clause-1/point-c"
+   ],
+   "annotation_status": "model_proposal",
+   "level": "complex",
+   "source_set": "dryrun-complex-v1"
+  },
+  {
+   "question_id": "x-x24",
+   "question": "Hợp đồng của 3 nhân viên hết hạn ngày 01/4/2026 và công ty không ký tiếp. Công ty đã xác định mỗi người còn được trợ cấp thôi việc cho thời gian chưa tham gia bảo hiểm thất nghiệp, nhưng đã 40 ngày vẫn chưa trả vì đang khó khăn dòng tiền. Công ty đang vi phạm gì và có thể bị phạt ra sao?",
+   "question_type": "synthesis",
+   "complex_kind": "obligation_and_sanction",
+   "family_id": "x-xf24",
+   "split": "dev",
+   "expected_status": "answer",
+   "relevant_unit_ids": [
+    "45-2019-qh14/chapter-iii/section-3/article-46/clause-1",
+    "45-2019-qh14/chapter-iii/section-3/article-48/clause-1/point-b",
+    "12-2022-nd-cp/chapter-ii/article-12/clause-2/point-a",
+    "12-2022-nd-cp/chapter-ii/article-12/clause-4/point-a",
+    "12-2022-nd-cp/chapter-i/article-6/clause-1"
+   ],
+   "issues": [
+    "Trợ cấp thôi việc khi hợp đồng hết hạn",
+    "Thời hạn thanh toán 14 ngày làm việc và trường hợp kéo dài tối đa 30 ngày",
+    "Mức phạt theo số người và nhân hai đối với tổ chức",
+    "Biện pháp khắc phục kèm tiền lãi"
+   ],
+   "reference_outcome": "Đã quá 14 ngày làm việc và quá cả mốc tối đa 30 ngày (ngay cả khi viện dẫn lý do kinh tế để kéo dài), nên công ty vi phạm thời hạn thanh toán và nghĩa vụ trả trợ cấp thôi việc. Với 3 người, khung phạt cá nhân 1 - 2 triệu đồng nên doanh nghiệp bị phạt 2 - 4 triệu đồng, và bị buộc trả đủ trợ cấp kèm tiền lãi theo lãi suất tiền gửi không kỳ hạn cao nhất của các ngân hàng thương mại nhà nước.",
+   "documents": [
+    "12-2022-nd-cp",
+    "45-2019-qh14"
+   ],
+   "annotation_status": "model_proposal",
+   "level": "complex",
+   "source_set": "dryrun-conflict-v1"
+  },
+  {
+   "question_id": "m-cq24",
+   "question": "Công ty trả lương thử việc 80% và bắt thử việc 90 ngày cho vị trí kỹ sư tốt nghiệp đại học: sai ở chỗ nào và có thể bị phạt bao nhiêu?",
+   "question_type": "synthesis",
+   "complex_kind": "situation",
+   "family_id": "m-cf24",
+   "split": "dev",
+   "expected_status": "answer",
+   "relevant_unit_ids": [
+    "45-2019-qh14/chapter-iii/section-1/article-26",
+    "45-2019-qh14/chapter-iii/section-1/article-25/clause-2",
+    "12-2022-nd-cp/chapter-ii/article-10/clause-2/point-b",
+    "12-2022-nd-cp/chapter-ii/article-10/clause-2/point-c"
+   ],
+   "annotation_status": "model_proposal",
+   "level": "complex",
+   "source_set": "dryrun-complex-v1"
+  },
+  {
+   "question_id": "s-qq38f71a5a1a13",
+   "family_id": "s-f38f71a5a1a13",
+   "question": "Có thể làm phụ lục hợp đồng để kéo dài thời hạn hợp đồng lao động thêm một năm được không?",
+   "split": "dev",
+   "question_type": "lookup",
+   "expected_status": "answer",
+   "relevant_unit_ids": [
+    "45-2019-qh14/chapter-iii/section-1/article-22/clause-2"
+   ],
+   "annotation_status": "model_proposal_not_reviewed",
+   "level": "simple",
+   "source_set": "dryrun-v1"
+  },
+  {
+   "question_id": "m-cq20",
+   "question": "Công ty muốn sa thải một nhân viên nữ đang mang thai vì tự ý nghỉ 5 ngày trong tháng mà không có lý do. Có làm được không, nếu được thì khi nào và phải họp kỷ luật theo thủ tục gì?",
+   "question_type": "synthesis",
+   "complex_kind": "situation",
+   "family_id": "m-cf20",
+   "split": "dev",
+   "expected_status": "answer",
+   "relevant_unit_ids": [
+    "45-2019-qh14/chapter-viii/section-1/article-125/clause-4",
+    "45-2019-qh14/chapter-viii/section-1/article-122/clause-4/point-d",
+    "45-2019-qh14/chapter-viii/section-1/article-123/clause-2",
+    "145-2020-nd-cp/chapter-viii/article-70/clause-2/point-a"
+   ],
+   "annotation_status": "model_proposal",
+   "level": "complex",
+   "source_set": "dryrun-complex-v1"
+  },
+  {
+   "question_id": "m-cq14",
+   "question": "Nhân viên văn phòng làm cho công ty được 11 năm thì mỗi năm được nghỉ phép bao nhiêu ngày?",
+   "question_type": "synthesis",
+   "complex_kind": "multi_article",
+   "family_id": "m-cf14",
+   "split": "dev",
+   "expected_status": "answer",
+   "relevant_unit_ids": [
+    "45-2019-qh14/chapter-vii/section-2/article-113/clause-1/point-a",
+    "45-2019-qh14/chapter-vii/section-2/article-114"
+   ],
+   "annotation_status": "model_proposal",
+   "level": "complex",
+   "source_set": "dryrun-complex-v1"
+  },
+  {
+   "question_id": "m-cq03",
+   "question": "Phi công của hãng bay ký hợp đồng không xác định thời hạn muốn nghỉ việc thì phải báo trước bao lâu, so với nhân viên văn phòng cùng loại hợp đồng thì khác thế nào?",
+   "question_type": "synthesis",
+   "complex_kind": "cross_document",
+   "family_id": "m-cf03",
+   "split": "dev",
+   "expected_status": "answer",
+   "relevant_unit_ids": [
+    "45-2019-qh14/chapter-iii/section-3/article-35/clause-1/point-a",
+    "45-2019-qh14/chapter-iii/section-3/article-35/clause-1/point-d",
+    "145-2020-nd-cp/chapter-iii/section-2/article-7/clause-1/point-a",
+    "145-2020-nd-cp/chapter-iii/section-2/article-7/clause-2/point-a"
+   ],
+   "annotation_status": "model_proposal",
+   "level": "complex",
+   "source_set": "dryrun-complex-v1"
+  },
+  {
+   "question_id": "s-qqb890bb2b5e31",
+   "family_id": "s-fb890bb2b5e31",
+   "question": "Nghỉ việc rồi thì công ty có trách nhiệm chốt sổ bảo hiểm và trả lại giấy tờ gốc cho mình không?",
+   "split": "dev",
+   "question_type": "lookup",
+   "expected_status": "answer",
+   "relevant_unit_ids": [
+    "45-2019-qh14/chapter-iii/section-3/article-48/clause-3/point-a"
+   ],
+   "annotation_status": "model_proposal_not_reviewed",
+   "level": "simple",
+   "source_set": "dryrun-v1"
+  },
+  {
+   "question_id": "s-qq2915e63fcb03",
+   "family_id": "s-f839b27c7d56e",
+   "question": "Trong thời gian bị tạm đình chỉ để điều tra, người lao động được nhận bao nhiêu phần trăm lương và tối đa bị đình chỉ mấy ngày?",
+   "split": "dev",
+   "question_type": "lookup",
+   "expected_status": "answer",
+   "relevant_unit_ids": [
+    "45-2019-qh14/chapter-viii/section-1/article-128/clause-2"
+   ],
+   "annotation_status": "model_proposal_not_reviewed",
+   "level": "simple",
+   "source_set": "dryrun-v1"
+  },
+  {
+   "question_id": "x-x20",
+   "question": "Xưởng hóa chất của chúng tôi vẫn để một thợ hàn nam 63 tuổi, đã quá tuổi nghỉ hưu, làm công việc độc hại liên tục 6 năm nay, có lúc làm một mình trong ca đêm. Việc này có vi phạm không, và doanh nghiệp có thể bị phạt bao nhiêu?",
+   "question_type": "synthesis",
+   "complex_kind": "obligation_and_sanction",
+   "family_id": "x-xf20",
+   "split": "dev",
+   "expected_status": "answer",
+   "relevant_unit_ids": [
+    "45-2019-qh14/chapter-xi/section-2/article-149/clause-3",
+    "84-2015-qh13/chapter-iv/article-64/clause-1/point-c",
+    "84-2015-qh13/chapter-iv/article-64/clause-1/point-d",
+    "12-2022-nd-cp/chapter-ii/article-31/clause-2",
+    "12-2022-nd-cp/chapter-i/article-6/clause-1"
+   ],
+   "issues": [
+    "Nguyên tắc cấm và ngoại lệ khi sử dụng người cao tuổi làm công việc độc hại",
+    "Các điều kiện cụ thể của Luật ATVSLĐ (tối đa 05 năm, có người không cao tuổi cùng làm)",
+    "Mức phạt và nhân hai đối với tổ chức"
+   ],
+   "reference_outcome": "Có vi phạm: ngoại lệ 'bảo đảm các điều kiện làm việc an toàn' của BLLĐ được Luật ATVSLĐ cụ thể hóa bằng các điều kiện phải đáp ứng đồng thời, trong khi người này đã làm quá 05 năm và có lúc làm một mình không có người lao động không cao tuổi cùng làm. Doanh nghiệp có thể bị phạt từ 20 đến 30 triệu đồng (gấp đôi khung 10 - 15 triệu của khoản 2 Điều 31 NĐ 12).",
+   "documents": [
+    "12-2022-nd-cp",
+    "45-2019-qh14",
+    "84-2015-qh13"
+   ],
+   "annotation_status": "model_proposal",
+   "level": "complex",
+   "source_set": "dryrun-conflict-v1"
+  },
+  {
+   "question_id": "x-x14",
+   "question": "Một nhân viên đã đóng BHXH bắt buộc 3 năm, mang thai được hơn 1 tháng thì bác sĩ chỉ định nghỉ dưỡng thai và chị xin tạm hoãn hợp đồng lao động đến khi sinh. Tính ra trong 12 tháng trước khi sinh chị chỉ đóng BHXH được 4 tháng. Chị có được hưởng chế độ thai sản khi sinh con không?",
+   "question_type": "synthesis",
+   "complex_kind": "lex_specialis_or_exception",
+   "family_id": "x-xf14",
+   "split": "dev",
+   "expected_status": "answer",
+   "relevant_unit_ids": [
+    "45-2019-qh14/chapter-x/article-138/clause-1",
+    "45-2019-qh14/chapter-x/article-138/clause-2",
+    "41-2024-qh15/chapter-v/section-2/article-50/clause-2",
+    "41-2024-qh15/chapter-v/section-2/article-50/clause-3"
+   ],
+   "issues": [
+    "Quyền tạm hoãn hợp đồng của lao động nữ mang thai theo chỉ định y tế",
+    "Điều kiện chung 06 tháng đóng trong 12 tháng",
+    "Điều kiện riêng 03 tháng cho người nghỉ dưỡng thai đã đóng từ đủ 12 tháng",
+    "Áp dụng ngoại lệ vào tình huống"
+   ],
+   "reference_outcome": "Chị không đạt điều kiện chung của khoản 2 Điều 50 (4 tháng, dưới mức 06 tháng), nhưng thuộc quy định riêng tại khoản 3 Điều 50 vì đã đóng từ đủ 12 tháng và phải nghỉ dưỡng thai theo chỉ định, nên chỉ cần 03 tháng đóng trong 12 tháng trước khi sinh. Với 4 tháng chị đủ điều kiện hưởng chế độ thai sản khi sinh con; việc tạm hoãn hợp đồng là quyền hợp pháp theo Điều 138 BLLĐ, và chính khoảng nghỉ đó là lý do Luật BHXH 2024 hạ ngưỡng.",
+   "documents": [
+    "41-2024-qh15",
+    "45-2019-qh14"
+   ],
+   "annotation_status": "model_proposal",
+   "level": "complex",
+   "source_set": "dryrun-conflict-v1"
+  }
+ ]
+}

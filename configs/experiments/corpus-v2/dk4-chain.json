@@ -1,0 +1,37 @@
+{
+  "condition": "DK4",
+  "representation": "llm_kb_validated",
+  "automatic_validation": true,
+  "manual_review": false,
+  "status": "draft",
+  "kb_run": "experiments/runs/kb-scope-v2-gpt-oss-120b",
+  "kb_model_note": "Same model, prompt and settings as the v1 run, on corpus scope v2 (711 articles, 09/11/2026).",
+  "record": "unit_with_claims",
+  "max_tokens": 384,
+  "graph": {
+    "chain": {
+      "relation_run": "experiments/runs/relations-v2-sonnet",
+      "order": [
+        "exception",
+        "sanction",
+        "base",
+        "detail",
+        "condition",
+        "procedure",
+        "consequence",
+        "reference"
+      ],
+      "max_neighbors": 1,
+      "references": true,
+      "seeds": 3,
+      "affinity": "dense",
+      "select": "affinity",
+      "max_affinity_rank": 300
+    },
+    "source_aliases": {
+      "Bộ luật Lao động": "45-2019-qh14"
+    }
+  },
+  "note": "Experimental legal-chain expansion (legal-chain-v1, docs/planning/graph-legal-reasoning-2026-11-10.md): typed article relations of relation-run-v1 anchored at the units of their quotes, sanction type derived from the sanction decree, plus resolved references; the first 3 search results each bring the 1 neighbour closest to the question by BGE-M3 (within the top 300), no keyword condition. Settings chosen in a small sweep on the dry-run case and conflict sets (11/11/2026), so results on those sets are optimistic.",
+  "claims_view": "compact"
+}
