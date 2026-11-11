@@ -130,6 +130,12 @@ class AnswerRunTests(unittest.TestCase):
         self.assertTrue(len(blocks) == 1 or sum(b["token_count"] for b in blocks) <= 25)
         self.assertEqual([b["id"] for b in pack(ranked, records, 3, 10_000)], ["E01", "E02", "E03"])
 
+    def test_relations_in_context_needs_a_legal_chain_retrieval_run(self):
+        config = self.root / "answer-chain.json"
+        config.write_text(json.dumps({"prompt": "answer-v3.md", "top_k": 3, "context_token_budget": 200, "relations_in_context": True}), encoding="utf-8")
+        with self.assertRaisesRegex(ValueError, "graph.chain"):
+            run(self.retrieval["DK2"], self.questions, config, StandIn(), self.root / "answers-chain")
+
     def test_answer_run_resumes_scores_and_pools_into_a_blinded_sheet(self):
         output = self.root / "answers-DK2"
         counts = run(self.retrieval["DK2"], self.questions, self.config, StandIn(fail=["Tiền lương"]), output)
@@ -183,6 +189,57 @@ class AnswerRunTests(unittest.TestCase):
             writer.writerows(rows)
         with self.assertRaisesRegex(ValueError, "grade '7'"):
             answer_grading.score_sheet(filled, key)
+
+
+    def test_outcome_judge_is_blinded_resumes_and_scores_paired_differences(self):
+        from legal_ai.evaluation import outcome_judge
+        questions = json.loads(self.questions.read_text(encoding="utf-8"))
+        for q in questions["questions"]:
+            q |= {"issues": ["Vấn đề một", "Vấn đề hai"], "reference_outcome": "Tòa chấp nhận yêu cầu."}
+        enriched = self.root / "questions-outcome.json"
+        enriched.write_text(json.dumps(questions, ensure_ascii=False), encoding="utf-8")
+        for name in ("DK1", "DK2"):
+            run(self.retrieval[name], self.questions, self.config, StandIn(), self.root / f"answers-{name}")
+        sheet, key = self.root / "sheet.csv", self.root / "key.json"
+        answer_grading.make_sheet([self.root / "answers-DK1", self.root / "answers-DK2"], enriched, sheet, key)
+
+        class Judge:
+            model, effort = "judge-stand-in", "medium"
+
+            def __init__(self, limit=99):
+                self.requests, self.limit = [], limit
+
+            def structured(self, system, prompt, schema, purpose="structured"):
+                if len(self.requests) >= self.limit:
+                    raise ProviderError("budget_exhausted")
+                request = json.loads(prompt)
+                self.requests.append(request)
+                n = len(request["statements"])
+                if (schema["properties"]["statements"]["minItems"], schema["properties"]["issues"]["maxItems"]) != (n, 2):
+                    raise ProviderError("statement_count_mismatch")  # The schema pins both counts.
+                good = "báo trước" in request["question"]  # Stand-in grade that differs by question, not by condition.
+                return {"output": {"statements": [{"supported": 2, "citation_correct": True, "legal_error": not good} for _ in range(n)],
+                                   "issues": [{"addressed": 2 if good else 0}, {"addressed": 1}], "outcome": 2 if good else 0,
+                                   "correctness": 2 if good else 1}, "model": self.model}
+
+        first = Judge(limit=2)
+        output = self.root / "judge"
+        counts = outcome_judge.judge(sheet, key, enriched, first, output)
+        self.assertEqual(counts["judged"], 2)
+        self.assertEqual(first.requests[0]["issues"], ["Vấn đề một", "Vấn đề hai"])
+        self.assertNotIn("DK", json.dumps(first.requests, ensure_ascii=False), "the judge never sees the condition")
+        second = Judge()
+        counts = outcome_judge.judge(sheet, key, enriched, second, output, workers=2)
+        self.assertEqual((counts["already_done"], counts["judged"]), (2, 4))
+        with self.assertRaisesRegex(ValueError, "other inputs"):
+            outcome_judge.judge(sheet, key, self.questions, Judge(), output)
+        report = outcome_judge.score(output, sheet, key)
+        block = report["by_model"]["stand-in"]
+        self.assertEqual(set(block["conditions"]), {"DK1", "DK2"})
+        self.assertEqual(block["conditions"]["DK1"]["n"], 3)
+        paired = block["paired"]["DK2-DK1"]["correctness"]
+        self.assertEqual((paired["diff"], paired["n"]), (0.0, 3), "same grades per question: no difference")
+        self.assertEqual(paired["ci95"], [0.0, 0.0])
 
 
 if __name__ == "__main__":

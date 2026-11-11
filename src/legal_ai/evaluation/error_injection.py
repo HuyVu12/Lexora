@@ -176,3 +176,69 @@ def run(kb_dir, units, output, per_type=30, seed="lexora-inject-v1"):
                 + [{"claim_id": c["claim_id"], "kind": "clean", **r} for c, r in zip(clean, clean_results)])
     write_json(output / "report.json", report)
     return report
+
+
+PLANT_VERSION = "planted-kb-v1"
+
+
+def _change_visible_number(claim, rng, pool, units):
+    """`number_changed` limited to the slots the compact claim line shows (quantities, deadlines)."""
+    if not any(isinstance(claim["slots"].get(n), str) and re.search(r"\d", claim["slots"][n]) for n in ("quantities", "deadlines")):
+        return None
+    return _change_number(claim, rng, pool, units)  # It tries quantities and deadlines first.
+
+
+PLANT_TYPES = {"number_changed": _change_visible_number, "modality_flipped": _flip_modality, "fabricated_actor": _fabricate_actor}
+
+
+def plant(kb_dir, units, output, target_unit_ids, seed="lexora-plant-v1"):
+    """A knowledge-base run whose DK3 claims on `target_unit_ids` are each replaced by one corrupted copy, and whose
+    DK4 is the automatic validator applied to that DK3, exactly as `kb_run.materialize` builds it.
+
+    Only errors the generator can see in the compact claim line are planted (a changed number in quantities or
+    deadlines, a flipped modality, a fabricated actor), one per claim, the type rotating over the targets in a
+    seeded order. The new run keeps the source run's manifest (same corpus bundle) plus a `planted` block, so
+    retrieval runs can point a DK3/DK4 condition at it. It is a stress test of what validation buys downstream,
+    not an estimate of the natural error rate."""
+    kb_dir, output = Path(kb_dir), Path(output)
+    if output.exists() and any(output.iterdir()):
+        raise ValueError("output must be empty: use a new directory")
+    claims = read_jsonl(kb_dir / "dk3.jsonl")
+    targets = set(target_unit_ids)
+    order = sorted((c for c in claims if c["unit_id"] in targets), key=lambda c: digest(f"{seed}:{c['claim_id']}"))
+    names = list(PLANT_TYPES)
+    replaced, planted = {}, []
+    for number, claim in enumerate(order):
+        rng = random.Random(f"{seed}:{claim['claim_id']}")
+        for shift in range(len(names)):
+            name = names[(number + shift) % len(names)]
+            change = PLANT_TYPES[name](claim, rng, claims, units)
+            if change:
+                copy = json.loads(canonical(claim)) | change
+                copy["injection"] = {"type": name, "source_claim_id": claim["claim_id"], "plant_version": PLANT_VERSION}
+                replaced[claim["claim_id"]] = copy
+                planted.append({"claim_id": claim["claim_id"], "type": name, "unit_id": claim["unit_id"],
+                                "before": {k: claim.get(k) for k in ("modality", "slots")}, "after": {k: copy.get(k) for k in ("modality", "slots")}})
+                break
+    dk3 = [replaced.get(c["claim_id"], c) for c in claims]
+    results = validate(dk3, units)
+    accepted = {r["claim_id"]: r for r in results if r["decision"] == "accepted"}
+    dk4 = [c | {"evidence": accepted[c["claim_id"]]["evidence"], "validation": VALIDATOR_VERSION} for c in dk3 if c["claim_id"] in accepted]
+    caught = {cid for cid in replaced if cid not in accepted}
+    by_type = {}
+    for row in planted:
+        entry = by_type.setdefault(row["type"], {"planted": 0, "removed_from_dk4": 0})
+        entry["planted"] += 1
+        entry["removed_from_dk4"] += row["claim_id"] in caught
+        row["in_dk4"] = row["claim_id"] not in caught
+    manifest = json.loads((kb_dir / "manifest.json").read_text(encoding="utf-8"))
+    manifest["planted"] = {"plant_version": PLANT_VERSION, "seed": seed, "source_run": kb_dir.as_posix(), "validator_version": VALIDATOR_VERSION,
+                           "target_units": len(targets), "target_claims": len(order), "planted": len(planted),
+                           "removed_from_dk4": len(caught), "by_type": by_type,
+                           "dk3_claims": len(dk3), "dk4_claims": len(dk4)}
+    output.mkdir(parents=True, exist_ok=True)
+    write_json(output / "manifest.json", manifest)
+    write_jsonl(output / "dk3.jsonl", dk3)
+    write_jsonl(output / "dk4.jsonl", dk4)
+    write_jsonl(output / "planted.jsonl", planted)
+    return manifest["planted"]

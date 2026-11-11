@@ -1,0 +1,657 @@
+[
+  {
+    "text": "Một kỹ sư nam sinh tháng 5/1965, làm việc trong điều kiện lao động bình thường và đã đóng BHXH bắt buộc 22 năm. Phòng nhân sự cần xác định chính xác ngày anh nghỉ hưu và ngày bắt đầu hưởng lương hưu để chuẩn bị quyết định chấm dứt hợp đồng. Hai mốc đó là ngày nào?",
+    "question_type": "synthesis",
+    "expected_status": "answer",
+    "relevant_unit_ids": [
+      "45-2019-qh14/chapter-xii/article-169/clause-2",
+      "135-2020-nd-cp/article-4/clause-2",
+      "135-2020-nd-cp/article-3/clause-1",
+      "135-2020-nd-cp/article-3/clause-2",
+      "41-2024-qh15/chapter-v/section-3/article-64/clause-1/point-a"
+    ],
+    "rationale": "Khoản 2 Điều 169 BLLĐ: tuổi nghỉ hưu điều chỉnh theo lộ trình, 'cứ mỗi năm tăng thêm 03 tháng đối với lao động nam'; khoản 2 Điều 4 NĐ 135/2020 (bảng lộ trình): năm 2025 là '61 tuổi 3 tháng', năm 2026 là '61 tuổi 6 tháng'; khoản 1 Điều 3 NĐ 135: 'Thời điểm nghỉ hưu là kết thúc ngày cuối cùng của tháng đủ tuổi nghỉ hưu'; khoản 2 Điều 3: hưởng chế độ hưu trí từ 'ngày đầu tiên của tháng liền kề sau thời điểm nghỉ hưu'; điểm a khoản 1 Điều 64 Luật BHXH 2024: có thời gian đóng 'từ đủ 15 năm trở lên' và 'Đủ tuổi nghỉ hưu theo quy định tại khoản 2 Điều 169' thì được hưởng lương hưu.",
+    "issues": [
+      "Tuổi nghỉ hưu của lao động nam theo lộ trình năm 2025 và năm 2026",
+      "Thời điểm nghỉ hưu tính theo tháng đủ tuổi",
+      "Thời điểm bắt đầu hưởng lương hưu",
+      "Điều kiện thời gian đóng BHXH để hưởng lương hưu"
+    ],
+    "reference_outcome": "Năm 2025 anh chưa đủ 61 tuổi 3 tháng (phải đến tháng 8/2026 mới đủ), nên áp dụng mức của năm 2026 là 61 tuổi 6 tháng, đủ vào tháng 11/2026. Thời điểm nghỉ hưu là kết thúc ngày 30/11/2026 và lương hưu được hưởng từ ngày 01/12/2026; với 22 năm đóng anh đủ điều kiện theo điểm a khoản 1 Điều 64 Luật BHXH 2024, còn NĐ 135 chỉ cụ thể hóa lộ trình của Điều 169 BLLĐ.",
+    "conflict_kind": "law_and_detail",
+    "documents": [
+      "135-2020-nd-cp",
+      "41-2024-qh15",
+      "45-2019-qh14"
+    ],
+    "notes": "Giả định hai bên không thỏa thuận tiếp tục làm việc sau tuổi nghỉ hưu (khoản 1 Điều 6 NĐ 135)."
+  },
+  {
+    "text": "Nhà máy của công ty đặt trong một khu công nghiệp nằm vắt qua hai địa bàn, một bên thuộc vùng I, một bên thuộc vùng II. Từ tháng 1/2026 công ty định thuê sinh viên làm bán thời gian, trả lương theo giờ 23.000 đồng. Mức này có hợp pháp không và phải căn cứ mức lương tối thiểu của vùng nào?",
+    "question_type": "synthesis",
+    "expected_status": "answer",
+    "relevant_unit_ids": [
+      "45-2019-qh14/chapter-vi/article-91/clause-2",
+      "45-2019-qh14/chapter-vi/article-90/clause-2",
+      "293-2025-nd-cp/article-3/clause-1",
+      "293-2025-nd-cp/article-3/clause-3/point-c",
+      "293-2025-nd-cp/article-4/clause-2"
+    ],
+    "rationale": "Khoản 2 Điều 91 BLLĐ: mức lương tối thiểu 'được xác lập theo vùng, ấn định theo tháng, giờ'; khoản 2 Điều 90: mức lương theo công việc 'không được thấp hơn mức lương tối thiểu'; khoản 1 Điều 3 NĐ 293/2025: vùng I '25.500' đồng/giờ, vùng II '22.700' đồng/giờ; điểm c khoản 3 Điều 3: hoạt động trong khu công nghiệp nằm trên các địa bàn có mức khác nhau 'thì áp dụng theo địa bàn có mức lương tối thiểu cao nhất'; khoản 2 Điều 4: người hưởng lương theo giờ không được thấp hơn 'mức lương tối thiểu giờ'.",
+    "issues": [
+      "Xác định vùng áp dụng khi khu công nghiệp nằm trên nhiều địa bàn",
+      "Mức lương tối thiểu giờ áp dụng từ 01/01/2026",
+      "Người làm bán thời gian hưởng lương theo giờ có phải tuân thủ lương tối thiểu giờ không"
+    ],
+    "reference_outcome": "Công ty phải áp dụng mức vùng I là 25.500 đồng/giờ, vì điểm c khoản 3 Điều 3 NĐ 293 chọn địa bàn có mức cao nhất cho khu công nghiệp nằm trên nhiều vùng. Mức 23.000 đồng/giờ tuy cao hơn mức vùng II nhưng thấp hơn mức tối thiểu giờ vùng I nên trái khoản 2 Điều 90 BLLĐ và khoản 2 Điều 4 NĐ 293; BLLĐ đặt nguyên tắc, NĐ 293 (chi tiết khoản 4 Điều 91 BLLĐ) quyết định con số và quy tắc chọn vùng.",
+    "conflict_kind": "law_and_detail",
+    "documents": [
+      "293-2025-nd-cp",
+      "45-2019-qh14"
+    ],
+    "notes": "Danh mục địa bàn vùng nằm trong Phụ lục NĐ 293, có thể không có trong corpus dưới dạng đơn vị; câu hỏi đã cho sẵn vùng."
+  },
+  {
+    "text": "Một trưởng phòng làm việc cho công ty có trụ sở ở Hà Nội (vùng I), lương tháng ghi trong hợp đồng 50 triệu đồng và đã đóng bảo hiểm thất nghiệp đủ 60 tháng trên mức lương đó, nghỉ việc hợp pháp vào tháng 3/2026. Anh ấy sẽ nhận trợ cấp thất nghiệp mỗi tháng bao nhiêu và trong bao lâu?",
+    "question_type": "synthesis",
+    "expected_status": "answer",
+    "relevant_unit_ids": [
+      "74-2025-qh15/chapter-vii/section-4/article-39/clause-1",
+      "74-2025-qh15/chapter-vii/section-4/article-39/clause-2",
+      "74-2025-qh15/chapter-vii/section-2/article-34/clause-2",
+      "293-2025-nd-cp/article-3/clause-1",
+      "293-2025-nd-cp/article-3/clause-3/point-a"
+    ],
+    "rationale": "Khoản 1 Điều 39 Luật Việc làm 2025: mức hưởng 'bằng 60% mức bình quân tiền lương tháng đóng bảo hiểm thất nghiệp của 06 tháng' gần nhất 'nhưng tối đa không quá 05 lần mức lương tối thiểu tháng theo vùng'; khoản 2 Điều 39: 'cứ đóng đủ 12 tháng đến đủ 36 tháng thì được hưởng 03 tháng', sau đó 'cứ đóng đủ thêm 12 tháng thì được hưởng thêm 01 tháng'; khoản 2 Điều 34: tiền lương đóng BHTN 'cao nhất bằng 20 lần mức lương tối thiểu tháng theo vùng'; khoản 1 Điều 3 NĐ 293/2025: vùng I '5.310.000' đồng/tháng; điểm a khoản 3 Điều 3: 'hoạt động trên địa bàn thuộc vùng nào thì áp dụng mức lương tối thiểu quy định đối với địa bàn đó'.",
+    "issues": [
+      "Trần tiền lương làm căn cứ đóng BHTN",
+      "Mức hưởng 60% và trần 05 lần lương tối thiểu vùng",
+      "Lương tối thiểu vùng I theo NĐ 293 dùng để tính trần",
+      "Số tháng hưởng theo số tháng đã đóng"
+    ],
+    "reference_outcome": "Tiền lương đóng 50 triệu đồng thấp hơn trần 20 lần (106,2 triệu) nên giữ nguyên; 60% là 30 triệu đồng nhưng bị giới hạn ở 05 lần lương tối thiểu vùng I theo NĐ 293, tức 26.550.000 đồng/tháng. 60 tháng đóng cho 03 tháng (36 tháng đầu) cộng 02 tháng (24 tháng tiếp theo), tổng 05 tháng; Luật Việc làm 2025 đặt công thức, NĐ 293 cung cấp mức lương tối thiểu vùng để tính trần.",
+    "conflict_kind": "law_and_detail",
+    "documents": [
+      "293-2025-nd-cp",
+      "74-2025-qh15"
+    ],
+    "notes": "Giả định tháng cuối cùng đóng BHTN thuộc năm 2026 (NĐ 293 có hiệu lực từ 01/01/2026) và người lao động đáp ứng các điều kiện hưởng tại Điều 38 Luật Việc làm 2025."
+  },
+  {
+    "text": "Công ty phần mềm muốn ràng buộc một kỹ sư R&D không được tiết lộ mã nguồn và thuật toán của công ty, kể cả trong 2 năm sau khi nghỉ việc. Thỏa thuận này lập ở đâu, nên có những nội dung gì, và nếu kỹ sư vi phạm thì công ty xử lý theo thủ tục nào khi vi phạm xảy ra lúc còn làm việc và khi đã nghỉ?",
+    "question_type": "synthesis",
+    "expected_status": "answer",
+    "relevant_unit_ids": [
+      "45-2019-qh14/chapter-iii/section-1/article-21/clause-2",
+      "10-2020-tt-bldtbxh/chapter-ii/article-4/clause-1",
+      "10-2020-tt-bldtbxh/chapter-ii/article-4/clause-2/point-c",
+      "10-2020-tt-bldtbxh/chapter-ii/article-4/clause-3/point-a",
+      "10-2020-tt-bldtbxh/chapter-ii/article-4/clause-3/point-b"
+    ],
+    "rationale": "Khoản 2 Điều 21 BLLĐ: người sử dụng lao động 'có quyền thỏa thuận bằng văn bản với người lao động về nội dung, thời hạn bảo vệ bí mật kinh doanh, bảo vệ bí mật công nghệ, quyền lợi và việc bồi thường trong trường hợp vi phạm'; khoản 1 Điều 4 TT 10/2020: thỏa thuận 'trong hợp đồng lao động hoặc bằng văn bản khác'; điểm c khoản 2 Điều 4: nội dung gồm 'Thời hạn bảo vệ bí mật kinh doanh, bí mật công nghệ'; điểm a khoản 3 Điều 4: vi phạm trong thời hạn hợp đồng xử lý theo 'khoản 2 Điều 130 của Bộ luật Lao động'; điểm b khoản 3 Điều 4: vi phạm 'sau khi chấm dứt hợp đồng lao động thì xử lý theo quy định của pháp luật dân sự'.",
+    "issues": [
+      "Hình thức của thỏa thuận bảo vệ bí mật kinh doanh, bí mật công nghệ",
+      "Các nội dung chủ yếu, gồm thời hạn bảo vệ kéo dài sau khi nghỉ việc",
+      "Thủ tục xử lý vi phạm khi hợp đồng còn hiệu lực",
+      "Thủ tục xử lý vi phạm sau khi chấm dứt hợp đồng"
+    ],
+    "reference_outcome": "BLLĐ cho phép thỏa thuận bằng văn bản, TT 10 chi tiết rằng có thể ghi ngay trong hợp đồng lao động hoặc văn bản riêng, với danh mục bí mật, phạm vi sử dụng, thời hạn bảo vệ, phương thức bảo vệ, quyền nghĩa vụ và xử lý vi phạm. Vi phạm khi hợp đồng còn hiệu lực thì xử lý bồi thường theo trình tự khoản 2 Điều 130 BLLĐ; vi phạm sau khi đã nghỉ việc không còn theo thủ tục lao động mà xử lý theo pháp luật dân sự và pháp luật liên quan.",
+    "conflict_kind": "law_and_detail",
+    "documents": [
+      "10-2020-tt-bldtbxh",
+      "45-2019-qh14"
+    ],
+    "notes": "Nội dung Điều 130 BLLĐ và pháp luật dân sự không được đưa vào nhãn; TT 10 không quy định thỏa thuận cấm làm việc cho đối thủ cạnh tranh."
+  },
+  {
+    "text": "Nhà máy gia công linh kiện điện tử xuất khẩu dự kiến cho công nhân tăng ca tổng cộng khoảng 280 giờ trong năm 2026, rải đều các tháng. Công ty có được làm vậy không, phải thông báo cho cơ quan nào và chậm nhất khi nào?",
+    "question_type": "synthesis",
+    "expected_status": "answer",
+    "relevant_unit_ids": [
+      "45-2019-qh14/chapter-vii/section-1/article-107/clause-3/point-a",
+      "45-2019-qh14/chapter-vii/section-1/article-107/clause-2/point-b",
+      "45-2019-qh14/chapter-vii/section-1/article-107/clause-4",
+      "145-2020-nd-cp/chapter-vii/article-62/clause-1/point-a",
+      "145-2020-nd-cp/chapter-vii/article-62/clause-2"
+    ],
+    "rationale": "Điểm a khoản 3 Điều 107 BLLĐ: được làm thêm 'không quá 300 giờ trong 01 năm' với 'Sản xuất, gia công xuất khẩu sản phẩm hàng dệt, may, da, giày, điện, điện tử'; điểm b khoản 2 Điều 107: vẫn 'không quá 40 giờ trong 01 tháng'; khoản 4 Điều 107: phải 'thông báo bằng văn bản cho cơ quan chuyên môn về lao động thuộc Ủy ban nhân dân cấp tỉnh'; điểm a khoản 1 Điều 62 NĐ 145/2020: thông báo tại 'Nơi người sử dụng lao động tổ chức làm thêm từ trên 200 giờ đến 300 giờ'; khoản 2 Điều 62: 'chậm nhất sau 15 ngày kể từ ngày thực hiện làm thêm từ trên 200 giờ'.",
+    "issues": [
+      "Gia công xuất khẩu hàng điện tử có thuộc diện làm thêm đến 300 giờ/năm",
+      "Giới hạn làm thêm theo tháng vẫn phải tuân thủ",
+      "Cơ quan nhận thông báo và thời hạn thông báo"
+    ],
+    "reference_outcome": "Được, vì gia công xuất khẩu hàng điện tử thuộc điểm a khoản 3 Điều 107 BLLĐ, miễn là mỗi tháng không quá 40 giờ (280 giờ chia 12 tháng khoảng 23 giờ) và người lao động đồng ý. Công ty phải thông báo bằng văn bản cho cơ quan chuyên môn về lao động cấp tỉnh nơi tổ chức làm thêm (và nơi đặt trụ sở chính nếu khác tỉnh), chậm nhất 15 ngày kể từ ngày bắt đầu làm thêm vượt 200 giờ, theo NĐ 145 chi tiết khoản 4 Điều 107.",
+    "conflict_kind": "law_and_detail",
+    "documents": [
+      "145-2020-nd-cp",
+      "45-2019-qh14"
+    ],
+    "notes": "NĐ 145 gọi cơ quan nhận thông báo là Sở Lao động - Thương binh và Xã hội; sau sắp xếp bộ máy năm 2025 chức năng này có thể đã chuyển sang cơ quan khác (ngoài corpus), nên câu trả lời nên dùng cách gọi chung của BLLĐ."
+  },
+  {
+    "text": "Nhân viên kế toán thử việc 2 tháng theo hợp đồng thử việc riêng, sau đó ký hợp đồng không xác định thời hạn và được công ty đóng bảo hiểm thất nghiệp đủ 6 năm. Nay chị nghỉ việc đúng luật, có báo trước 45 ngày. Công ty còn phải trả trợ cấp thôi việc không, tính thế nào, và chị có được hưởng trợ cấp thất nghiệp không?",
+    "question_type": "synthesis",
+    "expected_status": "answer",
+    "relevant_unit_ids": [
+      "45-2019-qh14/chapter-iii/section-3/article-46/clause-2",
+      "145-2020-nd-cp/chapter-iii/section-2/article-8/clause-3/point-a",
+      "145-2020-nd-cp/chapter-iii/section-2/article-8/clause-3/point-c",
+      "74-2025-qh15/chapter-vii/section-1/article-31/clause-2",
+      "74-2025-qh15/chapter-vii/section-4/article-38/clause-1/point-a"
+    ],
+    "rationale": "Khoản 2 Điều 46 BLLĐ: thời gian tính trợ cấp thôi việc là thời gian làm việc thực tế 'trừ đi thời gian người lao động đã tham gia bảo hiểm thất nghiệp'; điểm a khoản 3 Điều 8 NĐ 145: thời gian làm việc thực tế gồm cả 'thời gian thử việc'; điểm c khoản 3 Điều 8: tháng lẻ 'ít hơn hoặc bằng 06 tháng được tính bằng 1/2 năm'; khoản 2 Điều 31 Luật Việc làm 2025: 'người lao động đang làm việc theo hợp đồng thử việc' không thuộc đối tượng tham gia BHTN; điểm a khoản 1 Điều 38: được hưởng khi chấm dứt hợp đồng 'theo quy định của pháp luật' mà không phải đơn phương chấm dứt 'trái pháp luật'.",
+    "issues": [
+      "Thời gian thử việc có tính vào thời gian làm việc thực tế không",
+      "Trừ thời gian đã tham gia BHTN khi tính trợ cấp thôi việc",
+      "Người đang thử việc không thuộc diện tham gia BHTN",
+      "Điều kiện hưởng trợ cấp thất nghiệp khi người lao động tự nghỉ đúng luật"
+    ],
+    "reference_outcome": "Công ty vẫn phải trả trợ cấp thôi việc cho 2 tháng thử việc, vì thời gian này tính vào thời gian làm việc thực tế nhưng không được đóng BHTN (người thử việc không thuộc diện tham gia); 2 tháng được tính là 1/2 năm, tức trợ cấp bằng 1/4 tháng tiền lương bình quân 06 tháng liền kề. 6 năm đã đóng BHTN không tính trợ cấp thôi việc mà được bù bằng chế độ BHTN: chị nghỉ đúng luật nên không bị loại theo điểm a khoản 1 Điều 38 Luật Việc làm 2025.",
+    "conflict_kind": "cross_law",
+    "documents": [
+      "145-2020-nd-cp",
+      "45-2019-qh14",
+      "74-2025-qh15"
+    ],
+    "notes": "Giả định chị đáp ứng các điều kiện còn lại của khoản 1 Điều 38 (thời gian đóng, nộp hồ sơ trong 03 tháng)."
+  },
+  {
+    "text": "Một nhân viên mới vào công ty được 5 tháng thì sinh đôi; trước đó chị chưa từng tham gia BHXH. Chồng chị làm ở công ty khác và đã đóng BHXH bắt buộc liên tục 3 năm. Chị được nghỉ sinh bao lâu, có được BHXH trả trợ cấp thai sản không, và gia đình có được nhận khoản trợ cấp một lần nào không?",
+    "question_type": "synthesis",
+    "expected_status": "answer",
+    "relevant_unit_ids": [
+      "45-2019-qh14/chapter-x/article-139/clause-1",
+      "41-2024-qh15/chapter-v/section-2/article-53/clause-1",
+      "41-2024-qh15/chapter-v/section-2/article-50/clause-2",
+      "41-2024-qh15/chapter-v/section-2/article-58/clause-1",
+      "41-2024-qh15/chapter-v/section-2/article-58/clause-4"
+    ],
+    "rationale": "Khoản 1 Điều 139 BLLĐ: nghỉ thai sản 'là 06 tháng', sinh đôi trở lên thì 'cứ mỗi con, người mẹ được nghỉ thêm 01 tháng'; khoản 1 Điều 53 Luật BHXH 2024: thời gian nghỉ hưởng chế độ 'được thực hiện theo quy định tại khoản 1 Điều 139 của Bộ luật Lao động'; khoản 2 Điều 50: phải 'đóng bảo hiểm xã hội bắt buộc từ đủ 06 tháng trở lên trong thời gian 12 tháng liền kề trước khi sinh con'; khoản 1 Điều 58: lao động nữ không đủ điều kiện 'mà người chồng có đủ điều kiện quy định tại khoản 2 Điều 50 của Luật này thì người chồng được trợ cấp một lần'; khoản 4 Điều 58: mức 'cho mỗi con' bằng '02 lần mức tham chiếu'.",
+    "issues": [
+      "Thời gian nghỉ thai sản khi sinh đôi theo BLLĐ",
+      "Điều kiện 06 tháng đóng BHXH trong 12 tháng để hưởng chế độ thai sản",
+      "Quyền nghỉ theo BLLĐ tách khỏi quyền hưởng trợ cấp BHXH",
+      "Trợ cấp một lần chuyển sang người chồng"
+    ],
+    "reference_outcome": "Theo BLLĐ chị được nghỉ 07 tháng (06 tháng cộng 01 tháng cho con thứ hai), và Luật BHXH 2024 dẫn chiếu thẳng khoản 1 Điều 139 nên hai luật thống nhất về thời gian. Nhưng chị mới đóng 5 tháng nên không đủ điều kiện khoản 2 Điều 50, quỹ BHXH không trả trợ cấp thai sản và trợ cấp một lần cho chị; vì chồng đủ điều kiện khoản 2 Điều 50, chồng được trợ cấp một lần bằng 02 lần mức tham chiếu cho mỗi con, tức 04 lần mức tham chiếu.",
+    "conflict_kind": "cross_law",
+    "documents": [
+      "41-2024-qh15",
+      "45-2019-qh14"
+    ],
+    "notes": "Giả định không thuộc khoản 3 hoặc khoản 5 Điều 50 (nghỉ dưỡng thai, điều trị vô sinh). Corpus không quy định người sử dụng lao động phải trả lương trong thời gian nghỉ khi người lao động không đủ điều kiện hưởng BHXH. Mức tham chiếu bằng mức lương cơ sở (khoản 13 Điều 141), con số cụ thể ngoài corpus."
+  },
+  {
+    "text": "Công ty muốn chấm dứt hợp đồng với một nhân viên bảo vệ nam đã đủ tuổi nghỉ hưu theo lộ trình năm 2026. Anh có tổng cộng 16 năm đóng BHXH bắt buộc và đã làm cho công ty 9 năm. Anh có được hưởng lương hưu không, tỷ lệ bao nhiêu, và công ty có phải trả trợ cấp thôi việc cho 9 năm đó không?",
+    "question_type": "synthesis",
+    "expected_status": "answer",
+    "relevant_unit_ids": [
+      "45-2019-qh14/chapter-iii/section-3/article-36/clause-1/point-đ",
+      "41-2024-qh15/chapter-v/section-3/article-64/clause-1/point-a",
+      "41-2024-qh15/chapter-v/section-3/article-66/clause-1/point-b",
+      "45-2019-qh14/chapter-iii/section-3/article-46/clause-1",
+      "145-2020-nd-cp/chapter-iii/section-2/article-8/clause-1/point-a"
+    ],
+    "rationale": "Điểm đ khoản 1 Điều 36 BLLĐ: người sử dụng lao động được đơn phương chấm dứt khi người lao động 'đủ tuổi nghỉ hưu theo quy định tại Điều 169'; điểm a khoản 1 Điều 64 Luật BHXH 2024: có thời gian đóng 'từ đủ 15 năm trở lên' và đủ tuổi theo khoản 2 Điều 169 thì được lương hưu; điểm b khoản 1 Điều 66: lao động nam đóng 'từ đủ 15 năm đến dưới 20 năm' thì lương hưu 'bằng 40%' tương ứng 15 năm, 'cứ thêm mỗi năm đóng thì tính thêm 1%'; khoản 1 Điều 46 BLLĐ: trợ cấp thôi việc 'trừ trường hợp đủ điều kiện hưởng lương hưu theo quy định của pháp luật về bảo hiểm xã hội'; điểm a khoản 1 Điều 8 NĐ 145: loại trừ người 'đủ điều kiện hưởng lương hưu theo quy định tại Điều 169 của Bộ luật Lao động và pháp luật về bảo hiểm xã hội'.",
+    "issues": [
+      "Căn cứ chấm dứt hợp đồng khi người lao động đủ tuổi nghỉ hưu",
+      "Điều kiện từ đủ 15 năm đóng BHXH theo Luật BHXH 2024",
+      "Tỷ lệ lương hưu của lao động nam có từ 15 đến dưới 20 năm đóng",
+      "Loại trừ trợ cấp thôi việc khi đủ điều kiện hưởng lương hưu"
+    ],
+    "reference_outcome": "Anh đủ điều kiện lương hưu vì đủ tuổi và có 16 năm đóng (từ đủ 15 năm theo Luật BHXH 2024), tỷ lệ hưởng là 40% + 1% = 41% mức bình quân tiền lương đóng BHXH. Vì đủ điều kiện hưởng lương hưu, công ty không phải trả trợ cấp thôi việc theo khoản 1 Điều 46 BLLĐ và điểm a khoản 1 Điều 8 NĐ 145; ngoại lệ của BLLĐ chỉ xác định được khi đọc cùng điều kiện lương hưu của Luật BHXH 2024.",
+    "conflict_kind": "cross_law",
+    "documents": [
+      "145-2020-nd-cp",
+      "41-2024-qh15",
+      "45-2019-qh14"
+    ],
+    "notes": "Không xét thời hạn báo trước khi đơn phương chấm dứt (khoản 2 Điều 36 BLLĐ)."
+  },
+  {
+    "text": "Một công nhân bị máy dập cắt vào tay ngay tại xưởng, nghỉ điều trị 2 tháng rồi được Hội đồng giám định y khoa kết luận suy giảm 25% khả năng lao động; biên bản điều tra xác định anh không có lỗi. Trong 2 tháng điều trị ai trả tiền cho anh, anh có được trợ cấp ốm đau không, và công ty phải bồi thường tối thiểu bao nhiêu?",
+    "question_type": "synthesis",
+    "expected_status": "answer",
+    "relevant_unit_ids": [
+      "84-2015-qh13/chapter-iii/section-2/article-38/clause-3",
+      "84-2015-qh13/chapter-iii/section-2/article-38/clause-4/point-a",
+      "41-2024-qh15/chapter-v/section-1/article-42/clause-2/point-c",
+      "84-2015-qh13/chapter-iii/section-3/article-45/clause-2"
+    ],
+    "rationale": "Khoản 3 Điều 38 Luật ATVSLĐ: người sử dụng lao động 'Trả đủ tiền lương cho người lao động bị tai nạn lao động, bệnh nghề nghiệp phải nghỉ việc trong thời gian điều trị'; điểm a khoản 4 Điều 38: bồi thường 'Ít nhất bằng 1,5 tháng tiền lương nếu bị suy giảm từ 5% đến 10% khả năng lao động; sau đó cứ tăng 1% được cộng thêm 0,4 tháng tiền lương'; điểm c khoản 2 Điều 42 Luật BHXH 2024: không hưởng chế độ ốm đau 'Trong thời gian lần đầu phải nghỉ việc để điều trị, phục hồi chức năng lao động khi bị tai nạn lao động'; khoản 2 Điều 45 Luật ATVSLĐ: điều kiện hưởng chế độ TNLĐ từ quỹ là 'Suy giảm khả năng lao động từ 5% trở lên'.",
+    "issues": [
+      "Ai trả lương trong thời gian điều trị tai nạn lao động lần đầu",
+      "Loại trừ trợ cấp ốm đau trong thời gian điều trị TNLĐ lần đầu",
+      "Mức bồi thường tối thiểu của người sử dụng lao động theo tỷ lệ suy giảm",
+      "Quyền hưởng chế độ bảo hiểm TNLĐ từ quỹ khi suy giảm từ 5%"
+    ],
+    "reference_outcome": "Trong 2 tháng điều trị công ty phải trả đủ tiền lương theo khoản 3 Điều 38 Luật ATVSLĐ, còn quỹ BHXH không trả trợ cấp ốm đau vì điểm c khoản 2 Điều 42 Luật BHXH 2024 loại trừ thời gian điều trị TNLĐ lần đầu. Với 25% suy giảm và không có lỗi, công ty phải bồi thường ít nhất 1,5 + 15 x 0,4 = 7,5 tháng tiền lương; ngoài ra anh còn được hưởng chế độ TNLĐ từ Quỹ bảo hiểm TNLĐ, BNN vì suy giảm từ 5%, hai khoản này cộng dồn chứ không thay thế nhau.",
+    "conflict_kind": "cross_law",
+    "documents": [
+      "41-2024-qh15",
+      "84-2015-qh13"
+    ],
+    "notes": "Mức trợ cấp cụ thể từ quỹ (Điều 48 Luật ATVSLĐ) không đưa vào nhãn; tiền lương làm căn cứ bồi thường theo khoản 10 Điều 38."
+  },
+  {
+    "text": "Hợp đồng của một trưởng ca ghi: mức lương 12 triệu đồng, phụ cấp trách nhiệm 2 triệu đồng và phụ cấp độc hại 1 triệu đồng trả cố định hằng tháng, cộng thưởng KPI theo quý tùy kết quả. Công ty muốn đăng ký đóng BHXH và BHTN chỉ trên 12 triệu đồng. Làm vậy có đúng không?",
+    "question_type": "synthesis",
+    "expected_status": "answer",
+    "relevant_unit_ids": [
+      "10-2020-tt-bldtbxh/chapter-ii/article-3/clause-5/point-b",
+      "10-2020-tt-bldtbxh/chapter-ii/article-3/clause-5/point-c",
+      "41-2024-qh15/chapter-iv/section-2/article-31/clause-1/point-b",
+      "74-2025-qh15/chapter-vii/section-2/article-34/clause-1/point-b",
+      "41-2024-qh15/chapter-iv/section-2/article-39/clause-1/point-c"
+    ],
+    "rationale": "Điểm b khoản 5 Điều 3 TT 10/2020: phụ cấp lương gồm khoản 'để bù đắp yếu tố về điều kiện lao động, tính chất phức tạp công việc'; điểm c: phân biệt khoản bổ sung 'xác định được mức tiền cụ thể' trả thường xuyên với khoản 'không xác định được mức tiền cụ thể'; điểm b khoản 1 Điều 31 Luật BHXH 2024: tiền lương đóng BHXH 'bao gồm mức lương theo công việc hoặc chức danh, phụ cấp lương và các khoản bổ sung khác được thỏa thuận trả thường xuyên, ổn định trong mỗi kỳ trả lương'; điểm b khoản 1 Điều 34 Luật Việc làm 2025: căn cứ đóng BHTN dùng cùng công thức; điểm c khoản 1 Điều 39 Luật BHXH 2024: 'Đăng ký tiền lương làm căn cứ đóng bảo hiểm xã hội bắt buộc thấp hơn quy định tại khoản 1 Điều 31' là trốn đóng.",
+    "issues": [
+      "Phân loại phụ cấp lương và khoản bổ sung trong hợp đồng theo TT 10",
+      "Tiền lương làm căn cứ đóng BHXH và BHTN",
+      "Thưởng KPI không cố định có tính vào căn cứ đóng không",
+      "Hậu quả của việc đăng ký thấp hơn"
+    ],
+    "reference_outcome": "Không đúng: hai khoản phụ cấp trả cố định là phụ cấp lương theo TT 10 và phải cộng vào căn cứ đóng theo Luật BHXH 2024 và Luật Việc làm 2025, nên căn cứ đóng tối thiểu là 15 triệu đồng; thưởng KPI không xác định trước mức tiền và không trả ổn định mỗi kỳ nên không thuộc căn cứ đóng. Đăng ký 12 triệu đồng là thấp hơn khoản 1 Điều 31 và bị coi là trốn đóng theo điểm c khoản 1 Điều 39 Luật BHXH 2024.",
+    "conflict_kind": "cross_law",
+    "documents": [
+      "10-2020-tt-bldtbxh",
+      "41-2024-qh15",
+      "74-2025-qh15"
+    ],
+    "notes": "Chính phủ quy định chi tiết điểm b khoản 1 Điều 31 (khoản 3 Điều 31); văn bản này ngoài corpus và có thể loại trừ một số khoản cụ thể."
+  },
+  {
+    "text": "Công ty muốn ký hợp đồng 2 năm với một kế toán trưởng đã nghỉ hưu và đang nhận lương hưu. Công ty có phải đóng BHXH bắt buộc và bảo hiểm thất nghiệp cho ông không, và nếu không đóng thì có phải trả thêm khoản gì cho ông?",
+    "question_type": "synthesis",
+    "expected_status": "answer",
+    "relevant_unit_ids": [
+      "45-2019-qh14/chapter-xi/section-2/article-149/clause-2",
+      "41-2024-qh15/chapter-i/article-2/clause-7/point-a",
+      "74-2025-qh15/chapter-vii/section-1/article-31/clause-2",
+      "45-2019-qh14/chapter-xii/article-168/clause-3",
+      "12-2022-nd-cp/chapter-ii/article-17/clause-4/point-a"
+    ],
+    "rationale": "Khoản 2 Điều 149 BLLĐ: người lao động cao tuổi 'đang hưởng lương hưu' làm theo hợp đồng mới thì 'ngoài quyền lợi đang hưởng theo chế độ hưu trí' được hưởng tiền lương và quyền lợi khác; điểm a khoản 7 Điều 2 Luật BHXH 2024: 'Người đang hưởng lương hưu' không thuộc đối tượng BHXH bắt buộc; khoản 2 Điều 31 Luật Việc làm 2025: người 'đang hưởng lương hưu' không thuộc đối tượng tham gia BHTN; khoản 3 Điều 168 BLLĐ: với người không thuộc đối tượng tham gia, người sử dụng lao động 'có trách nhiệm chi trả thêm cùng lúc với kỳ trả lương một khoản tiền' tương đương mức đóng; khoản 4 Điều 17 NĐ 12/2022 (điểm a): phạt hành vi 'không trả hoặc trả không đủ cùng lúc với kỳ trả lương một khoản tiền' này.",
+    "issues": [
+      "Người đang hưởng lương hưu có thuộc đối tượng BHXH bắt buộc không",
+      "Người đang hưởng lương hưu có thuộc đối tượng BHTN không",
+      "Nghĩa vụ trả thêm khoản tiền tương đương mức đóng cho người không thuộc diện tham gia",
+      "Chế tài khi không trả khoản tiền đó"
+    ],
+    "reference_outcome": "Công ty không đóng BHXH bắt buộc và BHTN cho người đang hưởng lương hưu, vì Luật BHXH 2024 và Luật Việc làm 2025 đều loại trừ đối tượng này, và ông vẫn giữ nguyên lương hưu theo khoản 2 Điều 149 BLLĐ. Bù lại, theo khoản 3 Điều 168 BLLĐ công ty phải trả thêm cùng kỳ lương một khoản tương đương mức người sử dụng lao động lẽ ra phải đóng cho các loại bảo hiểm mà ông không thuộc diện tham gia; không trả thì bị phạt theo khoản 4 Điều 17 NĐ 12/2022.",
+    "conflict_kind": "lex_specialis_or_exception",
+    "documents": [
+      "12-2022-nd-cp",
+      "41-2024-qh15",
+      "45-2019-qh14",
+      "74-2025-qh15"
+    ],
+    "notes": "Nghĩa vụ bảo hiểm y tế và bảo hiểm TNLĐ, BNN đối với người hưởng lương hưu thuộc văn bản ngoài corpus hoặc không được xét; câu trả lời chỉ cần phần BHXH bắt buộc và BHTN."
+  },
+  {
+    "text": "Một nhân viên bị xe máy khác tông khi đang trên đường từ nhà đến công ty, đúng tuyến đường và thời gian hợp lý. Anh nằm viện 3 tuần, sau đó được giám định suy giảm 12% khả năng lao động. Thời gian nằm viện anh được hưởng chế độ gì, sau đó có được hưởng chế độ tai nạn lao động không, và công ty có trách nhiệm gì?",
+    "question_type": "synthesis",
+    "expected_status": "answer",
+    "relevant_unit_ids": [
+      "41-2024-qh15/chapter-v/section-1/article-42/clause-1/point-c",
+      "41-2024-qh15/chapter-v/section-1/article-42/clause-2/point-c",
+      "84-2015-qh13/chapter-iii/section-3/article-45/clause-1/point-c",
+      "84-2015-qh13/chapter-iii/section-3/article-45/clause-2",
+      "84-2015-qh13/chapter-iii/section-2/article-39/clause-2"
+    ],
+    "rationale": "Điểm c khoản 1 Điều 42 Luật BHXH 2024: hưởng chế độ ốm đau khi 'Điều trị khi bị tai nạn khi đi từ nơi ở đến nơi làm việc hoặc từ nơi làm việc về nơi ở theo tuyến đường và thời gian hợp lý'; điểm c khoản 2 Điều 42: loại trừ 'thời gian lần đầu phải nghỉ việc để điều trị, phục hồi chức năng lao động khi bị tai nạn lao động'; điểm c khoản 1 Điều 45 Luật ATVSLĐ: tai nạn 'Trên tuyến đường đi từ nơi ở đến nơi làm việc' thuộc trường hợp hưởng chế độ TNLĐ; khoản 2 Điều 45: 'Suy giảm khả năng lao động từ 5% trở lên'; khoản 2 Điều 39 Luật ATVSLĐ: nếu 'do lỗi của người khác gây ra' thì người sử dụng lao động 'trợ cấp cho người lao động theo quy định tại khoản 5 Điều 38'.",
+    "issues": [
+      "Chế độ trong thời gian điều trị tai nạn trên đường đi làm: ốm đau hay TNLĐ",
+      "Quan hệ giữa quy định riêng tại điểm c khoản 1 và loại trừ tại điểm c khoản 2 Điều 42 Luật BHXH 2024",
+      "Điều kiện hưởng chế độ TNLĐ từ quỹ khi suy giảm 12%",
+      "Trợ cấp của người sử dụng lao động khi tai nạn do người khác gây ra"
+    ],
+    "reference_outcome": "Thời gian nằm viện anh hưởng chế độ ốm đau, vì điểm c khoản 1 Điều 42 Luật BHXH 2024 quy định riêng cho tai nạn trên đường đi làm, không rơi vào loại trừ dành cho thời gian điều trị TNLĐ lần đầu. Sau khi giám định 12% (từ 5% trở lên) anh đủ điều kiện hưởng chế độ TNLĐ từ quỹ theo điểm c khoản 1 và khoản 2 Điều 45 Luật ATVSLĐ; do người khác gây ra nên công ty chỉ phải trợ cấp theo khoản 5 Điều 38 (ít nhất 40% mức bồi thường tương ứng), không phải bồi thường như tai nạn tại nơi làm việc.",
+    "conflict_kind": "lex_specialis_or_exception",
+    "documents": [
+      "41-2024-qh15",
+      "84-2015-qh13"
+    ],
+    "notes": "Hồ sơ xác nhận tai nạn trên đường đi làm và mức trợ cấp cụ thể của quỹ không được xét."
+  },
+  {
+    "text": "Một công nhân nam sinh tháng 6/1970 đã làm 17 năm công việc đặc biệt nặng nhọc, độc hại thuộc danh mục của Bộ, tổng thời gian đóng BHXH bắt buộc 25 năm, muốn nghỉ hưu sớm. Anh có được nghỉ hưu trước tuổi chung không, sớm nhất khi nào, và có được hưởng lương hưu không?",
+    "question_type": "synthesis",
+    "expected_status": "answer",
+    "relevant_unit_ids": [
+      "45-2019-qh14/chapter-xii/article-169/clause-3",
+      "135-2020-nd-cp/article-5/clause-1/point-a",
+      "135-2020-nd-cp/article-5/clause-2",
+      "135-2020-nd-cp/article-3/clause-1",
+      "41-2024-qh15/chapter-v/section-3/article-64/clause-1/point-b"
+    ],
+    "rationale": "Khoản 3 Điều 169 BLLĐ: người làm nghề, công việc đặc biệt nặng nhọc, độc hại 'có thể nghỉ hưu ở tuổi thấp hơn nhưng không quá 05 tuổi'; điểm a khoản 1 Điều 5 NĐ 135/2020: áp dụng cho người 'có từ đủ 15 năm trở lên làm nghề, công việc nặng nhọc, độc hại, nguy hiểm hoặc đặc biệt nặng nhọc, độc hại, nguy hiểm'; khoản 2 Điều 5 (bảng): tuổi nghỉ hưu thấp nhất của nam năm 2025 là '56 tuổi 3 tháng', năm 2026 là '56 tuổi 6 tháng'; khoản 1 Điều 3: thời điểm nghỉ hưu là 'kết thúc ngày cuối cùng của tháng đủ tuổi nghỉ hưu'; điểm b khoản 1 Điều 64 Luật BHXH 2024: đủ tuổi theo khoản 3 Điều 169 'và có tổng thời gian đóng bảo hiểm xã hội bắt buộc từ đủ 15 năm trở lên khi làm nghề, công việc nặng nhọc, độc hại' thì được lương hưu.",
+    "issues": [
+      "Ngoại lệ nghỉ hưu ở tuổi thấp hơn cho nghề đặc biệt nặng nhọc, độc hại",
+      "Tuổi nghỉ hưu thấp nhất theo bảng lộ trình",
+      "Điều kiện 15 năm làm nghề nặng nhọc, độc hại để hưởng lương hưu",
+      "Thời điểm nghỉ hưu"
+    ],
+    "reference_outcome": "Anh được nghỉ hưu sớm theo ngoại lệ khoản 3 Điều 169 BLLĐ, do NĐ 135 cụ thể hóa: năm 2025 anh chưa đủ 56 tuổi 3 tháng, còn tuổi thấp nhất năm 2026 là 56 tuổi 6 tháng, anh đủ vào tháng 12/2026 nên thời điểm nghỉ hưu sớm nhất là kết thúc ngày 31/12/2026. Anh hưởng lương hưu theo điểm b khoản 1 Điều 64 Luật BHXH 2024 vì có từ đủ 15 năm đóng BHXH khi làm nghề nặng nhọc, độc hại; quy định riêng này thay cho tuổi nghỉ hưu chung tại khoản 2 Điều 169.",
+    "conflict_kind": "lex_specialis_or_exception",
+    "documents": [
+      "135-2020-nd-cp",
+      "41-2024-qh15",
+      "45-2019-qh14"
+    ],
+    "notes": "Nghỉ hưu sớm là quyền lựa chọn ('có thể'); giả định cả 17 năm làm nghề nặng nhọc đều có đóng BHXH bắt buộc."
+  },
+  {
+    "text": "Công ty tự ý điều chuyển một nhân viên kế toán từ trụ sở Hà Nội vào chi nhánh Đà Nẵng làm việc lâu dài, trong khi hợp đồng ghi địa điểm làm việc là Hà Nội; chị nghỉ việc ngay mà không báo trước. Chị có được trợ cấp thôi việc và trợ cấp thất nghiệp không? Nếu chị nghỉ ngang không báo trước chỉ vì đã tìm được việc mới thì kết quả khác thế nào?",
+    "question_type": "synthesis",
+    "expected_status": "answer",
+    "relevant_unit_ids": [
+      "45-2019-qh14/chapter-iii/section-3/article-35/clause-2/point-a",
+      "45-2019-qh14/chapter-iii/section-3/article-46/clause-1",
+      "45-2019-qh14/chapter-iii/section-3/article-40/clause-1",
+      "74-2025-qh15/chapter-vii/section-4/article-38/clause-1/point-a"
+    ],
+    "rationale": "Điểm a khoản 2 Điều 35 BLLĐ: người lao động được đơn phương chấm dứt 'không cần báo trước' khi 'Không được bố trí theo đúng công việc, địa điểm làm việc hoặc không được bảo đảm điều kiện làm việc theo thỏa thuận, trừ trường hợp quy định tại Điều 29'; khoản 1 Điều 46: trợ cấp thôi việc khi hợp đồng chấm dứt theo 'các khoản 1, 2, 3, 4, 6, 7, 9 và 10 Điều 34'; khoản 1 Điều 40: đơn phương chấm dứt trái pháp luật thì 'Không được trợ cấp thôi việc'; điểm a khoản 1 Điều 38 Luật Việc làm 2025: không được hưởng trợ cấp thất nghiệp nếu thuộc trường hợp 'người lao động đơn phương chấm dứt hợp đồng lao động trái pháp luật theo quy định của Bộ luật Lao động'.",
+    "issues": [
+      "Quyền nghỉ không cần báo trước khi bị bố trí sai địa điểm làm việc",
+      "Trợ cấp thôi việc khi người lao động đơn phương chấm dứt đúng luật",
+      "Luật Việc làm 2025 dựa vào BLLĐ để xác định tính hợp pháp của việc nghỉ",
+      "Hậu quả khi nghỉ ngang không có căn cứ"
+    ],
+    "reference_outcome": "Điều chuyển lâu dài sai địa điểm đã thỏa thuận (không phải tạm chuyển theo Điều 29) cho phép chị nghỉ ngay không cần báo trước, nên việc chấm dứt là hợp pháp: chị được trợ cấp thôi việc cho phần thời gian chưa tham gia BHTN và không bị loại khỏi trợ cấp thất nghiệp theo điểm a khoản 1 Điều 38 Luật Việc làm 2025. Nếu chị nghỉ ngang chỉ vì có việc mới mà không báo trước theo khoản 1 Điều 35 thì đó là đơn phương chấm dứt trái pháp luật: mất trợ cấp thôi việc (khoản 1 Điều 40 BLLĐ) và không được hưởng trợ cấp thất nghiệp.",
+    "conflict_kind": "lex_specialis_or_exception",
+    "documents": [
+      "45-2019-qh14",
+      "74-2025-qh15"
+    ],
+    "notes": "Giả định đáp ứng các điều kiện còn lại của khoản 1 Điều 38 (thời gian đóng, nộp hồ sơ); nghĩa vụ bồi thường tại khoản 2 Điều 40 BLLĐ không đưa vào nhãn."
+  },
+  {
+    "text": "Một nhân viên đã đóng BHXH bắt buộc 3 năm, mang thai được hơn 1 tháng thì bác sĩ chỉ định nghỉ dưỡng thai và chị xin tạm hoãn hợp đồng lao động đến khi sinh. Tính ra trong 12 tháng trước khi sinh chị chỉ đóng BHXH được 4 tháng. Chị có được hưởng chế độ thai sản khi sinh con không?",
+    "question_type": "synthesis",
+    "expected_status": "answer",
+    "relevant_unit_ids": [
+      "45-2019-qh14/chapter-x/article-138/clause-1",
+      "45-2019-qh14/chapter-x/article-138/clause-2",
+      "41-2024-qh15/chapter-v/section-2/article-50/clause-2",
+      "41-2024-qh15/chapter-v/section-2/article-50/clause-3"
+    ],
+    "rationale": "Khoản 1 Điều 138 BLLĐ: lao động nữ mang thai có xác nhận của cơ sở khám bệnh, chữa bệnh 'về việc tiếp tục làm việc sẽ ảnh hưởng xấu tới thai nhi thì có quyền đơn phương chấm dứt hợp đồng lao động hoặc tạm hoãn thực hiện hợp đồng lao động'; khoản 2 Điều 138: thời gian tạm hoãn 'tối thiểu phải bằng thời gian do cơ sở khám bệnh, chữa bệnh có thẩm quyền chỉ định tạm nghỉ'; khoản 2 Điều 50 Luật BHXH 2024: điều kiện chung 'từ đủ 06 tháng trở lên trong thời gian 12 tháng liền kề trước khi sinh con'; khoản 3 Điều 50: người 'đã đóng bảo hiểm xã hội bắt buộc từ đủ 12 tháng trở lên mà khi mang thai phải nghỉ việc để dưỡng thai theo chỉ định' chỉ cần 'từ đủ 03 tháng trở lên trong thời gian 12 tháng liền kề trước khi sinh con'.",
+    "issues": [
+      "Quyền tạm hoãn hợp đồng của lao động nữ mang thai theo chỉ định y tế",
+      "Điều kiện chung 06 tháng đóng trong 12 tháng",
+      "Điều kiện riêng 03 tháng cho người nghỉ dưỡng thai đã đóng từ đủ 12 tháng",
+      "Áp dụng ngoại lệ vào tình huống"
+    ],
+    "reference_outcome": "Chị không đạt điều kiện chung của khoản 2 Điều 50 (4 tháng, dưới mức 06 tháng), nhưng thuộc quy định riêng tại khoản 3 Điều 50 vì đã đóng từ đủ 12 tháng và phải nghỉ dưỡng thai theo chỉ định, nên chỉ cần 03 tháng đóng trong 12 tháng trước khi sinh. Với 4 tháng chị đủ điều kiện hưởng chế độ thai sản khi sinh con; việc tạm hoãn hợp đồng là quyền hợp pháp theo Điều 138 BLLĐ, và chính khoảng nghỉ đó là lý do Luật BHXH 2024 hạ ngưỡng.",
+    "conflict_kind": "lex_specialis_or_exception",
+    "documents": [
+      "41-2024-qh15",
+      "45-2019-qh14"
+    ],
+    "notes": "Giả định có chỉ định nghỉ dưỡng thai của người hành nghề thuộc cơ sở khám bệnh, chữa bệnh."
+  },
+  {
+    "text": "Công ty TNHH của chúng tôi chậm đóng BHXH bắt buộc và bảo hiểm thất nghiệp cho nhân viên từ tháng 3/2025 đến nay, chưa bị cơ quan nào đôn đốc. Tháng 2/2026 thanh tra lập biên bản. Ngoài việc đóng bù, công ty bị phạt tiền khoảng bao nhiêu, và tiền lãi chậm đóng tính theo NĐ 12/2022 (gấp 2 lần lãi suất đầu tư quỹ) hay theo Luật BHXH 2024?",
+    "question_type": "synthesis",
+    "expected_status": "answer",
+    "relevant_unit_ids": [
+      "12-2022-nd-cp/chapter-iii/article-39/clause-5/point-a",
+      "12-2022-nd-cp/chapter-i/article-6/clause-1",
+      "12-2022-nd-cp/chapter-iii/article-39/clause-10/point-b",
+      "41-2024-qh15/chapter-iv/section-2/article-40/clause-1",
+      "41-2024-qh15/chapter-xi/article-141/clause-12"
+    ],
+    "rationale": "Điểm a khoản 5 Điều 39 NĐ 12/2022: phạt 'từ 12% đến 15% tổng số tiền phải đóng bảo hiểm xã hội bắt buộc, bảo hiểm thất nghiệp tại thời điểm lập biên bản vi phạm hành chính nhưng tối đa không quá 75.000.000 đồng' đối với hành vi 'Chậm đóng'; khoản 1 Điều 6: đây là mức phạt cá nhân, 'Mức phạt tiền đối với tổ chức bằng 02 lần mức phạt tiền đối với cá nhân'; điểm b khoản 10 Điều 39 NĐ 12: buộc nộp 'khoản tiền lãi bằng 02 lần mức lãi suất đầu tư quỹ bảo hiểm xã hội bình quân của năm trước liền kề'; khoản 1 Điều 40 Luật BHXH 2024: 'Bắt buộc đóng đủ số tiền chậm đóng; nộp số tiền bằng 0,03%/ngày'; khoản 12 Điều 141: số tiền phải đóng theo Luật 58/2014 và Luật Việc làm 2013 'đến hết ngày 30 tháng 6 năm 2025 mà không đóng hoặc không đóng đầy đủ thì được xử lý theo quy định về chậm đóng, trốn đóng của Luật này'.",
+    "issues": [
+      "Mức phạt tiền đối với hành vi chậm đóng BHXH, BHTN",
+      "Mức phạt đối với tổ chức gấp 2 lần cá nhân",
+      "Xung đột giữa cách tính lãi của NĐ 12/2022 và khoản 1 Điều 40 Luật BHXH 2024",
+      "Xử lý phần nợ phát sinh trước 01/7/2025"
+    ],
+    "reference_outcome": "Công ty bị phạt từ 24% đến 30% tổng số tiền phải đóng, tối đa 150 triệu đồng (gấp 2 lần mức cá nhân tại điểm a khoản 5 Điều 39 NĐ 12), và buộc đóng đủ. Về tiền chậm đóng, khoản 1 Điều 40 Luật BHXH 2024 (hiệu lực từ 01/7/2025) quy định 0,03%/ngày, khác cách tính 02 lần lãi suất đầu tư quỹ của NĐ 12; luật có hiệu lực pháp lý cao hơn và ban hành sau nên áp dụng 0,03%/ngày, kể cả cho phần nợ từ tháng 3 đến tháng 6/2025 theo khoản 12 Điều 141.",
+    "conflict_kind": "amended_or_superseded",
+    "documents": [
+      "12-2022-nd-cp",
+      "41-2024-qh15"
+    ],
+    "notes": "Corpus không chứa văn bản sửa đổi NĐ 12/2022 sau Luật BHXH 2024 (nếu có) và văn bản Chính phủ chi tiết khoản 1 Điều 40; cần đối chiếu trước khi dùng thực tế. Giả định chưa bị đôn đốc nên chưa thành trốn đóng theo điểm đ khoản 1 Điều 39 Luật BHXH 2024."
+  },
+  {
+    "text": "Một nữ nhân viên đủ tuổi nghỉ hưu theo lộ trình trong năm 2026 nhưng chỉ có 17 năm đóng BHXH bắt buộc. Phòng nhân sự đọc khoản 1 Điều 7 NĐ 135/2020 thấy dẫn chiếu Điều 54, Điều 55 Luật BHXH về điều kiện hưởng lương hưu và lo chị chưa đủ điều kiện. Hiện nay chị có được hưởng lương hưu không, tỷ lệ bao nhiêu?",
+    "question_type": "synthesis",
+    "expected_status": "answer",
+    "relevant_unit_ids": [
+      "45-2019-qh14/chapter-xii/article-169/clause-1",
+      "135-2020-nd-cp/article-7/clause-1",
+      "41-2024-qh15/chapter-xi/article-140/clause-2",
+      "41-2024-qh15/chapter-v/section-3/article-64/clause-1/point-a",
+      "41-2024-qh15/chapter-v/section-3/article-66/clause-1/point-a"
+    ],
+    "rationale": "Khoản 1 Điều 169 BLLĐ: hưởng lương hưu khi đủ tuổi nếu 'bảo đảm điều kiện về thời gian đóng bảo hiểm xã hội theo quy định của pháp luật về bảo hiểm xã hội'; khoản 1 Điều 7 NĐ 135: chế độ hưu trí 'theo Điều 54, Điều 55, khoản 1 Điều 73 của Luật Bảo hiểm xã hội' thực hiện theo tuổi nghỉ hưu mới; khoản 2 Điều 140 Luật BHXH 2024: 'Luật Bảo hiểm xã hội số 58/2014/QH13' cùng các lần sửa đổi 'hết hiệu lực thi hành kể từ ngày Luật này có hiệu lực thi hành'; điểm a khoản 1 Điều 64: có thời gian đóng 'từ đủ 15 năm trở lên' và đủ tuổi theo khoản 2 Điều 169; điểm a khoản 1 Điều 66: lao động nữ 'bằng 45%' tương ứng 15 năm, 'sau đó cứ thêm mỗi năm đóng thì tính thêm 2%'.",
+    "issues": [
+      "BLLĐ dẫn chiếu điều kiện thời gian đóng sang pháp luật BHXH",
+      "NĐ 135 dẫn chiếu các điều của Luật BHXH 2014 đã hết hiệu lực",
+      "Điều kiện từ đủ 15 năm đóng theo Luật BHXH 2024",
+      "Tỷ lệ lương hưu của lao động nữ có 17 năm đóng"
+    ],
+    "reference_outcome": "Chị được hưởng lương hưu: Điều 54, Điều 55 Luật BHXH 2014 mà NĐ 135 dẫn chiếu đã hết hiệu lực từ 01/7/2025 theo khoản 2 Điều 140 Luật BHXH 2024, nên điều kiện thời gian đóng mà khoản 1 Điều 169 BLLĐ dẫn chiếu nay là 'từ đủ 15 năm' tại điểm a khoản 1 Điều 64. Tỷ lệ hưởng là 45% + 2 x 2% = 49% mức bình quân tiền lương đóng BHXH; phần lộ trình tuổi của NĐ 135 vẫn dùng được vì nó chi tiết Điều 169 BLLĐ chứ không phải Luật BHXH cũ.",
+    "conflict_kind": "amended_or_superseded",
+    "documents": [
+      "135-2020-nd-cp",
+      "41-2024-qh15",
+      "45-2019-qh14"
+    ],
+    "notes": "Ngưỡng thời gian đóng của Luật BHXH 2014 nằm ngoài corpus; corpus chỉ cho thấy luật cũ hết hiệu lực và ngưỡng mới. Giả định chị nghỉ việc sau 01/7/2025."
+  },
+  {
+    "text": "Công ty có hai trường hợp chưa được giới thiệu đi giám định suy giảm khả năng lao động: một công nhân bị tai nạn lao động đã điều trị ổn định nhưng còn di chứng, và một nhân viên bị bệnh thông thường muốn giám định để nghỉ hưu do suy giảm khả năng lao động. Nếu thanh tra kiểm tra năm 2026, công ty có thể bị phạt theo căn cứ nào và căn cứ nào còn vướng?",
+    "question_type": "synthesis",
+    "expected_status": "answer",
+    "relevant_unit_ids": [
+      "84-2015-qh13/chapter-iii/section-3/article-47/clause-1/point-a",
+      "12-2022-nd-cp/chapter-ii/article-23/clause-1/point-d",
+      "12-2022-nd-cp/chapter-iii/article-41/clause-4/point-c",
+      "41-2024-qh15/chapter-ii/section-1/article-13/clause-5",
+      "41-2024-qh15/chapter-xi/article-140/clause-2"
+    ],
+    "rationale": "Điểm a khoản 1 Điều 47 Luật ATVSLĐ: người bị TNLĐ được giám định 'Sau khi bị thương tật, bệnh tật lần đầu đã được điều trị ổn định còn di chứng ảnh hưởng tới sức khỏe'; điểm d khoản 1 Điều 23 NĐ 12/2022: phạt 2 - 4 triệu đồng mỗi người khi 'Không giới thiệu người lao động bị tai nạn lao động, bệnh nghề nghiệp được giám định y khoa'; điểm c khoản 4 Điều 41 NĐ 12: phạt khi không giới thiệu người thuộc 'Điều 47 của Luật An toàn, vệ sinh lao động và Điều 55 của Luật Bảo hiểm xã hội' đi giám định; khoản 5 Điều 13 Luật BHXH 2024: người sử dụng lao động 'Xem xét giới thiệu người lao động thuộc đối tượng theo quy định tại Điều 65 của Luật này đi khám giám định y khoa'; khoản 2 Điều 140: Luật Bảo hiểm xã hội số 58/2014/QH13 'hết hiệu lực thi hành'.",
+    "issues": [
+      "Nghĩa vụ giới thiệu người bị TNLĐ đi giám định và chế tài còn hiệu lực",
+      "Hai điều khoản của NĐ 12/2022 cùng xử phạt hành vi đối với người bị TNLĐ",
+      "Dẫn chiếu Điều 55 Luật BHXH 2014 sau khi luật này hết hiệu lực",
+      "Nghĩa vụ tương ứng tại khoản 5 Điều 13 Luật BHXH 2024"
+    ],
+    "reference_outcome": "Với công nhân bị TNLĐ, nghĩa vụ theo Luật ATVSLĐ vẫn nguyên hiệu lực và công ty có thể bị phạt 2 - 4 triệu đồng mỗi người (mức cá nhân, doanh nghiệp gấp đôi) theo điểm d khoản 1 Điều 23 hoặc điểm c khoản 4 Điều 41 NĐ 12, nhưng chỉ bị phạt một lần cho một hành vi. Với nhân viên muốn nghỉ hưu do suy giảm khả năng lao động, NĐ 12 dẫn chiếu Điều 55 của Luật BHXH 2014 đã hết hiệu lực; nghĩa vụ hiện nay là 'xem xét giới thiệu' theo khoản 5 Điều 13 Luật BHXH 2024 (dẫn chiếu Điều 65), nên việc dùng chế tài cũ cho nghĩa vụ mới không chắc chắn và cần đối chiếu văn bản xử phạt cập nhật ngoài corpus.",
+    "conflict_kind": "amended_or_superseded",
+    "documents": [
+      "12-2022-nd-cp",
+      "41-2024-qh15",
+      "84-2015-qh13"
+    ],
+    "notes": "Nguyên tắc một hành vi chỉ bị xử phạt một lần thuộc Luật Xử lý vi phạm hành chính, ngoài corpus. Corpus không chứa văn bản sửa đổi NĐ 12/2022 sau năm 2024."
+  },
+  {
+    "text": "Một nhân viên nghỉ việc ngày 15/12/2025 và nộp hồ sơ hưởng trợ cấp thất nghiệp ngày 22/12/2025, nhưng đến đầu tháng 1/2026 vẫn chưa có quyết định vì công ty chưa hoàn thành thủ tục xác nhận thời gian đóng bảo hiểm thất nghiệp. Hồ sơ của anh được giải quyết theo luật nào, và công ty có bị xử lý gì không?",
+    "question_type": "synthesis",
+    "expected_status": "answer",
+    "relevant_unit_ids": [
+      "74-2025-qh15/chapter-viii/article-54/clause-1",
+      "74-2025-qh15/chapter-viii/article-54/clause-2",
+      "74-2025-qh15/chapter-viii/article-55/clause-4",
+      "45-2019-qh14/chapter-iii/section-3/article-48/clause-3/point-a",
+      "12-2022-nd-cp/chapter-iii/article-39/clause-3"
+    ],
+    "rationale": "Khoản 1 Điều 54 Luật Việc làm 2025: 'Luật này có hiệu lực thi hành từ ngày 01 tháng 01 năm 2026'; khoản 2 Điều 54: 'Luật Việc làm số 38/2013/QH13' đã sửa đổi 'hết hiệu lực kể từ ngày Luật này có hiệu lực thi hành'; khoản 4 Điều 55: người 'đã nộp hồ sơ đề nghị hưởng chế độ bảo hiểm thất nghiệp trước ngày Luật này có hiệu lực thi hành nhưng chưa có quyết định hưởng chế độ bảo hiểm thất nghiệp thì thực hiện theo quy định tại Luật này'; điểm a khoản 3 Điều 48 BLLĐ: người sử dụng lao động phải 'Hoàn thành thủ tục xác nhận thời gian đóng bảo hiểm xã hội, bảo hiểm thất nghiệp'; khoản 3 Điều 39 NĐ 12/2022: phạt 'từ 1.000.000 đồng đến 3.000.000 đồng khi vi phạm với mỗi người lao động' khi 'không thực hiện thủ tục xác nhận về việc đóng bảo hiểm thất nghiệp cho người lao động'.",
+    "issues": [
+      "Thời điểm Luật Việc làm 2025 có hiệu lực và Luật Việc làm 2013 hết hiệu lực",
+      "Quy định chuyển tiếp cho hồ sơ nộp trước 01/01/2026 chưa có quyết định",
+      "Nghĩa vụ xác nhận thời gian đóng BHTN khi chấm dứt hợp đồng",
+      "Chế tài trong NĐ 12/2022 ban hành dưới luật cũ"
+    ],
+    "reference_outcome": "Hồ sơ chưa có quyết định trước 01/01/2026 nên được giải quyết theo Luật Việc làm 2025 (khoản 4 Điều 55), dù anh nghỉ việc và nộp hồ sơ khi luật cũ còn hiệu lực. Công ty vi phạm nghĩa vụ tại điểm a khoản 3 Điều 48 BLLĐ và có thể bị phạt 1 - 3 triệu đồng cho mỗi người lao động (mức cá nhân, doanh nghiệp gấp đôi) theo khoản 3 Điều 39 NĐ 12; quy định phạt này mô tả hành vi chung, không dẫn chiếu điều cụ thể của Luật Việc làm 2013, nên vẫn áp dụng được.",
+    "conflict_kind": "amended_or_superseded",
+    "documents": [
+      "12-2022-nd-cp",
+      "45-2019-qh14",
+      "74-2025-qh15"
+    ],
+    "notes": "Khoản 2 Điều 12 NĐ 12/2022 cũng phạt hành vi không hoàn thành thủ tục xác nhận thời gian đóng BHXH, BHTN sau khi chấm dứt hợp đồng; người chấm có thể chấp nhận một trong hai căn cứ. Corpus không chứa văn bản sửa đổi NĐ 12/2022."
+  },
+  {
+    "text": "Sau khi sắp xếp lại đơn vị hành chính, địa bàn nơi xưởng may của chúng tôi hoạt động bị xếp vào vùng có lương tối thiểu thấp hơn theo Phụ lục NĐ 293/2025. Từ 01/01/2026 công ty có được hạ mức lương tối thiểu áp dụng cho công nhân cũ không, còn công nhân tuyển từ năm 2026 thì sao?",
+    "question_type": "synthesis",
+    "expected_status": "answer",
+    "relevant_unit_ids": [
+      "293-2025-nd-cp/article-5/clause-1",
+      "293-2025-nd-cp/article-5/clause-2",
+      "293-2025-nd-cp/article-5/clause-5",
+      "45-2019-qh14/chapter-vi/article-90/clause-2"
+    ],
+    "rationale": "Khoản 1 Điều 5 NĐ 293/2025: 'Nghị định này có hiệu lực thi hành từ ngày 01 tháng 01 năm 2026'; khoản 2 Điều 5: 'Nghị định số 74/2024/NĐ-CP' quy định mức lương tối thiểu 'hết hiệu lực kể từ ngày Nghị định này có hiệu lực thi hành'; khoản 5 Điều 5: nếu do điều chỉnh địa bàn mà mức mới 'thấp hơn mức lương tối thiểu do Chính phủ quy định tại thời điểm ngày 31 tháng 12 năm 2025 thì người sử dụng lao động phải tiếp tục thực hiện mức lương tối thiểu tại thời điểm ngày 31 tháng 12 năm 2025 đối với những người lao động được tuyển dụng từ ngày 31 tháng 12 năm 2025 trở về trước'; khoản 2 Điều 90 BLLĐ: mức lương theo công việc 'không được thấp hơn mức lương tối thiểu'.",
+    "issues": [
+      "NĐ 293/2025 thay thế NĐ 74/2024 từ 01/01/2026",
+      "Bảo lưu mức lương tối thiểu cũ cho người tuyển dụng đến hết 31/12/2025",
+      "Mức áp dụng cho người tuyển dụng từ năm 2026",
+      "Nguyên tắc lương không thấp hơn lương tối thiểu"
+    ],
+    "reference_outcome": "Không được hạ đối với công nhân tuyển dụng từ ngày 31/12/2025 trở về trước: khoản 5 Điều 5 NĐ 293 buộc tiếp tục áp dụng mức lương tối thiểu tại ngày 31/12/2025 (mức theo NĐ 74/2024 đã hết hiệu lực) cho đến khi Chính phủ có quy định mới. Công nhân tuyển từ năm 2026 áp dụng mức của vùng mới theo NĐ 293; trong mọi trường hợp mức lương theo công việc không được thấp hơn mức tối thiểu áp dụng cho người đó theo khoản 2 Điều 90 BLLĐ.",
+    "conflict_kind": "amended_or_superseded",
+    "documents": [
+      "293-2025-nd-cp",
+      "45-2019-qh14"
+    ],
+    "notes": "Mức lương tối thiểu cụ thể của NĐ 74/2024 và Phụ lục danh mục địa bàn nằm ngoài corpus."
+  },
+  {
+    "text": "Xưởng hóa chất của chúng tôi vẫn để một thợ hàn nam 63 tuổi, đã quá tuổi nghỉ hưu, làm công việc độc hại liên tục 6 năm nay, có lúc làm một mình trong ca đêm. Việc này có vi phạm không, và doanh nghiệp có thể bị phạt bao nhiêu?",
+    "question_type": "synthesis",
+    "expected_status": "answer",
+    "relevant_unit_ids": [
+      "45-2019-qh14/chapter-xi/section-2/article-149/clause-3",
+      "84-2015-qh13/chapter-iv/article-64/clause-1/point-c",
+      "84-2015-qh13/chapter-iv/article-64/clause-1/point-d",
+      "12-2022-nd-cp/chapter-ii/article-31/clause-2",
+      "12-2022-nd-cp/chapter-i/article-6/clause-1"
+    ],
+    "rationale": "Khoản 3 Điều 149 BLLĐ: 'Không được sử dụng người lao động cao tuổi làm nghề, công việc nặng nhọc, độc hại, nguy hiểm' có ảnh hưởng xấu tới sức khỏe, 'trừ trường hợp bảo đảm các điều kiện làm việc an toàn'; khoản 1 Điều 64 Luật ATVSLĐ: chỉ sử dụng 'khi có đủ các điều kiện sau đây', trong đó điểm c 'Chỉ sử dụng không quá 05 năm đối với từng người lao động cao tuổi' và điểm d 'Có ít nhất một người lao động không phải là người lao động cao tuổi cùng làm việc'; khoản 2 Điều 31 NĐ 12/2022: phạt 'từ 10.000.000 đồng đến 15.000.000 đồng' khi sử dụng người cao tuổi làm công việc nặng nhọc, độc hại, 'trừ trường hợp bảo đảm các điều kiện làm việc an toàn'; khoản 1 Điều 6: 'Mức phạt tiền đối với tổ chức bằng 02 lần mức phạt tiền đối với cá nhân'.",
+    "issues": [
+      "Nguyên tắc cấm và ngoại lệ khi sử dụng người cao tuổi làm công việc độc hại",
+      "Các điều kiện cụ thể của Luật ATVSLĐ (tối đa 05 năm, có người không cao tuổi cùng làm)",
+      "Mức phạt và nhân hai đối với tổ chức"
+    ],
+    "reference_outcome": "Có vi phạm: ngoại lệ 'bảo đảm các điều kiện làm việc an toàn' của BLLĐ được Luật ATVSLĐ cụ thể hóa bằng các điều kiện phải đáp ứng đồng thời, trong khi người này đã làm quá 05 năm và có lúc làm một mình không có người lao động không cao tuổi cùng làm. Doanh nghiệp có thể bị phạt từ 20 đến 30 triệu đồng (gấp đôi khung 10 - 15 triệu của khoản 2 Điều 31 NĐ 12).",
+    "conflict_kind": "obligation_and_sanction",
+    "documents": [
+      "12-2022-nd-cp",
+      "45-2019-qh14",
+      "84-2015-qh13"
+    ],
+    "notes": "Các điều kiện khác của khoản 1 Điều 64 (tay nghề, sức khỏe, tự nguyện) không được xét."
+  },
+  {
+    "text": "Một nữ công nhân mang thai tháng thứ 7 bị tổ trưởng xếp làm ca đêm và tăng ca; khi chị từ chối, công ty ra quyết định đơn phương chấm dứt hợp đồng với lý do không chấp hành phân công. Công ty sai ở đâu, bị phạt thế nào và phải khắc phục ra sao?",
+    "question_type": "synthesis",
+    "expected_status": "answer",
+    "relevant_unit_ids": [
+      "45-2019-qh14/chapter-x/article-137/clause-1/point-a",
+      "45-2019-qh14/chapter-x/article-137/clause-3",
+      "12-2022-nd-cp/chapter-ii/article-28/clause-2/point-a",
+      "12-2022-nd-cp/chapter-ii/article-28/clause-2/point-i",
+      "12-2022-nd-cp/chapter-ii/article-28/clause-3/point-c"
+    ],
+    "rationale": "Điểm a khoản 1 Điều 137 BLLĐ: không được sử dụng người lao động làm việc ban đêm, làm thêm giờ khi 'Mang thai từ tháng thứ 07'; khoản 3 Điều 137: không được 'đơn phương chấm dứt hợp đồng lao động đối với người lao động vì lý do kết hôn, mang thai'; điểm a khoản 2 Điều 28 NĐ 12/2022: phạt 'từ 10.000.000 đồng đến 20.000.000 đồng' khi sử dụng người mang thai từ tháng thứ 07 'làm thêm giờ hoặc làm việc ban đêm'; điểm i khoản 2 Điều 28: cùng khung phạt cho hành vi 'đơn phương chấm dứt hợp đồng lao động đối với người lao động vì lý do kết hôn, mang thai'; điểm c khoản 3 Điều 28: 'Buộc người sử dụng lao động nhận người lao động trở lại làm việc'.",
+    "issues": [
+      "Cấm làm đêm, làm thêm giờ với lao động nữ mang thai từ tháng thứ 07",
+      "Từ chối công việc bị cấm không phải là vi phạm",
+      "Cấm đơn phương chấm dứt vì lý do mang thai",
+      "Mức phạt và biện pháp khắc phục"
+    ],
+    "reference_outcome": "Công ty vi phạm hai lần: phân công ca đêm, tăng ca cho người mang thai tháng thứ 7 trái điểm a khoản 1 Điều 137, và chấm dứt hợp đồng mà thực chất vì chị mang thai và từ chối công việc bị cấm, trái khoản 3 Điều 137 BLLĐ. Mỗi hành vi có khung 10 - 20 triệu đồng mức cá nhân nên doanh nghiệp chịu 20 - 40 triệu đồng mỗi hành vi, và bị buộc nhận chị trở lại làm việc theo điểm c khoản 3 Điều 28 NĐ 12.",
+    "conflict_kind": "obligation_and_sanction",
+    "documents": [
+      "12-2022-nd-cp",
+      "45-2019-qh14"
+    ],
+    "notes": "Nghĩa vụ của người sử dụng lao động khi đơn phương chấm dứt trái pháp luật (Điều 41 BLLĐ) không đưa vào nhãn."
+  },
+  {
+    "text": "Một chuỗi nhà hàng tuyển 20 nhân viên phục vụ thời vụ làm 3 tháng dịp Tết, chỉ thỏa thuận miệng và trả lương tiền mặt, không ký hợp đồng và không đóng BHXH. Doanh nghiệp vi phạm những gì, và riêng việc không ký hợp đồng bằng văn bản bị phạt bao nhiêu?",
+    "question_type": "synthesis",
+    "expected_status": "answer",
+    "relevant_unit_ids": [
+      "45-2019-qh14/chapter-iii/section-1/article-14/clause-1",
+      "45-2019-qh14/chapter-iii/section-1/article-14/clause-2",
+      "12-2022-nd-cp/chapter-ii/article-9/clause-1/point-b",
+      "12-2022-nd-cp/chapter-ii/article-9/clause-3/point-a",
+      "41-2024-qh15/chapter-i/article-2/clause-1/point-a"
+    ],
+    "rationale": "Khoản 1 Điều 14 BLLĐ: 'Hợp đồng lao động phải được giao kết bằng văn bản'; khoản 2 Điều 14: chỉ được giao kết bằng lời nói 'đối với hợp đồng có thời hạn dưới 01 tháng'; khoản 1 Điều 9 NĐ 12/2022: phạt khi 'giao kết hợp đồng lao động không bằng văn bản với người lao động làm công việc có thời hạn từ đủ 01 tháng trở lên', điểm b: 'Từ 5.000.000 đồng đến 10.000.000 đồng đối với vi phạm từ 11 người đến 50 người lao động'; điểm a khoản 3 Điều 9: 'Buộc người sử dụng lao động giao kết hợp đồng lao động bằng văn bản'; điểm a khoản 1 Điều 2 Luật BHXH 2024: người làm việc theo hợp đồng 'có thời hạn từ đủ 01 tháng trở lên, kể cả trường hợp người lao động và người sử dụng lao động thỏa thuận bằng tên gọi khác' thuộc đối tượng BHXH bắt buộc.",
+    "issues": [
+      "Hình thức bằng văn bản với hợp đồng từ đủ 01 tháng",
+      "Mức phạt theo số người lao động và nhân hai đối với tổ chức",
+      "Biện pháp khắc phục",
+      "Nghĩa vụ BHXH bắt buộc phát sinh dù không ký hợp đồng bằng văn bản"
+    ],
+    "reference_outcome": "Hợp đồng 3 tháng phải lập bằng văn bản; thỏa thuận miệng chỉ hợp lệ với hợp đồng dưới 01 tháng. Với 20 người, khung phạt cá nhân là 5 - 10 triệu đồng nên doanh nghiệp bị phạt 10 - 20 triệu đồng và buộc ký hợp đồng bằng văn bản; đồng thời quan hệ từ đủ 01 tháng vẫn thuộc diện BHXH bắt buộc theo Luật BHXH 2024, nên việc không đóng là một vi phạm riêng, xử lý theo quy định về đóng BHXH.",
+    "conflict_kind": "obligation_and_sanction",
+    "documents": [
+      "12-2022-nd-cp",
+      "41-2024-qh15",
+      "45-2019-qh14"
+    ],
+    "notes": "Chế tài cụ thể cho việc không đóng BHXH (Điều 39, Điều 41 NĐ 12/2022) không đưa vào nhãn; khoản 1 Điều 6 NĐ 12 là căn cứ nhân hai mức phạt."
+  },
+  {
+    "text": "Công ty tuyển 5 nhân viên chính thức từ ngày 01/3/2026 nhưng đến giữa tháng 6/2026 vẫn chưa nộp hồ sơ đăng ký tham gia BHXH cho họ. Hạn đăng ký là khi nào, đến thời điểm này hành vi bị xác định là gì, và mức phạt có thể ra sao?",
+    "question_type": "synthesis",
+    "expected_status": "answer",
+    "relevant_unit_ids": [
+      "41-2024-qh15/chapter-iv/section-1/article-28/clause-1",
+      "41-2024-qh15/chapter-iv/section-2/article-39/clause-1/point-a",
+      "12-2022-nd-cp/chapter-iii/article-41/clause-4/point-a",
+      "12-2022-nd-cp/chapter-iii/article-39/clause-7/point-a",
+      "12-2022-nd-cp/chapter-iii/article-39/clause-10/point-a"
+    ],
+    "rationale": "Khoản 1 Điều 28 Luật BHXH 2024: nộp hồ sơ tham gia 'trong thời hạn 30 ngày kể từ ngày người lao động thuộc đối tượng tham gia bảo hiểm xã hội bắt buộc'; điểm a khoản 1 Điều 39: 'Sau 60 ngày kể từ ngày hết thời hạn quy định tại khoản 1 Điều 28 của Luật này mà người sử dụng lao động không đăng ký' là trốn đóng; điểm a khoản 4 Điều 41 NĐ 12/2022: phạt 'từ 2.000.000 đồng đến 4.000.000 đồng khi vi phạm với mỗi người lao động' khi 'Không lập hồ sơ tham gia bảo hiểm xã hội bắt buộc trong thời hạn 30 ngày'; điểm a khoản 7 Điều 39 NĐ 12: phạt 'từ 50.000.000 đồng đến 75.000.000 đồng' khi 'Trốn đóng bảo hiểm xã hội bắt buộc, bảo hiểm thất nghiệp'; điểm a khoản 10 Điều 39: 'Buộc người sử dụng lao động đóng đủ số tiền'.",
+    "issues": [
+      "Thời hạn 30 ngày đăng ký tham gia BHXH",
+      "Mốc 60 ngày sau thời hạn để bị coi là trốn đóng theo Luật BHXH 2024",
+      "Chế tài không lập hồ sơ đúng hạn và chế tài trốn đóng trong NĐ 12/2022",
+      "Biện pháp khắc phục"
+    ],
+    "reference_outcome": "Hạn đăng ký là 30 ngày kể từ 01/3/2026 (khoảng 31/3/2026); quá thêm 60 ngày (khoảng 30/5/2026) mà vẫn chưa đăng ký thì theo điểm a khoản 1 Điều 39 Luật BHXH 2024 hành vi đã là trốn đóng, không chỉ là chậm lập hồ sơ. NĐ 12 cho phép phạt việc không lập hồ sơ đúng hạn 2 - 4 triệu đồng mỗi người và hành vi trốn đóng 50 - 75 triệu đồng (mức cá nhân, doanh nghiệp gấp đôi), kèm buộc đóng đủ; khái niệm trốn đóng mà NĐ 12 xử phạt nay được xác định theo Luật BHXH 2024.",
+    "conflict_kind": "obligation_and_sanction",
+    "documents": [
+      "12-2022-nd-cp",
+      "41-2024-qh15"
+    ],
+    "notes": "Việc áp dụng đồng thời hai chế tài cho cùng chuỗi sự kiện tùy cách người có thẩm quyền xác định hành vi; corpus không chứa văn bản sửa đổi NĐ 12/2022. Số tiền phải nộp theo khoản 1 Điều 41 Luật BHXH 2024 không đưa vào nhãn."
+  },
+  {
+    "text": "Hợp đồng của 3 nhân viên hết hạn ngày 01/4/2026 và công ty không ký tiếp. Công ty đã xác định mỗi người còn được trợ cấp thôi việc cho thời gian chưa tham gia bảo hiểm thất nghiệp, nhưng đã 40 ngày vẫn chưa trả vì đang khó khăn dòng tiền. Công ty đang vi phạm gì và có thể bị phạt ra sao?",
+    "question_type": "synthesis",
+    "expected_status": "answer",
+    "relevant_unit_ids": [
+      "45-2019-qh14/chapter-iii/section-3/article-46/clause-1",
+      "45-2019-qh14/chapter-iii/section-3/article-48/clause-1/point-b",
+      "12-2022-nd-cp/chapter-ii/article-12/clause-2/point-a",
+      "12-2022-nd-cp/chapter-ii/article-12/clause-4/point-a",
+      "12-2022-nd-cp/chapter-i/article-6/clause-1"
+    ],
+    "rationale": "Khoản 1 Điều 46 BLLĐ: khi hợp đồng chấm dứt theo các khoản trong đó có khoản 1 Điều 34 (hết hạn), người sử dụng lao động 'có trách nhiệm trả trợ cấp thôi việc'; khoản 1 Điều 48: 'Trong thời hạn 14 ngày làm việc kể từ ngày chấm dứt hợp đồng lao động' phải thanh toán đầy đủ, chỉ có thể kéo dài 'nhưng không được quá 30 ngày' trong các trường hợp liệt kê, như điểm b 'vì lý do kinh tế'; khoản 2 Điều 12 NĐ 12/2022 phạt hành vi 'không thực hiện đúng quy định về thời hạn thanh toán các khoản về quyền lợi của người lao động' và 'không trả hoặc trả không đủ tiền trợ cấp thôi việc', điểm a: 'Từ 1.000.000 đồng đến 2.000.000 đồng đối với vi phạm từ 01 người đến 10 người lao động'; điểm a khoản 4 Điều 12: buộc trả đủ 'cộng với khoản tiền lãi của số tiền chưa trả'; khoản 1 Điều 6: tổ chức chịu mức 'bằng 02 lần'.",
+    "issues": [
+      "Trợ cấp thôi việc khi hợp đồng hết hạn",
+      "Thời hạn thanh toán 14 ngày làm việc và trường hợp kéo dài tối đa 30 ngày",
+      "Mức phạt theo số người và nhân hai đối với tổ chức",
+      "Biện pháp khắc phục kèm tiền lãi"
+    ],
+    "reference_outcome": "Đã quá 14 ngày làm việc và quá cả mốc tối đa 30 ngày (ngay cả khi viện dẫn lý do kinh tế để kéo dài), nên công ty vi phạm thời hạn thanh toán và nghĩa vụ trả trợ cấp thôi việc. Với 3 người, khung phạt cá nhân 1 - 2 triệu đồng nên doanh nghiệp bị phạt 2 - 4 triệu đồng, và bị buộc trả đủ trợ cấp kèm tiền lãi theo lãi suất tiền gửi không kỳ hạn cao nhất của các ngân hàng thương mại nhà nước.",
+    "conflict_kind": "obligation_and_sanction",
+    "documents": [
+      "12-2022-nd-cp",
+      "45-2019-qh14"
+    ],
+    "notes": ""
+  }
+]

@@ -110,6 +110,29 @@ class DecomposeTests(unittest.TestCase):
         self.assertEqual(answerer.requests[0]["issues"], ["Chấm dứt thử nghiệm", "Bồi thường"])
         self.assertEqual(len(read_jsonl(self.root / "a-split" / "answers.jsonl")), 2)
 
+    def test_adaptive_budget_grows_with_the_issue_count_in_retrieval_and_answers(self):
+        from legal_ai.evaluation.retrieval_run import adaptive_budget, check_adaptive
+        rule = {"base": 10, "per_issue": 5, "max": 18}
+        self.assertEqual([adaptive_budget(rule, n) for n in (0, 1, 2, 5)], [15, 15, 18, 18])
+        with self.assertRaises(ValueError):
+            check_adaptive({"base": 10, "per_issue": 5})
+        dec = self.root / "dec"
+        decompose.run(self.questions, Splitter(), dec)
+        shared = self.root / "shared.json"
+        write_json(shared, {"top_k": 2, "subqueries": dec.as_posix(), "adaptive_budget": {"base": 100, "per_issue": 50, "max": 400},
+                            "retrieval": {"method": "bm25", "tokenizer": "lexora-syllable-v1", "k1": 1.2, "b": 0.75, "recall_k": [1, 2]}})
+        dk2 = self.root / "dk2.json"
+        write_json(dk2, {"condition": "DK2", "representation": "structural_units", "max_tokens": 384})
+        metrics = retrieval_run(self.root / "bundle", self.questions, dk2, shared, self.root / "r-adaptive")
+        budgets = {r["question_id"]: r["adaptive_budget"] for r in read_jsonl(self.root / "r-adaptive" / "predictions.jsonl")}
+        self.assertEqual(budgets["q1"], 200, "two issues")
+        self.assertIn("mean_recall_at_adaptive", metrics)
+        config = self.root / "answer.json"
+        write_json(config, {"prompt": "answer-v2.md", "top_k": 2, "context_token_budget": {"base": 100, "per_issue": 50, "max": 400}})
+        answer_run(self.root / "r-adaptive", self.questions, config, Answerer(), self.root / "a-adaptive")
+        rows = {r["question_id"]: r for r in read_jsonl(self.root / "a-adaptive" / "answers.jsonl")}
+        self.assertEqual(rows["q1"]["context_token_budget"], 200)
+
 
 if __name__ == "__main__":
     unittest.main()

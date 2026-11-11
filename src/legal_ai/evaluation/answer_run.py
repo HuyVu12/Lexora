@@ -9,6 +9,9 @@ Citation gate (the same for every condition): a statement without a citation is 
 "answered"/"partial" answer left with no statement becomes "insufficient_evidence". Answers are appended to
 `answers.jsonl` as they arrive and an interrupted run resumes; the model has no seed, so the file is the record.
 
+With `relations_in_context` (a legal-chain retrieval run, `retrieval.legal_chain`), the request also lists the typed
+relations between the packed blocks ("E03 là chế tài đối với E01"), derived from the graph, never from the model.
+
 `score` computes what needs no human: refusal behavior against `expected_status`, and whether cited records
 cover the gold units. Grounding, citation support and correctness are graded by people (see `answer_sheet`).
 """
@@ -18,6 +21,7 @@ import json
 from pathlib import Path
 
 from legal_ai.common.io import canonical, digest, read_jsonl, write_json
+from legal_ai.evaluation.retrieval_run import adaptive_budget, check_adaptive
 from legal_ai.indexing.records import token_spans
 from legal_ai.providers.pilot import ProviderError
 
@@ -62,6 +66,21 @@ def pack(ranked, records, top_k, budget):
     return blocks
 
 
+def chain_edges(retrieval):
+    """Typed edges of a legal-chain retrieval run, rebuilt from its pinned bundle and relation run, so the answer
+    run can tell the generator how its evidence blocks relate (`relations_in_context`)."""
+    from legal_ai.retrieval import legal_chain
+    chain = (retrieval.get("graph") or {}).get("chain")
+    if not chain:
+        raise ValueError("relations_in_context needs a retrieval run with graph.chain (legal-chain-v1)")
+    units_path, documents_path = Path(retrieval["inputs"]["units"]["path"]), Path(retrieval["inputs"]["documents"]["path"])
+    relations_path = Path(chain["relation_run"]) / "relations.jsonl"
+    if digest(units_path.read_bytes()) != retrieval["inputs"]["units"]["sha256"] or digest(relations_path.read_bytes()) != retrieval["graph"]["relations_sha256"]:
+        raise ValueError("the bundle or relation run changed since the retrieval run")
+    return legal_chain.typed_edges(read_jsonl(units_path), read_jsonl(relations_path), read_jsonl(documents_path),
+                                   retrieval["graph"].get("source_aliases"), chain.get("references", True))
+
+
 def gate(output, blocks):
     """Apply the citation gate to one model answer; returns the stored answer fields."""
     by_id = {b["id"]: b for b in blocks}
@@ -99,6 +118,8 @@ def run(retrieval_dir, questions_path, config_path, provider, output, *, split=N
         questions = [q for q in questions if q.get("split") == split]
     system, system_sha = system_prompt(config["prompt"])
     # Issues of a decomposed retrieval run go to the generator with the question, the same for every condition.
+    edges = chain_edges(retrieval) if config.get("relations_in_context") else None
+    record_list = list(records.values())
     issues = {}
     if retrieval.get("subqueries"):
         from legal_ai.evaluation.decompose import load
@@ -108,7 +129,8 @@ def run(retrieval_dir, questions_path, config_path, provider, output, *, split=N
                 "split": split, "provider": getattr(provider, "provider", "claude-code"), "model": provider.model,
                 "effort": getattr(provider, "effort", None), "prompt": config["prompt"],
                 "system_sha256": system_sha, "top_k": config["top_k"], "context_token_budget": config["context_token_budget"],
-                "token_counter": "lexora-syllable-v1"}
+                "token_counter": "lexora-syllable-v1",
+                **({"relations_in_context": retrieval["graph"]["version"]} if edges is not None else {})}
     manifest_path = output / "manifest.json"
     if manifest_path.exists():
         earlier = json.loads(manifest_path.read_text(encoding="utf-8"))
@@ -129,14 +151,24 @@ def run(retrieval_dir, questions_path, config_path, provider, output, *, split=N
             prediction = predictions.get(question["question_id"])
             if prediction is None:
                 raise ValueError(f"question not in the retrieval run: {question['question_id']}")
-            blocks = pack(prediction["ranked"], records, config["top_k"], config["context_token_budget"])
+            budget = config["context_token_budget"]
+            if isinstance(budget, dict):  # Adaptive: grows with the shared decomposition's issue count, as in run-retrieval.
+                budget = adaptive_budget(check_adaptive(budget), len(issues.get(question["question_id"], [])))
+            blocks = pack(prediction["ranked"], records, config["top_k"], budget)
             request = {"question": question["question"]}
             if issues.get(question["question_id"]):
                 request["issues"] = [i["issue"] for i in issues[question["question_id"]]]
+            relations = []
+            if edges is not None:
+                from legal_ai.retrieval.legal_chain import block_relations, relation_lines
+                relations = block_relations(blocks, record_list, edges)
+                if relations:
+                    request["relations"] = relation_lines(relations)
             prompt = json.dumps(request | {"evidence": [{"id": b["id"], "text": b["text"]} for b in blocks]}, ensure_ascii=False)
             row = {"question_id": question["question_id"], "condition": manifest["condition"],
                    "context": [{k: b[k] for k in ("id", "record_id", "unit_ids", "token_count")} for b in blocks],
-                   "context_tokens": sum(b["token_count"] for b in blocks), "prompt_sha256": digest(prompt)}
+                   "context_tokens": sum(b["token_count"] for b in blocks), "context_token_budget": budget, "prompt_sha256": digest(prompt),
+                   **({"relations": relations} if edges is not None else {})}
             try:
                 answer = provider.structured(system, prompt, schema(b["id"] for b in blocks), purpose="answer")
                 row |= gate(answer["output"], blocks) | {"usage": answer.get("usage"), "cost_usd": answer.get("cost_usd"),
