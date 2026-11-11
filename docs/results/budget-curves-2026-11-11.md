@@ -98,7 +98,34 @@ Người kiểm một phát biểu của ĐK2-ĐK4 đọc chưa đến một n�
 Không lọc hiệu lực, và lấy ngày 11/11/2026 cho mọi câu, tỉ lệ câu có ngữ cảnh ĐK2 ở 1.000 token chứa đơn vị lỗi thời (chủ yếu NĐ 12/2022, hết hiệu lực từ 10/09/2026) là 0,34 ở bộ tra cứu, 0,33 ở bộ phức tạp, 0,32 ở bộ xung đột và 0,61 ở bộ tình huống; với ĐK1 là 0,14 đến 0,23.
 Con số này không đúng nghĩa cho bộ tình huống, vì vụ việc xảy ra trước khi NĐ 12/2022 hết hiệu lực; bộ hiệu lực v1 sẽ ghi ngày áp dụng cho từng câu.
 
+## Độ nhạy cỡ đoạn của ĐK1
+
+Recall theo ngân sách của ĐK1 với đoạn 128, 256, 384 (cấu hình chính) và 512 token, gối khoảng 1/6 cỡ đoạn; ĐK2 với P0 để so sánh.
+
+| Bộ | Điều kiện | 500 | 1.000 | 2.000 | 3.000 | 6.000 |
+|---|---|---|---|---|---|---|
+| Tra cứu | ĐK1-128 | 0,76 | 0,85 | 0,93 | 0,95 | 0,97 |
+| Tra cứu | ĐK1-384 | 0,56 | 0,74 | 0,85 | 0,92 | 0,98 |
+| Tra cứu | ĐK2 | 0,82 | 0,88 | 0,92 | 0,95 | 0,97 |
+| Phức tạp | ĐK1-128 | 0,49 | 0,65 | 0,78 | 0,81 | 0,90 |
+| Phức tạp | ĐK1-384 | 0,37 | 0,53 | 0,69 | 0,78 | 0,94 |
+| Phức tạp | ĐK2 | 0,43 | 0,62 | 0,67 | 0,73 | 0,89 |
+| Xung đột | ĐK1-128 | 0,27 | 0,40 | 0,53 | 0,59 | 0,72 |
+| Xung đột | ĐK1-384 | 0,19 | 0,29 | 0,47 | 0,54 | 0,64 |
+| Xung đột | ĐK2 | 0,21 | 0,35 | 0,43 | 0,52 | 0,62 |
+| Tình huống | ĐK1-128 | 0,20 | 0,33 | 0,49 | 0,58 | 0,66 |
+| Tình huống | ĐK1-384 | 0,12 | 0,25 | 0,42 | 0,48 | 0,66 |
+| Tình huống | ĐK2 | 0,16 | 0,25 | 0,33 | 0,42 | 0,53 |
+
+Nhận xét:
+
+- Đoạn 128 token là cấu hình ĐK1 mạnh nhất ở mọi bộ và gần như mọi ngân sách; 512 token yếu nhất.
+- Ở bộ tra cứu, ĐK1-128 gần bằng ĐK2 (0,85 so với 0,88 ở 1.000 token); lợi thế độ phủ theo token của ĐK2 so với ĐK1-384 phần lớn đến từ việc đoạn 384 token quá dài so với một Khoản.
+- Ở bộ khó, ĐK1-128 vượt cả ĐK2 với P2 (tình huống ở 3.000 token: 0,58 so với 0,48).
+- Vì vậy luận điểm "cấu trúc cho cùng độ phủ với ít token hơn" chỉ đứng được nếu so với ĐK1 ở cỡ đoạn mạnh nhất; nếu không, người phản biện có thể cho rằng ĐK1 bị làm yếu.
+  Luận điểm về trích dẫn chính xác tới Khoản, Điểm và về hiệu lực mức đơn vị không bị ảnh hưởng, nhưng độ chính xác trích dẫn theo ký tự của ĐK1-128 cũng sẽ cao hơn ĐK1-384 và cần đo lại.
+- Đây là kết quả trên nhãn nháp, chỉ ở tầng truy xuất; việc chọn cỡ đoạn chính cho ĐK1 là quyết định của nhóm (xem `docs/decisions.md`).
+
 ## Còn thiếu
 
-- Độ nhạy cỡ đoạn của ĐK1 (128, 256, 512 token) đang chạy; sẽ bổ sung vào tệp bảng.
 - Mọi kết luận chờ nhãn người (WP1) và lượt chạy chính (WP9).
