@@ -9,8 +9,14 @@ unit when one of its `unit_ids` is that unit or lies inside it (a Clause of a go
 without gold units (expected refusals) are excluded from the mean and counted. Because a DK1 chunk can
 span several units, every K also reports the mean number of index tokens behind the top-K records, so a
 higher recall bought with more context stays visible, and Recall at fixed token budgets (`token_budgets`, default
-500/1000/2000) takes ranked records while the tokens the generator would read (`index_text`, as the answer run
-counts them) fit the budget, so conditions are compared on equal context too.
+250 to 6000) packs ranked records with the answer run's own packing function (`indexing.packing`, `context_packing`
+P0/P1/P2 in the shared settings; DK1 always P0) while the tokens the generator would read fit the budget, so conditions
+are compared on equal context too. `tokens_to_reach` gives, per recall target (`recall_targets`, default 0.4 and 0.8),
+the smallest budget at which the mean recall reaches it, computed exactly from every question's packing breakpoints.
+
+Predictions keep enough ranked records to fill the largest budget even with the smallest records (at least 50). The
+hybrid ranking is the RRF of the first `rrf_candidates` of each list, followed (when deeper records are needed) by
+the remaining records in the order of RRF over the full lists, so the head of the ranking never changes.
 
 DK3/DK4 records are either one serialized claim each (`record: claims`, the first design, kept as an ablation) or
 the DK2 record of each unit with its claims attached (`record: unit_with_claims`). With a `graph` block the ranking
@@ -29,18 +35,23 @@ import platform
 import subprocess
 
 from legal_ai.common.io import canonical, digest, read_jsonl, write_json, write_jsonl
+from legal_ai.indexing.packing import PACKING_VERSION, Packer, condition_mode
+from legal_ai.kb.validity import STATUS_VERSION
 from legal_ai.indexing.records import RECORD_VERSION, TOKENIZER, check_records, claim_records, fixed_chunks, kb_unit_records, structural_records, token_spans
 from legal_ai.evaluation import decompose
 from legal_ai.retrieval import graph as kb_graph
 from legal_ai.retrieval import legal_chain
+from legal_ai.retrieval import norm_query
 from legal_ai.retrieval.bm25 import BM25, tokens
 from legal_ai.validation.bundle import validate_bundle
 
 RUN_VERSION = "retrieval-run-v1"
 BUILDERS = {"fixed_chunks": "DK1", "structural_units": "DK2", "llm_kb_raw": "DK3", "llm_kb_validated": "DK4"}
 KB_FILES = {"llm_kb_raw": "dk3.jsonl", "llm_kb_validated": "dk4.jsonl"}
-RECORD_MODES = ("claims", "unit_with_claims")
-TOKEN_BUDGETS = (500, 1000, 2000)
+RECORD_MODES = ("claims", "unit_with_claims", "norm_lines")
+TOKEN_BUDGETS = (250, 500, 1000, 1500, 2000, 3000, 4000, 6000)
+RECALL_TARGETS = (0.4, 0.8)
+MIN_DEPTH = 50
 
 
 def load_bundle(folder):
@@ -76,24 +87,78 @@ def build_records(condition, documents, units, texts, units_path=None):
         if mode not in RECORD_MODES:
             raise ValueError(f"record must be one of {RECORD_MODES}")
         claims = kb_claims(condition, units_path)
-        records = (claim_records(condition["condition"], documents, units, texts, claims) if mode == "claims" else
-                   kb_unit_records(condition["condition"], documents, units, texts, claims, condition.get("max_tokens", 384),
-                                   condition.get("claims_view", "full")))
+        if mode == "norm_lines":  # DK3-q/DK4-q: only units with claims, the generator reads one line per claim.
+            from legal_ai.retrieval.norm_query import norm_records
+            records = norm_records(condition["condition"], documents, units, texts, claims, condition.get("max_tokens", 384))
+        else:
+            records = (claim_records(condition["condition"], documents, units, texts, claims) if mode == "claims" else
+                       kb_unit_records(condition["condition"], documents, units, texts, claims, condition.get("max_tokens", 384),
+                                       condition.get("claims_view", "full")))
     if condition.get("graph") and representation not in KB_FILES:
         raise ValueError("graph expansion uses the knowledge base and applies to DK3/DK4 only")
     return check_records(records, texts)
 
 
-def within_budget(top, budget):
-    """The leading records whose generator tokens fit `budget`; the first is always kept, as the answer run does."""
-    kept, used = [], 0
-    for row in top:
-        cost = len(token_spans(row.get("generator_text") or row["index_text"]))
-        if kept and used + cost > budget:
+FLAT = Packer("P0")
+
+
+def within_budget(top, budget, packer=FLAT):
+    """The records the answer run would hand the generator within `budget` (the first is always kept)."""
+    return [b["record"] for b in packer.pack(top, budget)["blocks"]]
+
+
+def rank_depth(records, ks, budgets):
+    """Ranked records to keep per question: enough to fill the largest budget even with the smallest records."""
+    costs = sorted(len(token_spans(r.get("generator_text") or r["index_text"])) for r in records)
+    need, used = 0, 0
+    for cost in costs:
+        if used > max(budgets, default=0):
             break
-        kept.append(row)
         used += cost
-    return kept
+        need += 1
+    return max(max(ks), MIN_DEPTH, need)
+
+
+def extend_tail(head, ranked, depth):
+    """`head` (an expanded ranking) followed by the ranked records it does not hold, up to `depth`."""
+    taken = {i for i, _ in head}
+    return (head + [(i, s) for i, s in ranked if i not in taken])[:depth]
+
+
+def _recall(kept, gold):
+    return len([g for g in gold if any(_covers(r["unit_ids"], g) for r in kept)]) / len(gold) if gold else None
+
+
+def recall_steps(top, gold, packer=FLAT):
+    """[(tokens, recall)] of one question at every packed prefix: the context grows only when the budget reaches the
+    next record's cost, so these points are where its recall-by-budget curve can change."""
+    if not gold:
+        return []
+    steps, budget = [], 0
+    while True:
+        packed = packer.pack(top, budget)
+        steps.append((packed["tokens"], _recall([b["record"] for b in packed["blocks"]], gold)))
+        if packed["next_budget"] is None:
+            return steps
+        budget = packed["next_budget"]
+
+
+def tokens_to_reach(step_lists, target):
+    """Smallest budget at which the mean recall over questions reaches `target`, or None within the ranked depth."""
+    if not step_lists:
+        return None
+
+    def recall_at(steps, budget):
+        value = steps[0][1]
+        for used, recall in steps:
+            if used > budget:
+                break
+            value = recall
+        return value
+    for budget in sorted({t for steps in step_lists for t, _ in steps}):
+        if sum(recall_at(steps, budget) for steps in step_lists) / len(step_lists) >= target - 1e-12:
+            return budget
+    return None
 
 
 def _covers(record_units, gold):
@@ -114,25 +179,27 @@ def adaptive_budget(rule, issue_count):
     return min(rule["max"], rule["base"] + rule["per_issue"] * max(1, issue_count))
 
 
-def score_top(top, gold, ks, budgets, adaptive=None):
+def score_top(top, gold, ks, budgets, adaptive=None, packer=FLAT, stale=None):
     """Recall at every K and token budget, and context tokens at every K, of one question's ranked records; with
-    `adaptive` (this question's adaptive budget) also the recall within it."""
+    `adaptive` (this question's adaptive budget) also the recall within it. Budgets pack records with `packer`.
+    With `stale` (units outdated at the question's date) also whether the packed context holds one of them."""
     row = {"recall": {}, "context_tokens": {}, "recall_at_tokens": {}}
+    if stale:
+        row["stale_at_tokens"] = {str(b): any(_covers(r["unit_ids"], s) or any(u.startswith(s + "/") or s.startswith(u + "/") for u in r["unit_ids"])
+                                              for r in within_budget(top, b, packer) for s in stale) for b in budgets}
     for k in ks:
         covered = [g for g in gold if any(_covers(r["unit_ids"], g) for r in top[:k])]
         row["recall"][str(k)] = len(covered) / len(gold) if gold else None
         row["context_tokens"][str(k)] = sum(r["token_count"] for r in top[:k])
     for budget in budgets:
-        kept = within_budget(top, budget)
-        row["recall_at_tokens"][str(budget)] = len([g for g in gold if any(_covers(r["unit_ids"], g) for r in kept)]) / len(gold) if gold else None
+        row["recall_at_tokens"][str(budget)] = _recall(within_budget(top, budget, packer), gold)
     if adaptive is not None:
-        kept = within_budget(top, adaptive)
         row["adaptive_budget"] = adaptive
-        row["recall_at_adaptive"] = len([g for g in gold if any(_covers(r["unit_ids"], g) for r in kept)]) / len(gold) if gold else None
+        row["recall_at_adaptive"] = _recall(within_budget(top, adaptive, packer), gold)
     return row
 
 
-def summarize(predictions, ks, budgets, records, condition, headline_k):
+def summarize(predictions, ks, budgets, records, condition, headline_k, steps=None, targets=RECALL_TARGETS):
     scored = [row for row in predictions if row["gold_unit_ids"]]
     adaptive = {}
     if predictions and all("adaptive_budget" in row for row in predictions):
@@ -145,6 +212,10 @@ def summarize(predictions, ks, budgets, records, condition, headline_k):
         # Share of questions whose gold units are all retrieved: what a multi-provision question needs.
         "mean_complete": {str(k): (sum(r["recall"][str(k)] == 1.0 for r in scored) / len(scored) if scored else None) for k in ks},
         "mean_recall_at_tokens": {str(b): (sum(r["recall_at_tokens"][str(b)] for r in scored) / len(scored) if scored else None) for b in budgets},
+        "mean_complete_at_tokens": {str(b): (sum(r["recall_at_tokens"][str(b)] == 1.0 for r in scored) / len(scored) if scored else None) for b in budgets},
+        **({"tokens_to_reach": {str(t): tokens_to_reach([s for s in steps if s], t) for t in targets}} if steps is not None else {}),
+        **({"stale_context_rate_at_tokens": {str(b): sum(r["stale_at_tokens"][str(b)] for r in with_stale) / len(with_stale) for b in budgets},
+            "questions_with_stale_units": len(with_stale)} if (with_stale := [r for r in predictions if "stale_at_tokens" in r]) else {}),
         "mean_context_tokens": {str(k): (sum(r["context_tokens"][str(k)] for r in predictions) / len(predictions) if predictions else None) for k in ks},
         "record_count": len(records),
         "mean_record_tokens": sum(r["token_count"] for r in records) / len(records) if records else None,
@@ -161,6 +232,87 @@ def _git_state(root):
 
 
 METHODS = ("bm25", "dense", "hybrid")
+DROP = ("expired", "repealed", "not_yet_effective")
+
+
+def load_validity(condition, shared, documents, units, bundle):
+    """The `Validity` of a condition with a `validity` block ({level: unit|document, amendments: edge run}), or None.
+    Unit level (DK2-DK4) drops units that are expired, repealed or not yet effective at the question's date and notes
+    amended ones; document level (the DK1-hl control) drops chunks of documents that do not apply on that date."""
+    spec = condition.get("validity")
+    if not spec:
+        return None
+    if spec.get("level") not in ("unit", "document") or set(spec) - {"level", "amendments"}:
+        raise ValueError("validity must be {level: unit|document, amendments?: edge run directory}")
+    if spec["level"] == "unit" and condition["representation"] == "fixed_chunks":
+        raise ValueError("a fixed chunk has no unit to filter: use validity level document (DK1-hl)")
+    if not shared.get("validity_as_of"):
+        raise ValueError("validity needs shared.validity_as_of, the date used for questions without as_of")
+    from legal_ai.kb.validity import Validity
+    edges, edges_sha = [], None
+    if spec.get("amendments"):
+        folder = Path(spec["amendments"])
+        manifest = json.loads((folder / "manifest.json").read_text(encoding="utf-8"))
+        if manifest["units_sha256"] != digest((bundle / "units.jsonl").read_bytes()):
+            raise ValueError("the amendment edges were resolved against another corpus bundle")
+        edges, edges_sha = read_jsonl(folder / "edges.jsonl"), digest((folder / "edges.jsonl").read_bytes())
+    validity = Validity(documents, units, edges if spec["level"] == "unit" else ())
+    validity.edges_sha256 = edges_sha
+    return validity
+
+
+def filter_valid(ranked, records, validity, level, as_of):
+    """(kept ranking, {index: status note}, dropped count) for one question's date.
+
+    Unit level: a unit whose whole new wording is a unit of the corpus (an amending unit of scope v3, linked by
+    `amending_unit_id`) is replaced at its rank by that unit's records; other amended units keep their record with a
+    status note, and their amending units follow right after. Amending units obey their own document dates."""
+    if level == "unit" and getattr(validity, "records_of", None) is None:
+        validity.records_of = {}
+        for n, record in enumerate(records):
+            for unit in record["unit_ids"]:
+                validity.records_of.setdefault(unit, []).append(n)
+    kept, notes, dropped, seen = [], {}, 0, set()
+
+    def keep(i, score):
+        if i not in seen:
+            seen.add(i)
+            kept.append((i, score))
+    for i, score in ranked:
+        if i in seen:
+            continue
+        record = records[i]
+        if level == "document":
+            document = validity.documents[record["document_id"]]
+            start, end = document.get("effective_from"), document.get("effective_to")
+            if (start and as_of < start) or (end and as_of >= end):
+                dropped += 1
+                continue
+            keep(i, score)
+            continue
+        statuses = {u: validity.status(u, as_of) for u in record["unit_ids"]}
+        if all(s in DROP for s in statuses.values()):
+            dropped += 1
+            continue
+        amended = [u for u, s in statuses.items() if s == "amended"]
+        swaps = {u: validity.replacements(u, as_of) for u in amended}
+        replaced = bool(amended) and all(any(full for _, full in swaps[u]) for u in amended)
+        if not replaced:
+            lines = [validity.note(u, as_of) for u in amended]
+            if lines:
+                notes[i] = "\n".join(lines)
+            keep(i, score)
+        else:
+            dropped += 1
+        for unit in amended:
+            for target, _ in swaps[unit]:
+                if validity.status(target, as_of) in DROP:
+                    continue
+                for n in validity.records_of.get(target, []):
+                    if n not in seen:
+                        notes.setdefault(n, f"[Lời văn sửa đổi, có hiệu lực tại {as_of}, của {validity.describe(unit)}]")
+                    keep(n, score)
+    return kept, notes, dropped
 
 
 def run(bundle, questions_path, condition_path, shared_path, output, embedder=None):
@@ -181,11 +333,14 @@ def run(bundle, questions_path, condition_path, shared_path, output, embedder=No
         raise ValueError("dense and hybrid retrieval need an embedder (the embeddings extra and the local model)")
     ks = sorted(set(retrieval["recall_k"]) | {shared["top_k"]})
     budgets = sorted(shared.get("token_budgets", TOKEN_BUDGETS))
+    targets = sorted(shared.get("recall_targets", RECALL_TARGETS))
+    packing = condition_mode(condition["condition"], shared.get("context_packing"))
     rule = check_adaptive(shared["adaptive_budget"]) if shared.get("adaptive_budget") else None
     chain = legal_chain.check_config(condition["graph"]["chain"]) if condition.get("graph", {}).get("chain") else None
     graph = (kb_graph.check_config(condition["graph"]) if condition.get("graph") and not chain else condition.get("graph"))
 
     documents, units, texts = load_bundle(bundle)
+    validity = load_validity(condition, shared, documents, units, Path(bundle))
     known = {unit["unit_id"] for unit in units}
     ids = [q["question_id"] for q in questions]
     if len(set(ids)) != len(ids):
@@ -195,6 +350,7 @@ def run(bundle, questions_path, condition_path, shared_path, output, embedder=No
         raise ValueError(f"gold units missing from the bundle: {missing[:5]}")
 
     records = build_records(condition, documents, units, texts, Path(bundle) / "units.jsonl")
+    packer = Packer(packing, records, units, documents)
     lexical = BM25([tokens(row["index_text"]) for row in records], k1=retrieval["k1"], b=retrieval["b"]) if method != "dense" else None
     dense = None
     if method != "bm25":
@@ -218,20 +374,39 @@ def run(bundle, questions_path, condition_path, shared_path, output, embedder=No
         concepts = kb_graph.record_concepts(records, kb_graph.concept_keys(kb_claims(condition, Path(bundle) / "units.jsonl")))
     subqueries = decompose.load(shared["subqueries"], questions_path)[0] if shared.get("subqueries") else None
     # Deep enough for the largest token budget of the smallest records; predictions keep this depth.
-    depth = max(max(ks), 50)
-    predictions, errors = [], []
-    def rank(text):
+    depth = rank_depth(records, ks, budgets)
+    predictions, errors, steps = [], [], []
+    # norm-query-v1: every condition ranks with the shared analysis' topic query; DK3-q/DK4-q also filter by its fields.
+    analyses = norm_query.load(shared["query_slots"], questions_path)[0] if shared.get("query_slots") else None
+    query_filter = condition.get("query")
+    if query_filter and (analyses is None or condition.get("record") != "norm_lines" or set(query_filter) != {"aliases"}):
+        raise ValueError("a query condition needs record=norm_lines, query={aliases} and shared.query_slots")
+    aliases = norm_query.load_aliases(query_filter["aliases"]) if query_filter else None
+
+    def rank(text, limit=depth):
         if method == "bm25":
-            return lexical.rank(tokens(text))[:depth]
+            return lexical.rank(tokens(text))[:limit]
         if method == "dense":
-            return dense.rank(text)[:depth]
-        return rrf([lexical.rank(tokens(text)), dense.rank(text)], retrieval.get("rrf_c", 60), retrieval.get("rrf_candidates", 30))[:depth]
+            return dense.rank(text)[:limit]
+        lists = [lexical.rank(tokens(text)), dense.rank(text)]
+        fused = rrf(lists, retrieval.get("rrf_c", 60), retrieval.get("rrf_candidates", 30))
+        if limit is None or len(fused) < limit:  # Beyond the fused candidates: the rest in full-list RRF order; the head is unchanged.
+            head = {i for i, _ in fused}
+            fused += [(i, 0.0) for i, _ in rrf(lists, retrieval.get("rrf_c", 60), len(records)) if i not in head]
+        return fused[:limit]
 
     for question in questions:
         issues = subqueries.get(question["question_id"]) if subqueries is not None else None
         if subqueries is not None and issues is None:
             errors.append({"question_id": question["question_id"], "code": "no_decomposition"})
-        ranked = rank(question["question"])
+        analysis = analyses.get(question["question_id"]) if analyses is not None else None
+        if analyses is not None and analysis is None:
+            errors.append({"question_id": question["question_id"], "code": "no_query_slots"})
+        text = analysis["topic_query"] if analysis else question["question"]
+        if query_filter:  # Filter the whole ranking, then cut: most units hold no passing claim.
+            ranked = norm_query.filter_ranked(rank(text, None), records, analysis, aliases)[:depth] if analysis else []
+        else:
+            ranked = rank(text)
         if issues:
             ranked = decompose.merge([ranked] + [rank(i["query"]) for i in issues], depth)
         via, roles = {}, {}
@@ -244,43 +419,60 @@ def run(bundle, questions_path, condition_path, shared_path, output, embedder=No
                 for text in [question["question"]] + [i["query"] for i in issues or []]:
                     for n, (i, _) in enumerate(dense.rank(text)):
                         affinity[i] = min(n, affinity.get(i, n))
-            expanded = legal_chain.expand(ranked, records, edges, depth, chain.get("order", legal_chain.DEFAULT_ORDER),
+            # The graph expands the first MIN_DEPTH candidates (its confirming pool, as before deeper rankings existed);
+            # deeper records follow unexpanded, so the head never depends on the budget grid.
+            expanded = legal_chain.expand(ranked[:MIN_DEPTH], records, edges, MIN_DEPTH, chain.get("order", legal_chain.DEFAULT_ORDER),
                                            chain.get("max_neighbors", 2), chain.get("seeds"), affinity, chain.get("select", "role"),
                                            chain.get("max_affinity_rank"))
             via = {i: v for i, _, v, _ in expanded if v is not None}
             roles = {i: r for i, _, v, r in expanded if v is not None}
-            ranked = [(i, s) for i, s, _, _ in expanded]
+            ranked = extend_tail([(i, s) for i, s, _, _ in expanded], ranked, depth)
         elif graph:
-            expanded = kb_graph.expand(ranked, records, edges, depth, graph.get("max_neighbors", 2), graph.get("require_match", False), concepts)
+            expanded = kb_graph.expand(ranked[:MIN_DEPTH], records, edges, MIN_DEPTH, graph.get("max_neighbors", 2), graph.get("require_match", False), concepts)
             via = {i: v for i, _, v in expanded if v is not None}
-            ranked = [(i, s) for i, s, _ in expanded]
-        top = [records[i] for i, _ in ranked]
+            ranked = extend_tail([(i, s) for i, s, _ in expanded], ranked, depth)
+        as_of = question.get("as_of") or shared.get("validity_as_of")
+        dropped = 0
+        if validity is not None:
+            ranked, notes, dropped = filter_valid(ranked, records, validity, condition["validity"]["level"], as_of)
+        top = [records[i] if i not in (notes if validity is not None else {}) else records[i] | {"status_note": notes[i]} for i, _ in ranked]
         gold = question["relevant_unit_ids"]
         row = {"question_id": question["question_id"], "family_id": question.get("family_id"), "split": question.get("split"),
                "expected_status": question.get("expected_status"), "gold_unit_ids": gold,
                "ranked": [{"rank": n, "record_id": records[i]["record_id"], "score": round(score, 9), "unit_ids": records[i]["unit_ids"],
                            "token_count": records[i]["token_count"],
                            **({"via_reference_from": records[via[i]]["record_id"]} if i in via else {}),
-                           **({"via_role": roles[i]} if i in roles else {})} for n, (i, score) in enumerate(ranked, 1)],
+                           **({"via_role": roles[i]} if i in roles else {}),
+                           **({"status_note": notes[i]} if validity is not None and i in notes else {})} for n, (i, score) in enumerate(ranked, 1)],
+               **({"validity": {"as_of": as_of, "dropped": dropped}} if validity is not None else {}),
                "recall": {}, "context_tokens": {}, "recall_at_tokens": {}}
-        row.update(score_top(top, gold, ks, budgets, adaptive_budget(rule, len(issues or [])) if rule else None))
+        row.update(score_top(top, gold, ks, budgets, adaptive_budget(rule, len(issues or [])) if rule else None, packer, question.get("stale_unit_ids")))
+        steps.append(recall_steps(top, gold, packer))
         if not ranked:
             errors.append({"question_id": question["question_id"], "code": "no_match"})
         predictions.append(row)
 
-    metrics = summarize(predictions, ks, budgets, records, condition["condition"], shared["top_k"])
+    metrics = summarize(predictions, ks, budgets, records, condition["condition"], shared["top_k"], steps, targets)
+    metrics["context_packing"] = packing
     root = Path(__file__).resolve().parents[3]
     files = {"units": Path(bundle) / "units.jsonl", "documents": Path(bundle) / "documents.jsonl", "questions": Path(questions_path),
              "condition": Path(condition_path), "shared": Path(shared_path)}
     manifest = {
         "run_version": RUN_VERSION, "record_version": RECORD_VERSION, "created_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
         "condition": condition, "shared": shared, "tokenizer": TOKENIZER, "retrieval": retrieval, "recall_k": ks,
+        "token_budgets": budgets, "rank_depth": depth, "context_packing": {"version": PACKING_VERSION, "mode": packing},
+        "validity": ({"version": STATUS_VERSION, **condition["validity"], "default_as_of": shared.get("validity_as_of"),
+                      "edges_sha256": validity.edges_sha256, "undated_edges": validity.undated} if validity is not None else None),
         "inputs": {name: {"path": path.as_posix(), "sha256": digest(path.read_bytes())} for name, path in files.items()},
         "question_set": {"description": question_file.get("description"), "count": len(questions)},
         "records_sha256": digest("".join(canonical(r) + "\n" for r in records)),
         "status": "exploratory" if shared.get("status") != "frozen" or condition.get("status") != "frozen" else "frozen",
         "subqueries": ({"path": Path(shared["subqueries"]).as_posix(),
                         "sha256": digest((Path(shared["subqueries"]) / "subqueries.jsonl").read_bytes())} if shared.get("subqueries") else None),
+        **({"query_slots": {"version": norm_query.QUERY_VERSION, "path": Path(shared["query_slots"]).as_posix(),
+                            "sha256": digest((Path(shared["query_slots"]) / "query_slots.jsonl").read_bytes())}} if shared.get("query_slots") else {}),
+        **({"query_filter": {"aliases": Path(query_filter["aliases"]).as_posix(),
+                             "aliases_sha256": digest(Path(query_filter["aliases"]).read_bytes())}} if query_filter else {}),
         "graph": ({"version": legal_chain.CHAIN_VERSION, **graph, "edge_count": sum(len(v) for v in edges.values()),
                    "relations_sha256": digest((Path(chain["relation_run"]) / "relations.jsonl").read_bytes())} if chain else
                   {"version": kb_graph.GRAPH_VERSION, **graph, "edge_count": sum(len(v) for v in edges.values()),
@@ -289,7 +481,7 @@ def run(bundle, questions_path, condition_path, shared_path, output, embedder=No
         "method": method, "dense": ({**embedder.describe(), "texts_sha256": dense.texts_sha256} if dense else None),
         "network": False, "model_calls": 0,
         "environment": {"python": platform.python_version(), "platform": platform.platform(), "git": _git_state(root)},
-        "limitations": ["Retrieval only: no context packing, generation, citation or abstention behavior is scored",
+        "limitations": ["Retrieval only: no generation, citation or abstention behavior is scored",
                         "Recall depends on the gold units of the question file; draft questions are not independent gold"],
     }
     output.mkdir(parents=True, exist_ok=True)

@@ -9,6 +9,7 @@ only in their representation:
 - index isolation: every record of a run belongs to its own condition, maps only to units of the bundle, and no
   record ID is shared across runs;
 - DK3 and DK4 come from the same knowledge-base run and every DK4 claim is a DK3 claim;
+- DK2-DK4 pack their context the same way (`context_packing`; DK1 is always flat);
 - answer runs: one per retrieval run, the same model, effort, prompt, top-k, token budget and split;
 - held-out: a run on held-out questions needs frozen shared and condition settings.
 
@@ -51,9 +52,13 @@ def check(retrieval_dirs, answer_dirs=()):
         values = [m["inputs"][key]["sha256"] for _, m in runs]
         add(name, "pass" if _same(values) else "fail", "" if _same(values) else dict(zip(conditions, values)))
 
-    shared = [{k: m["retrieval"].get(k) for k in SHARED_KEYS} | {"top_k": m["shared"].get("top_k"),
-                                                                 "subqueries": (m.get("subqueries") or {}).get("sha256")} for _, m in runs]
+    shared = [{k: m["retrieval"].get(k) for k in SHARED_KEYS} | {"top_k": m["shared"].get("top_k"), "context_packing": m["shared"].get("context_packing"),
+                                                                 "subqueries": (m.get("subqueries") or {}).get("sha256"),
+                                                                 "query_slots": (m.get("query_slots") or {}).get("sha256")} for _, m in runs]
     add("same retrieval settings", "pass" if _same(shared) else "fail", "" if _same(shared) else dict(zip(conditions, shared)))
+    # DK1 always packs flat; DK2-DK4 must hand the generator their records the same way (`pack-article-v1`).
+    packing = [(c, (m.get("context_packing") or {}).get("mode", "P0")) for (_, m), c in zip(runs, conditions) if c != "DK1"]
+    add("DK2-DK4 use the same context packing", "pass" if _same([v for _, v in packing]) else "fail", ", ".join(f"{c}={v}" for c, v in packing))
     dense = [({k: (m.get("dense") or {}).get(k) for k in ("model", "revision", "weights_sha256", "max_seq_length")} if m.get("dense") else None) for _, m in runs]
     add("same embedding model", "pass" if _same(dense) else "fail", "" if _same(dense) else dict(zip(conditions, dense)))
 
@@ -82,7 +87,7 @@ def check(retrieval_dirs, answer_dirs=()):
             extra = sorted(dk4 - dk3)
             add("DK4 is a subset of DK3", "fail" if extra else "pass", f"{len(extra)} DK4 claims not in DK3" if extra else f"{len(dk4)} of {len(dk3)} kept")
         # DK3 and DK4 may differ only in which claims survived validation.
-        shape = {c: {k: m["condition"].get(k) for k in ("record", "max_tokens", "graph", "claims_view")} for (_, m), c in zip(runs, conditions) if c in ("DK3", "DK4")}
+        shape = {c: {k: m["condition"].get(k) for k in ("record", "max_tokens", "graph", "claims_view", "query", "validity")} for (_, m), c in zip(runs, conditions) if c in ("DK3", "DK4")}
         add("DK3 and DK4 use the same record shape and graph", "pass" if _same(list(shape.values())) else "fail", "" if _same(list(shape.values())) else shape)
 
     held = []

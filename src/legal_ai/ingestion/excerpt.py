@@ -71,9 +71,11 @@ def outline(text):
     return articles
 
 
-def excerpt(text, article_ids, limit=MAX_ARTICLES):
+def excerpt(text, article_ids, limit=MAX_ARTICLES, include_amending=False):
     """The chosen articles (outline IDs) with their chapter/section headings, verbatim, in document order.
-    `limit` caps one knowledge-base import; research scopes pass None."""
+    `limit` caps one knowledge-base import; research scopes pass None. With `include_amending` an article blocked only
+    for quoted text (an article amending another document) may be chosen: the parser keeps each quoted new wording
+    inside the leaf unit of its instruction, so every amendment becomes one citable unit (corpus scope v3)."""
     chosen = set(article_ids)
     if not chosen:
         raise ValueError("Chọn ít nhất một Điều")
@@ -87,7 +89,7 @@ def excerpt(text, article_ids, limit=MAX_ARTICLES):
     missing = sorted(chosen - known.keys())
     if missing:
         raise ValueError(f"Không có Điều này trong văn bản: {missing[0]}")
-    blocked = {a["id"] for a in outline(text) if a["blocked"]}
+    blocked = {a["id"] for a in outline(text) if a["blocked"] and not (include_amending and a["reason"] == "quoted_text")}
     if chosen & blocked:
         raise ValueError(f"Điều có cấu trúc lồng nhau không nhập được: {sorted(chosen & blocked)[0]}")
     parts, shown = [], set()

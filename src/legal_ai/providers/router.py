@@ -95,8 +95,9 @@ class _Transport:
                 raise ProviderError("invalid_provider_response")
             return result
         except HTTPError as exc:
+            exc.close()  # The error carries the open response body; release it.
             # 429 is the provider refusing a call that was sent, not Lexora's own budget (quota_exhausted, no call made).
-            raise ProviderError("rate_limited" if exc.code == 429 else "provider_http_error") from None
+            raise ProviderError("rate_limited" if exc.code == 429 else "provider_http_error", f"HTTP {exc.code}") from None
         except (URLError, OSError):
             raise ProviderError("provider_unavailable") from None
         except ValueError:

@@ -1,0 +1,10 @@
+{
+  "answer_version": "answer-run-v1",
+  "status": "draft",
+  "model": "gpt-oss-120b (9Router, MODEL_OSS_120B)",
+  "prompt": "answer-v4.md",
+  "top_k": 50,
+  "context_token_budget": 3000,
+  "token_counter": "lexora-syllable-v1",
+  "note": "Research plan 11/11 (WP3, WP6, WP9): main answer settings for DK1-DK4. answer-v4 reads Article-grouped evidence (pack-article-v1 P1/P2) and flat lists alike; the packing itself comes from the retrieval run's shared context_packing. Model fixed per run on the command line (--router-model); the model field here is documentation."
+}

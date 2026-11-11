@@ -139,11 +139,18 @@ class CorpusStore:
         with self._lock, closing(self._connect()) as db, db:
             if db.execute("SELECT 1 FROM corpora WHERE id = ?", (corpus_id,)).fetchone() is None:
                 raise ValueError("Không tìm thấy corpus")
-            live = db.execute("SELECT document_id, source_sha256 FROM corpus_documents WHERE corpus_id = ? AND removed_at IS NULL", (corpus_id,)).fetchall()
+            live = db.execute("SELECT document_id, source_sha256, metadata FROM corpus_documents WHERE corpus_id = ? AND removed_at IS NULL", (corpus_id,)).fetchall()
             if any(r["document_id"] == document_id for r in live):
                 raise ValueError(f"Mã văn bản {document_id} đã có trong corpus; hãy chọn mã khác")
-            if any(r["source_sha256"] == digest(raw) for r in live):
-                raise ValueError("Nguồn này (cùng nội dung) đã có trong corpus")
+            # One snapshot may appear twice only as excerpts with no article in common (scope v3 keeps the articles that
+            # amend other documents as a separate entry, so the first excerpt stays identical to earlier versions).
+            mine = set((metadata.get("excerpt") or {}).get("article_ids") or [])
+            for row in live:
+                if row["source_sha256"] != digest(raw):
+                    continue
+                theirs = set((json.loads(row["metadata"]).get("excerpt") or {}).get("article_ids") or [])
+                if not mine or not theirs or mine & theirs:
+                    raise ValueError("Nguồn này (cùng nội dung) đã có trong corpus")
             if len(live) >= MAX_DOCUMENTS:
                 raise ValueError(f"Một corpus chứa tối đa {MAX_DOCUMENTS} văn bản")
             db.execute("INSERT INTO corpus_documents VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)", (
@@ -151,7 +158,7 @@ class CorpusStore:
                 canonical(normalized), canonical(parsed["units"]), canonical(report), _now(), actor, None))
         return self.document(row_id)
 
-    def add_vbpl(self, corpus_id, manifest, raw, actor, document_id=None, article_ids=None):
+    def add_vbpl(self, corpus_id, manifest, raw, actor, document_id=None, article_ids=None, include_amending=False):
         """Add a vbpl.vn snapshot fetched by `vbpl_api.fetch_document` (its manifest and stored bytes).
         With `article_ids` (outline IDs) only those articles and their chapter/section headings are kept, verbatim;
         the row still stores the whole snapshot, and the metadata records the chosen articles."""
@@ -165,8 +172,8 @@ class CorpusStore:
         if article_ids is not None:
             chosen = set(article_ids)
             order = [a["id"] for a in outline(text) if a["id"] in chosen]
-            text = excerpt(text, article_ids, limit=None)
-            meta = meta | {"excerpt": {"article_ids": order, "count": len(order)}}
+            text = excerpt(text, article_ids, limit=None, include_amending=include_amending)
+            meta = meta | {"excerpt": {"article_ids": order, "count": len(order), **({"include_amending": True} if include_amending else {})}}
         kind = (meta.get("doc_type") or "văn bản").lower()
         no_articles = (f"Văn bản này ({kind} {meta.get('doc_num') or ''}) không chia thành Điều nên không đưa vào corpus được. "
                        "Lệnh công bố, chỉ thị và công văn thường như vậy; hãy chọn chính văn bản luật, nghị định hoặc thông tư.")

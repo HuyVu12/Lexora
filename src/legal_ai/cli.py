@@ -71,6 +71,14 @@ def main():
     command = commands.add_parser("kb-materialize", help="rebuild dk3/dk4 and the validation report of a knowledge-base run from raw.jsonl; offline")
     command.add_argument("run", help="knowledge-base run directory")
     command.add_argument("--bundle", help="contract bundle (default: the one recorded in the run manifest)")
+    command = commands.add_parser("amendment-build", help="amendment edges (amendment-rules-v1) of pinned vbpl.vn snapshots against a corpus bundle; offline, no model")
+    command.add_argument("bundle", help="contract bundle whose units are the targets")
+    command.add_argument("--config", default="configs/amendments-v1.json", help="amending sources (pinned snapshots)")
+    command.add_argument("--output", required=True, help="new directory for edges.jsonl and manifest.json")
+    command = commands.add_parser("budget-report", help="recall-by-token-budget tables and SVG curves from retrieval runs; offline")
+    command.add_argument("--runs", nargs="+", required=True, help="LABEL=RUN_DIR pairs; the label groups runs into one figure (SET:CONDITION)")
+    command.add_argument("--output", required=True, help="Markdown file; one SVG per question set is written next to it")
+    command.add_argument("--title", default="Đường cong recall theo ngân sách token")
     command = commands.add_parser("answer-run", help="cited answers for one retrieval run through Claude Code; resumes an earlier run")
     command.add_argument("retrieval_run", help="run directory written by run-retrieval")
     command.add_argument("--questions", required=True, help="the question file the retrieval run used")
@@ -122,6 +130,28 @@ def main():
     command.add_argument("--claude-model", help="decompose through the local claude CLI instead, e.g. claude-sonnet-5-5")
     command.add_argument("--claude-effort", default="medium", choices=["low", "medium", "high", "xhigh", "max"])
     command.add_argument("--approve-claude", action="store_true", help="explicit approval of the Claude Code calls")
+    command = commands.add_parser("query-slots", help="norm-query-v1: modality, actor, required slots and topic query of each enumeration question, once for every condition; resumes")
+    command.add_argument("questions", help="question file")
+    command.add_argument("--output", required=True, help="new directory, or an earlier analysis run of the same file")
+    command.add_argument("--max-calls", type=int, required=True, help="call budget of this session")
+    command.add_argument("--router-model", help="one approved 9Router model (a MODEL_* alias or a name)")
+    command.add_argument("--approve-router", action="store_true", help="explicit approval of the 9Router calls")
+    command.add_argument("--timeout", type=int, default=300, help="seconds per 9Router call")
+    command.add_argument("--max-tokens", type=int, default=2000)
+    command.add_argument("--claude-model", help="analyze through the local claude CLI instead")
+    command.add_argument("--claude-effort", default="medium", choices=["low", "medium", "high", "xhigh", "max"])
+    command.add_argument("--approve-claude", action="store_true", help="explicit approval of the Claude Code calls")
+    command = commands.add_parser("enum-drafts", help="draft enumeration questions and a check sheet from an adjudicated extraction gold file; offline")
+    command.add_argument("gold", help="adjudicated gold JSONL (extraction-gold-v1)")
+    command.add_argument("--bundle", required=True, help="contract bundle the gold was labelled on")
+    command.add_argument("--aliases", default="configs/experiments/actor-aliases.json")
+    command.add_argument("--level", default="article", choices=["article", "chapter"], help="topic scope of a question")
+    command.add_argument("--min-units", type=int, default=2)
+    command.add_argument("--output", required=True, help="new question file (JSON); the check sheet is written next to it as .csv")
+    command = commands.add_parser("enum-gate", help="extraction coverage of the gold answer units of an enumeration set by a knowledge-base run (WP5 gate); offline")
+    command.add_argument("questions", help="enumeration question file")
+    command.add_argument("--kb-run", required=True, help="knowledge-base run directory")
+    command.add_argument("--claims", default="dk3.jsonl", choices=["dk3.jsonl", "dk4.jsonl"])
     command = commands.add_parser("answer-score", help="automatic metrics of an answer run (refusals, citations against gold units); offline")
     command.add_argument("answer_run")
     command.add_argument("--questions", required=True)
@@ -255,6 +285,12 @@ def main():
             print(json.dumps({"corpus_id": corpus["id"], "name": corpus["name"],
                               "documents": [{"document_id": d["document_id"], "articles": d["article_count"], "audit": d["audit_count"]} for d in corpus["documents"]]},
                              ensure_ascii=False, indent=2))
+        elif args.command == "amendment-build":
+            from legal_ai.kb.amendments import build
+            print(json.dumps(build(args.bundle, args.config, args.output), ensure_ascii=False, indent=2))
+        elif args.command == "budget-report":
+            from legal_ai.evaluation.budget_report import write_report
+            print(json.dumps(write_report(args.runs, args.output, args.title), ensure_ascii=False, indent=2))
         elif args.command in ("kb-extract", "kb-materialize"):
             from legal_ai.common.io import read_jsonl
             from legal_ai.evaluation import kb_run
@@ -356,6 +392,41 @@ def main():
                 provider = ChatStructured(chat, max_tokens=args.max_tokens)
             counts = decompose_run(args.questions, provider, args.output, log=lambda line: print(line, flush=True))
             print(json.dumps(counts, indent=2))
+        elif args.command == "query-slots":
+            from legal_ai.retrieval.norm_query import analyze
+            if bool(args.router_model) == bool(args.claude_model):
+                parser.error("query-slots needs one of --router-model (with --approve-router) or --claude-model (with --approve-claude)")
+            if args.claude_model:
+                from legal_ai.providers.claude_code import ClaudeCodeProvider
+                provider = ClaudeCodeProvider(args.claude_model, args.claude_effort, args.max_calls, approved=args.approve_claude)
+            else:
+                from legal_ai.providers.router import ChatStructured, RouterProvider, read_settings
+                settings = read_settings(Path.cwd() / ".env")
+                name = settings.get(args.router_model, args.router_model) if args.router_model.startswith("MODEL_") else args.router_model
+                chat = RouterProvider(settings, model=name, approved_route=args.approve_router, max_calls=args.max_calls, timeout=args.timeout)
+                provider = ChatStructured(chat, max_tokens=args.max_tokens)
+            print(json.dumps(analyze(args.questions, provider, args.output, log=lambda line: print(line, flush=True)), indent=2))
+        elif args.command == "enum-drafts":
+            from legal_ai.common.io import read_jsonl, write_json
+            from legal_ai.research.enumeration import DRAFT_VERSION, check_sheet, drafts
+            from legal_ai.retrieval.norm_query import load_aliases
+            output = Path(args.output)
+            if output.exists():
+                parser.error("output exists: use a new question file")
+            gold, bundle = read_jsonl(args.gold), Path(args.bundle)
+            units, documents = read_jsonl(bundle / "units.jsonl"), read_jsonl(bundle / "documents.jsonl")
+            rows = drafts(gold, units, documents, load_aliases(args.aliases), args.level, args.min_units)
+            write_json(output, {"description": f"Enumeration drafts ({DRAFT_VERSION}) from {Path(args.gold).as_posix()}, scope {args.level}; "
+                                               "annotators rewrite and check every question before freezing", "questions": rows})
+            check_sheet(output.with_suffix(".csv"), rows, gold, units)
+            print(json.dumps({"questions": len(rows), "answer_units": sum(len(r["relevant_unit_ids"]) for r in rows),
+                              "sheet": output.with_suffix(".csv").as_posix()}, ensure_ascii=False, indent=2))
+        elif args.command == "enum-gate":
+            from legal_ai.common.io import read_jsonl
+            from legal_ai.retrieval.norm_query import coverage
+            questions = json.loads(Path(args.questions).read_text(encoding="utf-8"))["questions"]
+            result = coverage(questions, read_jsonl(Path(args.kb_run) / args.claims))
+            print(json.dumps(result | {"uncovered": result["uncovered"][:50]}, ensure_ascii=False, indent=2))
         elif args.command == "answer-score":
             from legal_ai.evaluation.answer_run import score
             print(json.dumps(score(args.answer_run, args.questions), ensure_ascii=False, indent=2))

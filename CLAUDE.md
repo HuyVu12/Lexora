@@ -38,6 +38,10 @@ python -m legal_ai.cli kb-materialize <kb run>                                  
 python -m legal_ai.cli gold-score <gold.jsonl> --bundle <bundle> --predictions rules   # RQ1 P/R/F1 (or a dk3.jsonl/dk4.jsonl)
 python -m legal_ai.cli answer-run <retrieval run> --questions <q.json> --output <new> --max-calls N --approve-claude   # then answer-score, answer-sheet, answer-grades, answer-judge
 python -m legal_ai.cli answer-run <retrieval run> --questions <q.json> --output <new> --max-calls N --router-model MODEL_OSS_120B --approve-router   # same with a 9Router model (ChatStructured: schema in the prompt, JSON parsed, raw text kept)
+python -m legal_ai.cli budget-report --runs SET:DK1=<run> SET:DK2=<run> --output docs/results/<new>.md   # recall-by-token-budget tables + SVG (shared token_budgets, context_packing P0/P1/P2)
+python -m legal_ai.cli amendment-build <bundle> --output data/kb/<new>                # amendment-rules-v1 edges from pinned snapshots (configs/amendments-v1.json); feeds configs/experiments/validity/
+python -m legal_ai.cli enum-drafts <gold.jsonl> --bundle <bundle> --output <q.json>    # enumeration drafts + check sheet from the adjudicated gold; enum-gate <q.json> --kb-run <kb run> for extraction coverage
+python -m legal_ai.cli query-slots <q.json> --output <new> --max-calls N --router-model MODEL_OSS_120B --approve-router   # norm-query-v1 analysis shared by every condition (shared.query_slots)
 python -m legal_ai.cli preflight --retrieval <DK1..DK4 runs> --answers <answer runs>   # fairness checks before reporting RQ3; exits 1 on failure
 python -m legal_ai.cli kb-compare                                                    # extraction-model comparison -> docs/results/extraction-models.{md,json}
 python -m legal_ai.cli kb-audit-sheet <kb runs> --sheet <csv> --key <json>            # blinded sample of rejected/accepted claims to label; kb-audit-score <csv> --key <json> [--compare <csv>]

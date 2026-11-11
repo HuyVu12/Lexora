@@ -9,8 +9,9 @@ from legal_ai.common.io import canonical, digest
 
 
 class ProviderError(RuntimeError):
-    def __init__(self, code):
+    def __init__(self, code, detail=""):
         self.code = code
+        self.detail = detail  # Diagnostic metadata only (e.g. an HTTP status), never prompt or answer text.
         super().__init__(code)
 
 

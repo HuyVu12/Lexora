@@ -1,0 +1,15 @@
+{
+  "condition": "DK3",
+  "variant": "DK3-q",
+  "representation": "llm_kb_raw",
+  "automatic_validation": false,
+  "manual_review": false,
+  "status": "draft",
+  "kb_run": "experiments/runs/kb-scope-v1-gemma4-31b",
+  "record": "norm_lines",
+  "max_tokens": 384,
+  "query": {
+    "aliases": "configs/experiments/actor-aliases.json"
+  },
+  "note": "Research plan 11/11, WP5.2 (norm-query-v1): pre-declared extension for H4/H5. Units are ranked by the shared analysis' topic query (shared.query_slots), kept only when a claim passes modality, required slots and actor (frozen alias table); the generator reads one structure line per claim with the verbatim action slot, grouped per Article. Runs on corpus v1 (94 Articles) where the six-model KBs exist. Weaker-model KB (gemma4:31b), replication."
+}

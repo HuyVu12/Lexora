@@ -1,0 +1,87 @@
+{
+  "status": "draft",
+  "note": "Research plan 11/11, WP5.2: fixed actor alias table for norm-query-v1 (accent-folded whole-word match). Must be frozen by the team before any DK3-q/DK4-q run; changing it afterwards is a new variant.",
+  "actors": {
+    "người lao động": [
+      "NLĐ",
+      "người làm việc",
+      "người lao động làm việc theo hợp đồng lao động"
+    ],
+    "người sử dụng lao động": [
+      "NSDLĐ",
+      "người sử dụng lao động",
+      "doanh nghiệp, cơ quan, tổ chức, hợp tác xã, hộ gia đình, cá nhân có thuê mướn, sử dụng người lao động"
+    ],
+    "lao động nữ": [
+      "người lao động nữ",
+      "lao động nữ mang thai",
+      "lao động nữ nuôi con dưới 12 tháng tuổi"
+    ],
+    "người lao động chưa thành niên": [
+      "người chưa đủ 18 tuổi",
+      "người lao động chưa đủ 15 tuổi",
+      "người chưa đủ 15 tuổi"
+    ],
+    "người lao động cao tuổi": [
+      "người cao tuổi"
+    ],
+    "người lao động nước ngoài": [
+      "lao động nước ngoài",
+      "người nước ngoài"
+    ],
+    "người học nghề": [
+      "người tập nghề",
+      "người học nghề, người tập nghề"
+    ],
+    "người lao động khuyết tật": [
+      "người khuyết tật"
+    ],
+    "tổ chức đại diện người lao động": [
+      "công đoàn",
+      "tổ chức đại diện người lao động tại cơ sở",
+      "ban chấp hành công đoàn cơ sở"
+    ],
+    "cơ quan bảo hiểm xã hội": [
+      "bảo hiểm xã hội Việt Nam",
+      "cơ quan BHXH"
+    ],
+    "người tham gia bảo hiểm xã hội": [
+      "người tham gia",
+      "người tham gia bảo hiểm xã hội bắt buộc",
+      "người tham gia bảo hiểm xã hội tự nguyện"
+    ],
+    "cơ quan quản lý nhà nước về lao động": [
+      "Bộ Lao động - Thương binh và Xã hội",
+      "Bộ Nội vụ",
+      "Sở Lao động - Thương binh và Xã hội",
+      "Sở Nội vụ",
+      "cơ quan chuyên môn về lao động thuộc Ủy ban nhân dân cấp tỉnh"
+    ],
+    "Ủy ban nhân dân": [
+      "Ủy ban nhân dân cấp tỉnh",
+      "Ủy ban nhân dân cấp huyện",
+      "Ủy ban nhân dân cấp xã",
+      "Chủ tịch Ủy ban nhân dân"
+    ],
+    "thanh tra lao động": [
+      "thanh tra",
+      "thanh tra viên lao động",
+      "Chánh thanh tra"
+    ],
+    "hòa giải viên lao động": [
+      "hòa giải viên"
+    ],
+    "hội đồng trọng tài lao động": [
+      "trọng tài viên lao động",
+      "Ban trọng tài lao động"
+    ],
+    "Tòa án": [
+      "Tòa án nhân dân"
+    ],
+    "người bị xử phạt": [
+      "cá nhân, tổ chức vi phạm",
+      "tổ chức vi phạm",
+      "cá nhân vi phạm"
+    ]
+  }
+}
