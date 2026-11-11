@@ -130,6 +130,12 @@ class AnswerRunTests(unittest.TestCase):
         self.assertTrue(len(blocks) == 1 or sum(b["token_count"] for b in blocks) <= 25)
         self.assertEqual([b["id"] for b in pack(ranked, records, 3, 10_000)], ["E01", "E02", "E03"])
 
+    def test_relations_in_context_needs_a_legal_chain_retrieval_run(self):
+        config = self.root / "answer-chain.json"
+        config.write_text(json.dumps({"prompt": "answer-v3.md", "top_k": 3, "context_token_budget": 200, "relations_in_context": True}), encoding="utf-8")
+        with self.assertRaisesRegex(ValueError, "graph.chain"):
+            run(self.retrieval["DK2"], self.questions, config, StandIn(), self.root / "answers-chain")
+
     def test_answer_run_resumes_scores_and_pools_into_a_blinded_sheet(self):
         output = self.root / "answers-DK2"
         counts = run(self.retrieval["DK2"], self.questions, self.config, StandIn(fail=["Tiền lương"]), output)

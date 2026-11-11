@@ -99,14 +99,29 @@ def main():
     command.add_argument("--dense-candidates", type=int, default=0, help="add this many nearest articles by the local embedding model (shared.json)")
     command.add_argument("--candidate-chars", type=int, default=900, help="characters of each candidate article shown to the model")
     command.add_argument("--materialize", action="store_true", help="only validate raw.jsonl again; offline")
+    command = commands.add_parser("neighbor-select", help="a model picks which legal-chain graph neighbours each question needs; resumes, then writes a retrieval run")
+    command.add_argument("retrieval_run", help="base run directory written by run-retrieval (DK3/DK4 without graph expansion)")
+    command.add_argument("--relation-run", required=True, help="relation run whose typed relations form the graph")
+    command.add_argument("--output", required=True, help="new directory, or an earlier selection run with the same inputs")
+    command.add_argument("--model", default="claude-haiku-5-5")
+    command.add_argument("--effort", default="medium", choices=["low", "medium", "high", "xhigh", "max"])
+    command.add_argument("--max-calls", type=int, default=0, help="call budget of this session (required unless --dry-run or --materialize)")
+    command.add_argument("--approve-claude", action="store_true", help="explicit approval of the Claude Code calls")
+    command.add_argument("--workers", type=int, default=1, help="calls at once")
+    command.add_argument("--dry-run", action="store_true", help="only count calls, candidates and characters; no model call")
+    command.add_argument("--materialize", action="store_true", help="only rebuild run/ from raw.jsonl; offline")
+    command.add_argument("--grouping", default="question", choices=["question", "issue"], help="issue: seeds, candidates and caps per decomposed issue (v2)")
     command = commands.add_parser("decompose-questions", help="split each question into legal issues with search queries, once for every condition; resumes")
     command.add_argument("questions", help="question file")
     command.add_argument("--output", required=True, help="new directory, or an earlier decomposition run of the same file")
     command.add_argument("--max-calls", type=int, required=True, help="call budget of this session")
-    command.add_argument("--router-model", required=True, help="one approved 9Router model (a MODEL_* alias or a name)")
+    command.add_argument("--router-model", help="one approved 9Router model (a MODEL_* alias or a name)")
     command.add_argument("--approve-router", action="store_true", help="explicit approval of the 9Router calls")
     command.add_argument("--timeout", type=int, default=300, help="seconds per 9Router call")
     command.add_argument("--max-tokens", type=int, default=4000)
+    command.add_argument("--claude-model", help="decompose through the local claude CLI instead, e.g. claude-sonnet-5-5")
+    command.add_argument("--claude-effort", default="medium", choices=["low", "medium", "high", "xhigh", "max"])
+    command.add_argument("--approve-claude", action="store_true", help="explicit approval of the Claude Code calls")
     command = commands.add_parser("answer-score", help="automatic metrics of an answer run (refusals, citations against gold units); offline")
     command.add_argument("answer_run")
     command.add_argument("--questions", required=True)
@@ -284,6 +299,19 @@ def main():
                 from legal_ai.evaluation.answer_grading import judge_sheet
                 provider = ClaudeCodeProvider(config["judge_model"], config["judge_effort"], args.max_calls, approved=args.approve_claude)
                 print(json.dumps(judge_sheet(args.sheet, provider, args.output, log=log), indent=2))
+        elif args.command == "neighbor-select":
+            from legal_ai.evaluation import neighbor_select
+            neighbor_select.start(args.retrieval_run, args.relation_run, args.output, args.model, args.effort, grouping=args.grouping)
+            if args.dry_run:
+                print(json.dumps(neighbor_select.estimate(args.output), ensure_ascii=False, indent=2))
+            else:
+                if not args.materialize:
+                    if args.max_calls < 1:
+                        parser.error("neighbor-select needs --max-calls (and --approve-claude) unless --dry-run or --materialize")
+                    from legal_ai.providers.claude_code import ClaudeCodeProvider
+                    provider = ClaudeCodeProvider(args.model, args.effort, args.max_calls, approved=args.approve_claude)
+                    print(json.dumps(neighbor_select.select(args.output, provider, log=lambda line: print(line, flush=True), workers=args.workers)))
+                print(json.dumps(neighbor_select.materialize(args.output), ensure_ascii=False, indent=2))
         elif args.command == "kb-relations":
             from legal_ai.common.io import read_jsonl
             from legal_ai.evaluation import relation_run
@@ -315,11 +343,18 @@ def main():
             print(json.dumps(relation_run.materialize(units, args.output), ensure_ascii=False, indent=2))
         elif args.command == "decompose-questions":
             from legal_ai.evaluation.decompose import run as decompose_run
-            from legal_ai.providers.router import ChatStructured, RouterProvider, read_settings
-            settings = read_settings(Path.cwd() / ".env")
-            name = settings.get(args.router_model, args.router_model) if args.router_model.startswith("MODEL_") else args.router_model
-            chat = RouterProvider(settings, model=name, approved_route=args.approve_router, max_calls=args.max_calls, timeout=args.timeout)
-            counts = decompose_run(args.questions, ChatStructured(chat, max_tokens=args.max_tokens), args.output, log=lambda line: print(line, flush=True))
+            if bool(args.router_model) == bool(args.claude_model):
+                parser.error("decompose-questions needs one of --router-model (with --approve-router) or --claude-model (with --approve-claude)")
+            if args.claude_model:
+                from legal_ai.providers.claude_code import ClaudeCodeProvider
+                provider = ClaudeCodeProvider(args.claude_model, args.claude_effort, args.max_calls, approved=args.approve_claude)
+            else:
+                from legal_ai.providers.router import ChatStructured, RouterProvider, read_settings
+                settings = read_settings(Path.cwd() / ".env")
+                name = settings.get(args.router_model, args.router_model) if args.router_model.startswith("MODEL_") else args.router_model
+                chat = RouterProvider(settings, model=name, approved_route=args.approve_router, max_calls=args.max_calls, timeout=args.timeout)
+                provider = ChatStructured(chat, max_tokens=args.max_tokens)
+            counts = decompose_run(args.questions, provider, args.output, log=lambda line: print(line, flush=True))
             print(json.dumps(counts, indent=2))
         elif args.command == "answer-score":
             from legal_ai.evaluation.answer_run import score

@@ -1,0 +1,14 @@
+{
+  "answer_version": "answer-run-v1",
+  "status": "draft",
+  "model": "claude-haiku-5-5",
+  "effort": "medium",
+  "judge_model": "claude-sonnet-5-5",
+  "judge_effort": "medium",
+  "prompt": "answer-v3.md",
+  "relations_in_context": true,
+  "top_k": 50,
+  "context_token_budget": 3000,
+  "token_counter": "lexora-syllable-v1",
+  "note": "Legal-chain test (docs/planning/graph-legal-reasoning-2026-11-10.md): as answer-cases-haiku.json, plus typed relations between evidence blocks and prompt answer-v3; needs a legal-chain retrieval run."
+}

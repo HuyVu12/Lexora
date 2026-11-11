@@ -18,6 +18,8 @@ is expanded over the knowledge base's cross-reference edges (`retrieval.graph`),
 
 With `shared.subqueries` (a decomposition run, the same for every condition) each question is ranked once as
 written and once per issue query, and the rankings are merged round-robin, so every issue gets early records.
+With `shared.adaptive_budget` ({base, per_issue, max}) every question also gets Recall within a budget that grows
+with its number of issues (`adaptive_budget`), the same rule for every condition.
 """
 
 from datetime import datetime, timezone
@@ -30,6 +32,7 @@ from legal_ai.common.io import canonical, digest, read_jsonl, write_json, write_
 from legal_ai.indexing.records import RECORD_VERSION, TOKENIZER, check_records, claim_records, fixed_chunks, kb_unit_records, structural_records, token_spans
 from legal_ai.evaluation import decompose
 from legal_ai.retrieval import graph as kb_graph
+from legal_ai.retrieval import legal_chain
 from legal_ai.retrieval.bm25 import BM25, tokens
 from legal_ai.validation.bundle import validate_bundle
 
@@ -97,6 +100,57 @@ def _covers(record_units, gold):
     return any(unit == gold or unit.startswith(gold + "/") for unit in record_units)
 
 
+def check_adaptive(rule):
+    """An adaptive budget rule {"base", "per_issue", "max"} (generator tokens): the same rule for every condition."""
+    if not isinstance(rule, dict) or set(rule) != {"base", "per_issue", "max"} or any(type(rule[k]) is not int or rule[k] < 0 for k in rule)             or rule["max"] < rule["base"] or rule["base"] < 1:
+        raise ValueError("adaptive_budget must be {base, per_issue, max} with non-negative integers, base >= 1 and max >= base")
+    return rule
+
+
+def adaptive_budget(rule, issue_count):
+    """Tokens for a question with `issue_count` legal issues (at least one): base + per_issue * issues, capped at max.
+    The count comes from the shared decomposition run, never from gold labels, so a complex case gets more context
+    by the same rule in every condition."""
+    return min(rule["max"], rule["base"] + rule["per_issue"] * max(1, issue_count))
+
+
+def score_top(top, gold, ks, budgets, adaptive=None):
+    """Recall at every K and token budget, and context tokens at every K, of one question's ranked records; with
+    `adaptive` (this question's adaptive budget) also the recall within it."""
+    row = {"recall": {}, "context_tokens": {}, "recall_at_tokens": {}}
+    for k in ks:
+        covered = [g for g in gold if any(_covers(r["unit_ids"], g) for r in top[:k])]
+        row["recall"][str(k)] = len(covered) / len(gold) if gold else None
+        row["context_tokens"][str(k)] = sum(r["token_count"] for r in top[:k])
+    for budget in budgets:
+        kept = within_budget(top, budget)
+        row["recall_at_tokens"][str(budget)] = len([g for g in gold if any(_covers(r["unit_ids"], g) for r in kept)]) / len(gold) if gold else None
+    if adaptive is not None:
+        kept = within_budget(top, adaptive)
+        row["adaptive_budget"] = adaptive
+        row["recall_at_adaptive"] = len([g for g in gold if any(_covers(r["unit_ids"], g) for r in kept)]) / len(gold) if gold else None
+    return row
+
+
+def summarize(predictions, ks, budgets, records, condition, headline_k):
+    scored = [row for row in predictions if row["gold_unit_ids"]]
+    adaptive = {}
+    if predictions and all("adaptive_budget" in row for row in predictions):
+        adaptive = {"mean_recall_at_adaptive": sum(r["recall_at_adaptive"] for r in scored) / len(scored) if scored else None,
+                    "mean_adaptive_budget": sum(r["adaptive_budget"] for r in predictions) / len(predictions)}
+    return adaptive | {
+        "run_version": RUN_VERSION, "condition": condition, "scored_questions": len(scored),
+        "excluded_without_gold": len(predictions) - len(scored), "headline_k": headline_k,
+        "mean_recall": {str(k): (sum(r["recall"][str(k)] for r in scored) / len(scored) if scored else None) for k in ks},
+        # Share of questions whose gold units are all retrieved: what a multi-provision question needs.
+        "mean_complete": {str(k): (sum(r["recall"][str(k)] == 1.0 for r in scored) / len(scored) if scored else None) for k in ks},
+        "mean_recall_at_tokens": {str(b): (sum(r["recall_at_tokens"][str(b)] for r in scored) / len(scored) if scored else None) for b in budgets},
+        "mean_context_tokens": {str(k): (sum(r["context_tokens"][str(k)] for r in predictions) / len(predictions) if predictions else None) for k in ks},
+        "record_count": len(records),
+        "mean_record_tokens": sum(r["token_count"] for r in records) / len(records) if records else None,
+    }
+
+
 def _git_state(root):
     try:
         commit = subprocess.run(["git", "rev-parse", "HEAD"], cwd=root, capture_output=True, text=True, check=True).stdout.strip()
@@ -127,7 +181,9 @@ def run(bundle, questions_path, condition_path, shared_path, output, embedder=No
         raise ValueError("dense and hybrid retrieval need an embedder (the embeddings extra and the local model)")
     ks = sorted(set(retrieval["recall_k"]) | {shared["top_k"]})
     budgets = sorted(shared.get("token_budgets", TOKEN_BUDGETS))
-    graph = kb_graph.check_config(condition["graph"]) if condition.get("graph") else None
+    rule = check_adaptive(shared["adaptive_budget"]) if shared.get("adaptive_budget") else None
+    chain = legal_chain.check_config(condition["graph"]["chain"]) if condition.get("graph", {}).get("chain") else None
+    graph = (kb_graph.check_config(condition["graph"]) if condition.get("graph") and not chain else condition.get("graph"))
 
     documents, units, texts = load_bundle(bundle)
     known = {unit["unit_id"] for unit in units}
@@ -145,14 +201,20 @@ def run(bundle, questions_path, condition_path, shared_path, output, embedder=No
         from legal_ai.retrieval.embeddings import DenseIndex, rrf
         dense = DenseIndex(embedder, [row["index_text"] for row in records])
     relations = None
-    if graph and "relation" in graph["edges"]:
+    if graph and not chain and "relation" in graph["edges"]:
         folder = Path(graph["relation_run"])
         if json.loads((folder / "manifest.json").read_text(encoding="utf-8"))["units_sha256"] != digest((Path(bundle) / "units.jsonl").read_bytes()):
             raise ValueError("the relation run was made from another corpus bundle")
         relations = [r for r in read_jsonl(folder / "relations.jsonl") if r["type"] in graph.get("relation_types", kb_graph.RELATION_TYPES)]
-    edges = kb_graph.graph_edges(units, graph["edges"], graph.get("source_aliases"), relations) if graph else None
+    edges = kb_graph.graph_edges(units, graph["edges"], graph.get("source_aliases"), relations) if graph and not chain else None
+    if chain:
+        folder = Path(chain["relation_run"])
+        if json.loads((folder / "manifest.json").read_text(encoding="utf-8"))["units_sha256"] != digest((Path(bundle) / "units.jsonl").read_bytes()):
+            raise ValueError("the relation run was made from another corpus bundle")
+        relations = read_jsonl(folder / "relations.jsonl")
+        edges = legal_chain.typed_edges(units, relations, documents, graph.get("source_aliases"), chain.get("references", True))
     concepts = None
-    if graph and "concept" in graph["edges"]:
+    if graph and not chain and "concept" in graph["edges"]:
         concepts = kb_graph.record_concepts(records, kb_graph.concept_keys(kb_claims(condition, Path(bundle) / "units.jsonl")))
     subqueries = decompose.load(shared["subqueries"], questions_path)[0] if shared.get("subqueries") else None
     # Deep enough for the largest token budget of the smallest records; predictions keep this depth.
@@ -172,8 +234,23 @@ def run(bundle, questions_path, condition_path, shared_path, output, embedder=No
         ranked = rank(question["question"])
         if issues:
             ranked = decompose.merge([ranked] + [rank(i["query"]) for i in issues], depth)
-        via = {}
-        if graph:
+        via, roles = {}, {}
+        if chain:
+            affinity = None
+            if chain.get("affinity") == "dense":
+                if dense is None:
+                    raise ValueError("graph.chain.affinity=dense needs dense or hybrid retrieval")
+                affinity = {}
+                for text in [question["question"]] + [i["query"] for i in issues or []]:
+                    for n, (i, _) in enumerate(dense.rank(text)):
+                        affinity[i] = min(n, affinity.get(i, n))
+            expanded = legal_chain.expand(ranked, records, edges, depth, chain.get("order", legal_chain.DEFAULT_ORDER),
+                                           chain.get("max_neighbors", 2), chain.get("seeds"), affinity, chain.get("select", "role"),
+                                           chain.get("max_affinity_rank"))
+            via = {i: v for i, _, v, _ in expanded if v is not None}
+            roles = {i: r for i, _, v, r in expanded if v is not None}
+            ranked = [(i, s) for i, s, _, _ in expanded]
+        elif graph:
             expanded = kb_graph.expand(ranked, records, edges, depth, graph.get("max_neighbors", 2), graph.get("require_match", False), concepts)
             via = {i: v for i, _, v in expanded if v is not None}
             ranked = [(i, s) for i, s, _ in expanded]
@@ -183,31 +260,15 @@ def run(bundle, questions_path, condition_path, shared_path, output, embedder=No
                "expected_status": question.get("expected_status"), "gold_unit_ids": gold,
                "ranked": [{"rank": n, "record_id": records[i]["record_id"], "score": round(score, 9), "unit_ids": records[i]["unit_ids"],
                            "token_count": records[i]["token_count"],
-                           **({"via_reference_from": records[via[i]]["record_id"]} if i in via else {})} for n, (i, score) in enumerate(ranked, 1)],
+                           **({"via_reference_from": records[via[i]]["record_id"]} if i in via else {}),
+                           **({"via_role": roles[i]} if i in roles else {})} for n, (i, score) in enumerate(ranked, 1)],
                "recall": {}, "context_tokens": {}, "recall_at_tokens": {}}
-        for k in ks:
-            covered = [g for g in gold if any(_covers(r["unit_ids"], g) for r in top[:k])]
-            row["recall"][str(k)] = len(covered) / len(gold) if gold else None
-            row["context_tokens"][str(k)] = sum(r["token_count"] for r in top[:k])
-        for budget in budgets:
-            kept = within_budget(top, budget)
-            row["recall_at_tokens"][str(budget)] = len([g for g in gold if any(_covers(r["unit_ids"], g) for r in kept)]) / len(gold) if gold else None
+        row.update(score_top(top, gold, ks, budgets, adaptive_budget(rule, len(issues or [])) if rule else None))
         if not ranked:
             errors.append({"question_id": question["question_id"], "code": "no_match"})
         predictions.append(row)
 
-    scored = [row for row in predictions if row["gold_unit_ids"]]
-    metrics = {
-        "run_version": RUN_VERSION, "condition": condition["condition"], "scored_questions": len(scored),
-        "excluded_without_gold": len(predictions) - len(scored), "headline_k": shared["top_k"],
-        "mean_recall": {str(k): (sum(r["recall"][str(k)] for r in scored) / len(scored) if scored else None) for k in ks},
-        # Share of questions whose gold units are all retrieved: what a multi-provision question needs.
-        "mean_complete": {str(k): (sum(r["recall"][str(k)] == 1.0 for r in scored) / len(scored) if scored else None) for k in ks},
-        "mean_recall_at_tokens": {str(b): (sum(r["recall_at_tokens"][str(b)] for r in scored) / len(scored) if scored else None) for b in budgets},
-        "mean_context_tokens": {str(k): (sum(r["context_tokens"][str(k)] for r in predictions) / len(predictions) if predictions else None) for k in ks},
-        "record_count": len(records),
-        "mean_record_tokens": sum(r["token_count"] for r in records) / len(records) if records else None,
-    }
+    metrics = summarize(predictions, ks, budgets, records, condition["condition"], shared["top_k"])
     root = Path(__file__).resolve().parents[3]
     files = {"units": Path(bundle) / "units.jsonl", "documents": Path(bundle) / "documents.jsonl", "questions": Path(questions_path),
              "condition": Path(condition_path), "shared": Path(shared_path)}
@@ -220,7 +281,9 @@ def run(bundle, questions_path, condition_path, shared_path, output, embedder=No
         "status": "exploratory" if shared.get("status") != "frozen" or condition.get("status") != "frozen" else "frozen",
         "subqueries": ({"path": Path(shared["subqueries"]).as_posix(),
                         "sha256": digest((Path(shared["subqueries"]) / "subqueries.jsonl").read_bytes())} if shared.get("subqueries") else None),
-        "graph": ({"version": kb_graph.GRAPH_VERSION, **graph, "edge_count": sum(len(v) for v in edges.values()),
+        "graph": ({"version": legal_chain.CHAIN_VERSION, **graph, "edge_count": sum(len(v) for v in edges.values()),
+                   "relations_sha256": digest((Path(chain["relation_run"]) / "relations.jsonl").read_bytes())} if chain else
+                  {"version": kb_graph.GRAPH_VERSION, **graph, "edge_count": sum(len(v) for v in edges.values()),
                    **({"relations_sha256": digest((Path(graph["relation_run"]) / "relations.jsonl").read_bytes())} if relations is not None else {})}
                   if graph else None),
         "method": method, "dense": ({**embedder.describe(), "texts_sha256": dense.texts_sha256} if dense else None),
