@@ -22,7 +22,7 @@
   "claims_view": "compact",
   "validity": {
     "level": "unit",
-    "amendments": "data/kb/amendments-scope-v2-2026-11-11"
+    "amendments": "data/kb/amendments-scope-v3-v48feefc6d53b"
   },
-  "note": "Research plan 11/11, WP4.4: unit status at the question's date (as_of, else shared.validity_as_of); amendment edges from cli amendment-build (rules, need human review). Units expired, repealed or not yet in force are dropped; amended units carry a status note."
+  "note": "Research plan 11/11, WP4.4: unit status at the question's date (as_of, else shared.validity_as_of); amendment edges from cli amendment-build (rules, need human review). Units expired, repealed or not yet in force are dropped; amended units carry a status note. Blocked on corpus v3 (v48feefc6d53b): kb_run was extracted from corpus v2 and the retrieval run refuses another bundle; the 1,718 units added in v3 need an extraction run first (model calls, needs approval)."
 }

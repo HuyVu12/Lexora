@@ -1,7 +1,8 @@
 """Recall-by-token-budget report (research plan WP2): Markdown tables and one SVG line chart per question set, read
 from the `metrics.json` of finished retrieval runs. Offline; numbers are copied, never recomputed.
 
-Runs are given as `SET:CONDITION=RUN_DIR`; the set groups runs into one table and one figure.
+Runs are given as `SET:CONDITION=RUN_DIR`; the set groups runs into one table and one figure (its file name), and
+`set_titles` (`SET=Title`) gives the heading shown on the page and in the figure.
 """
 
 from html import escape
@@ -91,14 +92,16 @@ def tables(name, runs):
     return lines
 
 
-def write_report(pairs, output, title):
+def write_report(pairs, output, title, set_titles=None):
     output = Path(output)
     sets = load_runs(pairs)
+    names = dict(item.split("=", 1) for item in (set_titles or []))
     lines = [f"# {title}", ""]
     for name, runs in sets.items():
+        shown = names.get(name, name)
         figure = output.with_name(f"{output.stem}-{name}.svg")
         figure.parent.mkdir(parents=True, exist_ok=True)
-        figure.write_text(svg(name, runs), encoding="utf-8")
-        lines += [f"## {name}", "", f"![{name}]({figure.name})", ""] + tables(name, runs) + [""]
+        figure.write_text(svg(shown, runs), encoding="utf-8")
+        lines += [f"## {shown}", "", f"![{shown}]({figure.name})", ""] + tables(name, runs) + [""]
     output.write_text("\n".join(lines), encoding="utf-8")
     return {"report": output.as_posix(), "sets": {name: [r["condition"] for r in runs] for name, runs in sets.items()}}

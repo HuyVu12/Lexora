@@ -79,6 +79,7 @@ def main():
     command.add_argument("--runs", nargs="+", required=True, help="LABEL=RUN_DIR pairs; the label groups runs into one figure (SET:CONDITION)")
     command.add_argument("--output", required=True, help="Markdown file; one SVG per question set is written next to it")
     command.add_argument("--title", default="Đường cong recall theo ngân sách token")
+    command.add_argument("--set-title", nargs="*", default=[], help="SET=Title pairs for headings and figure titles")
     command = commands.add_parser("answer-run", help="cited answers for one retrieval run through Claude Code; resumes an earlier run")
     command.add_argument("retrieval_run", help="run directory written by run-retrieval")
     command.add_argument("--questions", required=True, help="the question file the retrieval run used")
@@ -290,7 +291,7 @@ def main():
             print(json.dumps(build(args.bundle, args.config, args.output), ensure_ascii=False, indent=2))
         elif args.command == "budget-report":
             from legal_ai.evaluation.budget_report import write_report
-            print(json.dumps(write_report(args.runs, args.output, args.title), ensure_ascii=False, indent=2))
+            print(json.dumps(write_report(args.runs, args.output, args.title, args.set_title), ensure_ascii=False, indent=2))
         elif args.command in ("kb-extract", "kb-materialize"):
             from legal_ai.common.io import read_jsonl
             from legal_ai.evaluation import kb_run

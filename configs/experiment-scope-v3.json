@@ -1,8 +1,8 @@
 {
  "scope_version": "experiment-scope-v3",
- "status": "draft",
+ "status": "frozen",
  "name": "Phạm vi thực nghiệm v3 (nháp)",
- "description": "Nháp 11/11/2026 cho bộ hiệu lực (kế hoạch nghiên cứu WP4): 9 văn bản của v2 giữ nguyên bản chụp; thêm NĐ 152/2020, NĐ 70/2023 (kể cả Điều sửa đổi), NĐ 219/2025, các Điều sửa đổi của Luật BHXH 41/2024 và NĐ 283/2026 (thay thế NĐ 12/2022). Chưa khóa.",
+ "description": "Nháp 11/11/2026 cho bộ hiệu lực (kế hoạch nghiên cứu WP4): 9 văn bản của v2 giữ nguyên bản chụp; thêm NĐ 152/2020, NĐ 70/2023 (kể cả Điều sửa đổi), NĐ 219/2025, các Điều sửa đổi của Luật BHXH 41/2024 và NĐ 283/2026 (thay thế NĐ 12/2022). Khóa 11/11/2026: corpus c2b3a470da510, phiên bản v48feefc6d53b trong data/kb/research-scope-v3-20261111.sqlite, bundle data/normalized/experiment-scope-v3-v48feefc6d53b.",
  "documents": [
   {
    "document_id": "45-2019-qh14",

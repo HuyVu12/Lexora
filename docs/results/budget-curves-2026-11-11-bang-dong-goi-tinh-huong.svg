@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="640" height="360" viewBox="0 0 640 360" font-family="Segoe UI, Arial, sans-serif" font-size="12">
 <rect width="640" height="360" fill="#ffffff"/>
-<text x="56" y="22" font-size="14" font-weight="600" fill="#222">dong-goi-tinh-huong</text>
+<text x="56" y="22" font-size="14" font-weight="600" fill="#222">Đóng gói ĐK2, bộ tình huống</text>
 <line x1="56" x2="490" y1="316.0" y2="316.0" stroke="#e3e3e3"/>
 <text x="48" y="320.0" text-anchor="end" fill="#555">0,0</text>
 <line x1="56" x2="490" y1="260.0" y2="260.0" stroke="#e3e3e3"/>
@@ -33,7 +33,7 @@
 <circle cx="428.0" cy="185.4" r="3" fill="#1f5fa8"/>
 <circle cx="490.0" cy="166.7" r="3" fill="#1f5fa8"/>
 <line x1="506" x2="526" y1="50" y2="50" stroke="#1f5fa8" stroke-width="2"/>
-<text x="532" y="54" fill="#222">DK2-P0</text>
+<text x="532" y="54" fill="#222">ĐK2-P0</text>
 <polyline fill="none" stroke="#c4572a" stroke-width="2" points="56.0,292.7 118.0,271.9 180.0,245.0 242.0,229.2 304.0,210.7 366.0,188.0 428.0,178.8 490.0,156.4"/>
 <circle cx="56.0" cy="292.7" r="3" fill="#c4572a"/>
 <circle cx="118.0" cy="271.9" r="3" fill="#c4572a"/>
@@ -44,7 +44,7 @@
 <circle cx="428.0" cy="178.8" r="3" fill="#c4572a"/>
 <circle cx="490.0" cy="156.4" r="3" fill="#c4572a"/>
 <line x1="506" x2="526" y1="68" y2="68" stroke="#c4572a" stroke-width="2"/>
-<text x="532" y="72" fill="#222">DK2-P1</text>
+<text x="532" y="72" fill="#222">ĐK2-P1</text>
 <polyline fill="none" stroke="#2f8a4f" stroke-width="2" points="56.0,297.8 118.0,276.3 180.0,243.0 242.0,217.8 304.0,201.7 366.0,181.7 428.0,168.7 490.0,151.5"/>
 <circle cx="56.0" cy="297.8" r="3" fill="#2f8a4f"/>
 <circle cx="118.0" cy="276.3" r="3" fill="#2f8a4f"/>
@@ -55,5 +55,5 @@
 <circle cx="428.0" cy="168.7" r="3" fill="#2f8a4f"/>
 <circle cx="490.0" cy="151.5" r="3" fill="#2f8a4f"/>
 <line x1="506" x2="526" y1="86" y2="86" stroke="#2f8a4f" stroke-width="2"/>
-<text x="532" y="90" fill="#222">DK2-P2</text>
+<text x="532" y="90" fill="#222">ĐK2-P2</text>
 </svg>

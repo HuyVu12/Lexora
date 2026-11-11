@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lexora: kết quả chạy thử và kế hoạch 12/11</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,500;8..60,600&display=swap" rel="stylesheet">
+<style>
+:root {
+  /* Bản ghi nhớ học thuật một cột: tiêu đề serif, số liệu căn cột, màu chỉ dùng cho trạng thái và ba nhóm lý do bị loại. */
+  --paper: #f6f7f9;
+  --sheet: #ffffff;
+  --ink: #1c2330;
+  --muted: #5d6676;
+  --line: #dde1e8;
+  --accent: #2c5a85;
+  --ctx: #6f9bc4;
+  --nf: #c0573e;
+  --mod: #d9a43a;
+  --good: #2f7d4f;
+  --warn: #a8701a;
+  --todo: #7a8291;
+  --font-display: "Source Serif 4", "Noto Serif", "Times New Roman", serif; /* Georgia lacks Vietnamese precomposed letters */
+  --font-body: "Be Vietnam Pro", "Segoe UI", system-ui, sans-serif;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #12161d; --sheet: #191e27; --ink: #e6e9ef; --muted: #9aa3b2; --line: #2c3340;
+    --accent: #8bb6e0; --ctx: #5f8db8; --nf: #e07a60; --mod: #e2b453; --good: #6cc08d; --warn: #e0a548; --todo: #8f97a6;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --paper: #12161d; --sheet: #191e27; --ink: #e6e9ef; --muted: #9aa3b2; --line: #2c3340;
+  --accent: #8bb6e0; --ctx: #5f8db8; --nf: #e07a60; --mod: #e2b453; --good: #6cc08d; --warn: #e0a548; --todo: #8f97a6;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--paper); color: var(--ink); font: 400 15.5px/1.6 var(--font-body); }
+main { max-width: 900px; margin: 0 auto; padding: 40px 20px 64px; display: grid; gap: 28px; }
+header { display: grid; gap: 8px; border-bottom: 2px solid var(--ink); padding-bottom: 18px; }
+.meta { color: var(--muted); font-size: 13.5px; display: flex; flex-wrap: wrap; gap: 6px 18px; }
+h1, h2 { font-family: var(--font-display); font-weight: 600; text-wrap: balance; margin: 0; }
+h1 { font-size: 30px; line-height: 1.2; }
+h2 { font-size: 20px; display: flex; gap: 10px; align-items: baseline; }
+h2 .no { font-family: var(--font-body); font-size: 13px; color: var(--accent); font-weight: 600; }
+section { background: var(--sheet); border: 1px solid var(--line); border-radius: 8px; padding: 22px 24px; display: grid; gap: 14px; }
+p { margin: 0; max-width: 72ch; }
+ul { margin: 0; padding-left: 20px; display: grid; gap: 6px; max-width: 76ch; }
+.lead { font-size: 16.5px; }
+.small { font-size: 13.5px; color: var(--muted); }
+.table-wrap { overflow-x: auto; }
+table { border-collapse: collapse; width: 100%; font-size: 14px; font-variant-numeric: tabular-nums; }
+th, td { text-align: left; padding: 7px 10px; border-bottom: 1px solid var(--line); vertical-align: top; }
+th { font-weight: 600; color: var(--muted); font-size: 12.5px; text-transform: uppercase; letter-spacing: .03em; }
+td.n, th.n { text-align: right; white-space: nowrap; }
+code { font-size: 13px; background: color-mix(in srgb, var(--line) 55%, transparent); padding: 1px 5px; border-radius: 4px; }
+.pill { display: inline-block; font-size: 12px; font-weight: 600; padding: 2px 9px; border-radius: 999px; border: 1px solid currentColor; white-space: nowrap; }
+.pill.good { color: var(--good); } .pill.warn { color: var(--warn); } .pill.todo { color: var(--todo); }
+.chart { display: grid; gap: 8px; }
+.row { display: grid; grid-template-columns: 150px minmax(0, 1fr) 56px; gap: 12px; align-items: center; font-size: 13.5px; }
+.track { position: relative; height: 18px; background: repeating-linear-gradient(to right, var(--line) 0 1px, transparent 1px calc(100% / 3.5)); border-left: 1px solid var(--muted); }
+.bar { display: flex; height: 100%; }
+.bar span { display: block; height: 100%; }
+.c { background: var(--ctx); } .f { background: var(--nf); } .m { background: var(--mod); } .o { background: var(--todo); }
+.axis { display: grid; grid-template-columns: 150px minmax(0, 1fr) 56px; gap: 12px; font-size: 12px; color: var(--muted); }
+.axis .ticks { position: relative; height: 16px; }
+.axis .ticks span { position: absolute; transform: translateX(-50%); }
+.axis .ticks span:first-child { transform: none; }
+.legend { display: flex; flex-wrap: wrap; gap: 6px 18px; font-size: 13px; color: var(--muted); }
+.legend i { display: inline-block; width: 11px; height: 11px; border-radius: 2px; margin-right: 6px; vertical-align: -1px; }
+.two { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
+.callout { border-left: 3px solid var(--accent); padding: 4px 0 4px 14px; }
+ol { margin: 0; padding-left: 22px; display: grid; gap: 6px; max-width: 76ch; }
+@media (max-width: 640px) {
+  main { padding-top: 24px; }
+  section { padding: 18px 16px; }
+  .two { grid-template-columns: 1fr; }
+  .row, .axis { grid-template-columns: 96px minmax(0, 1fr) 48px; gap: 8px; }
+  h1 { font-size: 25px; }
+}
+</style>
+</head>
+<body>
+<main>
+  <header>
+    <h1>Lexora: kết quả chạy thử và kế hoạch đến 20/12/2026</h1>
+    <p class="lead">RAG trên kho tri thức pháp luật lao động có bằng chứng nguyên văn; so sánh bốn điều kiện ĐK1-ĐK4 và đề xuất bốn luận điểm sẽ bảo vệ.</p>
+    <div class="meta"><span>Bản gửi thầy ngày 12/11/2026</span><span>Corpus v2: 9 văn bản, 711 Điều (<code>ve5261858b8f3</code>)</span><span>Kế hoạch đầy đủ: <code>docs/planning/research-plan-2026-11-11.md</code></span></div>
+  </header>
+
+  <section aria-labelledby="s1">
+    <h2 id="s1"><span class="no">01</span>Tóm tắt</h2>
+    <ul>
+      <li>Cấu trúc văn bản (ĐK2) cho <strong>trích dẫn chính xác hơn rõ rệt</strong> và cùng độ phủ với khoảng một phần ba số token so với đoạn cắt cố định (ĐK1) ở câu tra cứu.</li>
+      <li>Ở câu khó (tình huống, xung đột), ĐK1 phủ nhiều căn cứ hơn từ khoảng 2.000 token; đóng gói ngữ cảnh theo Điều thu hẹp phần lớn khoảng cách này.</li>
+      <li>Kho quy phạm (ĐK3) và kiểm chứng (ĐK4) <strong>chưa cải thiện câu trả lời tra cứu</strong>: model sinh đọc nguyên văn và bỏ qua dòng quy phạm.</li>
+    </ul>
+    <p class="callout">Mọi con số dưới đây dùng nhãn do model soạn và giám khảo là model, nên chỉ để chọn cấu hình, <strong>chưa dùng để kết luận</strong>. Nhãn người đang được gán.</p>
+  </section>
+
+  <section aria-labelledby="s2">
+    <h2 id="s2"><span class="no">02</span>Kết quả chạy thử</h2>
+    <p>Tỉ lệ đơn vị đáp án nằm trong ngữ cảnh theo ngân sách token (truy xuất hybrid BM25 + BGE-M3, cùng ngân sách cho mọi điều kiện).</p>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Bộ câu hỏi</th><th class="n">Số câu</th><th class="n">ĐK1, 1.000</th><th class="n">ĐK2, 1.000</th><th class="n">ĐK1, 3.000</th><th class="n">ĐK2, 3.000</th><th class="n">ĐK2 + đóng gói P2, 3.000</th></tr></thead>
+        <tbody>
+          <tr><td>Tra cứu</td><td class="n">131</td><td class="n">0,74</td><td class="n">0,88</td><td class="n">0,92</td><td class="n">0,95</td><td class="n">-</td></tr>
+          <tr><td>Phức tạp</td><td class="n">30</td><td class="n">0,53</td><td class="n">0,62</td><td class="n">0,78</td><td class="n">0,73</td><td class="n">0,79</td></tr>
+          <tr><td>Xung đột</td><td class="n">25</td><td class="n">0,29</td><td class="n">0,35</td><td class="n">0,54</td><td class="n">0,52</td><td class="n">0,54</td></tr>
+          <tr><td>Tình huống</td><td class="n">44</td><td class="n">0,25</td><td class="n">0,25</td><td class="n">0,48</td><td class="n">0,42</td><td class="n">0,48</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>Câu trả lời trên bộ tình huống (Haiku 5.5, 3.000 token, giám khảo Sonnet 5.5):</p>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Chỉ số</th><th class="n">ĐK1</th><th class="n">ĐK2</th><th class="n">ĐK3</th></tr></thead>
+        <tbody>
+          <tr><td>Trích dẫn chính xác theo ký tự</td><td class="n">0,09</td><td class="n">0,24</td><td class="n">0,24</td></tr>
+          <tr><td>Trích trúng đơn vị đáp án</td><td class="n">0,49</td><td class="n">0,42</td><td class="n">0,40</td></tr>
+          <tr><td>Độ đúng (giám khảo)</td><td class="n">0,39</td><td class="n">0,42</td><td class="n">0,40</td></tr>
+          <tr><td>Token người kiểm phải đọc mỗi phát biểu</td><td class="n">550</td><td class="n">250</td><td class="n">272</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="small">Mức nhiễu của việc sinh lại và của giám khảo khoảng ±0,07 với 25-44 câu.</p>
+  </section>
+
+  <section aria-labelledby="s3">
+    <h2 id="s3"><span class="no">03</span>Bốn luận điểm đề xuất bảo vệ</h2>
+    <p>Luận điểm tổng: trong hỏi đáp pháp luật, cách tổ chức tri thức quyết định khả năng truy vết và khả năng làm những việc phụ thuộc cấu trúc, chứ chưa chắc quyết định độ đúng của câu trả lời khi model sinh đã đủ mạnh.</p>
+    <ol>
+      <li><strong>ĐK2 so với ĐK1:</strong> cấu trúc cho trích dẫn chính xác hơn và cùng độ phủ với ít token hơn.</li>
+      <li><strong>Hiệu lực:</strong> cấu trúc cho phép xử lý hiệu lực và sửa đổi ở mức Khoản, Điểm; đoạn cắt cố định không làm được.</li>
+      <li><strong>ĐK3 so với ĐK2:</strong> kho quy phạm không cải thiện câu tra cứu, nhưng trả lời được câu liệt kê theo chủ thể, tính quy phạm, thời hạn.</li>
+      <li><strong>ĐK4 so với ĐK3:</strong> kiểm chứng có giá trị ở tầng kho tri thức, và chỉ lan tới câu trả lời khi câu trả lời thật sự dựa vào quy phạm.</li>
+    </ol>
+    <p>Giả thuyết và chỉ số chính được chốt trước khi có nhãn người; kết quả âm được báo cáo như đề cương đã cam kết.</p>
+  </section>
+
+  <section aria-labelledby="s4">
+    <h2 id="s4"><span class="no">04</span>Đề xuất cần thầy duyệt</h2>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Nội dung</th><th>Đề cương</th><th>Đề xuất</th><th>Lý do</th></tr></thead>
+        <tbody>
+          <tr><td>Phạm vi</td><td>8-12 văn bản, 60-100 Điều</td><td>Corpus v2: 9 văn bản, 711 Điều; v3 thêm 5 mục cho bộ hiệu lực</td><td>Bộ tình huống dựa trên bản án thật cần toàn văn</td></tr>
+          <tr><td>Đóng gói ngữ cảnh ĐK2-ĐK4</td><td>Không nêu</td><td>Gom theo Điều, thêm Khoản anh em của 3 Điều đầu (P2)</td><td>Chọn theo quy tắc khai báo trước: recall +0,049 (CI95 0,029-0,071)</td></tr>
+          <tr><td>Hai điều kiện mở rộng</td><td>ĐK1-ĐK4</td><td>Thêm ĐK3-q, ĐK4-q (truy vấn theo trường của quy phạm) và đối chứng ĐK1-hl (lọc hiệu lực mức văn bản)</td><td>Cho kho quy phạm và kiểm chứng một nhiệm vụ đo được</td></tr>
+          <tr><td>Model sinh câu trả lời</td><td>Mã nguồn mở</td><td>gpt-oss-120b cho kết quả chính; Haiku 5.5 kiểm độ vững, và dự phòng nếu máy chủ gpt-oss không ổn định</td><td>Chạy thử 11/11: máy chủ gpt-oss lỗi 74% lượt gọi</td></tr>
+          <tr><td>Giám khảo</td><td>Model làm công cụ chấm hỗ trợ</td><td>Sonnet 5.5, kèm đồng thuận với người chấm trên mẫu 160 câu trả lời</td><td>Kết luận dựa trên người chấm</td></tr>
+          <tr><td>Nhánh đồ thị quan hệ + LLM chọn láng giềng</td><td>Không nêu</td><td>Dừng, báo cáo là thăm dò</td><td>Kết quả thăm dò chưa ổn định; dồn công sức cho ĐK3-q, ĐK4-q</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section aria-labelledby="s5">
+    <h2 id="s5"><span class="no">05</span>Lịch đến 20/12</h2>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Thời gian</th><th>Việc</th></tr></thead>
+        <tbody>
+          <tr><td>12-25/11</td><td>Hai người gán nhãn độc lập: bộ khó 99 câu và gold trích xuất 40 Điều khóa trước 23/11, bộ tra cứu 152 câu trước 25/11; song song hoàn thiện bộ hiệu lực và bộ liệt kê</td></tr>
+          <tr><td>24-27/11</td><td>RQ1, RQ2 đo trên gold; chốt cấu hình trên dev; dừng thêm biến thể từ 25/11; MVP hoàn thành 27/11</td></tr>
+          <tr><td>28/11-09/12</td><td>Lượt chạy chính trên held-out, chạy đúng một lần; hai người chấm mù; phân tích lỗi; khóa kết quả 09/12</td></tr>
+          <tr><td>10-20/12</td><td>Viết luận văn, demo, phản biện thử</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="small">Nếu trễ, cắt theo thứ tự: thí nghiệm ngoài luật lao động, phần sinh câu trả lời của ĐK3-q/ĐK4-q, lần sinh thứ hai. Không cắt nhãn người và bốn điều kiện chính.</p>
+  </section>
+</main>
+</body>
+</html>
