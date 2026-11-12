@@ -1,0 +1,52 @@
+{
+ "cases": {
+  "questions": 44,
+  "status_changed": 0,
+  "ancestors_dropped": 2,
+  "draft_units": 220,
+  "final_units": 251,
+  "same_as_draft": 6,
+  "confidence": {
+   "high": 4,
+   "low": 9,
+   "medium": 31
+  }
+ },
+ "conflict": {
+  "questions": 25,
+  "status_changed": 0,
+  "ancestors_dropped": 37,
+  "draft_units": 121,
+  "final_units": 156,
+  "same_as_draft": 4,
+  "confidence": {
+   "medium": 8,
+   "high": 17
+  }
+ },
+ "complex": {
+  "questions": 30,
+  "status_changed": 0,
+  "ancestors_dropped": 0,
+  "draft_units": 92,
+  "final_units": 119,
+  "same_as_draft": 13,
+  "confidence": {
+   "medium": 14,
+   "high": 16
+  }
+ },
+ "lookup": {
+  "questions": 152,
+  "status_changed": 11,
+  "ancestors_dropped": 14,
+  "draft_units": 177,
+  "final_units": 234,
+  "same_as_draft": 116,
+  "confidence": {
+   "high": 120,
+   "medium": 31,
+   "low": 1
+  }
+ }
+}

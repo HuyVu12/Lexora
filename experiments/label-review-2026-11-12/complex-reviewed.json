@@ -1,0 +1,1088 @@
+{
+ "description": "Complex question set v1 (30 model-drafted synthesis questions, labels are unreviewed model proposals; dry run only) | Model review 12/11/2026 (not human labels): see experiments/label-review-2026-11-12/README.md",
+ "questions": [
+  {
+   "question_id": "cq00",
+   "question": "Nhân viên làm được 4 năm rồi nghỉ theo thỏa thuận với công ty thì được trợ cấp thôi việc bao nhiêu, và lương để tính trợ cấp lấy theo những tháng nào?",
+   "question_type": "synthesis",
+   "complex_kind": "cross_document",
+   "family_id": "cf00",
+   "split": "dev",
+   "expected_status": "answer",
+   "relevant_unit_ids": [
+    "45-2019-qh14/chapter-iii/section-3/article-46/clause-1",
+    "145-2020-nd-cp/chapter-iii/section-2/article-8/clause-5/point-a",
+    "45-2019-qh14/chapter-iii/section-3/article-34/clause-3",
+    "45-2019-qh14/chapter-iii/section-3/article-46/clause-2"
+   ],
+   "annotation_status": "model_review",
+   "model_review": {
+    "date": "2026-11-12",
+    "draft_unit_ids": [
+     "45-2019-qh14/chapter-iii/section-3/article-46/clause-1",
+     "145-2020-nd-cp/chapter-iii/section-2/article-8/clause-5/point-a"
+    ],
+    "draft_expected_status": "answer",
+    "dropped": [],
+    "added": [
+     {
+      "unit_id": "45-2019-qh14/chapter-iii/section-3/article-34/clause-3",
+      "reason": "Thỏa thuận chấm dứt là khoản 3 Điều 34, thuộc các trường hợp được trợ cấp tại khoản 1 Điều 46",
+      "quote": "Hai bên thỏa thuận chấm dứt hợp đồng lao động."
+     },
+     {
+      "unit_id": "45-2019-qh14/chapter-iii/section-3/article-46/clause-2",
+      "reason": "Thời gian tính trợ cấp phải trừ thời gian đã đóng BHTN; cần để tính đúng số tiền",
+      "quote": "trừ đi thời gian người lao động đã tham gia bảo hiểm thất nghiệp"
+     }
+    ],
+    "outside_corpus": [],
+    "confidence": "medium",
+    "note": "Khoản 3 Điều 46 BLLĐ trùng nội dung điểm a khoản 5 Điều 8 NĐ 145 (giữ bản Nghị định theo nháp). Thêm khoản 2 Điều 46 vì thời gian đã đóng BHTN bị trừ, ảnh hưởng trực tiếp số tiền."
+   }
+  },
+  {
+   "question_id": "cq01",
+   "question": "Thời gian thử việc và thời gian nghỉ thai sản có được tính vào thời gian làm việc để tính trợ cấp thôi việc không, còn những năm đã đóng bảo hiểm thất nghiệp thì xử lý sao?",
+   "question_type": "synthesis",
+   "complex_kind": "cross_document",
+   "family_id": "cf01",
+   "split": "dev",
+   "expected_status": "answer",
+   "relevant_unit_ids": [
+    "45-2019-qh14/chapter-iii/section-3/article-46/clause-2",
+    "145-2020-nd-cp/chapter-iii/section-2/article-8/clause-3/point-a",
+    "145-2020-nd-cp/chapter-iii/section-2/article-8/clause-3/point-b"
+   ],
+   "annotation_status": "model_review",
+   "model_review": {
+    "date": "2026-11-12",
+    "draft_unit_ids": [
+     "45-2019-qh14/chapter-iii/section-3/article-46/clause-2",
+     "145-2020-nd-cp/chapter-iii/section-2/article-8/clause-3/point-a",
+     "145-2020-nd-cp/chapter-iii/section-2/article-8/clause-3/point-b"
+    ],
+    "draft_expected_status": "answer",
+    "dropped": [],
+    "added": [],
+    "outside_corpus": [],
+    "confidence": "high",
+    "note": "Nháp đúng: thử việc và nghỉ thai sản được tính (điểm a k3 Đ8 NĐ 145); thời gian đóng BHTN bị trừ (k2 Đ46, điểm b k3 Đ8)."
+   }
+  },
+  {
+   "question_id": "cq02",
+   "question": "Nhân viên tự ý nghỉ liền 6 ngày làm việc không có lý do, công ty chấm dứt hợp đồng thì có còn phải trả trợ cấp thôi việc cho người đó không?",
+   "question_type": "synthesis",
+   "complex_kind": "cross_document",
+   "family_id": "cf02",
+   "split": "dev",
+   "expected_status": "answer",
+   "relevant_unit_ids": [
+    "45-2019-qh14/chapter-iii/section-3/article-36/clause-1/point-e",
+    "145-2020-nd-cp/chapter-iii/section-2/article-8/clause-1/point-b",
+    "45-2019-qh14/chapter-iii/section-3/article-46/clause-1"
+   ],
+   "annotation_status": "model_review",
+   "model_review": {
+    "date": "2026-11-12",
+    "draft_unit_ids": [
+     "45-2019-qh14/chapter-iii/section-3/article-36/clause-1/point-e",
+     "145-2020-nd-cp/chapter-iii/section-2/article-8/clause-1/point-b",
+     "45-2019-qh14/chapter-iii/section-3/article-46/clause-1"
+    ],
+    "draft_expected_status": "answer",
+    "dropped": [],
+    "added": [],
+    "outside_corpus": [],
+    "confidence": "high",
+    "note": "Nháp đúng: tự ý bỏ việc từ 05 ngày làm việc liên tục là trường hợp loại trừ trợ cấp thôi việc."
+   }
+  },
+  {
+   "question_id": "cq03",
+   "question": "Phi công của hãng bay ký hợp đồng không xác định thời hạn muốn nghỉ việc thì phải báo trước bao lâu, so với nhân viên văn phòng cùng loại hợp đồng thì khác thế nào?",
+   "question_type": "synthesis",
+   "complex_kind": "cross_document",
+   "family_id": "cf03",
+   "split": "dev",
+   "expected_status": "answer",
+   "relevant_unit_ids": [
+    "45-2019-qh14/chapter-iii/section-3/article-35/clause-1/point-a",
+    "45-2019-qh14/chapter-iii/section-3/article-35/clause-1/point-d",
+    "145-2020-nd-cp/chapter-iii/section-2/article-7/clause-1/point-a",
+    "145-2020-nd-cp/chapter-iii/section-2/article-7/clause-2/point-a"
+   ],
+   "annotation_status": "model_review",
+   "model_review": {
+    "date": "2026-11-12",
+    "draft_unit_ids": [
+     "45-2019-qh14/chapter-iii/section-3/article-35/clause-1/point-a",
+     "45-2019-qh14/chapter-iii/section-3/article-35/clause-1/point-d",
+     "145-2020-nd-cp/chapter-iii/section-2/article-7/clause-1/point-a",
+     "145-2020-nd-cp/chapter-iii/section-2/article-7/clause-2/point-a"
+    ],
+    "draft_expected_status": "answer",
+    "dropped": [],
+    "added": [],
+    "outside_corpus": [],
+    "confidence": "high",
+    "note": "Nháp đúng: ít nhất 45 ngày (NV văn phòng) so với ít nhất 120 ngày (tổ lái tàu bay)."
+   }
+  },
+  {
+   "question_id": "cq04",
+   "question": "Công ty muốn đơn phương chấm dứt hợp đồng 2 năm với giám đốc điều hành (người quản lý doanh nghiệp) thì phải báo trước bao nhiêu ngày?",
+   "question_type": "synthesis",
+   "complex_kind": "cross_document",
+   "family_id": "cf04",
+   "split": "dev",
+   "expected_status": "answer",
+   "relevant_unit_ids": [
+    "45-2019-qh14/chapter-iii/section-3/article-36/clause-2/point-d",
+    "145-2020-nd-cp/chapter-iii/section-2/article-7/clause-1/point-b",
+    "145-2020-nd-cp/chapter-iii/section-2/article-7/clause-2/point-a"
+   ],
+   "annotation_status": "model_review",
+   "model_review": {
+    "date": "2026-11-12",
+    "draft_unit_ids": [
+     "45-2019-qh14/chapter-iii/section-3/article-36/clause-2/point-d",
+     "145-2020-nd-cp/chapter-iii/section-2/article-7/clause-1/point-b",
+     "145-2020-nd-cp/chapter-iii/section-2/article-7/clause-2/point-a"
+    ],
+    "draft_expected_status": "answer",
+    "dropped": [],
+    "added": [],
+    "outside_corpus": [
+     "Luật Doanh nghiệp 2020, khoản 24 Điều 4 (định nghĩa người quản lý doanh nghiệp)"
+    ],
+    "confidence": "high",
+    "note": "Nháp đúng: người quản lý doanh nghiệp, HĐ 2 năm (từ 12 tháng trở lên) -> ít nhất 120 ngày. Giám đốc điều hành có là người quản lý doanh nghiệp hay không do Luật Doanh nghiệp định nghĩa (ngoài corpus)."
+   }
+  },
+  {
+   "question_id": "cq05",
+   "question": "Nhân viên hưởng lương tháng đi tăng ca vào ngày lễ thì được trả lương thế nào, và lương giờ làm căn cứ được xác định ra sao?",
+   "question_type": "synthesis",
+   "complex_kind": "cross_document",
+   "family_id": "cf05",
+   "split": "dev",
+   "expected_status": "answer",
+   "relevant_unit_ids": [
+    "45-2019-qh14/chapter-vi/article-98/clause-1/point-c",
+    "145-2020-nd-cp/chapter-vi/section-2/article-55/clause-1/point-a",
+    "145-2020-nd-cp/chapter-vi/section-2/article-55/clause-1/point-b"
+   ],
+   "annotation_status": "model_review",
+   "model_review": {
+    "date": "2026-11-12",
+    "draft_unit_ids": [
+     "45-2019-qh14/chapter-vi/article-98/clause-1/point-c",
+     "145-2020-nd-cp/chapter-vi/section-2/article-55/clause-1/point-a",
+     "145-2020-nd-cp/chapter-vi/section-2/article-55/clause-1/point-b"
+    ],
+    "draft_expected_status": "answer",
+    "dropped": [],
+    "added": [],
+    "outside_corpus": [],
+    "confidence": "high",
+    "note": "Nháp đúng. Công thức nằm ở câu dẫn khoản 1 Điều 55 NĐ 145, đi kèm các điểm a, b trong bản ghi; không cần thêm đơn vị khoản."
+   }
+  },
+  {
+   "question_id": "cq06",
+   "question": "Công ty muốn cho công nhân tăng ca thì phải được họ đồng ý về những nội dung gì, và một ngày thường được tăng ca tối đa bao nhiêu giờ?",
+   "question_type": "synthesis",
+   "complex_kind": "cross_document",
+   "family_id": "cf06",
+   "split": "dev",
+   "expected_status": "answer",
+   "relevant_unit_ids": [
+    "45-2019-qh14/chapter-vii/section-1/article-107/clause-2/point-a",
+    "45-2019-qh14/chapter-vii/section-1/article-107/clause-2/point-b",
+    "145-2020-nd-cp/chapter-vii/article-60/clause-1",
+    "145-2020-nd-cp/chapter-vii/article-59/clause-1/point-a",
+    "145-2020-nd-cp/chapter-vii/article-59/clause-1/point-b",
+    "145-2020-nd-cp/chapter-vii/article-59/clause-1/point-c"
+   ],
+   "annotation_status": "model_review",
+   "model_review": {
+    "date": "2026-11-12",
+    "draft_unit_ids": [
+     "45-2019-qh14/chapter-vii/section-1/article-107/clause-2/point-a",
+     "145-2020-nd-cp/chapter-vii/article-59/clause-1",
+     "45-2019-qh14/chapter-vii/section-1/article-107/clause-2/point-b",
+     "145-2020-nd-cp/chapter-vii/article-60/clause-1"
+    ],
+    "draft_expected_status": "answer",
+    "dropped": [
+     {
+      "unit_id": "145-2020-nd-cp/chapter-vii/article-59/clause-1",
+      "reason": "Khoản có điểm chỉ chứa câu dẫn; thay bằng các điểm a, b, c nêu nội dung phải được đồng ý"
+     }
+    ],
+    "added": [
+     {
+      "unit_id": "145-2020-nd-cp/chapter-vii/article-59/clause-1/point-a",
+      "reason": "Nội dung phải được đồng ý: thời gian làm thêm",
+      "quote": "Thời gian làm thêm;"
+     },
+     {
+      "unit_id": "145-2020-nd-cp/chapter-vii/article-59/clause-1/point-b",
+      "reason": "Nội dung phải được đồng ý: địa điểm làm thêm",
+      "quote": "Địa điểm làm thêm;"
+     },
+     {
+      "unit_id": "145-2020-nd-cp/chapter-vii/article-59/clause-1/point-c",
+      "reason": "Nội dung phải được đồng ý: công việc làm thêm",
+      "quote": "Công việc làm thêm."
+     }
+    ],
+    "outside_corpus": [],
+    "confidence": "high",
+    "note": "Câu hỏi hỏi 'những nội dung gì' nên cần đủ ba điểm a, b, c Điều 59 NĐ 145; giới hạn ngày thường: 50% giờ làm việc bình thường (12 giờ nếu theo tuần)."
+   }
+  },
+  {
+   "question_id": "cq07",
+   "question": "Họp kỷ luật một nhân viên thì phải gửi thông báo trước mấy ngày, và những ai bắt buộc phải có mặt trong cuộc họp?",
+   "question_type": "synthesis",
+   "complex_kind": "cross_document",
+   "family_id": "cf07",
+   "split": "dev",
+   "expected_status": "answer",
+   "relevant_unit_ids": [
+    "45-2019-qh14/chapter-viii/section-1/article-122/clause-1/point-b",
+    "45-2019-qh14/chapter-viii/section-1/article-122/clause-1/point-c",
+    "145-2020-nd-cp/chapter-viii/article-70/clause-2/point-a"
+   ],
+   "annotation_status": "model_review",
+   "model_review": {
+    "date": "2026-11-12",
+    "draft_unit_ids": [
+     "45-2019-qh14/chapter-viii/section-1/article-122/clause-1/point-b",
+     "45-2019-qh14/chapter-viii/section-1/article-122/clause-1/point-c",
+     "145-2020-nd-cp/chapter-viii/article-70/clause-2/point-a"
+    ],
+    "draft_expected_status": "answer",
+    "dropped": [],
+    "added": [],
+    "outside_corpus": [],
+    "confidence": "high",
+    "note": "Nháp đúng: thông báo ít nhất 05 ngày làm việc; thành phần bắt buộc là tổ chức đại diện NLĐ và chính NLĐ."
+   }
+  },
+  {
+   "question_id": "cq08",
+   "question": "Người lao động nghỉ việc sau khoảng 4 năm làm việc thì trợ cấp thôi việc được tính theo công thức nào, căn cứ vào mức lương của giai đoạn nào?",
+   "question_type": "synthesis",
+   "complex_kind": "cross_document",
+   "family_id": "cf00",
+   "split": "dev",
+   "expected_status": "answer",
+   "relevant_unit_ids": [
+    "45-2019-qh14/chapter-iii/section-3/article-46/clause-1",
+    "145-2020-nd-cp/chapter-iii/section-2/article-8/clause-5/point-a",
+    "45-2019-qh14/chapter-iii/section-3/article-46/clause-2",
+    "145-2020-nd-cp/chapter-iii/section-2/article-8/clause-3/point-c"
+   ],
+   "annotation_status": "model_review",
+   "model_review": {
+    "date": "2026-11-12",
+    "draft_unit_ids": [
+     "45-2019-qh14/chapter-iii/section-3/article-46/clause-1",
+     "145-2020-nd-cp/chapter-iii/section-2/article-8/clause-5/point-a"
+    ],
+    "draft_expected_status": "answer",
+    "dropped": [],
+    "added": [
+     {
+      "unit_id": "45-2019-qh14/chapter-iii/section-3/article-46/clause-2",
+      "reason": "Thời gian tính trợ cấp phải trừ thời gian đã đóng BHTN; cần để tính đúng số tiền",
+      "quote": "trừ đi thời gian người lao động đã tham gia bảo hiểm thất nghiệp"
+     },
+     {
+      "unit_id": "145-2020-nd-cp/chapter-iii/section-2/article-8/clause-3/point-c",
+      "reason": "'Khoảng 4 năm': tháng lẻ được làm tròn 1/2 năm hoặc 01 năm, là một phần công thức",
+      "quote": "trường hợp có tháng lẻ ít hơn hoặc bằng 06 tháng được tính bằng 1/2 năm"
+     }
+    ],
+    "outside_corpus": [],
+    "confidence": "medium",
+    "note": "Công thức = số năm làm việc (đã trừ thời gian đóng BHTN, làm tròn) x 1/2 tháng lương bình quân 06 tháng liền kề. Gần trùng cq00."
+   }
+  },
+  {
+   "question_id": "cq09",
+   "question": "Với nhân viên tổ lái tàu bay làm hợp đồng vô thời hạn, nếu họ tự nghỉ thì phải báo trước tối thiểu bao nhiêu ngày, dài hơn bao nhiêu so với người lao động bình thường?",
+   "question_type": "synthesis",
+   "complex_kind": "cross_document",
+   "family_id": "cf03",
+   "split": "dev",
+   "expected_status": "answer",
+   "relevant_unit_ids": [
+    "45-2019-qh14/chapter-iii/section-3/article-35/clause-1/point-a",
+    "45-2019-qh14/chapter-iii/section-3/article-35/clause-1/point-d",
+    "145-2020-nd-cp/chapter-iii/section-2/article-7/clause-1/point-a",
+    "145-2020-nd-cp/chapter-iii/section-2/article-7/clause-2/point-a"
+   ],
+   "annotation_status": "model_review",
+   "model_review": {
+    "date": "2026-11-12",
+    "draft_unit_ids": [
+     "45-2019-qh14/chapter-iii/section-3/article-35/clause-1/point-a",
+     "45-2019-qh14/chapter-iii/section-3/article-35/clause-1/point-d",
+     "145-2020-nd-cp/chapter-iii/section-2/article-7/clause-1/point-a",
+     "145-2020-nd-cp/chapter-iii/section-2/article-7/clause-2/point-a"
+    ],
+    "draft_expected_status": "answer",
+    "dropped": [],
+    "added": [],
+    "outside_corpus": [],
+    "confidence": "high",
+    "note": "Trùng nội dung cq03: 120 ngày so với 45 ngày, dài hơn 75 ngày."
+   }
+  },
+  {
+   "question_id": "cq10",
+   "question": "Công ty cho nhân viên nghỉ trái luật nhưng nhân viên không muốn quay lại làm nữa thì công ty phải trả những khoản gì?",
+   "question_type": "synthesis",
+   "complex_kind": "multi_article",
+   "family_id": "cf10",
+   "split": "dev",
+   "expected_status": "answer",
+   "relevant_unit_ids": [
+    "45-2019-qh14/chapter-iii/section-3/article-41/clause-1",
+    "45-2019-qh14/chapter-iii/section-3/article-41/clause-2",
+    "45-2019-qh14/chapter-iii/section-3/article-46/clause-1"
+   ],
+   "annotation_status": "model_review",
+   "model_review": {
+    "date": "2026-11-12",
+    "draft_unit_ids": [
+     "45-2019-qh14/chapter-iii/section-3/article-39",
+     "45-2019-qh14/chapter-iii/section-3/article-41/clause-1",
+     "45-2019-qh14/chapter-iii/section-3/article-41/clause-2",
+     "45-2019-qh14/chapter-iii/section-3/article-46/clause-1"
+    ],
+    "draft_expected_status": "answer",
+    "dropped": [
+     {
+      "unit_id": "45-2019-qh14/chapter-iii/section-3/article-39",
+      "reason": "Chỉ là định nghĩa trái pháp luật; câu hỏi đã giả định việc cho nghỉ là trái luật"
+     }
+    ],
+    "added": [],
+    "outside_corpus": [],
+    "confidence": "medium",
+    "note": "Khoản phải trả: k1 Điều 41 (lương, BH những ngày không làm, ít nhất 02 tháng lương, tiền ngày không báo trước) và trợ cấp thôi việc (k2 Đ41, k1 Đ46)."
+   }
+  },
+  {
+   "question_id": "cq11",
+   "question": "Nhân viên hợp đồng không thời hạn nghỉ ngang mà không báo trước đủ ngày thì phải bồi thường gì cho công ty?",
+   "question_type": "synthesis",
+   "complex_kind": "multi_article",
+   "family_id": "cf11",
+   "split": "dev",
+   "expected_status": "answer",
+   "relevant_unit_ids": [
+    "45-2019-qh14/chapter-iii/section-3/article-35/clause-1/point-a",
+    "45-2019-qh14/chapter-iii/section-3/article-40/clause-1",
+    "45-2019-qh14/chapter-iii/section-3/article-40/clause-2",
+    "45-2019-qh14/chapter-iii/section-3/article-39",
+    "45-2019-qh14/chapter-iii/section-3/article-40/clause-3"
+   ],
+   "annotation_status": "model_review",
+   "model_review": {
+    "date": "2026-11-12",
+    "draft_unit_ids": [
+     "45-2019-qh14/chapter-iii/section-3/article-35/clause-1/point-a",
+     "45-2019-qh14/chapter-iii/section-3/article-40/clause-1",
+     "45-2019-qh14/chapter-iii/section-3/article-40/clause-2"
+    ],
+    "draft_expected_status": "answer",
+    "dropped": [],
+    "added": [
+     {
+      "unit_id": "45-2019-qh14/chapter-iii/section-3/article-39",
+      "reason": "Nghỉ không báo trước đủ theo Điều 35 là đơn phương chấm dứt trái pháp luật, căn cứ áp dụng Điều 40",
+      "quote": "chấm dứt hợp đồng lao động không đúng quy định tại các điều 35, 36 và 37"
+     },
+     {
+      "unit_id": "45-2019-qh14/chapter-iii/section-3/article-40/clause-3",
+      "reason": "Nghĩa vụ hoàn trả chi phí đào tạo khi chấm dứt trái luật",
+      "quote": "Phải hoàn trả cho người sử dụng lao động chi phí đào tạo"
+     }
+    ],
+    "outside_corpus": [],
+    "confidence": "medium",
+    "note": "Khoản 3 Điều 40 chỉ áp dụng nếu có chi phí đào tạo (Điều 62, nay có trong v2). Khoản 1 Điều 40 (mất trợ cấp thôi việc) là hậu quả, không phải bồi thường, giữ theo nháp."
+   }
+  },
+  {
+   "question_id": "cq12",
+   "question": "Nhân viên đang nghỉ ốm điều trị theo chỉ định của bác sĩ thì công ty có được đơn phương chấm dứt hợp đồng không, có ngoại lệ nào không?",
+   "question_type": "synthesis",
+   "complex_kind": "multi_article",
+   "family_id": "cf12",
+   "split": "dev",
+   "expected_status": "answer",
+   "relevant_unit_ids": [
+    "45-2019-qh14/chapter-iii/section-3/article-37/clause-1",
+    "45-2019-qh14/chapter-iii/section-3/article-36/clause-1/point-b"
+   ],
+   "annotation_status": "model_review",
+   "model_review": {
+    "date": "2026-11-12",
+    "draft_unit_ids": [
+     "45-2019-qh14/chapter-iii/section-3/article-37/clause-1",
+     "45-2019-qh14/chapter-iii/section-3/article-36/clause-1/point-b"
+    ],
+    "draft_expected_status": "answer",
+    "dropped": [],
+    "added": [],
+    "outside_corpus": [],
+    "confidence": "high",
+    "note": "Nháp đúng: không được đơn phương khi đang điều trị, ngoại lệ điểm b k1 Đ36 (điều trị 12/06 tháng liên tục)."
+   }
+  },
+  {
+   "question_id": "cq13",
+   "question": "Ngày nghỉ hằng tuần trùng đúng ngày Quốc khánh thì người lao động được nghỉ bù thế nào, còn nếu hôm đó vẫn phải đi làm thì lương tính bao nhiêu?",
+   "question_type": "synthesis",
+   "complex_kind": "multi_article",
+   "family_id": "cf13",
+   "split": "dev",
+   "expected_status": "answer",
+   "relevant_unit_ids": [
+    "45-2019-qh14/chapter-vii/section-2/article-111/clause-3",
+    "45-2019-qh14/chapter-vii/section-2/article-112/clause-1/point-đ",
+    "45-2019-qh14/chapter-vi/article-98/clause-1/point-c",
+    "145-2020-nd-cp/chapter-vi/section-2/article-55/clause-3"
+   ],
+   "annotation_status": "model_review",
+   "model_review": {
+    "date": "2026-11-12",
+    "draft_unit_ids": [
+     "45-2019-qh14/chapter-vii/section-2/article-111/clause-3",
+     "45-2019-qh14/chapter-vii/section-2/article-112/clause-1/point-đ",
+     "45-2019-qh14/chapter-vi/article-98/clause-1/point-c"
+    ],
+    "draft_expected_status": "answer",
+    "dropped": [],
+    "added": [
+     {
+      "unit_id": "145-2020-nd-cp/chapter-vi/section-2/article-55/clause-3",
+      "reason": "Làm thêm vào ngày lễ trùng ngày nghỉ hằng tuần thì hưởng lương làm thêm ngày lễ: trả lời trực tiếp ý thứ hai",
+      "quote": "Người lao động làm thêm giờ vào ngày lễ, tết trùng vào ngày nghỉ hằng tuần thì được trả lương làm thêm giờ vào ngày nghỉ lễ, tết."
+     }
+    ],
+    "outside_corpus": [],
+    "confidence": "high",
+    "note": "Nghỉ bù vào ngày làm việc kế tiếp (k3 Đ111); đi làm hôm đó tính lương làm thêm ngày lễ, ít nhất 300% (k3 Đ55 NĐ 145, điểm c k1 Đ98)."
+   }
+  },
+  {
+   "question_id": "cq14",
+   "question": "Nhân viên văn phòng làm cho công ty được 11 năm thì mỗi năm được nghỉ phép bao nhiêu ngày?",
+   "question_type": "synthesis",
+   "complex_kind": "multi_article",
+   "family_id": "cf14",
+   "split": "dev",
+   "expected_status": "answer",
+   "relevant_unit_ids": [
+    "45-2019-qh14/chapter-vii/section-2/article-113/clause-1/point-a",
+    "45-2019-qh14/chapter-vii/section-2/article-114"
+   ],
+   "annotation_status": "model_review",
+   "model_review": {
+    "date": "2026-11-12",
+    "draft_unit_ids": [
+     "45-2019-qh14/chapter-vii/section-2/article-113/clause-1/point-a",
+     "45-2019-qh14/chapter-vii/section-2/article-114"
+    ],
+    "draft_expected_status": "answer",
+    "dropped": [],
+    "added": [],
+    "outside_corpus": [],
+    "confidence": "high",
+    "note": "12 ngày + 02 ngày thâm niên (đủ 10 năm) = 14 ngày làm việc."
+   }
+  },
+  {
+   "question_id": "cq15",
+   "question": "Đi nghỉ phép năm mà chưa tới ngày lãnh lương thì có được ứng trước tiền lương không, ứng tối thiểu bao nhiêu?",
+   "question_type": "synthesis",
+   "complex_kind": "multi_article",
+   "family_id": "cf15",
+   "split": "dev",
+   "expected_status": "answer",
+   "relevant_unit_ids": [
+    "45-2019-qh14/chapter-vii/section-2/article-113/clause-5",
+    "45-2019-qh14/chapter-vi/article-101/clause-3"
+   ],
+   "annotation_status": "model_review",
+   "model_review": {
+    "date": "2026-11-12",
+    "draft_unit_ids": [
+     "45-2019-qh14/chapter-vii/section-2/article-113/clause-5",
+     "45-2019-qh14/chapter-vi/article-101/clause-3"
+    ],
+    "draft_expected_status": "answer",
+    "dropped": [],
+    "added": [],
+    "outside_corpus": [],
+    "confidence": "high",
+    "note": "Nháp đúng: được tạm ứng ít nhất bằng tiền lương của những ngày nghỉ."
+   }
+  },
+  {
+   "question_id": "cq16",
+   "question": "Nhân viên làm hỏng máy móc, công ty trừ lương để bồi thường thì có được không và mỗi tháng được trừ tối đa bao nhiêu?",
+   "question_type": "synthesis",
+   "complex_kind": "multi_article",
+   "family_id": "cf16",
+   "split": "dev",
+   "expected_status": "answer",
+   "relevant_unit_ids": [
+    "45-2019-qh14/chapter-viii/section-2/article-129/clause-1",
+    "45-2019-qh14/chapter-vi/article-102/clause-1",
+    "45-2019-qh14/chapter-vi/article-102/clause-3"
+   ],
+   "annotation_status": "model_review",
+   "model_review": {
+    "date": "2026-11-12",
+    "draft_unit_ids": [
+     "45-2019-qh14/chapter-viii/section-2/article-129/clause-1",
+     "45-2019-qh14/chapter-vi/article-102/clause-1",
+     "45-2019-qh14/chapter-vi/article-102/clause-3"
+    ],
+    "draft_expected_status": "answer",
+    "dropped": [],
+    "added": [],
+    "outside_corpus": [],
+    "confidence": "high",
+    "note": "Nháp đúng: được khấu trừ để bồi thường hư hỏng thiết bị, tối đa 30% lương thực trả hằng tháng sau khi trích nộp BH, thuế."
+   }
+  },
+  {
+   "question_id": "cq17",
+   "question": "Nhân viên đang mang thai vi phạm nội quy thì có bị xử lý kỷ luật ngay không, và sau khi nghỉ thai sản xong thì thời hiệu xử lý được tính thế nào?",
+   "question_type": "synthesis",
+   "complex_kind": "multi_article",
+   "family_id": "cf17",
+   "split": "dev",
+   "expected_status": "answer",
+   "relevant_unit_ids": [
+    "45-2019-qh14/chapter-viii/section-1/article-122/clause-4/point-d",
+    "45-2019-qh14/chapter-viii/section-1/article-123/clause-2",
+    "45-2019-qh14/chapter-viii/section-1/article-123/clause-1"
+   ],
+   "annotation_status": "model_review",
+   "model_review": {
+    "date": "2026-11-12",
+    "draft_unit_ids": [
+     "45-2019-qh14/chapter-viii/section-1/article-122/clause-4/point-d",
+     "45-2019-qh14/chapter-viii/section-1/article-123/clause-2"
+    ],
+    "draft_expected_status": "answer",
+    "dropped": [],
+    "added": [
+     {
+      "unit_id": "45-2019-qh14/chapter-viii/section-1/article-123/clause-1",
+      "reason": "Thời hiệu gốc 06 tháng mà khoản 2 Điều 123 kéo dài",
+      "quote": "Thời hiệu xử lý kỷ luật lao động là 06 tháng kể từ ngày xảy ra hành vi vi phạm"
+     }
+    ],
+    "outside_corpus": [],
+    "confidence": "high",
+    "note": "Không xử lý khi mang thai, nghỉ thai sản, nuôi con dưới 12 tháng (nên chưa xử lý ngay khi vừa hết thai sản); hết thời gian đó được kéo dài thời hiệu tối đa 60 ngày."
+   }
+  },
+  {
+   "question_id": "cq18",
+   "question": "Nếu tòa kết luận công ty đuổi việc sai luật mà người lao động không muốn trở lại làm việc thì doanh nghiệp phải chi trả những khoản nào?",
+   "question_type": "synthesis",
+   "complex_kind": "multi_article",
+   "family_id": "cf10",
+   "split": "dev",
+   "expected_status": "answer",
+   "relevant_unit_ids": [
+    "45-2019-qh14/chapter-iii/section-3/article-41/clause-1",
+    "45-2019-qh14/chapter-iii/section-3/article-41/clause-2",
+    "45-2019-qh14/chapter-iii/section-3/article-46/clause-1"
+   ],
+   "annotation_status": "model_review",
+   "model_review": {
+    "date": "2026-11-12",
+    "draft_unit_ids": [
+     "45-2019-qh14/chapter-iii/section-3/article-39",
+     "45-2019-qh14/chapter-iii/section-3/article-41/clause-1",
+     "45-2019-qh14/chapter-iii/section-3/article-41/clause-2",
+     "45-2019-qh14/chapter-iii/section-3/article-46/clause-1"
+    ],
+    "draft_expected_status": "answer",
+    "dropped": [
+     {
+      "unit_id": "45-2019-qh14/chapter-iii/section-3/article-39",
+      "reason": "Chỉ là định nghĩa trái pháp luật; câu hỏi đã giả định việc cho nghỉ là trái luật"
+     }
+    ],
+    "added": [],
+    "outside_corpus": [],
+    "confidence": "medium",
+    "note": "Trùng nội dung cq10."
+   }
+  },
+  {
+   "question_id": "cq19",
+   "question": "Làm cho một công ty liên tục hơn 10 năm trong điều kiện bình thường thì số ngày phép năm tăng lên thành bao nhiêu?",
+   "question_type": "synthesis",
+   "complex_kind": "multi_article",
+   "family_id": "cf14",
+   "split": "dev",
+   "expected_status": "answer",
+   "relevant_unit_ids": [
+    "45-2019-qh14/chapter-vii/section-2/article-113/clause-1/point-a",
+    "45-2019-qh14/chapter-vii/section-2/article-114"
+   ],
+   "annotation_status": "model_review",
+   "model_review": {
+    "date": "2026-11-12",
+    "draft_unit_ids": [
+     "45-2019-qh14/chapter-vii/section-2/article-113/clause-1/point-a",
+     "45-2019-qh14/chapter-vii/section-2/article-114"
+    ],
+    "draft_expected_status": "answer",
+    "dropped": [],
+    "added": [],
+    "outside_corpus": [],
+    "confidence": "high",
+    "note": "Trùng nội dung cq14."
+   }
+  },
+  {
+   "question_id": "cq20",
+   "question": "Công ty muốn sa thải một nhân viên nữ đang mang thai vì tự ý nghỉ 5 ngày trong tháng mà không có lý do. Có làm được không, nếu được thì khi nào và phải họp kỷ luật theo thủ tục gì?",
+   "question_type": "synthesis",
+   "complex_kind": "situation",
+   "family_id": "cf20",
+   "split": "dev",
+   "expected_status": "answer",
+   "relevant_unit_ids": [
+    "45-2019-qh14/chapter-viii/section-1/article-125/clause-4",
+    "45-2019-qh14/chapter-viii/section-1/article-122/clause-4/point-d",
+    "45-2019-qh14/chapter-viii/section-1/article-123/clause-2",
+    "145-2020-nd-cp/chapter-viii/article-70/clause-2/point-a",
+    "45-2019-qh14/chapter-viii/section-1/article-123/clause-1",
+    "45-2019-qh14/chapter-viii/section-1/article-122/clause-1/point-b",
+    "45-2019-qh14/chapter-viii/section-1/article-122/clause-1/point-c"
+   ],
+   "annotation_status": "model_review",
+   "model_review": {
+    "date": "2026-11-12",
+    "draft_unit_ids": [
+     "45-2019-qh14/chapter-viii/section-1/article-125/clause-4",
+     "45-2019-qh14/chapter-viii/section-1/article-122/clause-4/point-d",
+     "45-2019-qh14/chapter-viii/section-1/article-123/clause-2",
+     "145-2020-nd-cp/chapter-viii/article-70/clause-2/point-a"
+    ],
+    "draft_expected_status": "answer",
+    "dropped": [],
+    "added": [
+     {
+      "unit_id": "45-2019-qh14/chapter-viii/section-1/article-123/clause-1",
+      "reason": "Thời hiệu gốc 06 tháng mà khoản 2 Điều 123 kéo dài",
+      "quote": "Thời hiệu xử lý kỷ luật lao động là 06 tháng kể từ ngày xảy ra hành vi vi phạm"
+     },
+     {
+      "unit_id": "45-2019-qh14/chapter-viii/section-1/article-122/clause-1/point-b",
+      "reason": "Thành phần bắt buộc dự họp kỷ luật (Điều 70 NĐ 145 dẫn chiếu tới)",
+      "quote": "Phải có sự tham gia của tổ chức đại diện người lao động tại cơ sở"
+     },
+     {
+      "unit_id": "45-2019-qh14/chapter-viii/section-1/article-122/clause-1/point-c",
+      "reason": "Người lao động phải có mặt, có quyền bào chữa (thành phần dự họp)",
+      "quote": "Người lao động phải có mặt và có quyền tự bào chữa"
+     }
+    ],
+    "outside_corpus": [],
+    "confidence": "medium",
+    "note": "5 ngày cộng dồn trong 30 ngày là căn cứ sa thải nhưng không được xử lý khi đang mang thai/nuôi con dưới 12 tháng; xử lý sau đó trong thời hiệu (kéo dài tối đa 60 ngày). Có thể thêm điểm b, c k2 và k3, k4 Điều 70 NĐ 145 nếu muốn trọn quy trình họp."
+   }
+  },
+  {
+   "question_id": "cq21",
+   "question": "Nhân viên làm hợp đồng không thời hạn được 3 năm muốn nghỉ việc: phải báo trước bao lâu, có được trợ cấp thôi việc không, và công ty phải thanh toán hết các khoản trong bao lâu?",
+   "question_type": "synthesis",
+   "complex_kind": "situation",
+   "family_id": "cf21",
+   "split": "dev",
+   "expected_status": "answer",
+   "relevant_unit_ids": [
+    "45-2019-qh14/chapter-iii/section-3/article-35/clause-1/point-a",
+    "45-2019-qh14/chapter-iii/section-3/article-46/clause-1",
+    "45-2019-qh14/chapter-iii/section-3/article-48/clause-1",
+    "45-2019-qh14/chapter-iii/section-3/article-34/clause-9",
+    "45-2019-qh14/chapter-iii/section-3/article-46/clause-2"
+   ],
+   "annotation_status": "model_review",
+   "model_review": {
+    "date": "2026-11-12",
+    "draft_unit_ids": [
+     "45-2019-qh14/chapter-iii/section-3/article-35/clause-1/point-a",
+     "45-2019-qh14/chapter-iii/section-3/article-46/clause-1",
+     "45-2019-qh14/chapter-iii/section-3/article-48/clause-1"
+    ],
+    "draft_expected_status": "answer",
+    "dropped": [],
+    "added": [
+     {
+      "unit_id": "45-2019-qh14/chapter-iii/section-3/article-34/clause-9",
+      "reason": "NLĐ đơn phương theo Điều 35 là khoản 9 Điều 34, thuộc các trường hợp được trợ cấp thôi việc",
+      "quote": "Người lao động đơn phương chấm dứt hợp đồng lao động theo quy định tại Điều 35"
+     },
+     {
+      "unit_id": "45-2019-qh14/chapter-iii/section-3/article-46/clause-2",
+      "reason": "Thời gian tính trợ cấp phải trừ thời gian đã đóng BHTN; cần để tính đúng số tiền",
+      "quote": "trừ đi thời gian người lao động đã tham gia bảo hiểm thất nghiệp"
+     }
+    ],
+    "outside_corpus": [],
+    "confidence": "medium",
+    "note": "Báo trước 45 ngày; được trợ cấp thôi việc nhưng trừ thời gian đã đóng BHTN; thanh toán trong 14 ngày làm việc (tối đa 30 ngày trong trường hợp đặc biệt)."
+   }
+  },
+  {
+   "question_id": "cq22",
+   "question": "Công ty thay đổi công nghệ nên phải cắt giảm 20 người: công ty phải làm gì trước khi cho nghỉ, và người bị cho nghỉ được trợ cấp bao nhiêu?",
+   "question_type": "synthesis",
+   "complex_kind": "situation",
+   "family_id": "cf22",
+   "split": "dev",
+   "expected_status": "answer",
+   "relevant_unit_ids": [
+    "45-2019-qh14/chapter-iii/section-3/article-42/clause-3",
+    "45-2019-qh14/chapter-iii/section-3/article-47/clause-1",
+    "145-2020-nd-cp/chapter-iii/section-2/article-8/clause-2",
+    "45-2019-qh14/chapter-iii/section-3/article-42/clause-6",
+    "45-2019-qh14/chapter-iii/section-3/article-42/clause-5",
+    "45-2019-qh14/chapter-iii/section-3/article-44/clause-2"
+   ],
+   "annotation_status": "model_review",
+   "model_review": {
+    "date": "2026-11-12",
+    "draft_unit_ids": [
+     "45-2019-qh14/chapter-iii/section-3/article-42/clause-3",
+     "45-2019-qh14/chapter-iii/section-3/article-47/clause-1",
+     "145-2020-nd-cp/chapter-iii/section-2/article-8/clause-2"
+    ],
+    "draft_expected_status": "answer",
+    "dropped": [],
+    "added": [
+     {
+      "unit_id": "45-2019-qh14/chapter-iii/section-3/article-42/clause-6",
+      "reason": "Chỉ cho thôi việc sau khi trao đổi với tổ chức đại diện NLĐ và báo trước 30 ngày cho UBND cấp tỉnh và NLĐ",
+      "quote": "thông báo trước 30 ngày cho Ủy ban nhân dân cấp tỉnh và cho người lao động"
+     },
+     {
+      "unit_id": "45-2019-qh14/chapter-iii/section-3/article-42/clause-5",
+      "reason": "Không giải quyết được việc làm thì phải trả trợ cấp mất việc làm theo Điều 47",
+      "quote": "phải trả trợ cấp mất việc làm theo quy định tại Điều 47"
+     },
+     {
+      "unit_id": "45-2019-qh14/chapter-iii/section-3/article-44/clause-2",
+      "reason": "Xây dựng phương án phải trao đổi với tổ chức đại diện NLĐ và công khai trong 15 ngày",
+      "quote": "Phương án sử dụng lao động phải được thông báo công khai cho người lao động biết trong thời hạn 15 ngày"
+     }
+    ],
+    "outside_corpus": [],
+    "confidence": "medium",
+    "note": "Trợ cấp mất việc làm: mỗi năm 01 tháng lương, ít nhất 02 tháng. Nội dung phương án (k1 Điều 44) không được hỏi nên không thêm."
+   }
+  },
+  {
+   "question_id": "cq23",
+   "question": "Nhân viên bị nghi trộm tài sản công ty, công ty muốn cho nghỉ ở nhà để điều tra rồi mới sa thải: được tạm đình chỉ bao lâu và lương trong thời gian đó trả thế nào?",
+   "question_type": "synthesis",
+   "complex_kind": "situation",
+   "family_id": "cf23",
+   "split": "dev",
+   "expected_status": "answer",
+   "relevant_unit_ids": [
+    "45-2019-qh14/chapter-viii/section-1/article-128/clause-1",
+    "45-2019-qh14/chapter-viii/section-1/article-128/clause-2",
+    "45-2019-qh14/chapter-viii/section-1/article-125/clause-1",
+    "45-2019-qh14/chapter-viii/section-1/article-128/clause-3",
+    "45-2019-qh14/chapter-viii/section-1/article-128/clause-4"
+   ],
+   "annotation_status": "model_review",
+   "model_review": {
+    "date": "2026-11-12",
+    "draft_unit_ids": [
+     "45-2019-qh14/chapter-viii/section-1/article-128/clause-1",
+     "45-2019-qh14/chapter-viii/section-1/article-128/clause-2",
+     "45-2019-qh14/chapter-viii/section-1/article-125/clause-1"
+    ],
+    "draft_expected_status": "answer",
+    "dropped": [],
+    "added": [
+     {
+      "unit_id": "45-2019-qh14/chapter-viii/section-1/article-128/clause-3",
+      "reason": "Bị kỷ luật thì không phải trả lại tiền lương đã tạm ứng",
+      "quote": "người lao động cũng không phải trả lại số tiền lương đã tạm ứng"
+     },
+     {
+      "unit_id": "45-2019-qh14/chapter-viii/section-1/article-128/clause-4",
+      "reason": "Không bị kỷ luật thì được trả đủ lương thời gian bị tạm đình chỉ",
+      "quote": "được người sử dụng lao động trả đủ tiền lương cho thời gian bị tạm đình chỉ công việc"
+     }
+    ],
+    "outside_corpus": [],
+    "confidence": "high",
+    "note": "Tạm đình chỉ tối đa 15 ngày, đặc biệt 90 ngày; tạm ứng 50% lương; khoản lương sau đó do k3, k4 Điều 128 quy định."
+   }
+  },
+  {
+   "question_id": "cq24",
+   "question": "Công ty trả lương thử việc 80% và bắt thử việc 90 ngày cho vị trí kỹ sư tốt nghiệp đại học: sai ở chỗ nào và có thể bị phạt bao nhiêu?",
+   "question_type": "synthesis",
+   "complex_kind": "situation",
+   "family_id": "cf24",
+   "split": "dev",
+   "expected_status": "answer",
+   "relevant_unit_ids": [
+    "45-2019-qh14/chapter-iii/section-1/article-26",
+    "45-2019-qh14/chapter-iii/section-1/article-25/clause-2",
+    "12-2022-nd-cp/chapter-ii/article-10/clause-2/point-b",
+    "12-2022-nd-cp/chapter-ii/article-10/clause-2/point-c",
+    "12-2022-nd-cp/chapter-i/article-6/clause-1"
+   ],
+   "annotation_status": "model_review",
+   "model_review": {
+    "date": "2026-11-12",
+    "draft_unit_ids": [
+     "45-2019-qh14/chapter-iii/section-1/article-26",
+     "45-2019-qh14/chapter-iii/section-1/article-25/clause-2",
+     "12-2022-nd-cp/chapter-ii/article-10/clause-2/point-b",
+     "12-2022-nd-cp/chapter-ii/article-10/clause-2/point-c"
+    ],
+    "draft_expected_status": "answer",
+    "dropped": [],
+    "added": [
+     {
+      "unit_id": "12-2022-nd-cp/chapter-i/article-6/clause-1",
+      "reason": "Mức phạt tại Chương II là của cá nhân; doanh nghiệp (tổ chức) bị phạt gấp 02 lần",
+      "quote": "Mức phạt tiền đối với tổ chức bằng 02 lần mức phạt tiền đối với cá nhân"
+     }
+    ],
+    "outside_corpus": [],
+    "confidence": "medium",
+    "note": "Thử việc tối đa 60 ngày, lương ít nhất 85%. Mức 2-5 triệu nằm ở câu dẫn khoản 2 Điều 10 NĐ 12 (đi kèm điểm b, c); doanh nghiệp bị phạt gấp đôi (4-10 triệu). Biện pháp khắc phục (điểm a k3 Đ10) không được hỏi."
+   }
+  },
+  {
+   "question_id": "cq25",
+   "question": "Doanh nghiệp ở vùng I trả lương tháng cho 15 công nhân làm việc giản đơn thấp hơn lương tối thiểu vùng thì bị xử lý thế nào, và mức tối thiểu đó áp theo địa bàn nào?",
+   "question_type": "synthesis",
+   "complex_kind": "situation",
+   "family_id": "cf25",
+   "split": "dev",
+   "expected_status": "answer",
+   "relevant_unit_ids": [
+    "293-2025-nd-cp/article-3/clause-1",
+    "293-2025-nd-cp/article-3/clause-3/point-a",
+    "12-2022-nd-cp/chapter-ii/article-17/clause-3/point-b",
+    "12-2022-nd-cp/chapter-ii/article-17/clause-5/point-a",
+    "12-2022-nd-cp/chapter-i/article-6/clause-1"
+   ],
+   "annotation_status": "model_review",
+   "model_review": {
+    "date": "2026-11-12",
+    "draft_unit_ids": [
+     "293-2025-nd-cp/article-3/clause-1",
+     "293-2025-nd-cp/article-3/clause-3/point-a",
+     "12-2022-nd-cp/chapter-ii/article-17/clause-3/point-b"
+    ],
+    "draft_expected_status": "answer",
+    "dropped": [],
+    "added": [
+     {
+      "unit_id": "12-2022-nd-cp/chapter-ii/article-17/clause-5/point-a",
+      "reason": "Biện pháp khắc phục: trả đủ lương cộng tiền lãi (câu hỏi hỏi 'bị xử lý thế nào')",
+      "quote": "Buộc người sử dụng lao động trả đủ tiền lương cộng với khoản tiền lãi"
+     },
+     {
+      "unit_id": "12-2022-nd-cp/chapter-i/article-6/clause-1",
+      "reason": "Mức phạt tại Chương II là của cá nhân; doanh nghiệp (tổ chức) bị phạt gấp 02 lần",
+      "quote": "Mức phạt tiền đối với tổ chức bằng 02 lần mức phạt tiền đối với cá nhân"
+     }
+    ],
+    "outside_corpus": [],
+    "confidence": "medium",
+    "note": "15 người -> điểm b k3 Đ17 (30-50 triệu với cá nhân, gấp đôi với doanh nghiệp) cùng biện pháp khắc phục; vùng áp dụng theo nơi hoạt động của NSDLĐ. Danh mục địa bàn ở Phụ lục NĐ 293, không cần cho câu này."
+   }
+  },
+  {
+   "question_id": "cq26",
+   "question": "Công ty chậm lương 2 tháng vì khó khăn: nhân viên có được nghỉ ngay mà không cần báo trước không, công ty phải trả thêm gì và có bị phạt không?",
+   "question_type": "synthesis",
+   "complex_kind": "situation",
+   "family_id": "cf26",
+   "split": "dev",
+   "expected_status": "answer",
+   "relevant_unit_ids": [
+    "45-2019-qh14/chapter-iii/section-3/article-35/clause-2/point-b",
+    "45-2019-qh14/chapter-vi/article-97/clause-4",
+    "12-2022-nd-cp/chapter-ii/article-17/clause-2",
+    "12-2022-nd-cp/chapter-ii/article-17/clause-5/point-a"
+   ],
+   "annotation_status": "model_review",
+   "model_review": {
+    "date": "2026-11-12",
+    "draft_unit_ids": [
+     "45-2019-qh14/chapter-iii/section-3/article-35/clause-2/point-b",
+     "45-2019-qh14/chapter-vi/article-97/clause-4",
+     "12-2022-nd-cp/chapter-ii/article-17/clause-2"
+    ],
+    "draft_expected_status": "answer",
+    "dropped": [],
+    "added": [
+     {
+      "unit_id": "12-2022-nd-cp/chapter-ii/article-17/clause-5/point-a",
+      "reason": "Khi bị xử phạt còn buộc trả đủ lương cộng tiền lãi của số tiền chậm trả",
+      "quote": "Buộc người sử dụng lao động trả đủ tiền lương cộng với khoản tiền lãi của số tiền lương chậm trả"
+     }
+    ],
+    "outside_corpus": [],
+    "confidence": "medium",
+    "note": "Chậm 2 tháng vượt 30 ngày nên không thuộc ngoại lệ k4 Đ97: NLĐ được nghỉ không cần báo trước; phải đền bù tiền lãi (k4 Đ97); bị phạt theo k2 Đ17 NĐ 12, mức tùy số NLĐ (câu hỏi không nêu nên chỉ giữ khoản)."
+   }
+  },
+  {
+   "question_id": "cq27",
+   "question": "Nhân viên làm mất laptop công ty giao, nửa năm sau công ty mới đòi bồi thường: còn trong thời hiệu không, và nếu trừ vào lương thì trừ thế nào?",
+   "question_type": "synthesis",
+   "complex_kind": "situation",
+   "family_id": "cf27",
+   "split": "dev",
+   "expected_status": "answer",
+   "relevant_unit_ids": [
+    "45-2019-qh14/chapter-viii/section-2/article-129/clause-2",
+    "145-2020-nd-cp/chapter-viii/article-72/clause-1",
+    "45-2019-qh14/chapter-vi/article-102/clause-1",
+    "45-2019-qh14/chapter-vi/article-102/clause-3"
+   ],
+   "annotation_status": "model_review",
+   "model_review": {
+    "date": "2026-11-12",
+    "draft_unit_ids": [
+     "45-2019-qh14/chapter-viii/section-2/article-129/clause-2",
+     "145-2020-nd-cp/chapter-viii/article-72/clause-1",
+     "45-2019-qh14/chapter-vi/article-102/clause-1",
+     "45-2019-qh14/chapter-vi/article-102/clause-3"
+    ],
+    "draft_expected_status": "answer",
+    "dropped": [],
+    "added": [],
+    "outside_corpus": [],
+    "confidence": "medium",
+    "note": "Thời hiệu 06 tháng kể từ ngày làm mất: 'nửa năm sau' là sát hạn, cần ngày cụ thể. Khoản 1 Điều 102 chỉ nêu khấu trừ cho hư hỏng; áp dụng cho làm mất tài sản là suy luận, giữ theo nháp."
+   }
+  },
+  {
+   "question_id": "cq28",
+   "question": "Lao động nữ có thai bỏ việc 5 ngày cộng dồn trong vòng 30 ngày, doanh nghiệp có kỷ luật sa thải ngay được không hay phải chờ, và cuộc họp kỷ luật cần chuẩn bị thế nào?",
+   "question_type": "synthesis",
+   "complex_kind": "situation",
+   "family_id": "cf20",
+   "split": "dev",
+   "expected_status": "answer",
+   "relevant_unit_ids": [
+    "45-2019-qh14/chapter-viii/section-1/article-125/clause-4",
+    "45-2019-qh14/chapter-viii/section-1/article-122/clause-4/point-d",
+    "45-2019-qh14/chapter-viii/section-1/article-123/clause-2",
+    "145-2020-nd-cp/chapter-viii/article-70/clause-2/point-a",
+    "45-2019-qh14/chapter-viii/section-1/article-123/clause-1",
+    "45-2019-qh14/chapter-viii/section-1/article-122/clause-1/point-b",
+    "45-2019-qh14/chapter-viii/section-1/article-122/clause-1/point-c"
+   ],
+   "annotation_status": "model_review",
+   "model_review": {
+    "date": "2026-11-12",
+    "draft_unit_ids": [
+     "45-2019-qh14/chapter-viii/section-1/article-125/clause-4",
+     "45-2019-qh14/chapter-viii/section-1/article-122/clause-4/point-d",
+     "45-2019-qh14/chapter-viii/section-1/article-123/clause-2",
+     "145-2020-nd-cp/chapter-viii/article-70/clause-2/point-a"
+    ],
+    "draft_expected_status": "answer",
+    "dropped": [],
+    "added": [
+     {
+      "unit_id": "45-2019-qh14/chapter-viii/section-1/article-123/clause-1",
+      "reason": "Thời hiệu gốc 06 tháng mà khoản 2 Điều 123 kéo dài",
+      "quote": "Thời hiệu xử lý kỷ luật lao động là 06 tháng kể từ ngày xảy ra hành vi vi phạm"
+     },
+     {
+      "unit_id": "45-2019-qh14/chapter-viii/section-1/article-122/clause-1/point-b",
+      "reason": "Thành phần bắt buộc dự họp kỷ luật (Điều 70 NĐ 145 dẫn chiếu tới)",
+      "quote": "Phải có sự tham gia của tổ chức đại diện người lao động tại cơ sở"
+     },
+     {
+      "unit_id": "45-2019-qh14/chapter-viii/section-1/article-122/clause-1/point-c",
+      "reason": "Người lao động phải có mặt, có quyền bào chữa (thành phần dự họp)",
+      "quote": "Người lao động phải có mặt và có quyền tự bào chữa"
+     }
+    ],
+    "outside_corpus": [],
+    "confidence": "medium",
+    "note": "Trùng nội dung cq20; 'chuẩn bị cuộc họp' gồm thông báo 05 ngày làm việc tới các thành phần tại điểm b, c k1 Điều 122."
+   }
+  },
+  {
+   "question_id": "cq29",
+   "question": "Nhân viên hợp đồng vô thời hạn làm 3 năm xin nghỉ: cần báo trước bao nhiêu ngày, được nhận trợ cấp gì và công ty phải trả hết tiền trong thời hạn nào?",
+   "question_type": "synthesis",
+   "complex_kind": "situation",
+   "family_id": "cf21",
+   "split": "dev",
+   "expected_status": "answer",
+   "relevant_unit_ids": [
+    "45-2019-qh14/chapter-iii/section-3/article-35/clause-1/point-a",
+    "45-2019-qh14/chapter-iii/section-3/article-46/clause-1",
+    "45-2019-qh14/chapter-iii/section-3/article-48/clause-1",
+    "45-2019-qh14/chapter-iii/section-3/article-34/clause-9",
+    "45-2019-qh14/chapter-iii/section-3/article-46/clause-2"
+   ],
+   "annotation_status": "model_review",
+   "model_review": {
+    "date": "2026-11-12",
+    "draft_unit_ids": [
+     "45-2019-qh14/chapter-iii/section-3/article-35/clause-1/point-a",
+     "45-2019-qh14/chapter-iii/section-3/article-46/clause-1",
+     "45-2019-qh14/chapter-iii/section-3/article-48/clause-1"
+    ],
+    "draft_expected_status": "answer",
+    "dropped": [],
+    "added": [
+     {
+      "unit_id": "45-2019-qh14/chapter-iii/section-3/article-34/clause-9",
+      "reason": "NLĐ đơn phương theo Điều 35 là khoản 9 Điều 34, thuộc các trường hợp được trợ cấp thôi việc",
+      "quote": "Người lao động đơn phương chấm dứt hợp đồng lao động theo quy định tại Điều 35"
+     },
+     {
+      "unit_id": "45-2019-qh14/chapter-iii/section-3/article-46/clause-2",
+      "reason": "Thời gian tính trợ cấp phải trừ thời gian đã đóng BHTN; cần để tính đúng số tiền",
+      "quote": "trừ đi thời gian người lao động đã tham gia bảo hiểm thất nghiệp"
+     }
+    ],
+    "outside_corpus": [],
+    "confidence": "medium",
+    "note": "Trùng nội dung cq21."
+   }
+  }
+ ]
+}
