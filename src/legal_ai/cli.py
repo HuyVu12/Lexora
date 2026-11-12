@@ -293,7 +293,6 @@ def main():
             from legal_ai.evaluation.budget_report import write_report
             print(json.dumps(write_report(args.runs, args.output, args.title, args.set_title), ensure_ascii=False, indent=2))
         elif args.command in ("kb-extract", "kb-materialize"):
-            from legal_ai.common.io import read_jsonl
             from legal_ai.evaluation import kb_run
             if args.command == "kb-materialize":
                 bundle = args.bundle or json.loads((Path(args.run) / "manifest.json").read_text(encoding="utf-8"))["bundle"]
@@ -350,7 +349,6 @@ def main():
                     print(json.dumps(neighbor_select.select(args.output, provider, log=lambda line: print(line, flush=True), workers=args.workers)))
                 print(json.dumps(neighbor_select.materialize(args.output), ensure_ascii=False, indent=2))
         elif args.command == "kb-relations":
-            from legal_ai.common.io import read_jsonl
             from legal_ai.evaluation import relation_run
             units = read_jsonl(Path(args.bundle) / "units.jsonl")
             aliases = {"Bộ luật Lao động": "45-2019-qh14"}
@@ -408,7 +406,6 @@ def main():
                 provider = ChatStructured(chat, max_tokens=args.max_tokens)
             print(json.dumps(analyze(args.questions, provider, args.output, log=lambda line: print(line, flush=True)), indent=2))
         elif args.command == "enum-drafts":
-            from legal_ai.common.io import read_jsonl, write_json
             from legal_ai.research.enumeration import DRAFT_VERSION, check_sheet, drafts
             from legal_ai.retrieval.norm_query import load_aliases
             output = Path(args.output)
@@ -423,7 +420,6 @@ def main():
             print(json.dumps({"questions": len(rows), "answer_units": sum(len(r["relevant_unit_ids"]) for r in rows),
                               "sheet": output.with_suffix(".csv").as_posix()}, ensure_ascii=False, indent=2))
         elif args.command == "enum-gate":
-            from legal_ai.common.io import read_jsonl
             from legal_ai.retrieval.norm_query import coverage
             questions = json.loads(Path(args.questions).read_text(encoding="utf-8"))["questions"]
             result = coverage(questions, read_jsonl(Path(args.kb_run) / args.claims))
@@ -458,7 +454,6 @@ def main():
             for username, role, password in result["accounts"]:
                 print(f"  {username:8} {role:9} {password}")
         elif args.command == "preflight":
-            from legal_ai.common.io import write_json
             from legal_ai.evaluation.preflight import check
             report = check(args.retrieval, args.answers)
             if args.output:
@@ -473,12 +468,10 @@ def main():
             print(json.dumps([{k: s[k] for k in ("model", "batches_ok", "batches_attempted", "dk3_claims", "dk4_claims", "rejected")} for s in summaries],
                              ensure_ascii=False, indent=2))
         elif args.command == "kb-inject":
-            from legal_ai.common.io import read_jsonl
             from legal_ai.evaluation.error_injection import run as inject_run
             bundle = json.loads((Path(args.run) / "manifest.json").read_text(encoding="utf-8"))["bundle"]
             print(json.dumps(inject_run(args.run, read_jsonl(Path(bundle) / "units.jsonl"), args.output, args.per_type, args.seed), ensure_ascii=False, indent=2))
         elif args.command == "kb-plant":
-            from legal_ai.common.io import read_jsonl
             from legal_ai.evaluation.error_injection import plant
             bundle = json.loads((Path(args.run) / "manifest.json").read_text(encoding="utf-8"))["bundle"]
             questions = json.loads(Path(args.questions).read_text(encoding="utf-8"))["questions"]
@@ -514,7 +507,6 @@ def main():
                 report["agreement"] = audit_agreement(args.sheet, args.compare)
             print(json.dumps(report, ensure_ascii=False, indent=2))
         elif args.command.startswith("gold-"):
-            from legal_ai.common.io import read_jsonl, write_jsonl
             from legal_ai.evaluation import extraction_gold as gold
             if args.command == "gold-agreement":
                 print(json.dumps(gold.agreement(read_jsonl(args.first), read_jsonl(args.second)), ensure_ascii=False, indent=2))
