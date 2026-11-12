@@ -109,7 +109,7 @@ Dự đoán ghi trước: H1 đạt; H2, H3, H4, H5 chưa biết; H0a và H0b kh
 
 1. Mọi lựa chọn thiết kế (biến thể đóng gói, tham số, prompt) được chọn trên tập dev rồi khóa; held-out chạy đúng một lần.
 2. Không chọn biến thể theo độ chênh giữa các điều kiện; chỉ chọn theo chỉ số của một điều kiện đã nêu trước (ví dụ recall của ĐK2).
-3. Không làm yếu ĐK1: giữ 384 token gối 64, và báo cáo thêm độ nhạy theo cỡ đoạn.
+3. Không làm yếu ĐK1: dùng cỡ đoạn mạnh nhất theo recall của chính ĐK1 trên dev (128 token, gối 21, chốt 12/11), và báo cáo độ nhạy theo cỡ đoạn.
 4. Mọi điều kiện dùng chung corpus, bộ câu hỏi, lượt tách vấn đề, cấu hình truy xuất, model sinh, prompt, ngân sách token; `preflight` phải đạt trước khi báo cáo.
 5. Kết luận dựa trên nhãn người và chỉ số tất định; giám khảo LLM chỉ bổ sung và phải có độ đồng thuận với người.
 6. Mỗi câu ở bộ khó được sinh hai lần để đo riêng nhiễu sinh; mức nhiễu được báo cáo cạnh mọi chênh lệch.
@@ -122,7 +122,7 @@ Dự đoán ghi trước: H1 đạt; H2, H3, H4, H5 chưa biết; H0a và H0b kh
 
 | Tên | Định nghĩa | Vai trò |
 |---|---|---|
-| ĐK1 | Đoạn 384 token, gối 64 | Chính |
+| ĐK1 | Đoạn 128 token, gối 21 (đổi từ 384/64 ngày 12/11 sau WP2, xem `docs/decisions.md`) | Chính |
 | ĐK2 | Đơn vị lá kèm đường dẫn, tên Điều, câu dẫn | Chính |
 | ĐK3 | Bản ghi ĐK2 cộng dòng quy phạm gọn, đồ thị dẫn chiếu hai chiều | Chính |
 | ĐK4 | ĐK3 chỉ giữ quy phạm qua `kb-validator-v3` | Chính |

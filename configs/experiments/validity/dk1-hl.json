@@ -2,11 +2,11 @@
   "condition": "DK1",
   "variant": "DK1-hl",
   "representation": "fixed_chunks",
-  "chunk_tokens": 384,
-  "overlap_tokens": 64,
+  "chunk_tokens": 128,
+  "overlap_tokens": 21,
   "status": "draft",
   "validity": {
     "level": "document"
   },
-  "note": "Research plan 11/11, WP4.4: unit status at the question's date (as_of, else shared.validity_as_of); amendment edges from cli amendment-build (rules, need human review). Control for H3: DK1 chunks filtered by document dates only, to separate what only the unit level gives."
+  "note": "Research plan 11/11, WP4.4: unit status at the question's date (as_of, else shared.validity_as_of); amendment edges from cli amendment-build (rules, need human review). Control for H3: DK1 chunks (128/21, the main DK1 since 12/11) filtered by document dates only, to separate what only the unit level gives."
 }

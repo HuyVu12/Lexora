@@ -1,0 +1,11 @@
+{
+  "condition": "DK1",
+  "representation": "fixed_chunks",
+  "chunk_tokens": 128,
+  "overlap_tokens": 21,
+  "automatic_validation": false,
+  "manual_review": false,
+  "shared_config": "configs/pilot.json",
+  "status": "draft",
+  "note": "Main DK1 from 12/11/2026 (docs/decisions.md): 128-token chunks, overlap about 1/6 (21), chosen on the dev dry-run sets by DK1's own recall at every budget (research plan, principle 2), so the baseline is the strongest fixed-chunk setting tested. dk1.json (384/64) stays for reproducing earlier runs and as the sensitivity point."
+}

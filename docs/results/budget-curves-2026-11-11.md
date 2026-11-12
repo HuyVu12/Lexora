@@ -124,7 +124,8 @@ Nhận xét:
 - Ở bộ khó, ĐK1-128 vượt cả ĐK2 với P2 (tình huống ở 3.000 token: 0,58 so với 0,48).
 - Vì vậy luận điểm "cấu trúc cho cùng độ phủ với ít token hơn" chỉ đứng được nếu so với ĐK1 ở cỡ đoạn mạnh nhất; nếu không, người phản biện có thể cho rằng ĐK1 bị làm yếu.
   Luận điểm về trích dẫn chính xác tới Khoản, Điểm và về hiệu lực mức đơn vị không bị ảnh hưởng, nhưng độ chính xác trích dẫn theo ký tự của ĐK1-128 cũng sẽ cao hơn ĐK1-384 và cần đo lại.
-- Đây là kết quả trên nhãn nháp, chỉ ở tầng truy xuất; việc chọn cỡ đoạn chính cho ĐK1 là quyết định của nhóm (xem `docs/decisions.md`).
+- Đây là kết quả trên nhãn nháp, chỉ ở tầng truy xuất.
+- Quyết định 12/11/2026: ĐK1 chính đổi sang đoạn 128 token, gối 21 (`configs/experiments/dk1-128.json`); 384 token giữ làm điểm độ nhạy.
 
 ## Còn thiếu
 
