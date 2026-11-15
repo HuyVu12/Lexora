@@ -1,0 +1,2145 @@
+{
+ "description": "Conflict/overlap set v1 (25 questions across 2-4 documents; labels are unreviewed model proposals; dry run only) | Model review 2026-11-15 on corpus v3 v48feefc6d53b (not human labels): see experiments/label-review-2026-11-15/README.md",
+ "name": "Bộ xung đột v1 (rà soát model 15/11/2026, corpus v3)",
+ "corpus_version_id": "v48feefc6d53b",
+ "unit_status": "unit-status-v2",
+ "edges": "data/kb/amendments-scope-v3-v48feefc6d53b-v2/edges.jsonl",
+ "excluded": [],
+ "questions": [
+  {
+   "question_id": "x00",
+   "question": "Một kỹ sư nam sinh tháng 5/1965, làm việc trong điều kiện lao động bình thường và đã đóng BHXH bắt buộc 22 năm. Phòng nhân sự cần xác định chính xác ngày anh nghỉ hưu và ngày bắt đầu hưởng lương hưu để chuẩn bị quyết định chấm dứt hợp đồng. Hai mốc đó là ngày nào?",
+   "complex_kind": "law_and_detail",
+   "family_id": "xf00",
+   "split": "dev",
+   "documents": [
+    "135-2020-nd-cp",
+    "41-2024-qh15",
+    "45-2019-qh14"
+   ],
+   "question_type": "synthesis",
+   "expected_status": "answer",
+   "relevant_unit_ids": [
+    "45-2019-qh14/chapter-xii/article-169/clause-2",
+    "135-2020-nd-cp/article-4/clause-2",
+    "135-2020-nd-cp/article-3/clause-1",
+    "135-2020-nd-cp/article-3/clause-2",
+    "41-2024-qh15/chapter-v/section-3/article-64/clause-1/point-a",
+    "41-2024-qh15/chapter-v/section-3/article-69/clause-1",
+    "135-2020-nd-cp/article-4/clause-1"
+   ],
+   "as_of": "2026-11-11",
+   "as_of_source": "no date in question, corpus freeze date",
+   "issues": [
+    "Tuổi nghỉ hưu của lao động nam theo lộ trình năm 2025 và năm 2026",
+    "Thời điểm nghỉ hưu tính theo tháng đủ tuổi",
+    "Thời điểm bắt đầu hưởng lương hưu",
+    "Điều kiện thời gian đóng BHXH để hưởng lương hưu"
+   ],
+   "reference_outcome": "Năm 2025 anh chưa đủ 61 tuổi 3 tháng (phải đến tháng 8/2026 mới đủ), nên áp dụng mức của năm 2026 là 61 tuổi 6 tháng, đủ vào tháng 11/2026. Thời điểm nghỉ hưu là kết thúc ngày 30/11/2026 và lương hưu được hưởng từ ngày 01/12/2026; với 22 năm đóng anh đủ điều kiện theo điểm a khoản 1 Điều 64 Luật BHXH 2024, còn NĐ 135 chỉ cụ thể hóa lộ trình của Điều 169 BLLĐ.",
+   "annotation_status": "model_review",
+   "model_review": {
+    "date": "2026-11-15",
+    "corpus_version_id": "v48feefc6d53b",
+    "label_2026_11_12": {
+     "relevant_unit_ids": [
+      "45-2019-qh14/chapter-xii/article-169/clause-2",
+      "135-2020-nd-cp/article-4/clause-2",
+      "135-2020-nd-cp/article-3/clause-1",
+      "135-2020-nd-cp/article-3/clause-2",
+      "41-2024-qh15/chapter-v/section-3/article-64/clause-1/point-a",
+      "41-2024-qh15/chapter-v/section-3/article-69/clause-1"
+     ],
+     "expected_status": "answer",
+     "confidence": "medium"
+    },
+    "kept": [
+     "45-2019-qh14/chapter-xii/article-169/clause-2",
+     "135-2020-nd-cp/article-4/clause-2",
+     "135-2020-nd-cp/article-3/clause-1",
+     "135-2020-nd-cp/article-3/clause-2",
+     "41-2024-qh15/chapter-v/section-3/article-64/clause-1/point-a",
+     "41-2024-qh15/chapter-v/section-3/article-64/clause-1",
+     "41-2024-qh15/chapter-v/section-3/article-69/clause-1"
+    ],
+    "added": [
+     {
+      "unit_id": "135-2020-nd-cp/article-4/clause-1",
+      "reason": "Nhắc lại cùng quy tắc lộ trình của khoản 2 Điều 169 BLLĐ (quy ước 15/11: quy định nhắc lại ở hai văn bản thì chọn cả hai); khoản 2 Điều 169 BLLĐ cũng ghi 'tuổi nghỉ hưu của người lao động trong điều kiện lao động bình thường là đủ 60 tuổi 03 tháng đối với lao động nam'",
+      "quote": "tuổi nghỉ hưu của người lao động trong điều kiện lao động bình thường là đủ 60 tuổi 03 tháng đối với lao động nam"
+     }
+    ],
+    "dropped": [],
+    "stale_pairs": [],
+    "ancestors_dropped": [
+     "41-2024-qh15/chapter-v/section-3/article-64/clause-1"
+    ],
+    "outside_corpus": [
+     "Phụ lục I NĐ 135/2020 (bảng đối chiếu tháng, năm sinh)",
+     "Văn bản hướng dẫn khoản 3 Điều 69 Luật BHXH 2024 về thời điểm hưởng lương hưu"
+    ],
+    "confidence": "medium",
+    "note": "Rà lại 15/11 trên corpus v3 tại 11/11/2026: mọi đơn vị còn hiệu lực. Thêm khoản 1 Điều 4 NĐ 135 vì nhắc lại nguyên văn lộ trình của khoản 2 Điều 169 BLLĐ. Khoản 1 Điều 69 Luật BHXH 2024 và khoản 2 Điều 3 NĐ 135 là hai quy định khác nhau về thời điểm hưởng (theo văn bản chấm dứt HĐLĐ, và ngày đầu tiên của tháng liền kề sau thời điểm nghỉ hưu), không phải nhắc lại; cả hai là đơn vị trả lời. Ghi chú 12/11: Kết luận đúng (61 tuổi 6 tháng, đủ vào tháng 11/2026; nghỉ hưu hết 30/11/2026, hưởng từ 01/12/2026). Điều kiện 15 năm nằm ở câu dẫn khoản 1 Điều 64, không ở điểm a. Khoản 1 Điều 69 Luật BHXH 2024 định thời điểm hưởng theo văn bản chấm dứt HĐLĐ, cần đọc cùng khoản 2 Điều 3 NĐ 135.",
+    "changed_from_2026_11_12": "Thêm khoản 1 Điều 4 NĐ 135/2020 vì nhắc lại lộ trình tuổi nghỉ hưu của khoản 2 Điều 169 BLLĐ (quy ước nhắc lại ở hai văn bản).",
+    "checked_at": "2026-11-11",
+    "reference_outcome_supported": true
+   }
+  },
+  {
+   "question_id": "x01",
+   "question": "Nhà máy của công ty đặt trong một khu công nghiệp nằm vắt qua hai địa bàn, một bên thuộc vùng I, một bên thuộc vùng II. Từ tháng 1/2026 công ty định thuê sinh viên làm bán thời gian, trả lương theo giờ 23.000 đồng. Mức này có hợp pháp không và phải căn cứ mức lương tối thiểu của vùng nào?",
+   "complex_kind": "law_and_detail",
+   "family_id": "xf01",
+   "split": "dev",
+   "documents": [
+    "293-2025-nd-cp",
+    "45-2019-qh14"
+   ],
+   "question_type": "synthesis",
+   "expected_status": "answer",
+   "relevant_unit_ids": [
+    "45-2019-qh14/chapter-vi/article-90/clause-2",
+    "293-2025-nd-cp/article-3/clause-1",
+    "293-2025-nd-cp/article-3/clause-3/point-c",
+    "293-2025-nd-cp/article-4/clause-2",
+    "293-2025-nd-cp/article-5/clause-1"
+   ],
+   "as_of": "2026-01-01",
+   "as_of_source": "câu hỏi nêu 'Từ tháng 1/2026'; dùng ngày 01/01/2026, mọi ngày sau đó đến ngày khóa corpus cho cùng trạng thái hiệu lực",
+   "issues": [
+    "Xác định vùng áp dụng khi khu công nghiệp nằm trên nhiều địa bàn",
+    "Mức lương tối thiểu giờ áp dụng từ 01/01/2026",
+    "Người làm bán thời gian hưởng lương theo giờ có phải tuân thủ lương tối thiểu giờ không"
+   ],
+   "reference_outcome": "Công ty phải áp dụng mức vùng I là 25.500 đồng/giờ, vì điểm c khoản 3 Điều 3 NĐ 293 chọn địa bàn có mức cao nhất cho khu công nghiệp nằm trên nhiều vùng. Mức 23.000 đồng/giờ tuy cao hơn mức vùng II nhưng thấp hơn mức tối thiểu giờ vùng I nên trái khoản 2 Điều 90 BLLĐ và khoản 2 Điều 4 NĐ 293; BLLĐ đặt nguyên tắc, NĐ 293 (chi tiết khoản 4 Điều 91 BLLĐ) quyết định con số và quy tắc chọn vùng.",
+   "annotation_status": "model_review",
+   "model_review": {
+    "date": "2026-11-15",
+    "corpus_version_id": "v48feefc6d53b",
+    "label_2026_11_12": {
+     "relevant_unit_ids": [
+      "45-2019-qh14/chapter-vi/article-90/clause-2",
+      "293-2025-nd-cp/article-3/clause-1",
+      "293-2025-nd-cp/article-3/clause-3/point-c",
+      "293-2025-nd-cp/article-4/clause-2",
+      "293-2025-nd-cp/article-5/clause-1"
+     ],
+     "expected_status": "answer",
+     "confidence": "high"
+    },
+    "kept": [
+     "45-2019-qh14/chapter-vi/article-90/clause-2",
+     "293-2025-nd-cp/article-3/clause-1",
+     "293-2025-nd-cp/article-3/clause-3/point-c",
+     "293-2025-nd-cp/article-4/clause-2",
+     "293-2025-nd-cp/article-5/clause-1"
+    ],
+    "added": [],
+    "dropped": [],
+    "stale_pairs": [],
+    "ancestors_dropped": [],
+    "outside_corpus": [],
+    "confidence": "high",
+    "note": "Rà lại 15/11: mọi đơn vị còn hiệu lực tại 01/01/2026. Khoản 2 Điều 90 BLLĐ và khoản 2 Điều 4 NĐ 293 cùng nêu mức lương theo công việc hoặc chức danh 'không được thấp hơn mức lương tối thiểu' (NĐ 293 chi tiết cho lương giờ), là nhắc lại nên giữ cả hai. Corpus v3 không có văn bản mới về lương tối thiểu. Ghi chú 12/11: 23.000 đ/giờ thấp hơn 25.500 đ/giờ vùng I; điểm c khoản 3 Điều 3 NĐ 293 chọn địa bàn có mức cao nhất. Khoản 2 Điều 91 BLLĐ chỉ liên quan chủ đề nên bỏ.",
+    "changed_from_2026_11_12": "Không đổi; chỉ ghi ngày áp dụng 01/01/2026 theo câu hỏi.",
+    "checked_at": "2026-01-01",
+    "reference_outcome_supported": true
+   }
+  },
+  {
+   "question_id": "x02",
+   "question": "Một trưởng phòng làm việc cho công ty có trụ sở ở Hà Nội (vùng I), lương tháng ghi trong hợp đồng 50 triệu đồng và đã đóng bảo hiểm thất nghiệp đủ 60 tháng trên mức lương đó, nghỉ việc hợp pháp vào tháng 3/2026. Anh ấy sẽ nhận trợ cấp thất nghiệp mỗi tháng bao nhiêu và trong bao lâu?",
+   "complex_kind": "law_and_detail",
+   "family_id": "xf02",
+   "split": "dev",
+   "documents": [
+    "293-2025-nd-cp",
+    "74-2025-qh15"
+   ],
+   "question_type": "synthesis",
+   "expected_status": "answer",
+   "relevant_unit_ids": [
+    "74-2025-qh15/chapter-vii/section-4/article-39/clause-1",
+    "74-2025-qh15/chapter-vii/section-4/article-39/clause-2",
+    "74-2025-qh15/chapter-vii/section-2/article-34/clause-2",
+    "293-2025-nd-cp/article-3/clause-1",
+    "293-2025-nd-cp/article-3/clause-3/point-a",
+    "293-2025-nd-cp/article-5/clause-1"
+   ],
+   "as_of": "2026-03-01",
+   "as_of_source": "câu hỏi nêu nghỉ việc 'vào tháng 3/2026'; dùng ngày đầu tháng, mọi ngày trong tháng 3/2026 cho cùng trạng thái hiệu lực",
+   "issues": [
+    "Trần tiền lương làm căn cứ đóng BHTN",
+    "Mức hưởng 60% và trần 05 lần lương tối thiểu vùng",
+    "Lương tối thiểu vùng I theo NĐ 293 dùng để tính trần",
+    "Số tháng hưởng theo số tháng đã đóng"
+   ],
+   "reference_outcome": "Tiền lương đóng 50 triệu đồng thấp hơn trần 20 lần (106,2 triệu) nên giữ nguyên; 60% là 30 triệu đồng nhưng bị giới hạn ở 05 lần lương tối thiểu vùng I theo NĐ 293, tức 26.550.000 đồng/tháng. 60 tháng đóng cho 03 tháng (36 tháng đầu) cộng 02 tháng (24 tháng tiếp theo), tổng 05 tháng; Luật Việc làm 2025 đặt công thức, NĐ 293 cung cấp mức lương tối thiểu vùng để tính trần.",
+   "annotation_status": "model_review",
+   "model_review": {
+    "date": "2026-11-15",
+    "corpus_version_id": "v48feefc6d53b",
+    "label_2026_11_12": {
+     "relevant_unit_ids": [
+      "74-2025-qh15/chapter-vii/section-4/article-39/clause-1",
+      "74-2025-qh15/chapter-vii/section-4/article-39/clause-2",
+      "74-2025-qh15/chapter-vii/section-2/article-34/clause-2",
+      "293-2025-nd-cp/article-3/clause-1",
+      "293-2025-nd-cp/article-3/clause-3/point-a",
+      "293-2025-nd-cp/article-5/clause-1"
+     ],
+     "expected_status": "answer",
+     "confidence": "high"
+    },
+    "kept": [
+     "74-2025-qh15/chapter-vii/section-4/article-39/clause-1",
+     "74-2025-qh15/chapter-vii/section-4/article-39/clause-2",
+     "74-2025-qh15/chapter-vii/section-2/article-34/clause-2",
+     "293-2025-nd-cp/article-3/clause-1",
+     "293-2025-nd-cp/article-3/clause-3/point-a",
+     "293-2025-nd-cp/article-5/clause-1"
+    ],
+    "added": [],
+    "dropped": [],
+    "stale_pairs": [],
+    "ancestors_dropped": [],
+    "outside_corpus": [
+     "Phụ lục NĐ 293/2025 (Hà Nội thuộc vùng I; câu hỏi đã cho sẵn)"
+    ],
+    "confidence": "high",
+    "note": "Rà lại 15/11: mọi đơn vị còn hiệu lực tại 03/2026; corpus v3 không có văn bản mới về bảo hiểm thất nghiệp hay lương tối thiểu. Ghi chú 12/11: 50 triệu < 20 x 5,31 triệu; 60% = 30 triệu bị giới hạn ở 26.550.000 đ; 60 tháng đóng = 3 + 2 = 5 tháng. Văn bản hỗ trợ đầy đủ.",
+    "changed_from_2026_11_12": "Không đổi; chỉ ghi ngày áp dụng tháng 3/2026 theo câu hỏi.",
+    "checked_at": "2026-03-01",
+    "reference_outcome_supported": true
+   }
+  },
+  {
+   "question_id": "x03",
+   "question": "Công ty phần mềm muốn ràng buộc một kỹ sư R&D không được tiết lộ mã nguồn và thuật toán của công ty, kể cả trong 2 năm sau khi nghỉ việc. Thỏa thuận này lập ở đâu, nên có những nội dung gì, và nếu kỹ sư vi phạm thì công ty xử lý theo thủ tục nào khi vi phạm xảy ra lúc còn làm việc và khi đã nghỉ?",
+   "complex_kind": "law_and_detail",
+   "family_id": "xf03",
+   "split": "dev",
+   "documents": [
+    "10-2020-tt-bldtbxh",
+    "45-2019-qh14"
+   ],
+   "question_type": "synthesis",
+   "expected_status": "answer",
+   "relevant_unit_ids": [
+    "45-2019-qh14/chapter-iii/section-1/article-21/clause-2",
+    "10-2020-tt-bldtbxh/chapter-ii/article-4/clause-1",
+    "10-2020-tt-bldtbxh/chapter-ii/article-4/clause-2/point-c",
+    "10-2020-tt-bldtbxh/chapter-ii/article-4/clause-3/point-a",
+    "10-2020-tt-bldtbxh/chapter-ii/article-4/clause-3/point-b",
+    "10-2020-tt-bldtbxh/chapter-ii/article-4/clause-2/point-a",
+    "10-2020-tt-bldtbxh/chapter-ii/article-4/clause-2/point-b",
+    "10-2020-tt-bldtbxh/chapter-ii/article-4/clause-2/point-d",
+    "10-2020-tt-bldtbxh/chapter-ii/article-4/clause-2/point-đ",
+    "10-2020-tt-bldtbxh/chapter-ii/article-4/clause-2/point-e"
+   ],
+   "as_of": "2026-11-11",
+   "as_of_source": "no date in question, corpus freeze date",
+   "issues": [
+    "Hình thức của thỏa thuận bảo vệ bí mật kinh doanh, bí mật công nghệ",
+    "Các nội dung chủ yếu, gồm thời hạn bảo vệ kéo dài sau khi nghỉ việc",
+    "Thủ tục xử lý vi phạm khi hợp đồng còn hiệu lực",
+    "Thủ tục xử lý vi phạm sau khi chấm dứt hợp đồng"
+   ],
+   "reference_outcome": "BLLĐ cho phép thỏa thuận bằng văn bản, TT 10 chi tiết rằng có thể ghi ngay trong hợp đồng lao động hoặc văn bản riêng, với danh mục bí mật, phạm vi sử dụng, thời hạn bảo vệ, phương thức bảo vệ, quyền nghĩa vụ và xử lý vi phạm. Vi phạm khi hợp đồng còn hiệu lực thì xử lý bồi thường theo trình tự khoản 2 Điều 130 BLLĐ; vi phạm sau khi đã nghỉ việc không còn theo thủ tục lao động mà xử lý theo pháp luật dân sự và pháp luật liên quan.",
+   "annotation_status": "model_review",
+   "model_review": {
+    "date": "2026-11-15",
+    "corpus_version_id": "v48feefc6d53b",
+    "label_2026_11_12": {
+     "relevant_unit_ids": [
+      "45-2019-qh14/chapter-iii/section-1/article-21/clause-2",
+      "10-2020-tt-bldtbxh/chapter-ii/article-4/clause-1",
+      "10-2020-tt-bldtbxh/chapter-ii/article-4/clause-2/point-c",
+      "10-2020-tt-bldtbxh/chapter-ii/article-4/clause-3/point-a",
+      "10-2020-tt-bldtbxh/chapter-ii/article-4/clause-3/point-b",
+      "10-2020-tt-bldtbxh/chapter-ii/article-4/clause-2/point-a",
+      "10-2020-tt-bldtbxh/chapter-ii/article-4/clause-2/point-b",
+      "10-2020-tt-bldtbxh/chapter-ii/article-4/clause-2/point-d",
+      "10-2020-tt-bldtbxh/chapter-ii/article-4/clause-2/point-đ",
+      "10-2020-tt-bldtbxh/chapter-ii/article-4/clause-2/point-e"
+     ],
+     "expected_status": "answer",
+     "confidence": "high"
+    },
+    "kept": [
+     "45-2019-qh14/chapter-iii/section-1/article-21/clause-2",
+     "10-2020-tt-bldtbxh/chapter-ii/article-4/clause-1",
+     "10-2020-tt-bldtbxh/chapter-ii/article-4/clause-2/point-c",
+     "10-2020-tt-bldtbxh/chapter-ii/article-4/clause-3/point-a",
+     "10-2020-tt-bldtbxh/chapter-ii/article-4/clause-3/point-b",
+     "10-2020-tt-bldtbxh/chapter-ii/article-4/clause-2",
+     "10-2020-tt-bldtbxh/chapter-ii/article-4/clause-2/point-a",
+     "10-2020-tt-bldtbxh/chapter-ii/article-4/clause-2/point-b",
+     "10-2020-tt-bldtbxh/chapter-ii/article-4/clause-2/point-d",
+     "10-2020-tt-bldtbxh/chapter-ii/article-4/clause-2/point-đ",
+     "10-2020-tt-bldtbxh/chapter-ii/article-4/clause-2/point-e"
+    ],
+    "added": [],
+    "dropped": [],
+    "stale_pairs": [],
+    "ancestors_dropped": [
+     "10-2020-tt-bldtbxh/chapter-ii/article-4/clause-2"
+    ],
+    "outside_corpus": [
+     "Bộ luật Dân sự và pháp luật sở hữu trí tuệ (xử lý vi phạm sau khi chấm dứt HĐLĐ)"
+    ],
+    "confidence": "high",
+    "note": "Rà lại 15/11: mọi đơn vị còn hiệu lực tại 11/11/2026. Khoản 1 Điều 4 TT 10 nhắc lại quyền thỏa thuận của khoản 2 Điều 21 BLLĐ ('Khi người lao động làm việc có liên quan trực tiếp đến bí mật kinh doanh, bí mật công nghệ theo quy định của pháp luật thì người sử dụng lao động có quyền thỏa thuận') và thêm hình thức 'trong hợp đồng lao động hoặc bằng văn bản khác'; cả hai đã có trong nhãn. Ghi chú 12/11: Câu hỏi hỏi \"nên có những nội dung gì\" nên cần đủ các điểm a-e khoản 2 Điều 4 TT 10; bản nháp chỉ có điểm c. Trình tự bồi thường chi tiết nằm ở Điều 71 NĐ 145 (khoản 2 Điều 130 BLLĐ giao Chính phủ); không bắt buộc vì kết quả tham chiếu chỉ dẫn chiếu.",
+    "changed_from_2026_11_12": "Không đổi.",
+    "checked_at": "2026-11-11",
+    "reference_outcome_supported": true
+   }
+  },
+  {
+   "question_id": "x04",
+   "question": "Nhà máy gia công linh kiện điện tử xuất khẩu dự kiến cho công nhân tăng ca tổng cộng khoảng 280 giờ trong năm 2026, rải đều các tháng. Công ty có được làm vậy không, phải thông báo cho cơ quan nào và chậm nhất khi nào?",
+   "complex_kind": "law_and_detail",
+   "family_id": "xf04",
+   "split": "dev",
+   "documents": [
+    "145-2020-nd-cp",
+    "45-2019-qh14"
+   ],
+   "question_type": "synthesis",
+   "expected_status": "answer",
+   "relevant_unit_ids": [
+    "45-2019-qh14/chapter-vii/section-1/article-107/clause-3/point-a",
+    "45-2019-qh14/chapter-vii/section-1/article-107/clause-2/point-b",
+    "45-2019-qh14/chapter-vii/section-1/article-107/clause-4",
+    "145-2020-nd-cp/chapter-vii/article-62/clause-1/point-a",
+    "145-2020-nd-cp/chapter-vii/article-62/clause-2",
+    "45-2019-qh14/chapter-vii/section-1/article-107/clause-2/point-a",
+    "45-2019-qh14/chapter-vii/section-1/article-107/clause-2/point-c",
+    "145-2020-nd-cp/chapter-vii/article-62/clause-1/point-b",
+    "145-2020-nd-cp/chapter-vii/article-59/clause-1",
+    "283-2026-nd-cp/chapter-ii/section-2/article-24/clause-1/point-b"
+   ],
+   "as_of": "2026-11-11",
+   "as_of_source": "câu hỏi chỉ nêu 'trong năm 2026', không nêu ngày sự việc; dùng ngày khóa corpus (nằm trong năm 2026)",
+   "issues": [
+    "Gia công xuất khẩu hàng điện tử có thuộc diện làm thêm đến 300 giờ/năm",
+    "Giới hạn làm thêm theo tháng vẫn phải tuân thủ",
+    "Cơ quan nhận thông báo và thời hạn thông báo"
+   ],
+   "reference_outcome": "Được, vì gia công xuất khẩu hàng điện tử thuộc điểm a khoản 3 Điều 107 BLLĐ, miễn là mỗi tháng không quá 40 giờ (280 giờ chia 12 tháng khoảng 23 giờ) và người lao động đồng ý. Công ty phải thông báo bằng văn bản cho cơ quan chuyên môn về lao động cấp tỉnh nơi tổ chức làm thêm (và nơi đặt trụ sở chính nếu khác tỉnh), chậm nhất 15 ngày kể từ ngày bắt đầu làm thêm vượt 200 giờ, theo NĐ 145 chi tiết khoản 4 Điều 107.",
+   "annotation_status": "model_review",
+   "model_review": {
+    "date": "2026-11-15",
+    "corpus_version_id": "v48feefc6d53b",
+    "label_2026_11_12": {
+     "relevant_unit_ids": [
+      "45-2019-qh14/chapter-vii/section-1/article-107/clause-3/point-a",
+      "45-2019-qh14/chapter-vii/section-1/article-107/clause-2/point-b",
+      "45-2019-qh14/chapter-vii/section-1/article-107/clause-4",
+      "145-2020-nd-cp/chapter-vii/article-62/clause-1/point-a",
+      "145-2020-nd-cp/chapter-vii/article-62/clause-2",
+      "45-2019-qh14/chapter-vii/section-1/article-107/clause-2/point-a",
+      "45-2019-qh14/chapter-vii/section-1/article-107/clause-2/point-c",
+      "145-2020-nd-cp/chapter-vii/article-62/clause-1/point-b"
+     ],
+     "expected_status": "answer",
+     "confidence": "high"
+    },
+    "kept": [
+     "45-2019-qh14/chapter-vii/section-1/article-107/clause-3/point-a",
+     "45-2019-qh14/chapter-vii/section-1/article-107/clause-2/point-b",
+     "45-2019-qh14/chapter-vii/section-1/article-107/clause-4",
+     "145-2020-nd-cp/chapter-vii/article-62/clause-1/point-a",
+     "145-2020-nd-cp/chapter-vii/article-62/clause-2",
+     "45-2019-qh14/chapter-vii/section-1/article-107/clause-2",
+     "45-2019-qh14/chapter-vii/section-1/article-107/clause-2/point-a",
+     "45-2019-qh14/chapter-vii/section-1/article-107/clause-2/point-c",
+     "45-2019-qh14/chapter-vii/section-1/article-107/clause-3",
+     "145-2020-nd-cp/chapter-vii/article-62/clause-1",
+     "145-2020-nd-cp/chapter-vii/article-62/clause-1/point-b"
+    ],
+    "added": [
+     {
+      "unit_id": "145-2020-nd-cp/chapter-vii/article-59/clause-1",
+      "reason": "Nhắc lại yêu cầu người lao động đồng ý của điểm a khoản 2 Điều 107 BLLĐ ('Phải được sự đồng ý của người lao động'); NĐ 145 chi tiết các nội dung phải được đồng ý",
+      "quote": "người sử dụng lao động phải được sự đồng ý của người lao động tham gia làm thêm"
+     },
+     {
+      "unit_id": "283-2026-nd-cp/chapter-ii/section-2/article-24/clause-1/point-b",
+      "reason": "Văn bản còn hiệu lực tại 11/11/2026 gọi cơ quan nhận thông báo làm thêm từ trên 200 giờ đến 300 giờ là 'Sở Nội vụ', khác tên 'Sở Lao động - Thương binh và Xã hội' ở khoản 1 Điều 62 NĐ 145; cùng nghĩa vụ thông báo, khác tên cơ quan, nên cần đọc cùng để trả lời 'thông báo cho cơ quan nào'",
+      "quote": "Không thông báo bằng văn bản cho Sở Nội vụ nơi tổ chức làm thêm giờ và nơi đặt trụ sở chính về việc tổ chức làm thêm giờ từ trên 200 giờ đến 300 giờ trong một năm"
+     }
+    ],
+    "dropped": [],
+    "stale_pairs": [],
+    "ancestors_dropped": [
+     "45-2019-qh14/chapter-vii/section-1/article-107/clause-2",
+     "45-2019-qh14/chapter-vii/section-1/article-107/clause-3",
+     "145-2020-nd-cp/chapter-vii/article-62/clause-1"
+    ],
+    "outside_corpus": [],
+    "confidence": "medium",
+    "note": "Rà lại 15/11: các đơn vị BLLĐ và NĐ 145 còn hiệu lực tại 11/11/2026. Thêm khoản 1 Điều 59 NĐ 145 (nhắc lại yêu cầu đồng ý) và điểm b khoản 1 Điều 24 NĐ 283 (tên cơ quan nhận thông báo hiện nay là Sở Nội vụ). Khoản 2 Điều 60 NĐ 145 chỉ nhắc giới hạn 12 giờ/ngày, không nhắc giới hạn 40 giờ/tháng, nên không thêm. Hạ độ tin cậy vì tên cơ quan trong NĐ 145 và NĐ 283 khác nhau, cần người xem. Ghi chú 12/11: Điểm a khoản 3 không tự chứa mức 300 giờ; mức này ở câu dẫn khoản 3. BLLĐ nói \"cơ quan chuyên môn về lao động thuộc UBND cấp tỉnh\", NĐ 145 nói \"Sở LĐTBXH\"; thời hạn là chậm nhất sau 15 ngày kể từ ngày làm thêm trên 200 giờ.",
+    "changed_from_2026_11_12": "Thêm khoản 1 Điều 59 NĐ 145 (nhắc lại yêu cầu người lao động đồng ý) và điểm b khoản 1 Điều 24 NĐ 283/2026 (cơ quan nhận thông báo nay được gọi là Sở Nội vụ); hạ độ tin cậy xuống vừa.",
+    "checked_at": "2026-11-11",
+    "outcome_issue": "Kết quả tham chiếu ghi 'cơ quan chuyên môn về lao động cấp tỉnh' (khớp khoản 4 Điều 107 BLLĐ) nhưng chưa nêu tên cơ quan hiện nay. Điểm b khoản 1 Điều 24 NĐ 283/2026 (hiệu lực từ 10/09/2026) ghi 'Không thông báo bằng văn bản cho Sở Nội vụ nơi tổ chức làm thêm giờ và nơi đặt trụ sở chính', trong khi khoản 1 Điều 62 NĐ 145 vẫn ghi 'Sở Lao động - Thương binh và Xã hội'. Corpus không có văn bản sửa khoản 1 Điều 62 NĐ 145; người duyệt cần quyết định có ghi 'Sở Nội vụ' vào đáp án hay không.",
+    "reference_outcome_supported": true
+   }
+  },
+  {
+   "question_id": "x05",
+   "question": "Nhân viên kế toán thử việc 2 tháng theo hợp đồng thử việc riêng, sau đó ký hợp đồng không xác định thời hạn và được công ty đóng bảo hiểm thất nghiệp đủ 6 năm. Nay chị nghỉ việc đúng luật, có báo trước 45 ngày. Công ty còn phải trả trợ cấp thôi việc không, tính thế nào, và chị có được hưởng trợ cấp thất nghiệp không?",
+   "complex_kind": "cross_law",
+   "family_id": "xf05",
+   "split": "dev",
+   "documents": [
+    "145-2020-nd-cp",
+    "45-2019-qh14",
+    "74-2025-qh15"
+   ],
+   "question_type": "synthesis",
+   "expected_status": "answer",
+   "relevant_unit_ids": [
+    "45-2019-qh14/chapter-iii/section-3/article-46/clause-2",
+    "145-2020-nd-cp/chapter-iii/section-2/article-8/clause-3/point-a",
+    "145-2020-nd-cp/chapter-iii/section-2/article-8/clause-3/point-c",
+    "74-2025-qh15/chapter-vii/section-1/article-31/clause-2",
+    "74-2025-qh15/chapter-vii/section-4/article-38/clause-1/point-a",
+    "45-2019-qh14/chapter-iii/section-3/article-34/clause-9",
+    "45-2019-qh14/chapter-iii/section-3/article-46/clause-1",
+    "45-2019-qh14/chapter-iii/section-3/article-46/clause-3",
+    "74-2025-qh15/chapter-vii/section-4/article-38/clause-1/point-b",
+    "145-2020-nd-cp/chapter-iii/section-2/article-8/clause-1",
+    "145-2020-nd-cp/chapter-iii/section-2/article-8/clause-5/point-a"
+   ],
+   "as_of": "2026-11-11",
+   "as_of_source": "no date in question, corpus freeze date",
+   "issues": [
+    "Thời gian thử việc có tính vào thời gian làm việc thực tế không",
+    "Trừ thời gian đã tham gia BHTN khi tính trợ cấp thôi việc",
+    "Người đang thử việc không thuộc diện tham gia BHTN",
+    "Điều kiện hưởng trợ cấp thất nghiệp khi người lao động tự nghỉ đúng luật"
+   ],
+   "reference_outcome": "Công ty vẫn phải trả trợ cấp thôi việc cho 2 tháng thử việc, vì thời gian này tính vào thời gian làm việc thực tế nhưng không được đóng BHTN (người thử việc không thuộc diện tham gia); 2 tháng được tính là 1/2 năm, tức trợ cấp bằng 1/4 tháng tiền lương bình quân 06 tháng liền kề. 6 năm đã đóng BHTN không tính trợ cấp thôi việc mà được bù bằng chế độ BHTN: chị nghỉ đúng luật nên không bị loại theo điểm a khoản 1 Điều 38 Luật Việc làm 2025.",
+   "annotation_status": "model_review",
+   "model_review": {
+    "date": "2026-11-15",
+    "corpus_version_id": "v48feefc6d53b",
+    "label_2026_11_12": {
+     "relevant_unit_ids": [
+      "45-2019-qh14/chapter-iii/section-3/article-46/clause-2",
+      "145-2020-nd-cp/chapter-iii/section-2/article-8/clause-3/point-a",
+      "145-2020-nd-cp/chapter-iii/section-2/article-8/clause-3/point-c",
+      "74-2025-qh15/chapter-vii/section-1/article-31/clause-2",
+      "74-2025-qh15/chapter-vii/section-4/article-38/clause-1/point-a",
+      "45-2019-qh14/chapter-iii/section-3/article-34/clause-9",
+      "45-2019-qh14/chapter-iii/section-3/article-46/clause-1",
+      "45-2019-qh14/chapter-iii/section-3/article-46/clause-3",
+      "74-2025-qh15/chapter-vii/section-4/article-38/clause-1/point-b"
+     ],
+     "expected_status": "answer",
+     "confidence": "high"
+    },
+    "kept": [
+     "45-2019-qh14/chapter-iii/section-3/article-46/clause-2",
+     "145-2020-nd-cp/chapter-iii/section-2/article-8/clause-3/point-a",
+     "145-2020-nd-cp/chapter-iii/section-2/article-8/clause-3/point-c",
+     "74-2025-qh15/chapter-vii/section-1/article-31/clause-2",
+     "74-2025-qh15/chapter-vii/section-4/article-38/clause-1/point-a",
+     "45-2019-qh14/chapter-iii/section-3/article-34/clause-9",
+     "45-2019-qh14/chapter-iii/section-3/article-46/clause-1",
+     "45-2019-qh14/chapter-iii/section-3/article-46/clause-3",
+     "74-2025-qh15/chapter-vii/section-4/article-38/clause-1",
+     "74-2025-qh15/chapter-vii/section-4/article-38/clause-1/point-b"
+    ],
+    "added": [
+     {
+      "unit_id": "145-2020-nd-cp/chapter-iii/section-2/article-8/clause-1",
+      "reason": "Nhắc lại câu dẫn trách nhiệm trả trợ cấp thôi việc của khoản 1 Điều 46 BLLĐ: cùng điều kiện 'từ đủ 12 tháng trở lên' và cùng các khoản 1, 2, 3, 4, 6, 7, 9 và 10 Điều 34",
+      "quote": "từ đủ 12 tháng trở lên khi hợp đồng lao động chấm dứt theo quy định tại các khoản 1, 2, 3, 4, 6, 7, 9 và 10 Điều 34 của Bộ luật Lao động"
+     },
+     {
+      "unit_id": "145-2020-nd-cp/chapter-iii/section-2/article-8/clause-5/point-a",
+      "reason": "Nhắc lại khoản 3 Điều 46 BLLĐ về tiền lương tính trợ cấp thôi việc: cùng cụm 'tiền lương bình quân của 06 tháng liền kề theo hợp đồng lao động trước khi người lao động thôi việc'",
+      "quote": "tiền lương bình quân của 06 tháng liền kề theo hợp đồng lao động trước khi người lao động thôi việc"
+     }
+    ],
+    "dropped": [],
+    "stale_pairs": [],
+    "ancestors_dropped": [
+     "74-2025-qh15/chapter-vii/section-4/article-38/clause-1"
+    ],
+    "outside_corpus": [],
+    "confidence": "high",
+    "note": "Rà lại 15/11: mọi đơn vị còn hiệu lực tại 11/11/2026. Thêm hai đơn vị NĐ 145 nhắc lại khoản 1 và khoản 3 Điều 46 BLLĐ. Câu dẫn khoản 3 Điều 8 NĐ 145 nhắc lại khoản 2 Điều 46 BLLĐ nhưng đã có hai điểm con (a, c) trong nhãn nên không cần ghi riêng. Ghi chú 12/11: 1/2 năm x 1/2 tháng = 1/4 tháng lương bình quân 06 tháng: đúng. Bản nháp thiếu khoản 1 và khoản 3 Điều 46. Điều kiện c, d khoản 1 Điều 38 Luật Việc làm (hồ sơ, chưa có việc làm) chưa có dữ kiện; thời gian thử việc 6 năm trước thuộc Luật Việc làm 2013 nhưng kết quả không đổi.",
+    "changed_from_2026_11_12": "Thêm khoản 1 Điều 8 và điểm a khoản 5 Điều 8 NĐ 145/2020 vì nhắc lại khoản 1 và khoản 3 Điều 46 BLLĐ.",
+    "checked_at": "2026-11-11",
+    "reference_outcome_supported": true
+   }
+  },
+  {
+   "question_id": "x06",
+   "question": "Một nhân viên mới vào công ty được 5 tháng thì sinh đôi; trước đó chị chưa từng tham gia BHXH. Chồng chị làm ở công ty khác và đã đóng BHXH bắt buộc liên tục 3 năm. Chị được nghỉ sinh bao lâu, có được BHXH trả trợ cấp thai sản không, và gia đình có được nhận khoản trợ cấp một lần nào không?",
+   "complex_kind": "cross_law",
+   "family_id": "xf06",
+   "split": "dev",
+   "documents": [
+    "41-2024-qh15",
+    "45-2019-qh14"
+   ],
+   "question_type": "synthesis",
+   "expected_status": "answer",
+   "relevant_unit_ids": [
+    "45-2019-qh14/chapter-x/article-139/clause-1",
+    "41-2024-qh15/chapter-v/section-2/article-53/clause-1",
+    "41-2024-qh15/chapter-v/section-2/article-50/clause-2",
+    "41-2024-qh15/chapter-v/section-2/article-58/clause-1",
+    "41-2024-qh15/chapter-v/section-2/article-58/clause-4"
+   ],
+   "as_of": "2026-11-11",
+   "as_of_source": "no date in question, corpus freeze date",
+   "issues": [
+    "Thời gian nghỉ thai sản khi sinh đôi theo BLLĐ",
+    "Điều kiện 06 tháng đóng BHXH trong 12 tháng để hưởng chế độ thai sản",
+    "Quyền nghỉ theo BLLĐ tách khỏi quyền hưởng trợ cấp BHXH",
+    "Trợ cấp một lần chuyển sang người chồng"
+   ],
+   "reference_outcome": "Theo BLLĐ chị được nghỉ 07 tháng (06 tháng cộng 01 tháng cho con thứ hai), và Luật BHXH 2024 dẫn chiếu thẳng khoản 1 Điều 139 nên hai luật thống nhất về thời gian. Nhưng chị mới đóng 5 tháng nên không đủ điều kiện khoản 2 Điều 50, quỹ BHXH không trả trợ cấp thai sản và trợ cấp một lần cho chị; vì chồng đủ điều kiện khoản 2 Điều 50, chồng được trợ cấp một lần bằng 02 lần mức tham chiếu cho mỗi con, tức 04 lần mức tham chiếu.",
+   "annotation_status": "model_review",
+   "model_review": {
+    "date": "2026-11-15",
+    "corpus_version_id": "v48feefc6d53b",
+    "label_2026_11_12": {
+     "relevant_unit_ids": [
+      "45-2019-qh14/chapter-x/article-139/clause-1",
+      "41-2024-qh15/chapter-v/section-2/article-53/clause-1",
+      "41-2024-qh15/chapter-v/section-2/article-50/clause-2",
+      "41-2024-qh15/chapter-v/section-2/article-58/clause-1",
+      "41-2024-qh15/chapter-v/section-2/article-58/clause-4"
+     ],
+     "expected_status": "answer",
+     "confidence": "high"
+    },
+    "kept": [
+     "45-2019-qh14/chapter-x/article-139/clause-1",
+     "41-2024-qh15/chapter-v/section-2/article-53/clause-1",
+     "41-2024-qh15/chapter-v/section-2/article-50/clause-2",
+     "41-2024-qh15/chapter-v/section-2/article-58/clause-1",
+     "41-2024-qh15/chapter-v/section-2/article-58/clause-4"
+    ],
+    "added": [],
+    "dropped": [],
+    "stale_pairs": [],
+    "ancestors_dropped": [],
+    "outside_corpus": [],
+    "confidence": "high",
+    "note": "Rà lại 15/11: mọi đơn vị còn hiệu lực tại 11/11/2026. Khoản 1 Điều 53 Luật BHXH 2024 dẫn chiếu thẳng khoản 1 Điều 139 BLLĐ (không chép lại nội dung); cả hai đã có trong nhãn. Ghi chú 12/11: Bản nháp đủ: 06 tháng + 01 tháng cho con thứ hai; chị đóng 5 tháng không đạt khoản 2 Điều 50; chồng đủ điều kiện nên nhận 02 x 2 con = 04 lần mức tham chiếu.",
+    "changed_from_2026_11_12": "Không đổi.",
+    "checked_at": "2026-11-11",
+    "reference_outcome_supported": true
+   }
+  },
+  {
+   "question_id": "x07",
+   "question": "Công ty muốn chấm dứt hợp đồng với một nhân viên bảo vệ nam đã đủ tuổi nghỉ hưu theo lộ trình năm 2026. Anh có tổng cộng 16 năm đóng BHXH bắt buộc và đã làm cho công ty 9 năm. Anh có được hưởng lương hưu không, tỷ lệ bao nhiêu, và công ty có phải trả trợ cấp thôi việc cho 9 năm đó không?",
+   "complex_kind": "cross_law",
+   "family_id": "xf07",
+   "split": "dev",
+   "documents": [
+    "145-2020-nd-cp",
+    "41-2024-qh15",
+    "45-2019-qh14"
+   ],
+   "question_type": "synthesis",
+   "expected_status": "answer",
+   "relevant_unit_ids": [
+    "45-2019-qh14/chapter-iii/section-3/article-36/clause-1/point-đ",
+    "41-2024-qh15/chapter-v/section-3/article-64/clause-1/point-a",
+    "41-2024-qh15/chapter-v/section-3/article-66/clause-1/point-b",
+    "45-2019-qh14/chapter-iii/section-3/article-46/clause-1",
+    "145-2020-nd-cp/chapter-iii/section-2/article-8/clause-1/point-a"
+   ],
+   "as_of": "2026-11-11",
+   "as_of_source": "câu hỏi chỉ nêu lộ trình 'năm 2026', không nêu ngày chấm dứt; dùng ngày khóa corpus (nằm trong năm 2026)",
+   "issues": [
+    "Căn cứ chấm dứt hợp đồng khi người lao động đủ tuổi nghỉ hưu",
+    "Điều kiện từ đủ 15 năm đóng BHXH theo Luật BHXH 2024",
+    "Tỷ lệ lương hưu của lao động nam có từ 15 đến dưới 20 năm đóng",
+    "Loại trừ trợ cấp thôi việc khi đủ điều kiện hưởng lương hưu"
+   ],
+   "reference_outcome": "Anh đủ điều kiện lương hưu vì đủ tuổi và có 16 năm đóng (từ đủ 15 năm theo Luật BHXH 2024), tỷ lệ hưởng là 40% + 1% = 41% mức bình quân tiền lương đóng BHXH. Vì đủ điều kiện hưởng lương hưu, công ty không phải trả trợ cấp thôi việc theo khoản 1 Điều 46 BLLĐ và điểm a khoản 1 Điều 8 NĐ 145; ngoại lệ của BLLĐ chỉ xác định được khi đọc cùng điều kiện lương hưu của Luật BHXH 2024.",
+   "annotation_status": "model_review",
+   "model_review": {
+    "date": "2026-11-15",
+    "corpus_version_id": "v48feefc6d53b",
+    "label_2026_11_12": {
+     "relevant_unit_ids": [
+      "45-2019-qh14/chapter-iii/section-3/article-36/clause-1/point-đ",
+      "41-2024-qh15/chapter-v/section-3/article-64/clause-1/point-a",
+      "41-2024-qh15/chapter-v/section-3/article-66/clause-1/point-b",
+      "45-2019-qh14/chapter-iii/section-3/article-46/clause-1",
+      "145-2020-nd-cp/chapter-iii/section-2/article-8/clause-1/point-a"
+     ],
+     "expected_status": "answer",
+     "confidence": "high"
+    },
+    "kept": [
+     "45-2019-qh14/chapter-iii/section-3/article-36/clause-1/point-đ",
+     "41-2024-qh15/chapter-v/section-3/article-64/clause-1/point-a",
+     "41-2024-qh15/chapter-v/section-3/article-66/clause-1/point-b",
+     "45-2019-qh14/chapter-iii/section-3/article-46/clause-1",
+     "145-2020-nd-cp/chapter-iii/section-2/article-8/clause-1/point-a",
+     "45-2019-qh14/chapter-iii/section-3/article-36/clause-1",
+     "41-2024-qh15/chapter-v/section-3/article-64/clause-1",
+     "145-2020-nd-cp/chapter-iii/section-2/article-8/clause-1"
+    ],
+    "added": [],
+    "dropped": [],
+    "stale_pairs": [],
+    "ancestors_dropped": [
+     "45-2019-qh14/chapter-iii/section-3/article-36/clause-1",
+     "41-2024-qh15/chapter-v/section-3/article-64/clause-1",
+     "145-2020-nd-cp/chapter-iii/section-2/article-8/clause-1"
+    ],
+    "outside_corpus": [],
+    "confidence": "high",
+    "note": "Rà lại 15/11: mọi đơn vị còn hiệu lực tại 11/11/2026. Khoản 1 Điều 46 BLLĐ và khoản 1 Điều 8 NĐ 145 là nhắc lại (cùng 'từ đủ 12 tháng trở lên', cùng các khoản của Điều 34), cả hai đã có; điểm a khoản 1 Điều 8 NĐ 145 chi tiết ngoại lệ 'đủ điều kiện hưởng lương hưu'. Ghi chú 12/11: 16 năm đóng: 40% + 1% = 41%. Điều kiện 15 năm ở câu dẫn khoản 1 Điều 64; điểm đ khoản 1 Điều 36 và điểm a khoản 1 Điều 8 NĐ 145 cần câu dẫn mới có hiệu lực pháp lý.",
+    "changed_from_2026_11_12": "Không đổi.",
+    "checked_at": "2026-11-11",
+    "reference_outcome_supported": true
+   }
+  },
+  {
+   "question_id": "x08",
+   "question": "Một công nhân bị máy dập cắt vào tay ngay tại xưởng, nghỉ điều trị 2 tháng rồi được Hội đồng giám định y khoa kết luận suy giảm 25% khả năng lao động; biên bản điều tra xác định anh không có lỗi. Trong 2 tháng điều trị ai trả tiền cho anh, anh có được trợ cấp ốm đau không, và công ty phải bồi thường tối thiểu bao nhiêu?",
+   "complex_kind": "cross_law",
+   "family_id": "xf08",
+   "split": "dev",
+   "documents": [
+    "41-2024-qh15",
+    "84-2015-qh13"
+   ],
+   "question_type": "synthesis",
+   "expected_status": "answer",
+   "relevant_unit_ids": [
+    "84-2015-qh13/chapter-iii/section-2/article-38/clause-3",
+    "84-2015-qh13/chapter-iii/section-2/article-38/clause-4/point-a",
+    "41-2024-qh15/chapter-v/section-1/article-42/clause-2/point-c",
+    "84-2015-qh13/chapter-iii/section-3/article-45/clause-2",
+    "84-2015-qh13/chapter-iii/section-3/article-45/clause-1/point-a"
+   ],
+   "as_of": "2026-11-11",
+   "as_of_source": "no date in question, corpus freeze date",
+   "issues": [
+    "Ai trả lương trong thời gian điều trị tai nạn lao động lần đầu",
+    "Loại trừ trợ cấp ốm đau trong thời gian điều trị TNLĐ lần đầu",
+    "Mức bồi thường tối thiểu của người sử dụng lao động theo tỷ lệ suy giảm",
+    "Quyền hưởng chế độ bảo hiểm TNLĐ từ quỹ khi suy giảm từ 5%"
+   ],
+   "reference_outcome": "Trong 2 tháng điều trị công ty phải trả đủ tiền lương theo khoản 3 Điều 38 Luật ATVSLĐ, còn quỹ BHXH không trả trợ cấp ốm đau vì điểm c khoản 2 Điều 42 Luật BHXH 2024 loại trừ thời gian điều trị TNLĐ lần đầu. Với 25% suy giảm và không có lỗi, công ty phải bồi thường ít nhất 1,5 + 15 x 0,4 = 7,5 tháng tiền lương; ngoài ra anh còn được hưởng chế độ TNLĐ từ Quỹ bảo hiểm TNLĐ, BNN vì suy giảm từ 5%, hai khoản này cộng dồn chứ không thay thế nhau.",
+   "annotation_status": "model_review",
+   "model_review": {
+    "date": "2026-11-15",
+    "corpus_version_id": "v48feefc6d53b",
+    "label_2026_11_12": {
+     "relevant_unit_ids": [
+      "84-2015-qh13/chapter-iii/section-2/article-38/clause-3",
+      "84-2015-qh13/chapter-iii/section-2/article-38/clause-4/point-a",
+      "41-2024-qh15/chapter-v/section-1/article-42/clause-2/point-c",
+      "84-2015-qh13/chapter-iii/section-3/article-45/clause-2",
+      "84-2015-qh13/chapter-iii/section-3/article-45/clause-1/point-a"
+     ],
+     "expected_status": "answer",
+     "confidence": "high"
+    },
+    "kept": [
+     "84-2015-qh13/chapter-iii/section-2/article-38/clause-3",
+     "84-2015-qh13/chapter-iii/section-2/article-38/clause-4/point-a",
+     "41-2024-qh15/chapter-v/section-1/article-42/clause-2/point-c",
+     "84-2015-qh13/chapter-iii/section-3/article-45/clause-2",
+     "84-2015-qh13/chapter-iii/section-2/article-38/clause-4",
+     "41-2024-qh15/chapter-v/section-1/article-42/clause-2",
+     "84-2015-qh13/chapter-iii/section-3/article-45/clause-1/point-a"
+    ],
+    "added": [],
+    "dropped": [],
+    "stale_pairs": [],
+    "ancestors_dropped": [
+     "84-2015-qh13/chapter-iii/section-2/article-38/clause-4",
+     "41-2024-qh15/chapter-v/section-1/article-42/clause-2"
+    ],
+    "outside_corpus": [],
+    "confidence": "high",
+    "note": "Rà lại 15/11: các đơn vị Luật ATVSLĐ dùng ở đây (khoản 3, điểm a khoản 4 Điều 38; Điều 45) không bị Điều 139 Luật BHXH 2024 sửa (các khoản bị sửa là khoản 7 Điều 42, khoản 1 Điều 43, điểm b khoản 2 Điều 44, khoản 3 và 5 Điều 49, khoản 3 Điều 53), nên còn hiệu lực tại 11/11/2026. Ghi chú 12/11: 25%: 1,5 + 15 x 0,4 = 7,5 tháng lương: đúng. Điểm c khoản 2 Điều 42 không tự chứa phủ định, cần câu dẫn khoản 2.",
+    "changed_from_2026_11_12": "Không đổi.",
+    "checked_at": "2026-11-11",
+    "reference_outcome_supported": true
+   }
+  },
+  {
+   "question_id": "x09",
+   "question": "Hợp đồng của một trưởng ca ghi: mức lương 12 triệu đồng, phụ cấp trách nhiệm 2 triệu đồng và phụ cấp độc hại 1 triệu đồng trả cố định hằng tháng, cộng thưởng KPI theo quý tùy kết quả. Công ty muốn đăng ký đóng BHXH và BHTN chỉ trên 12 triệu đồng. Làm vậy có đúng không?",
+   "complex_kind": "cross_law",
+   "family_id": "xf09",
+   "split": "dev",
+   "documents": [
+    "10-2020-tt-bldtbxh",
+    "41-2024-qh15",
+    "74-2025-qh15"
+   ],
+   "question_type": "synthesis",
+   "expected_status": "answer",
+   "relevant_unit_ids": [
+    "10-2020-tt-bldtbxh/chapter-ii/article-3/clause-5/point-b",
+    "10-2020-tt-bldtbxh/chapter-ii/article-3/clause-5/point-c",
+    "41-2024-qh15/chapter-iv/section-2/article-31/clause-1/point-b",
+    "74-2025-qh15/chapter-vii/section-2/article-34/clause-1/point-b",
+    "41-2024-qh15/chapter-iv/section-2/article-39/clause-1/point-c",
+    "41-2024-qh15/chapter-iv/section-2/article-39/clause-1/point-d"
+   ],
+   "as_of": "2026-11-11",
+   "as_of_source": "no date in question, corpus freeze date",
+   "issues": [
+    "Phân loại phụ cấp lương và khoản bổ sung trong hợp đồng theo TT 10",
+    "Tiền lương làm căn cứ đóng BHXH và BHTN",
+    "Thưởng KPI không cố định có tính vào căn cứ đóng không",
+    "Hậu quả của việc đăng ký thấp hơn"
+   ],
+   "reference_outcome": "Không đúng: hai khoản phụ cấp trả cố định là phụ cấp lương theo TT 10 và phải cộng vào căn cứ đóng theo Luật BHXH 2024 và Luật Việc làm 2025, nên căn cứ đóng tối thiểu là 15 triệu đồng; thưởng KPI không xác định trước mức tiền và không trả ổn định mỗi kỳ nên không thuộc căn cứ đóng. Đăng ký 12 triệu đồng là thấp hơn khoản 1 Điều 31 và bị coi là trốn đóng theo điểm c khoản 1 Điều 39 Luật BHXH 2024.",
+   "annotation_status": "model_review",
+   "model_review": {
+    "date": "2026-11-15",
+    "corpus_version_id": "v48feefc6d53b",
+    "label_2026_11_12": {
+     "relevant_unit_ids": [
+      "10-2020-tt-bldtbxh/chapter-ii/article-3/clause-5/point-b",
+      "10-2020-tt-bldtbxh/chapter-ii/article-3/clause-5/point-c",
+      "41-2024-qh15/chapter-iv/section-2/article-31/clause-1/point-b",
+      "74-2025-qh15/chapter-vii/section-2/article-34/clause-1/point-b",
+      "41-2024-qh15/chapter-iv/section-2/article-39/clause-1/point-c",
+      "41-2024-qh15/chapter-iv/section-2/article-39/clause-1/point-d"
+     ],
+     "expected_status": "answer",
+     "confidence": "high"
+    },
+    "kept": [
+     "10-2020-tt-bldtbxh/chapter-ii/article-3/clause-5/point-b",
+     "10-2020-tt-bldtbxh/chapter-ii/article-3/clause-5/point-c",
+     "41-2024-qh15/chapter-iv/section-2/article-31/clause-1/point-b",
+     "74-2025-qh15/chapter-vii/section-2/article-34/clause-1/point-b",
+     "41-2024-qh15/chapter-iv/section-2/article-39/clause-1/point-c",
+     "41-2024-qh15/chapter-iv/section-2/article-39/clause-1",
+     "41-2024-qh15/chapter-iv/section-2/article-39/clause-1/point-d"
+    ],
+    "added": [],
+    "dropped": [],
+    "stale_pairs": [],
+    "ancestors_dropped": [
+     "41-2024-qh15/chapter-iv/section-2/article-39/clause-1"
+    ],
+    "outside_corpus": [
+     "Nghị định quy định chi tiết điểm b khoản 1 Điều 31 Luật BHXH 2024 (khoản 3 Điều 31)"
+    ],
+    "confidence": "high",
+    "note": "Rà lại 15/11: mọi đơn vị còn hiệu lực tại 11/11/2026. Điểm b khoản 1 Điều 31 Luật BHXH 2024 và điểm b khoản 1 Điều 34 Luật Việc làm 2025 nhắc lại cùng một quy tắc ('phụ cấp lương và các khoản bổ sung khác được thỏa thuận trả thường xuyên, ổn định trong mỗi kỳ trả lương'), cả hai đã có. Không thêm chế tài: câu hỏi chỉ hỏi đúng hay sai; nếu người duyệt muốn nêu mức phạt thì căn cứ hiện hành là điểm a khoản 2 Điều 44 và điểm a khoản 2 Điều 46 NĐ 283/2026 (đăng ký tiền lương đóng BHXH, BHTN thấp hơn quy định). Ghi chú 12/11: Hai phụ cấp cố định là phụ cấp lương (b1); thưởng KPI không xác định trước, không ổn định nên không vào căn cứ đóng; căn cứ tối thiểu 15 triệu. Câu hỏi hỏi cả BHTN nên thêm điểm d.",
+    "changed_from_2026_11_12": "Không đổi.",
+    "checked_at": "2026-11-11",
+    "reference_outcome_supported": true
+   }
+  },
+  {
+   "question_id": "x10",
+   "question": "Công ty muốn ký hợp đồng 2 năm với một kế toán trưởng đã nghỉ hưu và đang nhận lương hưu. Công ty có phải đóng BHXH bắt buộc và bảo hiểm thất nghiệp cho ông không, và nếu không đóng thì có phải trả thêm khoản gì cho ông?",
+   "complex_kind": "lex_specialis_or_exception",
+   "family_id": "xf10",
+   "split": "dev",
+   "documents": [
+    "12-2022-nd-cp",
+    "41-2024-qh15",
+    "45-2019-qh14",
+    "74-2025-qh15"
+   ],
+   "question_type": "synthesis",
+   "expected_status": "answer",
+   "relevant_unit_ids": [
+    "45-2019-qh14/chapter-xi/section-2/article-149/clause-2",
+    "41-2024-qh15/chapter-i/article-2/clause-7/point-a",
+    "74-2025-qh15/chapter-vii/section-1/article-31/clause-2",
+    "45-2019-qh14/chapter-xii/article-168/clause-3",
+    "283-2026-nd-cp/chapter-ii/section-2/article-23/clause-4/point-a",
+    "283-2026-nd-cp/chapter-i/article-7/clause-1",
+    "283-2026-nd-cp/chapter-i/article-7/clause-2/point-b"
+   ],
+   "as_of": "2026-11-11",
+   "as_of_source": "no date in question, corpus freeze date",
+   "stale_unit_ids": [
+    "12-2022-nd-cp/chapter-ii/article-17/clause-4/point-a",
+    "12-2022-nd-cp/chapter-ii/article-17/clause-4"
+   ],
+   "issues": [
+    "Người đang hưởng lương hưu có thuộc đối tượng BHXH bắt buộc không",
+    "Người đang hưởng lương hưu có thuộc đối tượng BHTN không",
+    "Nghĩa vụ trả thêm khoản tiền tương đương mức đóng cho người không thuộc diện tham gia",
+    "Chế tài khi không trả khoản tiền đó"
+   ],
+   "reference_outcome": "Công ty không đóng BHXH bắt buộc và BHTN cho người đang hưởng lương hưu, vì Luật BHXH 2024 và Luật Việc làm 2025 đều loại trừ đối tượng này, và ông vẫn giữ nguyên lương hưu theo khoản 2 Điều 149 BLLĐ. Bù lại, theo khoản 3 Điều 168 BLLĐ công ty phải trả thêm cùng kỳ lương một khoản tương đương mức người sử dụng lao động lẽ ra phải đóng cho các loại bảo hiểm mà ông không thuộc diện tham gia; không trả thì bị phạt theo khoản 4 Điều 17 NĐ 12/2022.",
+   "annotation_status": "model_review",
+   "model_review": {
+    "date": "2026-11-15",
+    "corpus_version_id": "v48feefc6d53b",
+    "label_2026_11_12": {
+     "relevant_unit_ids": [
+      "45-2019-qh14/chapter-xi/section-2/article-149/clause-2",
+      "41-2024-qh15/chapter-i/article-2/clause-7/point-a",
+      "74-2025-qh15/chapter-vii/section-1/article-31/clause-2",
+      "45-2019-qh14/chapter-xii/article-168/clause-3"
+     ],
+     "expected_status": "answer",
+     "confidence": "medium"
+    },
+    "kept": [
+     "45-2019-qh14/chapter-xi/section-2/article-149/clause-2",
+     "41-2024-qh15/chapter-i/article-2/clause-7/point-a",
+     "74-2025-qh15/chapter-vii/section-1/article-31/clause-2",
+     "45-2019-qh14/chapter-xii/article-168/clause-3",
+     "41-2024-qh15/chapter-i/article-2/clause-7"
+    ],
+    "added": [
+     {
+      "unit_id": "283-2026-nd-cp/chapter-ii/section-2/article-23/clause-4",
+      "reason": "Thay khoản 4 Điều 17 NĐ 12/2022: câu dẫn mô tả cùng hành vi không trả khoản tiền tương đương mức đóng bảo hiểm cho người không thuộc diện tham gia",
+      "quote": "không trả hoặc trả không đủ cùng lúc với kỳ trả lương một khoản tiền cho người lao động tương đương với mức người sử dụng lao động đóng bảo hiểm xã hội bắt buộc"
+     },
+     {
+      "unit_id": "283-2026-nd-cp/chapter-ii/section-2/article-23/clause-4/point-a",
+      "reason": "Mức phạt khi vi phạm với một người lao động (01 đến 10 người), thay điểm a khoản 4 Điều 17 NĐ 12/2022 với cùng mức",
+      "quote": "Từ 3.000.000 đồng đến 5.000.000 đồng đối với vi phạm từ 01 người đến 10 người lao động"
+     },
+     {
+      "unit_id": "283-2026-nd-cp/chapter-i/article-7/clause-1",
+      "reason": "Quy tắc thay khoản 1 Điều 6 NĐ 12/2022: mức phạt trong Nghị định là mức đối với cá nhân, tổ chức bị phạt gấp đôi; điều phạt dùng trong câu này không nằm trong danh sách ngoại lệ của khoản này",
+      "quote": "Mức phạt tiền đối với tổ chức bằng 02 lần mức phạt tiền đối với cá nhân."
+     },
+     {
+      "unit_id": "283-2026-nd-cp/chapter-i/article-7/clause-2/point-b",
+      "reason": "Doanh nghiệp thuộc nhóm tổ chức bị phạt gấp 02 lần (câu dẫn khoản 2 Điều 7 NĐ 283)",
+      "quote": "Doanh nghiệp được thành lập và hoạt động theo pháp luật Việt Nam"
+     }
+    ],
+    "dropped": [],
+    "stale_pairs": [
+     {
+      "stale_unit_id": "12-2022-nd-cp/chapter-ii/article-17/clause-4/point-a",
+      "new_unit_id": "283-2026-nd-cp/chapter-ii/section-2/article-23/clause-4/point-a",
+      "old_quote": "Từ 3.000.000 đồng đến 5.000.000 đồng đối với vi phạm từ 01 người đến 10 người lao động",
+      "new_quote": "Từ 3.000.000 đồng đến 5.000.000 đồng đối với vi phạm từ 01 người đến 10 người lao động",
+      "reason": "NĐ 12/2022 hết hiệu lực từ 10/09/2026; NĐ 283 giữ nguyên mức phạt cho 01 đến 10 người (12/11 đã bỏ đơn vị này, nay có đơn vị thay thế trong corpus)"
+     },
+     {
+      "stale_unit_id": "12-2022-nd-cp/chapter-ii/article-17/clause-4",
+      "new_unit_id": "283-2026-nd-cp/chapter-ii/section-2/article-23/clause-4",
+      "old_quote": "không trả hoặc trả không đủ cùng lúc với kỳ trả lương một khoản tiền cho người lao động tương đương với mức người sử dụng lao động đóng bảo hiểm xã hội bắt buộc",
+      "new_quote": "không trả hoặc trả không đủ cùng lúc với kỳ trả lương một khoản tiền cho người lao động tương đương với mức người sử dụng lao động đóng bảo hiểm xã hội bắt buộc",
+      "reason": "NĐ 12/2022 hết hiệu lực từ 10/09/2026; câu dẫn khoản 4 Điều 23 NĐ 283 mô tả nguyên văn cùng hành vi"
+     }
+    ],
+    "ancestors_dropped": [
+     "41-2024-qh15/chapter-i/article-2/clause-7",
+     "283-2026-nd-cp/chapter-ii/section-2/article-23/clause-4"
+    ],
+    "outside_corpus": [],
+    "confidence": "high",
+    "note": "Rà lại 15/11: câu không nêu ngày nên hỏi tại 11/11/2026. Phần chế tài mà 12/11 để ngoài corpus nay có trong NĐ 283/2026 (khoản 4 Điều 23, kèm khoản 1 và điểm b khoản 2 Điều 7 về mức phạt doanh nghiệp gấp đôi). Phần nghĩa vụ không đổi. Ghi chú 12/11: Phần nghĩa vụ (không đóng BHXH, BHTN; trả thêm khoản tương đương theo khoản 3 Điều 168) được hỗ trợ. Phần chế tài dựa vào khoản 4 Điều 17 NĐ 12 không còn đúng cho hợp đồng ký từ nay (NĐ 12 hết hiệu lực 10/09/2026). Nếu đối soát coi sự việc xảy ra trước 10/09/2026 thì giữ khoản 4 Điều 17 (câu dẫn) và điểm a.",
+    "changed_from_2026_11_12": "Thêm chế tài theo NĐ 283/2026 (khoản 4 Điều 23 và điểm a; khoản 1 và điểm b khoản 2 Điều 7) thay khoản 4 Điều 17 NĐ 12/2022 đã hết hiệu lực; bỏ NĐ 283 khỏi danh sách ngoài corpus; nâng độ tin cậy lên cao.",
+    "checked_at": "2026-11-11",
+    "outcome_issue": "Kết quả tham chiếu ghi 'không trả thì bị phạt theo khoản 4 Điều 17 NĐ 12/2022'. Tại 11/11/2026 NĐ 12/2022 đã hết hiệu lực; căn cứ hiện hành là khoản 4 Điều 23 NĐ 283/2026, cùng hành vi ('không trả hoặc trả không đủ cùng lúc với kỳ trả lương một khoản tiền cho người lao động tương đương với mức người sử dụng lao động đóng bảo hiểm xã hội bắt buộc') và cùng mức 'Từ 3.000.000 đồng đến 5.000.000 đồng đối với vi phạm từ 01 người đến 10 người lao động'; doanh nghiệp bị phạt gấp 02 lần theo khoản 1 Điều 7 NĐ 283. Cần sửa số hiệu điều trong đáp án.",
+    "reference_outcome_supported": false
+   }
+  },
+  {
+   "question_id": "x11",
+   "question": "Một nhân viên bị xe máy khác tông khi đang trên đường từ nhà đến công ty, đúng tuyến đường và thời gian hợp lý. Anh nằm viện 3 tuần, sau đó được giám định suy giảm 12% khả năng lao động. Thời gian nằm viện anh được hưởng chế độ gì, sau đó có được hưởng chế độ tai nạn lao động không, và công ty có trách nhiệm gì?",
+   "complex_kind": "lex_specialis_or_exception",
+   "family_id": "xf11",
+   "split": "dev",
+   "documents": [
+    "41-2024-qh15",
+    "84-2015-qh13"
+   ],
+   "question_type": "synthesis",
+   "expected_status": "answer",
+   "relevant_unit_ids": [
+    "41-2024-qh15/chapter-v/section-1/article-42/clause-1/point-c",
+    "41-2024-qh15/chapter-v/section-1/article-42/clause-2/point-c",
+    "84-2015-qh13/chapter-iii/section-3/article-45/clause-1/point-c",
+    "84-2015-qh13/chapter-iii/section-3/article-45/clause-2",
+    "84-2015-qh13/chapter-iii/section-2/article-39/clause-2",
+    "84-2015-qh13/chapter-iii/section-2/article-38/clause-5",
+    "84-2015-qh13/chapter-iii/section-2/article-38/clause-4/point-a"
+   ],
+   "as_of": "2026-11-11",
+   "as_of_source": "no date in question, corpus freeze date",
+   "issues": [
+    "Chế độ trong thời gian điều trị tai nạn trên đường đi làm: ốm đau hay TNLĐ",
+    "Quan hệ giữa quy định riêng tại điểm c khoản 1 và loại trừ tại điểm c khoản 2 Điều 42 Luật BHXH 2024",
+    "Điều kiện hưởng chế độ TNLĐ từ quỹ khi suy giảm 12%",
+    "Trợ cấp của người sử dụng lao động khi tai nạn do người khác gây ra"
+   ],
+   "reference_outcome": "Thời gian nằm viện anh hưởng chế độ ốm đau, vì điểm c khoản 1 Điều 42 Luật BHXH 2024 quy định riêng cho tai nạn trên đường đi làm, không rơi vào loại trừ dành cho thời gian điều trị TNLĐ lần đầu. Sau khi giám định 12% (từ 5% trở lên) anh đủ điều kiện hưởng chế độ TNLĐ từ quỹ theo điểm c khoản 1 và khoản 2 Điều 45 Luật ATVSLĐ; do người khác gây ra nên công ty chỉ phải trợ cấp theo khoản 5 Điều 38 (ít nhất 40% mức bồi thường tương ứng), không phải bồi thường như tai nạn tại nơi làm việc.",
+   "annotation_status": "model_review",
+   "model_review": {
+    "date": "2026-11-15",
+    "corpus_version_id": "v48feefc6d53b",
+    "label_2026_11_12": {
+     "relevant_unit_ids": [
+      "41-2024-qh15/chapter-v/section-1/article-42/clause-1/point-c",
+      "41-2024-qh15/chapter-v/section-1/article-42/clause-2/point-c",
+      "84-2015-qh13/chapter-iii/section-3/article-45/clause-1/point-c",
+      "84-2015-qh13/chapter-iii/section-3/article-45/clause-2",
+      "84-2015-qh13/chapter-iii/section-2/article-39/clause-2",
+      "84-2015-qh13/chapter-iii/section-2/article-38/clause-5",
+      "84-2015-qh13/chapter-iii/section-2/article-38/clause-4/point-a"
+     ],
+     "expected_status": "answer",
+     "confidence": "high"
+    },
+    "kept": [
+     "41-2024-qh15/chapter-v/section-1/article-42/clause-1/point-c",
+     "41-2024-qh15/chapter-v/section-1/article-42/clause-2/point-c",
+     "84-2015-qh13/chapter-iii/section-3/article-45/clause-1/point-c",
+     "84-2015-qh13/chapter-iii/section-3/article-45/clause-2",
+     "84-2015-qh13/chapter-iii/section-2/article-39/clause-2",
+     "41-2024-qh15/chapter-v/section-1/article-42/clause-1",
+     "41-2024-qh15/chapter-v/section-1/article-42/clause-2",
+     "84-2015-qh13/chapter-iii/section-2/article-38/clause-5",
+     "84-2015-qh13/chapter-iii/section-2/article-38/clause-4/point-a"
+    ],
+    "added": [],
+    "dropped": [],
+    "stale_pairs": [],
+    "ancestors_dropped": [
+     "41-2024-qh15/chapter-v/section-1/article-42/clause-1",
+     "41-2024-qh15/chapter-v/section-1/article-42/clause-2"
+    ],
+    "outside_corpus": [],
+    "confidence": "high",
+    "note": "Rà lại 15/11: các đơn vị Luật ATVSLĐ dùng ở đây (Điều 38, 39, 45) không bị Điều 139 Luật BHXH 2024 sửa, còn hiệu lực tại 11/11/2026. Ghi chú 12/11: Điểm c khoản 1 Điều 42 quy định riêng cho tai nạn trên đường đi làm nên hưởng ốm đau; sau đó 12% đủ điều kiện TNLĐ. Khoản 2 Điều 39 dẫn chiếu khoản 5 Điều 38 nên cần khoản 5 (và điểm a khoản 4 để tính: 40% x 2,3 tháng = 0,92 tháng lương).",
+    "changed_from_2026_11_12": "Không đổi.",
+    "checked_at": "2026-11-11",
+    "reference_outcome_supported": true
+   }
+  },
+  {
+   "question_id": "x12",
+   "question": "Một công nhân nam sinh tháng 6/1970 đã làm 17 năm công việc đặc biệt nặng nhọc, độc hại thuộc danh mục của Bộ, tổng thời gian đóng BHXH bắt buộc 25 năm, muốn nghỉ hưu sớm. Anh có được nghỉ hưu trước tuổi chung không, sớm nhất khi nào, và có được hưởng lương hưu không?",
+   "complex_kind": "lex_specialis_or_exception",
+   "family_id": "xf12",
+   "split": "dev",
+   "documents": [
+    "135-2020-nd-cp",
+    "41-2024-qh15",
+    "45-2019-qh14"
+   ],
+   "question_type": "synthesis",
+   "expected_status": "answer",
+   "relevant_unit_ids": [
+    "45-2019-qh14/chapter-xii/article-169/clause-3",
+    "135-2020-nd-cp/article-5/clause-1/point-a",
+    "135-2020-nd-cp/article-5/clause-2",
+    "135-2020-nd-cp/article-3/clause-1",
+    "41-2024-qh15/chapter-v/section-3/article-64/clause-1/point-b"
+   ],
+   "as_of": "2026-11-11",
+   "as_of_source": "no date in question, corpus freeze date",
+   "issues": [
+    "Ngoại lệ nghỉ hưu ở tuổi thấp hơn cho nghề đặc biệt nặng nhọc, độc hại",
+    "Tuổi nghỉ hưu thấp nhất theo bảng lộ trình",
+    "Điều kiện 15 năm làm nghề nặng nhọc, độc hại để hưởng lương hưu",
+    "Thời điểm nghỉ hưu"
+   ],
+   "reference_outcome": "Anh được nghỉ hưu sớm theo ngoại lệ khoản 3 Điều 169 BLLĐ, do NĐ 135 cụ thể hóa: năm 2025 anh chưa đủ 56 tuổi 3 tháng, còn tuổi thấp nhất năm 2026 là 56 tuổi 6 tháng, anh đủ vào tháng 12/2026 nên thời điểm nghỉ hưu sớm nhất là kết thúc ngày 31/12/2026. Anh hưởng lương hưu theo điểm b khoản 1 Điều 64 Luật BHXH 2024 vì có từ đủ 15 năm đóng BHXH khi làm nghề nặng nhọc, độc hại; quy định riêng này thay cho tuổi nghỉ hưu chung tại khoản 2 Điều 169.",
+   "annotation_status": "model_review",
+   "model_review": {
+    "date": "2026-11-15",
+    "corpus_version_id": "v48feefc6d53b",
+    "label_2026_11_12": {
+     "relevant_unit_ids": [
+      "45-2019-qh14/chapter-xii/article-169/clause-3",
+      "135-2020-nd-cp/article-5/clause-1/point-a",
+      "135-2020-nd-cp/article-5/clause-2",
+      "135-2020-nd-cp/article-3/clause-1",
+      "41-2024-qh15/chapter-v/section-3/article-64/clause-1/point-b"
+     ],
+     "expected_status": "answer",
+     "confidence": "high"
+    },
+    "kept": [
+     "45-2019-qh14/chapter-xii/article-169/clause-3",
+     "135-2020-nd-cp/article-5/clause-1/point-a",
+     "135-2020-nd-cp/article-5/clause-2",
+     "135-2020-nd-cp/article-3/clause-1",
+     "41-2024-qh15/chapter-v/section-3/article-64/clause-1/point-b",
+     "135-2020-nd-cp/article-5/clause-1",
+     "41-2024-qh15/chapter-v/section-3/article-64/clause-1"
+    ],
+    "added": [],
+    "dropped": [],
+    "stale_pairs": [],
+    "ancestors_dropped": [
+     "135-2020-nd-cp/article-5/clause-1",
+     "41-2024-qh15/chapter-v/section-3/article-64/clause-1"
+    ],
+    "outside_corpus": [
+     "Phụ lục II NĐ 135/2020 (bảng đối chiếu tháng, năm sinh)"
+    ],
+    "confidence": "high",
+    "note": "Rà lại 15/11: mọi đơn vị còn hiệu lực tại 11/11/2026. Câu dẫn khoản 1 Điều 5 NĐ 135 nhắc lại khoản 3 Điều 169 BLLĐ ('có thể nghỉ hưu ở tuổi thấp hơn nhưng không quá 05 tuổi'), cả hai đã có. Ghi chú 12/11: Sinh 6/1970: năm 2025 chưa đủ 56 tuổi 3 tháng; năm 2026 đủ 56 tuổi 6 tháng vào tháng 12/2026, nghỉ hưu hết 31/12/2026. Văn bản hỗ trợ.",
+    "changed_from_2026_11_12": "Không đổi.",
+    "checked_at": "2026-11-11",
+    "reference_outcome_supported": true
+   }
+  },
+  {
+   "question_id": "x13",
+   "question": "Công ty tự ý điều chuyển một nhân viên kế toán từ trụ sở Hà Nội vào chi nhánh Đà Nẵng làm việc lâu dài, trong khi hợp đồng ghi địa điểm làm việc là Hà Nội; chị nghỉ việc ngay mà không báo trước. Chị có được trợ cấp thôi việc và trợ cấp thất nghiệp không? Nếu chị nghỉ ngang không báo trước chỉ vì đã tìm được việc mới thì kết quả khác thế nào?",
+   "complex_kind": "lex_specialis_or_exception",
+   "family_id": "xf13",
+   "split": "dev",
+   "documents": [
+    "45-2019-qh14",
+    "74-2025-qh15"
+   ],
+   "question_type": "synthesis",
+   "expected_status": "answer",
+   "relevant_unit_ids": [
+    "45-2019-qh14/chapter-iii/section-3/article-35/clause-2/point-a",
+    "45-2019-qh14/chapter-iii/section-3/article-46/clause-1",
+    "45-2019-qh14/chapter-iii/section-3/article-40/clause-1",
+    "74-2025-qh15/chapter-vii/section-4/article-38/clause-1/point-a",
+    "45-2019-qh14/chapter-iii/section-3/article-35/clause-1",
+    "45-2019-qh14/chapter-iii/section-3/article-34/clause-9",
+    "45-2019-qh14/chapter-iii/section-3/article-39",
+    "45-2019-qh14/chapter-iii/section-3/article-46/clause-2",
+    "145-2020-nd-cp/chapter-iii/section-2/article-8/clause-1",
+    "145-2020-nd-cp/chapter-iii/section-2/article-8/clause-3"
+   ],
+   "as_of": "2026-11-11",
+   "as_of_source": "no date in question, corpus freeze date",
+   "issues": [
+    "Quyền nghỉ không cần báo trước khi bị bố trí sai địa điểm làm việc",
+    "Trợ cấp thôi việc khi người lao động đơn phương chấm dứt đúng luật",
+    "Luật Việc làm 2025 dựa vào BLLĐ để xác định tính hợp pháp của việc nghỉ",
+    "Hậu quả khi nghỉ ngang không có căn cứ"
+   ],
+   "reference_outcome": "Điều chuyển lâu dài sai địa điểm đã thỏa thuận (không phải tạm chuyển theo Điều 29) cho phép chị nghỉ ngay không cần báo trước, nên việc chấm dứt là hợp pháp: chị được trợ cấp thôi việc cho phần thời gian chưa tham gia BHTN và không bị loại khỏi trợ cấp thất nghiệp theo điểm a khoản 1 Điều 38 Luật Việc làm 2025. Nếu chị nghỉ ngang chỉ vì có việc mới mà không báo trước theo khoản 1 Điều 35 thì đó là đơn phương chấm dứt trái pháp luật: mất trợ cấp thôi việc (khoản 1 Điều 40 BLLĐ) và không được hưởng trợ cấp thất nghiệp.",
+   "annotation_status": "model_review",
+   "model_review": {
+    "date": "2026-11-15",
+    "corpus_version_id": "v48feefc6d53b",
+    "label_2026_11_12": {
+     "relevant_unit_ids": [
+      "45-2019-qh14/chapter-iii/section-3/article-35/clause-2/point-a",
+      "45-2019-qh14/chapter-iii/section-3/article-46/clause-1",
+      "45-2019-qh14/chapter-iii/section-3/article-40/clause-1",
+      "74-2025-qh15/chapter-vii/section-4/article-38/clause-1/point-a",
+      "45-2019-qh14/chapter-iii/section-3/article-35/clause-1",
+      "45-2019-qh14/chapter-iii/section-3/article-34/clause-9",
+      "45-2019-qh14/chapter-iii/section-3/article-39",
+      "45-2019-qh14/chapter-iii/section-3/article-46/clause-2"
+     ],
+     "expected_status": "answer",
+     "confidence": "high"
+    },
+    "kept": [
+     "45-2019-qh14/chapter-iii/section-3/article-35/clause-2/point-a",
+     "45-2019-qh14/chapter-iii/section-3/article-46/clause-1",
+     "45-2019-qh14/chapter-iii/section-3/article-40/clause-1",
+     "74-2025-qh15/chapter-vii/section-4/article-38/clause-1/point-a",
+     "45-2019-qh14/chapter-iii/section-3/article-35/clause-2",
+     "45-2019-qh14/chapter-iii/section-3/article-35/clause-1",
+     "45-2019-qh14/chapter-iii/section-3/article-34/clause-9",
+     "45-2019-qh14/chapter-iii/section-3/article-39",
+     "45-2019-qh14/chapter-iii/section-3/article-46/clause-2",
+     "74-2025-qh15/chapter-vii/section-4/article-38/clause-1"
+    ],
+    "added": [
+     {
+      "unit_id": "145-2020-nd-cp/chapter-iii/section-2/article-8/clause-1",
+      "reason": "Nhắc lại câu dẫn khoản 1 Điều 46 BLLĐ (cùng 'từ đủ 12 tháng trở lên' và cùng các khoản 1, 2, 3, 4, 6, 7, 9 và 10 Điều 34, trong đó có khoản 9 là người lao động đơn phương chấm dứt đúng luật)",
+      "quote": "từ đủ 12 tháng trở lên khi hợp đồng lao động chấm dứt theo quy định tại các khoản 1, 2, 3, 4, 6, 7, 9 và 10 Điều 34 của Bộ luật Lao động"
+     },
+     {
+      "unit_id": "145-2020-nd-cp/chapter-iii/section-2/article-8/clause-3",
+      "reason": "Nhắc lại khoản 2 Điều 46 BLLĐ về thời gian tính trợ cấp thôi việc trừ thời gian đã tham gia bảo hiểm thất nghiệp (cùng cụm từ)",
+      "quote": "tổng thời gian người lao động đã làm việc thực tế cho người sử dụng lao động trừ đi thời gian người lao động đã tham gia bảo hiểm thất nghiệp"
+     }
+    ],
+    "dropped": [],
+    "stale_pairs": [],
+    "ancestors_dropped": [
+     "45-2019-qh14/chapter-iii/section-3/article-35/clause-2",
+     "74-2025-qh15/chapter-vii/section-4/article-38/clause-1"
+    ],
+    "outside_corpus": [],
+    "confidence": "high",
+    "note": "Rà lại 15/11: mọi đơn vị còn hiệu lực tại 11/11/2026. Thêm hai đơn vị NĐ 145 nhắc lại khoản 1 và khoản 2 Điều 46 BLLĐ. Ghi chú 12/11: Điều chuyển lâu dài sai địa điểm thuộc điểm a khoản 2 Điều 35; nghỉ ngang vì có việc mới vi phạm khoản 1 Điều 35 nên trái pháp luật (Điều 39), mất trợ cấp thôi việc và trợ cấp thất nghiệp. Câu hỏi không cho thời gian làm việc nên điều kiện từ đủ 12 tháng của khoản 1 Điều 46 chưa kiểm được.",
+    "changed_from_2026_11_12": "Thêm khoản 1 và câu dẫn khoản 3 Điều 8 NĐ 145/2020 vì nhắc lại khoản 1 và khoản 2 Điều 46 BLLĐ.",
+    "checked_at": "2026-11-11",
+    "reference_outcome_supported": true
+   }
+  },
+  {
+   "question_id": "x14",
+   "question": "Một nhân viên đã đóng BHXH bắt buộc 3 năm, mang thai được hơn 1 tháng thì bác sĩ chỉ định nghỉ dưỡng thai và chị xin tạm hoãn hợp đồng lao động đến khi sinh. Tính ra trong 12 tháng trước khi sinh chị chỉ đóng BHXH được 4 tháng. Chị có được hưởng chế độ thai sản khi sinh con không?",
+   "complex_kind": "lex_specialis_or_exception",
+   "family_id": "xf14",
+   "split": "dev",
+   "documents": [
+    "41-2024-qh15",
+    "45-2019-qh14"
+   ],
+   "question_type": "synthesis",
+   "expected_status": "answer",
+   "relevant_unit_ids": [
+    "45-2019-qh14/chapter-x/article-138/clause-1",
+    "45-2019-qh14/chapter-x/article-138/clause-2",
+    "41-2024-qh15/chapter-v/section-2/article-50/clause-2",
+    "41-2024-qh15/chapter-v/section-2/article-50/clause-3"
+   ],
+   "as_of": "2026-11-11",
+   "as_of_source": "no date in question, corpus freeze date",
+   "issues": [
+    "Quyền tạm hoãn hợp đồng của lao động nữ mang thai theo chỉ định y tế",
+    "Điều kiện chung 06 tháng đóng trong 12 tháng",
+    "Điều kiện riêng 03 tháng cho người nghỉ dưỡng thai đã đóng từ đủ 12 tháng",
+    "Áp dụng ngoại lệ vào tình huống"
+   ],
+   "reference_outcome": "Chị không đạt điều kiện chung của khoản 2 Điều 50 (4 tháng, dưới mức 06 tháng), nhưng thuộc quy định riêng tại khoản 3 Điều 50 vì đã đóng từ đủ 12 tháng và phải nghỉ dưỡng thai theo chỉ định, nên chỉ cần 03 tháng đóng trong 12 tháng trước khi sinh. Với 4 tháng chị đủ điều kiện hưởng chế độ thai sản khi sinh con; việc tạm hoãn hợp đồng là quyền hợp pháp theo Điều 138 BLLĐ, và chính khoảng nghỉ đó là lý do Luật BHXH 2024 hạ ngưỡng.",
+   "annotation_status": "model_review",
+   "model_review": {
+    "date": "2026-11-15",
+    "corpus_version_id": "v48feefc6d53b",
+    "label_2026_11_12": {
+     "relevant_unit_ids": [
+      "45-2019-qh14/chapter-x/article-138/clause-1",
+      "45-2019-qh14/chapter-x/article-138/clause-2",
+      "41-2024-qh15/chapter-v/section-2/article-50/clause-2",
+      "41-2024-qh15/chapter-v/section-2/article-50/clause-3"
+     ],
+     "expected_status": "answer",
+     "confidence": "high"
+    },
+    "kept": [
+     "45-2019-qh14/chapter-x/article-138/clause-1",
+     "45-2019-qh14/chapter-x/article-138/clause-2",
+     "41-2024-qh15/chapter-v/section-2/article-50/clause-2",
+     "41-2024-qh15/chapter-v/section-2/article-50/clause-3"
+    ],
+    "added": [],
+    "dropped": [],
+    "stale_pairs": [],
+    "ancestors_dropped": [],
+    "outside_corpus": [],
+    "confidence": "high",
+    "note": "Rà lại 15/11: mọi đơn vị còn hiệu lực tại 11/11/2026. Điều 138 BLLĐ (quyền tạm hoãn) và khoản 3 Điều 50 Luật BHXH 2024 (ngưỡng 03 tháng) là hai quy định khác nhau, không phải nhắc lại; cả hai là đơn vị trả lời. Ghi chú 12/11: Bản nháp đủ: không đạt khoản 2 Điều 50 (4 < 6 tháng) nhưng đạt khoản 3 Điều 50 (đã đóng từ đủ 12 tháng, nghỉ dưỡng thai theo chỉ định, chỉ cần 03 tháng).",
+    "changed_from_2026_11_12": "Không đổi.",
+    "checked_at": "2026-11-11",
+    "reference_outcome_supported": true
+   }
+  },
+  {
+   "question_id": "x15",
+   "question": "Công ty TNHH của chúng tôi chậm đóng BHXH bắt buộc và bảo hiểm thất nghiệp cho nhân viên từ tháng 3/2025 đến nay, chưa bị cơ quan nào đôn đốc. Tháng 2/2026 thanh tra lập biên bản. Ngoài việc đóng bù, công ty bị phạt tiền khoảng bao nhiêu, và tiền lãi chậm đóng tính theo NĐ 12/2022 (gấp 2 lần lãi suất đầu tư quỹ) hay theo Luật BHXH 2024?",
+   "complex_kind": "amended_or_superseded",
+   "family_id": "xf15",
+   "split": "dev",
+   "documents": [
+    "12-2022-nd-cp",
+    "41-2024-qh15"
+   ],
+   "question_type": "synthesis",
+   "expected_status": "answer",
+   "relevant_unit_ids": [
+    "12-2022-nd-cp/chapter-iii/article-39/clause-5/point-a",
+    "12-2022-nd-cp/chapter-i/article-6/clause-1",
+    "12-2022-nd-cp/chapter-iii/article-39/clause-10/point-b",
+    "41-2024-qh15/chapter-iv/section-2/article-40/clause-1",
+    "41-2024-qh15/chapter-xi/article-141/clause-12",
+    "12-2022-nd-cp/chapter-iii/article-39/clause-10/point-a",
+    "41-2024-qh15/chapter-iv/section-2/article-38/clause-1",
+    "41-2024-qh15/chapter-iv/section-2/article-39/clause-1/point-đ",
+    "74-2025-qh15/chapter-vii/section-2/article-33/clause-5"
+   ],
+   "as_of": "2026-02-01",
+   "as_of_source": "câu hỏi nêu 'Tháng 2/2026 thanh tra lập biên bản'; dùng ngày đầu tháng, mọi ngày trong tháng 2/2026 cho cùng trạng thái hiệu lực",
+   "issues": [
+    "Mức phạt tiền đối với hành vi chậm đóng BHXH, BHTN",
+    "Mức phạt đối với tổ chức gấp 2 lần cá nhân",
+    "Xung đột giữa cách tính lãi của NĐ 12/2022 và khoản 1 Điều 40 Luật BHXH 2024",
+    "Xử lý phần nợ phát sinh trước 01/7/2025"
+   ],
+   "reference_outcome": "Công ty bị phạt từ 24% đến 30% tổng số tiền phải đóng, tối đa 150 triệu đồng (gấp 2 lần mức cá nhân tại điểm a khoản 5 Điều 39 NĐ 12), và buộc đóng đủ. Về tiền chậm đóng, khoản 1 Điều 40 Luật BHXH 2024 (hiệu lực từ 01/7/2025) quy định 0,03%/ngày, khác cách tính 02 lần lãi suất đầu tư quỹ của NĐ 12; luật có hiệu lực pháp lý cao hơn và ban hành sau nên áp dụng 0,03%/ngày, kể cả cho phần nợ từ tháng 3 đến tháng 6/2025 theo khoản 12 Điều 141.",
+   "annotation_status": "model_review",
+   "model_review": {
+    "date": "2026-11-15",
+    "corpus_version_id": "v48feefc6d53b",
+    "label_2026_11_12": {
+     "relevant_unit_ids": [
+      "12-2022-nd-cp/chapter-iii/article-39/clause-5/point-a",
+      "12-2022-nd-cp/chapter-i/article-6/clause-1",
+      "12-2022-nd-cp/chapter-iii/article-39/clause-10/point-b",
+      "41-2024-qh15/chapter-iv/section-2/article-40/clause-1",
+      "41-2024-qh15/chapter-xi/article-141/clause-12",
+      "12-2022-nd-cp/chapter-iii/article-39/clause-10/point-a",
+      "41-2024-qh15/chapter-iv/section-2/article-38/clause-1",
+      "41-2024-qh15/chapter-iv/section-2/article-39/clause-1/point-đ"
+     ],
+     "expected_status": "answer",
+     "confidence": "medium"
+    },
+    "kept": [
+     "12-2022-nd-cp/chapter-iii/article-39/clause-5/point-a",
+     "12-2022-nd-cp/chapter-i/article-6/clause-1",
+     "12-2022-nd-cp/chapter-iii/article-39/clause-10/point-b",
+     "41-2024-qh15/chapter-iv/section-2/article-40/clause-1",
+     "41-2024-qh15/chapter-xi/article-141/clause-12",
+     "12-2022-nd-cp/chapter-iii/article-39/clause-5",
+     "12-2022-nd-cp/chapter-iii/article-39/clause-10/point-a",
+     "41-2024-qh15/chapter-iv/section-2/article-38",
+     "41-2024-qh15/chapter-iv/section-2/article-38/clause-1",
+     "41-2024-qh15/chapter-iv/section-2/article-39/clause-1/point-đ"
+    ],
+    "added": [
+     {
+      "unit_id": "74-2025-qh15/chapter-vii/section-2/article-33/clause-5",
+      "reason": "Câu hỏi hỏi cả bảo hiểm thất nghiệp: Luật Việc làm 2025 (hiệu lực từ 01/01/2026) giao việc xử lý chậm đóng bảo hiểm thất nghiệp cho Luật BHXH, nên mức 0,03%/ngày của khoản 1 Điều 40 Luật BHXH 2024 áp dụng cho cả phần bảo hiểm thất nghiệp",
+      "quote": "Việc xử lý hành vi chậm đóng, trốn đóng bảo hiểm thất nghiệp được thực hiện theo quy định của Luật Bảo hiểm xã hội."
+     }
+    ],
+    "dropped": [],
+    "stale_pairs": [],
+    "ancestors_dropped": [
+     "12-2022-nd-cp/chapter-iii/article-39/clause-5",
+     "41-2024-qh15/chapter-iv/section-2/article-38"
+    ],
+    "outside_corpus": [
+     "Luật Ban hành văn bản quy phạm pháp luật (nguyên tắc áp dụng văn bản có hiệu lực cao hơn)",
+     "Nghị định quy định chi tiết khoản 1 Điều 40 Luật BHXH 2024"
+    ],
+    "confidence": "medium",
+    "note": "Rà lại 15/11: sự việc ở tháng 2/2026, khi NĐ 12/2022 còn hiệu lực (hết hiệu lực 10/09/2026), nên các đơn vị NĐ 12 vẫn là đơn vị trả lời và không lỗi thời tại ngày này; NĐ 283/2026 chưa có hiệu lực nên không đưa vào. Để người duyệt biết: NĐ 283 (điểm b khoản 4 Điều 43) nay tự quy định 'nộp số tiền bằng 0,03%/ngày', tức xung đột với cách tính lãi của NĐ 12 không còn từ 10/09/2026; khoản 2 Điều 67 NĐ 283 cho áp dụng NĐ 283 nếu hành vi chậm đóng còn kéo dài sau 10/09/2026, khoản 1 Điều 67 giữ nghị định có hiệu lực lúc vi phạm cho hành vi đã kết thúc trước ngày đó. Thêm khoản 5 Điều 33 Luật Việc làm 2025. Ghi chú 12/11: Mức phạt 24%-30%, tối đa 150 triệu là đúng (gấp đôi khoản 5 Điều 39 NĐ 12; biên bản 2/2026 khi NĐ 12 còn hiệu lực). Chi tiết \"chưa bị đôn đốc\" quyết định đây là chậm đóng, không phải trốn đóng (điểm đ khoản 1 Điều 39 Luật BHXH 2024). Nguyên tắc luật cao hơn thắng nghị định nằm ngoài corpus.",
+    "changed_from_2026_11_12": "Thêm khoản 5 Điều 33 Luật Việc làm 2025 (chậm đóng bảo hiểm thất nghiệp xử lý theo Luật BHXH); ghi ngày áp dụng 02/2026, nên các đơn vị NĐ 12/2022 vẫn giữ.",
+    "checked_at": "2026-02-01",
+    "reference_outcome_supported": true
+   }
+  },
+  {
+   "question_id": "x16",
+   "question": "Một nữ nhân viên đủ tuổi nghỉ hưu theo lộ trình trong năm 2026 nhưng chỉ có 17 năm đóng BHXH bắt buộc. Phòng nhân sự đọc khoản 1 Điều 7 NĐ 135/2020 thấy dẫn chiếu Điều 54, Điều 55 Luật BHXH về điều kiện hưởng lương hưu và lo chị chưa đủ điều kiện. Hiện nay chị có được hưởng lương hưu không, tỷ lệ bao nhiêu?",
+   "complex_kind": "amended_or_superseded",
+   "family_id": "xf16",
+   "split": "dev",
+   "documents": [
+    "135-2020-nd-cp",
+    "41-2024-qh15",
+    "45-2019-qh14"
+   ],
+   "question_type": "synthesis",
+   "expected_status": "answer",
+   "relevant_unit_ids": [
+    "45-2019-qh14/chapter-xii/article-169/clause-1",
+    "135-2020-nd-cp/article-7/clause-1",
+    "41-2024-qh15/chapter-xi/article-140/clause-2",
+    "41-2024-qh15/chapter-v/section-3/article-64/clause-1/point-a",
+    "41-2024-qh15/chapter-v/section-3/article-66/clause-1/point-a",
+    "41-2024-qh15/chapter-xi/article-140/clause-1"
+   ],
+   "as_of": "2026-11-11",
+   "as_of_source": "câu hỏi hỏi 'Hiện nay', không nêu ngày; dùng ngày khóa corpus",
+   "issues": [
+    "BLLĐ dẫn chiếu điều kiện thời gian đóng sang pháp luật BHXH",
+    "NĐ 135 dẫn chiếu các điều của Luật BHXH 2014 đã hết hiệu lực",
+    "Điều kiện từ đủ 15 năm đóng theo Luật BHXH 2024",
+    "Tỷ lệ lương hưu của lao động nữ có 17 năm đóng"
+   ],
+   "reference_outcome": "Chị được hưởng lương hưu: Điều 54, Điều 55 Luật BHXH 2014 mà NĐ 135 dẫn chiếu đã hết hiệu lực từ 01/7/2025 theo khoản 2 Điều 140 Luật BHXH 2024, nên điều kiện thời gian đóng mà khoản 1 Điều 169 BLLĐ dẫn chiếu nay là 'từ đủ 15 năm' tại điểm a khoản 1 Điều 64. Tỷ lệ hưởng là 45% + 2 x 2% = 49% mức bình quân tiền lương đóng BHXH; phần lộ trình tuổi của NĐ 135 vẫn dùng được vì nó chi tiết Điều 169 BLLĐ chứ không phải Luật BHXH cũ.",
+   "annotation_status": "model_review",
+   "model_review": {
+    "date": "2026-11-15",
+    "corpus_version_id": "v48feefc6d53b",
+    "label_2026_11_12": {
+     "relevant_unit_ids": [
+      "45-2019-qh14/chapter-xii/article-169/clause-1",
+      "135-2020-nd-cp/article-7/clause-1",
+      "41-2024-qh15/chapter-xi/article-140/clause-2",
+      "41-2024-qh15/chapter-v/section-3/article-64/clause-1/point-a",
+      "41-2024-qh15/chapter-v/section-3/article-66/clause-1/point-a",
+      "41-2024-qh15/chapter-xi/article-140/clause-1"
+     ],
+     "expected_status": "answer",
+     "confidence": "high"
+    },
+    "kept": [
+     "45-2019-qh14/chapter-xii/article-169/clause-1",
+     "135-2020-nd-cp/article-7/clause-1",
+     "41-2024-qh15/chapter-xi/article-140/clause-2",
+     "41-2024-qh15/chapter-v/section-3/article-64/clause-1/point-a",
+     "41-2024-qh15/chapter-v/section-3/article-66/clause-1/point-a",
+     "41-2024-qh15/chapter-xi/article-140/clause-1",
+     "41-2024-qh15/chapter-v/section-3/article-64/clause-1"
+    ],
+    "added": [],
+    "dropped": [],
+    "stale_pairs": [],
+    "ancestors_dropped": [
+     "41-2024-qh15/chapter-v/section-3/article-64/clause-1"
+    ],
+    "outside_corpus": [],
+    "confidence": "high",
+    "note": "Rà lại 15/11: mọi đơn vị còn hiệu lực tại 11/11/2026; corpus v3 không có văn bản sửa khoản 1 Điều 7 NĐ 135. Ghi chú 12/11: 17 năm, nữ: 45% + 2 x 2% = 49%. Điều kiện 15 năm nằm ở câu dẫn khoản 1 Điều 64, bản nháp bỏ sót. Khoản 1 Điều 7 NĐ 135 thực chất nói về điều kiện tuổi, không về số năm đóng.",
+    "changed_from_2026_11_12": "Không đổi.",
+    "checked_at": "2026-11-11",
+    "reference_outcome_supported": true
+   }
+  },
+  {
+   "question_id": "x17",
+   "question": "Công ty có hai trường hợp chưa được giới thiệu đi giám định suy giảm khả năng lao động: một công nhân bị tai nạn lao động đã điều trị ổn định nhưng còn di chứng, và một nhân viên bị bệnh thông thường muốn giám định để nghỉ hưu do suy giảm khả năng lao động. Nếu thanh tra kiểm tra năm 2026, công ty có thể bị phạt theo căn cứ nào và căn cứ nào còn vướng?",
+   "complex_kind": "amended_or_superseded",
+   "family_id": "xf17",
+   "split": "dev",
+   "documents": [
+    "12-2022-nd-cp",
+    "41-2024-qh15",
+    "84-2015-qh13"
+   ],
+   "question_type": "synthesis",
+   "expected_status": "answer",
+   "relevant_unit_ids": [
+    "84-2015-qh13/chapter-iii/section-3/article-47/clause-1/point-a",
+    "41-2024-qh15/chapter-ii/section-1/article-13/clause-5",
+    "84-2015-qh13/chapter-iii/section-2/article-38/clause-6",
+    "283-2026-nd-cp/chapter-ii/section-3/article-34/clause-1/point-d",
+    "283-2026-nd-cp/chapter-iii/article-48/clause-3/point-đ",
+    "41-2024-qh15/chapter-v/section-3/article-65/clause-1",
+    "283-2026-nd-cp/chapter-i/article-7/clause-1",
+    "283-2026-nd-cp/chapter-i/article-7/clause-2/point-b",
+    "283-2026-nd-cp/chapter-vi/article-67/clause-2"
+   ],
+   "as_of": "2026-11-11",
+   "as_of_source": "câu hỏi chỉ nêu 'thanh tra kiểm tra năm 2026', không nêu ngày; dùng ngày khóa corpus (nằm trong năm 2026, sau khi bộ câu hỏi được soạn ngày 10/11/2026); hai trường hợp đang chờ giới thiệu nên hành vi còn tiếp diễn",
+   "stale_unit_ids": [
+    "12-2022-nd-cp/chapter-ii/article-23/clause-1/point-d",
+    "12-2022-nd-cp/chapter-ii/article-23/clause-1",
+    "12-2022-nd-cp/chapter-iii/article-41/clause-4/point-c",
+    "12-2022-nd-cp/chapter-iii/article-41/clause-4",
+    "12-2022-nd-cp/chapter-i/article-6/clause-1"
+   ],
+   "issues": [
+    "Nghĩa vụ giới thiệu người bị TNLĐ đi giám định và chế tài còn hiệu lực",
+    "Hai điều khoản của NĐ 12/2022 cùng xử phạt hành vi đối với người bị TNLĐ",
+    "Dẫn chiếu Điều 55 Luật BHXH 2014 sau khi luật này hết hiệu lực",
+    "Nghĩa vụ tương ứng tại khoản 5 Điều 13 Luật BHXH 2024"
+   ],
+   "reference_outcome": "Với công nhân bị TNLĐ, nghĩa vụ theo Luật ATVSLĐ vẫn nguyên hiệu lực và công ty có thể bị phạt 2 - 4 triệu đồng mỗi người (mức cá nhân, doanh nghiệp gấp đôi) theo điểm d khoản 1 Điều 23 hoặc điểm c khoản 4 Điều 41 NĐ 12, nhưng chỉ bị phạt một lần cho một hành vi. Với nhân viên muốn nghỉ hưu do suy giảm khả năng lao động, NĐ 12 dẫn chiếu Điều 55 của Luật BHXH 2014 đã hết hiệu lực; nghĩa vụ hiện nay là 'xem xét giới thiệu' theo khoản 5 Điều 13 Luật BHXH 2024 (dẫn chiếu Điều 65), nên việc dùng chế tài cũ cho nghĩa vụ mới không chắc chắn và cần đối chiếu văn bản xử phạt cập nhật ngoài corpus.",
+   "annotation_status": "model_review",
+   "model_review": {
+    "date": "2026-11-15",
+    "corpus_version_id": "v48feefc6d53b",
+    "label_2026_11_12": {
+     "relevant_unit_ids": [
+      "84-2015-qh13/chapter-iii/section-3/article-47/clause-1/point-a",
+      "12-2022-nd-cp/chapter-ii/article-23/clause-1/point-d",
+      "12-2022-nd-cp/chapter-iii/article-41/clause-4/point-c",
+      "41-2024-qh15/chapter-ii/section-1/article-13/clause-5",
+      "41-2024-qh15/chapter-xi/article-140/clause-2",
+      "84-2015-qh13/chapter-iii/section-2/article-38/clause-6",
+      "12-2022-nd-cp/chapter-i/article-6/clause-1",
+      "41-2024-qh15/chapter-xi/article-140/clause-1"
+     ],
+     "expected_status": "answer",
+     "confidence": "medium"
+    },
+    "kept": [
+     "84-2015-qh13/chapter-iii/section-3/article-47/clause-1/point-a",
+     "41-2024-qh15/chapter-ii/section-1/article-13/clause-5",
+     "84-2015-qh13/chapter-iii/section-2/article-38/clause-6",
+     "84-2015-qh13/chapter-iii/section-3/article-47/clause-1"
+    ],
+    "added": [
+     {
+      "unit_id": "283-2026-nd-cp/chapter-ii/section-3/article-34/clause-1/point-d",
+      "reason": "Thay điểm d khoản 1 Điều 23 NĐ 12/2022 với nguyên văn cùng hành vi: không giới thiệu người bị tai nạn lao động đi giám định",
+      "quote": "Không giới thiệu người lao động bị tai nạn lao động, bệnh nghề nghiệp được giám định y khoa, xác định mức độ suy giảm khả năng lao động"
+     },
+     {
+      "unit_id": "283-2026-nd-cp/chapter-ii/section-3/article-34/clause-1",
+      "reason": "Câu dẫn chứa mức phạt 2 - 4 triệu đồng mỗi người, giống khoản 1 Điều 23 NĐ 12/2022",
+      "quote": "Phạt tiền từ 2.000.000 đồng đến 4.000.000 đồng khi vi phạm đối với mỗi người lao động nhưng tối đa không quá 75.000.000 đồng"
+     },
+     {
+      "unit_id": "283-2026-nd-cp/chapter-iii/article-48/clause-3/point-đ",
+      "reason": "Thay điểm c khoản 4 Điều 41 NĐ 12/2022 nhưng dẫn chiếu 'Điều 65 của Luật Bảo hiểm xã hội' thay vì Điều 55 Luật BHXH 2014, tức cùng điều mà khoản 5 Điều 13 Luật BHXH 2024 dẫn chiếu; căn cứ phạt cho trường hợp thứ hai không còn vướng",
+      "quote": "Không giới thiệu người lao động thuộc đối tượng quy định tại Điều 47 của Luật An toàn, vệ sinh lao động và Điều 65 của Luật Bảo hiểm xã hội đi khám giám định suy giảm khả năng lao động tại Hội đồng Giám định y khoa"
+     },
+     {
+      "unit_id": "283-2026-nd-cp/chapter-iii/article-48/clause-3",
+      "reason": "Câu dẫn chứa mức phạt 2 - 4 triệu đồng mỗi người, giống khoản 4 Điều 41 NĐ 12/2022",
+      "quote": "Phạt tiền từ 2.000.000 đồng đến 4.000.000 đồng khi vi phạm với mỗi người lao động nhưng tối đa không quá 75.000.000 đồng"
+     },
+     {
+      "unit_id": "41-2024-qh15/chapter-v/section-3/article-65/clause-1",
+      "reason": "Điều 65 Luật BHXH 2024 là điều mà cả khoản 5 Điều 13 Luật BHXH 2024 và điểm đ khoản 3 Điều 48 NĐ 283 dẫn chiếu: hưởng lương hưu với mức thấp hơn khi suy giảm khả năng lao động, đúng trường hợp nhân viên thứ hai",
+      "quote": "được hưởng lương hưu với mức thấp hơn so với người đủ điều kiện hưởng lương hưu"
+     },
+     {
+      "unit_id": "283-2026-nd-cp/chapter-i/article-7/clause-1",
+      "reason": "Quy tắc thay khoản 1 Điều 6 NĐ 12/2022: mức phạt trong Nghị định là mức đối với cá nhân, tổ chức bị phạt gấp đôi; điều phạt dùng trong câu này không nằm trong danh sách ngoại lệ của khoản này",
+      "quote": "Mức phạt tiền đối với tổ chức bằng 02 lần mức phạt tiền đối với cá nhân."
+     },
+     {
+      "unit_id": "283-2026-nd-cp/chapter-i/article-7/clause-2/point-b",
+      "reason": "Doanh nghiệp thuộc nhóm tổ chức bị phạt gấp 02 lần (câu dẫn khoản 2 Điều 7 NĐ 283)",
+      "quote": "Doanh nghiệp được thành lập và hoạt động theo pháp luật Việt Nam"
+     },
+     {
+      "unit_id": "283-2026-nd-cp/chapter-vi/article-67/clause-2",
+      "reason": "Quy định chuyển tiếp: hành vi bắt đầu trước 10/09/2026 nhưng vẫn đang diễn ra sau ngày đó thì xử lý theo NĐ 283, nên NĐ 12/2022 không còn là căn cứ phạt",
+      "quote": "xảy ra trước thời điểm Nghị định này có hiệu lực nhưng vẫn đang diễn ra khi Nghị định này đã có hiệu lực thì áp dụng quy định của Nghị định này để xử lý"
+     }
+    ],
+    "dropped": [
+     {
+      "unit_id": "41-2024-qh15/chapter-xi/article-140/clause-2",
+      "reason": "Chỉ cần khi căn cứ phạt là NĐ 12/2022 (dẫn chiếu Điều 55 Luật BHXH 2014 đã hết hiệu lực); NĐ 283 dẫn chiếu Điều 65 nên câu trả lời tại 11/11/2026 không còn dựa vào việc Luật 2014 hết hiệu lực"
+     },
+     {
+      "unit_id": "41-2024-qh15/chapter-xi/article-140/clause-1",
+      "reason": "Chỉ dùng kèm khoản 2 Điều 140 để xác định Luật BHXH 2014 hết hiệu lực từ 01/7/2025; không còn cần khi căn cứ phạt là NĐ 283"
+     }
+    ],
+    "stale_pairs": [
+     {
+      "stale_unit_id": "12-2022-nd-cp/chapter-ii/article-23/clause-1/point-d",
+      "new_unit_id": "283-2026-nd-cp/chapter-ii/section-3/article-34/clause-1/point-d",
+      "old_quote": "Không giới thiệu người lao động bị tai nạn lao động, bệnh nghề nghiệp được giám định y khoa, xác định mức độ suy giảm khả năng lao động",
+      "new_quote": "Không giới thiệu người lao động bị tai nạn lao động, bệnh nghề nghiệp được giám định y khoa, xác định mức độ suy giảm khả năng lao động",
+      "reason": "NĐ 12/2022 hết hiệu lực từ 10/09/2026; NĐ 283 giữ nguyên hành vi"
+     },
+     {
+      "stale_unit_id": "12-2022-nd-cp/chapter-ii/article-23/clause-1",
+      "new_unit_id": "283-2026-nd-cp/chapter-ii/section-3/article-34/clause-1",
+      "old_quote": "Phạt tiền từ 2.000.000 đồng đến 4.000.000 đồng khi vi phạm đối với mỗi người lao động nhưng tối đa không quá 75.000.000 đồng",
+      "new_quote": "Phạt tiền từ 2.000.000 đồng đến 4.000.000 đồng khi vi phạm đối với mỗi người lao động nhưng tối đa không quá 75.000.000 đồng",
+      "reason": "NĐ 12/2022 hết hiệu lực từ 10/09/2026; cùng mức phạt"
+     },
+     {
+      "stale_unit_id": "12-2022-nd-cp/chapter-iii/article-41/clause-4/point-c",
+      "new_unit_id": "283-2026-nd-cp/chapter-iii/article-48/clause-3/point-đ",
+      "old_quote": "Không giới thiệu người lao động thuộc đối tượng quy định tại Điều 47 của Luật An toàn, vệ sinh lao động và Điều 55 của Luật Bảo hiểm xã hội",
+      "new_quote": "Không giới thiệu người lao động thuộc đối tượng quy định tại Điều 47 của Luật An toàn, vệ sinh lao động và Điều 65 của Luật Bảo hiểm xã hội",
+      "reason": "NĐ 12/2022 hết hiệu lực từ 10/09/2026; NĐ 283 giữ hành vi nhưng đổi dẫn chiếu từ Điều 55 sang Điều 65 Luật BHXH"
+     },
+     {
+      "stale_unit_id": "12-2022-nd-cp/chapter-iii/article-41/clause-4",
+      "new_unit_id": "283-2026-nd-cp/chapter-iii/article-48/clause-3",
+      "old_quote": "Phạt tiền từ 2.000.000 đồng đến 4.000.000 đồng khi vi phạm với mỗi người lao động nhưng tối đa không quá 75.000.000 đồng",
+      "new_quote": "Phạt tiền từ 2.000.000 đồng đến 4.000.000 đồng khi vi phạm với mỗi người lao động nhưng tối đa không quá 75.000.000 đồng",
+      "reason": "NĐ 12/2022 hết hiệu lực từ 10/09/2026; cùng mức phạt"
+     },
+     {
+      "stale_unit_id": "12-2022-nd-cp/chapter-i/article-6/clause-1",
+      "new_unit_id": "283-2026-nd-cp/chapter-i/article-7/clause-1",
+      "old_quote": "Mức phạt tiền đối với tổ chức bằng 02 lần mức phạt tiền đối với cá nhân.",
+      "new_quote": "Mức phạt tiền đối với tổ chức bằng 02 lần mức phạt tiền đối với cá nhân.",
+      "reason": "NĐ 12/2022 hết hiệu lực từ 10/09/2026 (khoản 4 Điều 66 NĐ 283); khoản 1 Điều 7 NĐ 283 giữ nguyên câu về mức phạt tổ chức gấp đôi"
+     }
+    ],
+    "ancestors_dropped": [
+     "84-2015-qh13/chapter-iii/section-3/article-47/clause-1",
+     "283-2026-nd-cp/chapter-ii/section-3/article-34/clause-1",
+     "283-2026-nd-cp/chapter-iii/article-48/clause-3"
+    ],
+    "outside_corpus": [
+     "Luật Xử lý vi phạm hành chính (một hành vi chỉ bị xử phạt một lần)"
+    ],
+    "confidence": "low",
+    "note": "Rà lại 15/11: câu chỉ nêu 'năm 2026', nên áp ngày khóa corpus 11/11/2026; khi đó NĐ 12/2022 đã hết hiệu lực và hành vi (chưa giới thiệu) vẫn tiếp diễn, nên theo khoản 2 Điều 67 NĐ 283 áp dụng NĐ 283. Năm đơn vị NĐ 12 chuyển sang lỗi thời, thay bằng các đơn vị NĐ 283 trích nguyên văn. Độ tin cậy thấp vì (1) 'năm 2026' có thể được người duyệt hiểu là trước 10/09/2026, khi đó nhãn 12/11 (NĐ 12) đúng; (2) kết quả tham chiếu phải viết lại. Corpus v3 không có phần mở đầu của NĐ 283 nên không đọc được số hiệu Luật BHXH mà NĐ 283 gọi là 'Luật Bảo hiểm xã hội'; việc coi đó là Luật 41/2024 dựa vào trùng số Điều 65 với khoản 5 Điều 13 Luật BHXH 2024, người duyệt nên kiểm. Ghi chú 12/11: Hai điều khoản NĐ 12 cùng mức 2-4 triệu/người (doanh nghiệp gấp đôi). NĐ 12/2022 hết hiệu lực từ 10/09/2026: nếu thanh tra kiểm tra sau mốc này thì cả hai căn cứ phạt đều phải tra văn bản thay thế ngoài corpus; kết quả tham chiếu chỉ nêu điều đó cho trường hợp thứ hai.",
+    "changed_from_2026_11_12": "Áp ngày 11/11/2026: thay năm đơn vị NĐ 12/2022 bằng điểm d khoản 1 Điều 34, điểm đ khoản 3 Điều 48 (kèm câu dẫn), khoản 1 và điểm b khoản 2 Điều 7, khoản 2 Điều 67 NĐ 283/2026; thêm khoản 1 Điều 65 Luật BHXH 2024; bỏ khoản 1, khoản 2 Điều 140 Luật BHXH 2024 vì NĐ 283 đã dẫn chiếu Điều 65; hạ độ tin cậy xuống thấp và ghi vấn đề của kết quả tham chiếu.",
+    "checked_at": "2026-11-11",
+    "outcome_issue": "Kết quả tham chiếu dựa vào NĐ 12/2022 (điểm d khoản 1 Điều 23, điểm c khoản 4 Điều 41) và kết luận căn cứ cho trường hợp thứ hai 'không chắc chắn và cần đối chiếu văn bản xử phạt cập nhật ngoài corpus'. Văn bản đó nay có trong corpus: điểm đ khoản 3 Điều 48 NĐ 283/2026 ghi 'Không giới thiệu người lao động thuộc đối tượng quy định tại Điều 47 của Luật An toàn, vệ sinh lao động và Điều 65 của Luật Bảo hiểm xã hội đi khám giám định suy giảm khả năng lao động', tức dẫn chiếu đúng Điều 65 mà khoản 5 Điều 13 Luật BHXH 2024 dẫn chiếu. Trường hợp thứ nhất chuyển sang điểm d khoản 1 Điều 34 NĐ 283 (cùng hành vi, cùng mức 2 - 4 triệu đồng mỗi người, doanh nghiệp gấp đôi theo khoản 1 Điều 7). Nếu thanh tra kiểm tra từ 10/09/2026, đáp án cần viết lại: cả hai trường hợp đều có căn cứ phạt theo NĐ 283, phần 'còn vướng' chỉ còn việc hai điều khoản (điểm d khoản 1 Điều 34 và điểm đ khoản 3 Điều 48) cùng áp cho người bị tai nạn lao động.",
+    "reference_outcome_supported": false
+   }
+  },
+  {
+   "question_id": "x18",
+   "question": "Một nhân viên nghỉ việc ngày 15/12/2025 và nộp hồ sơ hưởng trợ cấp thất nghiệp ngày 22/12/2025, nhưng đến đầu tháng 1/2026 vẫn chưa có quyết định vì công ty chưa hoàn thành thủ tục xác nhận thời gian đóng bảo hiểm thất nghiệp. Hồ sơ của anh được giải quyết theo luật nào, và công ty có bị xử lý gì không?",
+   "complex_kind": "amended_or_superseded",
+   "family_id": "xf18",
+   "split": "dev",
+   "documents": [
+    "12-2022-nd-cp",
+    "45-2019-qh14",
+    "74-2025-qh15"
+   ],
+   "question_type": "synthesis",
+   "expected_status": "answer",
+   "relevant_unit_ids": [
+    "74-2025-qh15/chapter-viii/article-54/clause-1",
+    "74-2025-qh15/chapter-viii/article-54/clause-2",
+    "74-2025-qh15/chapter-viii/article-55/clause-4",
+    "45-2019-qh14/chapter-iii/section-3/article-48/clause-3/point-a",
+    "12-2022-nd-cp/chapter-iii/article-39/clause-3",
+    "12-2022-nd-cp/chapter-i/article-6/clause-1"
+   ],
+   "as_of": "2026-01-05",
+   "as_of_source": "câu hỏi nêu 'đến đầu tháng 1/2026 vẫn chưa có quyết định'; dùng ngày 05/01/2026 (ngày làm việc đầu tiên của năm), mọi ngày đầu tháng 1/2026 cho cùng trạng thái hiệu lực",
+   "issues": [
+    "Thời điểm Luật Việc làm 2025 có hiệu lực và Luật Việc làm 2013 hết hiệu lực",
+    "Quy định chuyển tiếp cho hồ sơ nộp trước 01/01/2026 chưa có quyết định",
+    "Nghĩa vụ xác nhận thời gian đóng BHTN khi chấm dứt hợp đồng",
+    "Chế tài trong NĐ 12/2022 ban hành dưới luật cũ"
+   ],
+   "reference_outcome": "Hồ sơ chưa có quyết định trước 01/01/2026 nên được giải quyết theo Luật Việc làm 2025 (khoản 4 Điều 55), dù anh nghỉ việc và nộp hồ sơ khi luật cũ còn hiệu lực. Công ty vi phạm nghĩa vụ tại điểm a khoản 3 Điều 48 BLLĐ và có thể bị phạt 1 - 3 triệu đồng cho mỗi người lao động (mức cá nhân, doanh nghiệp gấp đôi) theo khoản 3 Điều 39 NĐ 12; quy định phạt này mô tả hành vi chung, không dẫn chiếu điều cụ thể của Luật Việc làm 2013, nên vẫn áp dụng được.",
+   "annotation_status": "model_review",
+   "model_review": {
+    "date": "2026-11-15",
+    "corpus_version_id": "v48feefc6d53b",
+    "label_2026_11_12": {
+     "relevant_unit_ids": [
+      "74-2025-qh15/chapter-viii/article-54/clause-1",
+      "74-2025-qh15/chapter-viii/article-54/clause-2",
+      "74-2025-qh15/chapter-viii/article-55/clause-4",
+      "45-2019-qh14/chapter-iii/section-3/article-48/clause-3/point-a",
+      "12-2022-nd-cp/chapter-iii/article-39/clause-3",
+      "12-2022-nd-cp/chapter-i/article-6/clause-1"
+     ],
+     "expected_status": "answer",
+     "confidence": "high"
+    },
+    "kept": [
+     "74-2025-qh15/chapter-viii/article-54/clause-1",
+     "74-2025-qh15/chapter-viii/article-54/clause-2",
+     "74-2025-qh15/chapter-viii/article-55/clause-4",
+     "45-2019-qh14/chapter-iii/section-3/article-48/clause-3/point-a",
+     "12-2022-nd-cp/chapter-iii/article-39/clause-3",
+     "45-2019-qh14/chapter-iii/section-3/article-48/clause-3",
+     "12-2022-nd-cp/chapter-i/article-6/clause-1"
+    ],
+    "added": [],
+    "dropped": [],
+    "stale_pairs": [],
+    "ancestors_dropped": [
+     "45-2019-qh14/chapter-iii/section-3/article-48/clause-3"
+    ],
+    "outside_corpus": [],
+    "confidence": "high",
+    "note": "Rà lại 15/11: tại đầu tháng 1/2026 Luật Việc làm 2025 đã có hiệu lực và NĐ 12/2022 còn hiệu lực, nên giữ nguyên nhãn; NĐ 283/2026 chưa có hiệu lực ở ngày này nên không đưa vào. Khoản 1 Điều 67 NĐ 283 xác nhận hành vi đã kết thúc trước 10/09/2026 vẫn xử theo nghị định có hiệu lực lúc vi phạm (NĐ 12). Khoản 3 Điều 13 Luật BHXH 2024 nói về phối hợp xác nhận thời gian đóng bảo hiểm xã hội, không phải bảo hiểm thất nghiệp, nên không coi là nhắc lại điểm a khoản 3 Điều 48 BLLĐ. Ghi chú 12/11: Khoản 4 Điều 55 Luật Việc làm 2025: hồ sơ nộp trước 01/01/2026 chưa có quyết định thì theo luật mới. Hành vi xảy ra 12/2025-1/2026 nên NĐ 12 còn hiệu lực.",
+    "changed_from_2026_11_12": "Không đổi; ghi ngày áp dụng đầu tháng 1/2026 theo câu hỏi, khi NĐ 12/2022 còn hiệu lực.",
+    "checked_at": "2026-01-05",
+    "reference_outcome_supported": true
+   }
+  },
+  {
+   "question_id": "x19",
+   "question": "Sau khi sắp xếp lại đơn vị hành chính, địa bàn nơi xưởng may của chúng tôi hoạt động bị xếp vào vùng có lương tối thiểu thấp hơn theo Phụ lục NĐ 293/2025. Từ 01/01/2026 công ty có được hạ mức lương tối thiểu áp dụng cho công nhân cũ không, còn công nhân tuyển từ năm 2026 thì sao?",
+   "complex_kind": "amended_or_superseded",
+   "family_id": "xf19",
+   "split": "dev",
+   "documents": [
+    "293-2025-nd-cp",
+    "45-2019-qh14"
+   ],
+   "question_type": "synthesis",
+   "expected_status": "answer",
+   "relevant_unit_ids": [
+    "293-2025-nd-cp/article-5/clause-1",
+    "293-2025-nd-cp/article-5/clause-2",
+    "293-2025-nd-cp/article-5/clause-5",
+    "45-2019-qh14/chapter-vi/article-90/clause-2",
+    "293-2025-nd-cp/article-3/clause-3/point-a"
+   ],
+   "as_of": "2026-01-01",
+   "as_of_source": "câu hỏi nêu 'Từ 01/01/2026'",
+   "issues": [
+    "NĐ 293/2025 thay thế NĐ 74/2024 từ 01/01/2026",
+    "Bảo lưu mức lương tối thiểu cũ cho người tuyển dụng đến hết 31/12/2025",
+    "Mức áp dụng cho người tuyển dụng từ năm 2026",
+    "Nguyên tắc lương không thấp hơn lương tối thiểu"
+   ],
+   "reference_outcome": "Không được hạ đối với công nhân tuyển dụng từ ngày 31/12/2025 trở về trước: khoản 5 Điều 5 NĐ 293 buộc tiếp tục áp dụng mức lương tối thiểu tại ngày 31/12/2025 (mức theo NĐ 74/2024 đã hết hiệu lực) cho đến khi Chính phủ có quy định mới. Công nhân tuyển từ năm 2026 áp dụng mức của vùng mới theo NĐ 293; trong mọi trường hợp mức lương theo công việc không được thấp hơn mức tối thiểu áp dụng cho người đó theo khoản 2 Điều 90 BLLĐ.",
+   "annotation_status": "model_review",
+   "model_review": {
+    "date": "2026-11-15",
+    "corpus_version_id": "v48feefc6d53b",
+    "label_2026_11_12": {
+     "relevant_unit_ids": [
+      "293-2025-nd-cp/article-5/clause-1",
+      "293-2025-nd-cp/article-5/clause-2",
+      "293-2025-nd-cp/article-5/clause-5",
+      "45-2019-qh14/chapter-vi/article-90/clause-2",
+      "293-2025-nd-cp/article-3/clause-3/point-a"
+     ],
+     "expected_status": "answer",
+     "confidence": "high"
+    },
+    "kept": [
+     "293-2025-nd-cp/article-5/clause-1",
+     "293-2025-nd-cp/article-5/clause-2",
+     "293-2025-nd-cp/article-5/clause-5",
+     "45-2019-qh14/chapter-vi/article-90/clause-2",
+     "293-2025-nd-cp/article-3/clause-3/point-a"
+    ],
+    "added": [],
+    "dropped": [],
+    "stale_pairs": [],
+    "ancestors_dropped": [],
+    "outside_corpus": [
+     "NĐ 74/2024/NĐ-CP (mức lương tối thiểu tại ngày 31/12/2025)",
+     "Phụ lục NĐ 293/2025"
+    ],
+    "confidence": "high",
+    "note": "Rà lại 15/11: mọi đơn vị còn hiệu lực tại 01/01/2026; NĐ 74/2024 và Phụ lục NĐ 293 vẫn không có trong corpus v3. Ghi chú 12/11: Khoản 5 Điều 5 NĐ 293 giữ mức tại 31/12/2025 cho người tuyển dụng đến hết ngày đó; người tuyển từ 2026 theo mức vùng mới.",
+    "changed_from_2026_11_12": "Không đổi; ghi ngày áp dụng 01/01/2026 theo câu hỏi.",
+    "checked_at": "2026-01-01",
+    "reference_outcome_supported": true
+   }
+  },
+  {
+   "question_id": "x20",
+   "question": "Xưởng hóa chất của chúng tôi vẫn để một thợ hàn nam 63 tuổi, đã quá tuổi nghỉ hưu, làm công việc độc hại liên tục 6 năm nay, có lúc làm một mình trong ca đêm. Việc này có vi phạm không, và doanh nghiệp có thể bị phạt bao nhiêu?",
+   "complex_kind": "obligation_and_sanction",
+   "family_id": "xf20",
+   "split": "dev",
+   "documents": [
+    "12-2022-nd-cp",
+    "45-2019-qh14",
+    "84-2015-qh13"
+   ],
+   "question_type": "synthesis",
+   "expected_status": "answer",
+   "relevant_unit_ids": [
+    "45-2019-qh14/chapter-xi/section-2/article-149/clause-3",
+    "84-2015-qh13/chapter-iv/article-64/clause-1/point-c",
+    "84-2015-qh13/chapter-iv/article-64/clause-1/point-d",
+    "45-2019-qh14/chapter-xi/section-2/article-148/clause-1",
+    "283-2026-nd-cp/chapter-ii/section-2/article-29/clause-2",
+    "283-2026-nd-cp/chapter-i/article-7/clause-1",
+    "283-2026-nd-cp/chapter-i/article-7/clause-2/point-b",
+    "283-2026-nd-cp/chapter-vi/article-67/clause-2"
+   ],
+   "as_of": "2026-11-11",
+   "as_of_source": "no date in question, corpus freeze date",
+   "stale_unit_ids": [
+    "12-2022-nd-cp/chapter-ii/article-31/clause-2",
+    "12-2022-nd-cp/chapter-i/article-6/clause-1"
+   ],
+   "issues": [
+    "Nguyên tắc cấm và ngoại lệ khi sử dụng người cao tuổi làm công việc độc hại",
+    "Các điều kiện cụ thể của Luật ATVSLĐ (tối đa 05 năm, có người không cao tuổi cùng làm)",
+    "Mức phạt và nhân hai đối với tổ chức"
+   ],
+   "reference_outcome": "Có vi phạm: ngoại lệ 'bảo đảm các điều kiện làm việc an toàn' của BLLĐ được Luật ATVSLĐ cụ thể hóa bằng các điều kiện phải đáp ứng đồng thời, trong khi người này đã làm quá 05 năm và có lúc làm một mình không có người lao động không cao tuổi cùng làm. Doanh nghiệp có thể bị phạt từ 20 đến 30 triệu đồng (gấp đôi khung 10 - 15 triệu của khoản 2 Điều 31 NĐ 12).",
+   "annotation_status": "model_review",
+   "model_review": {
+    "date": "2026-11-15",
+    "corpus_version_id": "v48feefc6d53b",
+    "label_2026_11_12": {
+     "relevant_unit_ids": [
+      "45-2019-qh14/chapter-xi/section-2/article-149/clause-3",
+      "84-2015-qh13/chapter-iv/article-64/clause-1/point-c",
+      "84-2015-qh13/chapter-iv/article-64/clause-1/point-d",
+      "45-2019-qh14/chapter-xi/section-2/article-148/clause-1"
+     ],
+     "expected_status": "answer",
+     "confidence": "medium"
+    },
+    "kept": [
+     "45-2019-qh14/chapter-xi/section-2/article-149/clause-3",
+     "84-2015-qh13/chapter-iv/article-64/clause-1/point-c",
+     "84-2015-qh13/chapter-iv/article-64/clause-1/point-d",
+     "45-2019-qh14/chapter-xi/section-2/article-148/clause-1",
+     "84-2015-qh13/chapter-iv/article-64/clause-1"
+    ],
+    "added": [
+     {
+      "unit_id": "283-2026-nd-cp/chapter-ii/section-2/article-29/clause-2",
+      "reason": "Thay khoản 2 Điều 31 NĐ 12/2022 với nguyên văn cùng hành vi và cùng mức 10 - 15 triệu đồng; câu này cũng nhắc lại điều cấm của khoản 3 Điều 149 BLLĐ ('trừ trường hợp bảo đảm các điều kiện làm việc an toàn')",
+      "quote": "Phạt tiền từ 10.000.000 đồng đến 15.000.000 đồng đối với người sử dụng lao động có hành vi sử dụng người lao động cao tuổi làm nghề, công việc nặng nhọc, độc hại, nguy hiểm"
+     },
+     {
+      "unit_id": "283-2026-nd-cp/chapter-i/article-7/clause-1",
+      "reason": "Quy tắc thay khoản 1 Điều 6 NĐ 12/2022: mức phạt trong Nghị định là mức đối với cá nhân, tổ chức bị phạt gấp đôi; điều phạt dùng trong câu này không nằm trong danh sách ngoại lệ của khoản này",
+      "quote": "Mức phạt tiền đối với tổ chức bằng 02 lần mức phạt tiền đối với cá nhân."
+     },
+     {
+      "unit_id": "283-2026-nd-cp/chapter-i/article-7/clause-2/point-b",
+      "reason": "Doanh nghiệp thuộc nhóm tổ chức bị phạt gấp 02 lần (câu dẫn khoản 2 Điều 7 NĐ 283)",
+      "quote": "Doanh nghiệp được thành lập và hoạt động theo pháp luật Việt Nam"
+     },
+     {
+      "unit_id": "283-2026-nd-cp/chapter-vi/article-67/clause-2",
+      "reason": "Quy định chuyển tiếp: hành vi bắt đầu trước 10/09/2026 nhưng vẫn đang diễn ra sau ngày đó thì xử lý theo NĐ 283, nên NĐ 12/2022 không còn là căn cứ phạt",
+      "quote": "xảy ra trước thời điểm Nghị định này có hiệu lực nhưng vẫn đang diễn ra khi Nghị định này đã có hiệu lực thì áp dụng quy định của Nghị định này để xử lý"
+     }
+    ],
+    "dropped": [],
+    "stale_pairs": [
+     {
+      "stale_unit_id": "12-2022-nd-cp/chapter-ii/article-31/clause-2",
+      "new_unit_id": "283-2026-nd-cp/chapter-ii/section-2/article-29/clause-2",
+      "old_quote": "Phạt tiền từ 10.000.000 đồng đến 15.000.000 đồng đối với người sử dụng lao động có hành vi sử dụng người lao động cao tuổi làm nghề, công việc nặng nhọc, độc hại, nguy hiểm",
+      "new_quote": "Phạt tiền từ 10.000.000 đồng đến 15.000.000 đồng đối với người sử dụng lao động có hành vi sử dụng người lao động cao tuổi làm nghề, công việc nặng nhọc, độc hại, nguy hiểm",
+      "reason": "NĐ 12/2022 hết hiệu lực từ 10/09/2026; NĐ 283 giữ nguyên hành vi và mức phạt (12/11 đã bỏ đơn vị này, nay có đơn vị thay thế trong corpus)"
+     },
+     {
+      "stale_unit_id": "12-2022-nd-cp/chapter-i/article-6/clause-1",
+      "new_unit_id": "283-2026-nd-cp/chapter-i/article-7/clause-1",
+      "old_quote": "Mức phạt tiền đối với tổ chức bằng 02 lần mức phạt tiền đối với cá nhân.",
+      "new_quote": "Mức phạt tiền đối với tổ chức bằng 02 lần mức phạt tiền đối với cá nhân.",
+      "reason": "NĐ 12/2022 hết hiệu lực từ 10/09/2026 (khoản 4 Điều 66 NĐ 283); khoản 1 Điều 7 NĐ 283 giữ nguyên câu về mức phạt tổ chức gấp đôi"
+     }
+    ],
+    "ancestors_dropped": [
+     "84-2015-qh13/chapter-iv/article-64/clause-1"
+    ],
+    "outside_corpus": [],
+    "confidence": "high",
+    "note": "Rà lại 15/11: hành vi 'liên tục 6 năm nay' vẫn đang diễn ra tại 11/11/2026, nên theo khoản 2 Điều 67 NĐ 283 xử theo NĐ 283. Chế tài mà 12/11 để ngoài corpus nay có trong NĐ 283 (khoản 2 Điều 29, khoản 1 và điểm b khoản 2 Điều 7). Phần vi phạm (khoản 3 Điều 149 BLLĐ; điểm c, d khoản 1 Điều 64 Luật ATVSLĐ) không đổi. Ghi chú 12/11: Phần vi phạm được hỗ trợ (quá 05 năm, có lúc không có người không cao tuổi cùng làm). Mức phạt 20-30 triệu theo NĐ 12 không còn áp dụng cho hành vi đang tiếp diễn sau 10/09/2026. Nếu đối soát coi sự việc xảy ra trước mốc này thì giữ khoản 2 Điều 31 và khoản 1 Điều 6 NĐ 12.",
+    "changed_from_2026_11_12": "Thêm chế tài theo NĐ 283/2026 (khoản 2 Điều 29; khoản 1, điểm b khoản 2 Điều 7; khoản 2 Điều 67) thay NĐ 12/2022 đã hết hiệu lực; bỏ NĐ 283 khỏi danh sách ngoài corpus; nâng độ tin cậy lên cao.",
+    "checked_at": "2026-11-11",
+    "outcome_issue": "Kết quả tham chiếu ghi mức phạt 'gấp đôi khung 10 - 15 triệu của khoản 2 Điều 31 NĐ 12'. Tại 11/11/2026 căn cứ là khoản 2 Điều 29 NĐ 283/2026 ('Phạt tiền từ 10.000.000 đồng đến 15.000.000 đồng đối với người sử dụng lao động có hành vi sử dụng người lao động cao tuổi làm nghề, công việc nặng nhọc, độc hại, nguy hiểm'), doanh nghiệp gấp 02 lần theo khoản 1 Điều 7 NĐ 283 (Điều 29 không nằm trong danh sách ngoại lệ), nên con số 20 - 30 triệu đồng không đổi; chỉ cần sửa số hiệu điều và tên nghị định.",
+    "reference_outcome_supported": false
+   }
+  },
+  {
+   "question_id": "x21",
+   "question": "Một nữ công nhân mang thai tháng thứ 7 bị tổ trưởng xếp làm ca đêm và tăng ca; khi chị từ chối, công ty ra quyết định đơn phương chấm dứt hợp đồng với lý do không chấp hành phân công. Công ty sai ở đâu, bị phạt thế nào và phải khắc phục ra sao?",
+   "complex_kind": "obligation_and_sanction",
+   "family_id": "xf21",
+   "split": "dev",
+   "documents": [
+    "12-2022-nd-cp",
+    "45-2019-qh14"
+   ],
+   "question_type": "synthesis",
+   "expected_status": "answer",
+   "relevant_unit_ids": [
+    "45-2019-qh14/chapter-x/article-137/clause-1/point-a",
+    "45-2019-qh14/chapter-x/article-137/clause-3",
+    "45-2019-qh14/chapter-iii/section-3/article-41/clause-1",
+    "283-2026-nd-cp/chapter-ii/section-2/article-26/clause-2/point-a",
+    "283-2026-nd-cp/chapter-ii/section-2/article-26/clause-2/point-i",
+    "283-2026-nd-cp/chapter-ii/section-2/article-26/clause-3/point-c",
+    "283-2026-nd-cp/chapter-i/article-7/clause-1",
+    "283-2026-nd-cp/chapter-i/article-7/clause-2/point-b"
+   ],
+   "as_of": "2026-11-11",
+   "as_of_source": "no date in question, corpus freeze date",
+   "stale_unit_ids": [
+    "12-2022-nd-cp/chapter-ii/article-28/clause-2/point-a",
+    "12-2022-nd-cp/chapter-ii/article-28/clause-2/point-i",
+    "12-2022-nd-cp/chapter-ii/article-28/clause-3/point-c",
+    "12-2022-nd-cp/chapter-ii/article-28/clause-2",
+    "12-2022-nd-cp/chapter-i/article-6/clause-1"
+   ],
+   "issues": [
+    "Cấm làm đêm, làm thêm giờ với lao động nữ mang thai từ tháng thứ 07",
+    "Từ chối công việc bị cấm không phải là vi phạm",
+    "Cấm đơn phương chấm dứt vì lý do mang thai",
+    "Mức phạt và biện pháp khắc phục"
+   ],
+   "reference_outcome": "Công ty vi phạm hai lần: phân công ca đêm, tăng ca cho người mang thai tháng thứ 7 trái điểm a khoản 1 Điều 137, và chấm dứt hợp đồng mà thực chất vì chị mang thai và từ chối công việc bị cấm, trái khoản 3 Điều 137 BLLĐ. Mỗi hành vi có khung 10 - 20 triệu đồng mức cá nhân nên doanh nghiệp chịu 20 - 40 triệu đồng mỗi hành vi, và bị buộc nhận chị trở lại làm việc theo điểm c khoản 3 Điều 28 NĐ 12.",
+   "annotation_status": "model_review",
+   "model_review": {
+    "date": "2026-11-15",
+    "corpus_version_id": "v48feefc6d53b",
+    "label_2026_11_12": {
+     "relevant_unit_ids": [
+      "45-2019-qh14/chapter-x/article-137/clause-1/point-a",
+      "45-2019-qh14/chapter-x/article-137/clause-3",
+      "12-2022-nd-cp/chapter-ii/article-28/clause-2/point-a",
+      "12-2022-nd-cp/chapter-ii/article-28/clause-2/point-i",
+      "12-2022-nd-cp/chapter-ii/article-28/clause-3/point-c",
+      "12-2022-nd-cp/chapter-i/article-6/clause-1",
+      "45-2019-qh14/chapter-iii/section-3/article-41/clause-1"
+     ],
+     "expected_status": "answer",
+     "confidence": "medium"
+    },
+    "kept": [
+     "45-2019-qh14/chapter-x/article-137/clause-1/point-a",
+     "45-2019-qh14/chapter-x/article-137/clause-3",
+     "45-2019-qh14/chapter-x/article-137/clause-1",
+     "45-2019-qh14/chapter-iii/section-3/article-41/clause-1"
+    ],
+    "added": [
+     {
+      "unit_id": "283-2026-nd-cp/chapter-ii/section-2/article-26/clause-2/point-a",
+      "reason": "Thay điểm a khoản 2 Điều 28 NĐ 12/2022 với nguyên văn cùng hành vi (làm thêm giờ, làm đêm với người mang thai từ tháng thứ 07)",
+      "quote": "Sử dụng người lao động mang thai từ tháng thứ 07 hoặc từ tháng thứ 06 nếu làm việc ở vùng cao, vùng sâu, vùng xa, biên giới, hải đảo làm thêm giờ hoặc làm việc ban đêm hoặc đi công tác xa"
+     },
+     {
+      "unit_id": "283-2026-nd-cp/chapter-ii/section-2/article-26/clause-2/point-i",
+      "reason": "Thay điểm i khoản 2 Điều 28 NĐ 12/2022: đơn phương chấm dứt hợp đồng vì lý do mang thai",
+      "quote": "đơn phương chấm dứt hợp đồng lao động đối với người lao động vì lý do kết hôn, mang thai, nghỉ thai sản hoặc nuôi con dưới 12 tháng tuổi"
+     },
+     {
+      "unit_id": "283-2026-nd-cp/chapter-ii/section-2/article-26/clause-2",
+      "reason": "Câu dẫn chứa khung phạt 10 - 20 triệu đồng, giống khoản 2 Điều 28 NĐ 12/2022",
+      "quote": "Phạt tiền từ 10.000.000 đồng đến 20.000.000 đồng đối với người sử dụng lao động có một trong các hành vi sau đây:"
+     },
+     {
+      "unit_id": "283-2026-nd-cp/chapter-ii/section-2/article-26/clause-3/point-c",
+      "reason": "Thay điểm c khoản 3 Điều 28 NĐ 12/2022: buộc nhận người lao động trở lại làm việc",
+      "quote": "Buộc người sử dụng lao động nhận người lao động trở lại làm việc khi có hành vi vi phạm quy định tại điểm i khoản 2 Điều này."
+     },
+     {
+      "unit_id": "283-2026-nd-cp/chapter-i/article-7/clause-1",
+      "reason": "Quy tắc thay khoản 1 Điều 6 NĐ 12/2022: mức phạt trong Nghị định là mức đối với cá nhân, tổ chức bị phạt gấp đôi; điều phạt dùng trong câu này không nằm trong danh sách ngoại lệ của khoản này",
+      "quote": "Mức phạt tiền đối với tổ chức bằng 02 lần mức phạt tiền đối với cá nhân."
+     },
+     {
+      "unit_id": "283-2026-nd-cp/chapter-i/article-7/clause-2/point-b",
+      "reason": "Doanh nghiệp thuộc nhóm tổ chức bị phạt gấp 02 lần (câu dẫn khoản 2 Điều 7 NĐ 283)",
+      "quote": "Doanh nghiệp được thành lập và hoạt động theo pháp luật Việt Nam"
+     }
+    ],
+    "dropped": [],
+    "stale_pairs": [
+     {
+      "stale_unit_id": "12-2022-nd-cp/chapter-ii/article-28/clause-2/point-a",
+      "new_unit_id": "283-2026-nd-cp/chapter-ii/section-2/article-26/clause-2/point-a",
+      "old_quote": "Sử dụng người lao động mang thai từ tháng thứ 07 hoặc từ tháng thứ 06 nếu làm việc ở vùng cao, vùng sâu, vùng xa, biên giới, hải đảo làm thêm giờ hoặc làm việc ban đêm hoặc đi công tác xa",
+      "new_quote": "Sử dụng người lao động mang thai từ tháng thứ 07 hoặc từ tháng thứ 06 nếu làm việc ở vùng cao, vùng sâu, vùng xa, biên giới, hải đảo làm thêm giờ hoặc làm việc ban đêm hoặc đi công tác xa",
+      "reason": "NĐ 12/2022 hết hiệu lực từ 10/09/2026; NĐ 283 giữ nguyên hành vi"
+     },
+     {
+      "stale_unit_id": "12-2022-nd-cp/chapter-ii/article-28/clause-2/point-i",
+      "new_unit_id": "283-2026-nd-cp/chapter-ii/section-2/article-26/clause-2/point-i",
+      "old_quote": "đơn phương chấm dứt hợp đồng lao động đối với người lao động vì lý do kết hôn, mang thai, nghỉ thai sản hoặc nuôi con dưới 12 tháng tuổi",
+      "new_quote": "đơn phương chấm dứt hợp đồng lao động đối với người lao động vì lý do kết hôn, mang thai, nghỉ thai sản hoặc nuôi con dưới 12 tháng tuổi",
+      "reason": "NĐ 12/2022 hết hiệu lực từ 10/09/2026; NĐ 283 giữ hành vi (chỉ thêm chữ 'người lao động' sau 'Sa thải')"
+     },
+     {
+      "stale_unit_id": "12-2022-nd-cp/chapter-ii/article-28/clause-3/point-c",
+      "new_unit_id": "283-2026-nd-cp/chapter-ii/section-2/article-26/clause-3/point-c",
+      "old_quote": "Buộc người sử dụng lao động nhận người lao động trở lại làm việc khi có hành vi vi phạm quy định tại điểm i khoản 2 Điều này.",
+      "new_quote": "Buộc người sử dụng lao động nhận người lao động trở lại làm việc khi có hành vi vi phạm quy định tại điểm i khoản 2 Điều này.",
+      "reason": "NĐ 12/2022 hết hiệu lực từ 10/09/2026; cùng biện pháp khắc phục"
+     },
+     {
+      "stale_unit_id": "12-2022-nd-cp/chapter-ii/article-28/clause-2",
+      "new_unit_id": "283-2026-nd-cp/chapter-ii/section-2/article-26/clause-2",
+      "old_quote": "Phạt tiền từ 10.000.000 đồng đến 20.000.000 đồng đối với người sử dụng lao động có một trong các hành vi sau đây:",
+      "new_quote": "Phạt tiền từ 10.000.000 đồng đến 20.000.000 đồng đối với người sử dụng lao động có một trong các hành vi sau đây:",
+      "reason": "NĐ 12/2022 hết hiệu lực từ 10/09/2026; cùng khung phạt"
+     },
+     {
+      "stale_unit_id": "12-2022-nd-cp/chapter-i/article-6/clause-1",
+      "new_unit_id": "283-2026-nd-cp/chapter-i/article-7/clause-1",
+      "old_quote": "Mức phạt tiền đối với tổ chức bằng 02 lần mức phạt tiền đối với cá nhân.",
+      "new_quote": "Mức phạt tiền đối với tổ chức bằng 02 lần mức phạt tiền đối với cá nhân.",
+      "reason": "NĐ 12/2022 hết hiệu lực từ 10/09/2026 (khoản 4 Điều 66 NĐ 283); khoản 1 Điều 7 NĐ 283 giữ nguyên câu về mức phạt tổ chức gấp đôi"
+     }
+    ],
+    "ancestors_dropped": [
+     "45-2019-qh14/chapter-x/article-137/clause-1",
+     "283-2026-nd-cp/chapter-ii/section-2/article-26/clause-2"
+    ],
+    "outside_corpus": [],
+    "confidence": "high",
+    "note": "Rà lại 15/11: câu không nêu ngày nên hỏi tại 11/11/2026; năm đơn vị NĐ 12/2022 lỗi thời, thay bằng NĐ 283 trích nguyên văn. Độ tin cậy nâng lên vì quy ước 15/11 đã chốt ngày áp dụng. Ghi chú 12/11: Điểm a khoản 1 Điều 137 chỉ nêu điều kiện, điều cấm nằm ở câu dẫn khoản 1. Mức 20-40 triệu mỗi hành vi đúng theo NĐ 12, nhưng chỉ áp dụng nếu sự việc xảy ra trước 10/09/2026 (câu hỏi không nêu thời điểm). Khắc phục đầy đủ còn gồm khoản 1 Điều 41 BLLĐ mà kết quả tham chiếu bỏ qua.",
+    "changed_from_2026_11_12": "Áp ngày 11/11/2026: thay năm đơn vị NĐ 12/2022 bằng điểm a, điểm i, câu dẫn khoản 2 và điểm c khoản 3 Điều 26, khoản 1 và điểm b khoản 2 Điều 7 NĐ 283/2026; bỏ NĐ 283 khỏi danh sách ngoài corpus; nâng độ tin cậy lên cao.",
+    "checked_at": "2026-11-11",
+    "outcome_issue": "Kết quả tham chiếu ghi 'bị buộc nhận chị trở lại làm việc theo điểm c khoản 3 Điều 28 NĐ 12' và khung 10 - 20 triệu đồng theo NĐ 12/2022. Tại 11/11/2026 căn cứ là NĐ 283/2026: điểm a và điểm i khoản 2 Điều 26 (khung 'Phạt tiền từ 10.000.000 đồng đến 20.000.000 đồng'), biện pháp khắc phục ở điểm c khoản 3 Điều 26, doanh nghiệp gấp 02 lần theo khoản 1 Điều 7. Con số 20 - 40 triệu đồng mỗi hành vi không đổi; cần sửa số hiệu điều. Đáp án vẫn nên bổ sung khoản 1 Điều 41 BLLĐ như ghi chú 12/11.",
+    "reference_outcome_supported": false
+   }
+  },
+  {
+   "question_id": "x22",
+   "question": "Một chuỗi nhà hàng tuyển 20 nhân viên phục vụ thời vụ làm 3 tháng dịp Tết, chỉ thỏa thuận miệng và trả lương tiền mặt, không ký hợp đồng và không đóng BHXH. Doanh nghiệp vi phạm những gì, và riêng việc không ký hợp đồng bằng văn bản bị phạt bao nhiêu?",
+   "complex_kind": "obligation_and_sanction",
+   "family_id": "xf22",
+   "split": "dev",
+   "documents": [
+    "12-2022-nd-cp",
+    "41-2024-qh15",
+    "45-2019-qh14"
+   ],
+   "question_type": "synthesis",
+   "expected_status": "answer",
+   "relevant_unit_ids": [
+    "45-2019-qh14/chapter-iii/section-1/article-14/clause-1",
+    "45-2019-qh14/chapter-iii/section-1/article-14/clause-2",
+    "41-2024-qh15/chapter-i/article-2/clause-1/point-a",
+    "283-2026-nd-cp/chapter-ii/section-2/article-15/clause-1/point-b",
+    "283-2026-nd-cp/chapter-ii/section-2/article-15/clause-3/point-a",
+    "283-2026-nd-cp/chapter-i/article-7/clause-1",
+    "283-2026-nd-cp/chapter-i/article-7/clause-2/point-b"
+   ],
+   "as_of": "2026-11-11",
+   "as_of_source": "no date in question, corpus freeze date ('dịp Tết' không phải ngày cụ thể)",
+   "stale_unit_ids": [
+    "12-2022-nd-cp/chapter-ii/article-9/clause-1/point-b",
+    "12-2022-nd-cp/chapter-ii/article-9/clause-3/point-a",
+    "12-2022-nd-cp/chapter-ii/article-9/clause-1",
+    "12-2022-nd-cp/chapter-i/article-6/clause-1"
+   ],
+   "issues": [
+    "Hình thức bằng văn bản với hợp đồng từ đủ 01 tháng",
+    "Mức phạt theo số người lao động và nhân hai đối với tổ chức",
+    "Biện pháp khắc phục",
+    "Nghĩa vụ BHXH bắt buộc phát sinh dù không ký hợp đồng bằng văn bản"
+   ],
+   "reference_outcome": "Hợp đồng 3 tháng phải lập bằng văn bản; thỏa thuận miệng chỉ hợp lệ với hợp đồng dưới 01 tháng. Với 20 người, khung phạt cá nhân là 5 - 10 triệu đồng nên doanh nghiệp bị phạt 10 - 20 triệu đồng và buộc ký hợp đồng bằng văn bản; đồng thời quan hệ từ đủ 01 tháng vẫn thuộc diện BHXH bắt buộc theo Luật BHXH 2024, nên việc không đóng là một vi phạm riêng, xử lý theo quy định về đóng BHXH.",
+   "annotation_status": "model_review",
+   "model_review": {
+    "date": "2026-11-15",
+    "corpus_version_id": "v48feefc6d53b",
+    "label_2026_11_12": {
+     "relevant_unit_ids": [
+      "45-2019-qh14/chapter-iii/section-1/article-14/clause-1",
+      "45-2019-qh14/chapter-iii/section-1/article-14/clause-2",
+      "12-2022-nd-cp/chapter-ii/article-9/clause-1/point-b",
+      "12-2022-nd-cp/chapter-ii/article-9/clause-3/point-a",
+      "41-2024-qh15/chapter-i/article-2/clause-1/point-a",
+      "12-2022-nd-cp/chapter-i/article-6/clause-1"
+     ],
+     "expected_status": "answer",
+     "confidence": "medium"
+    },
+    "kept": [
+     "45-2019-qh14/chapter-iii/section-1/article-14/clause-1",
+     "45-2019-qh14/chapter-iii/section-1/article-14/clause-2",
+     "41-2024-qh15/chapter-i/article-2/clause-1/point-a",
+     "41-2024-qh15/chapter-i/article-2/clause-1"
+    ],
+    "added": [
+     {
+      "unit_id": "283-2026-nd-cp/chapter-ii/section-2/article-15/clause-1/point-b",
+      "reason": "Thay điểm b khoản 1 Điều 9 NĐ 12/2022 với cùng mức cho 11 đến 50 người lao động (20 người)",
+      "quote": "Từ 5.000.000 đồng đến 10.000.000 đồng đối với vi phạm từ 11 người đến 50 người lao động"
+     },
+     {
+      "unit_id": "283-2026-nd-cp/chapter-ii/section-2/article-15/clause-1",
+      "reason": "Câu dẫn mô tả hành vi giao kết không bằng văn bản với công việc từ đủ 01 tháng, giống khoản 1 Điều 9 NĐ 12/2022",
+      "quote": "giao kết hợp đồng lao động không bằng văn bản với người lao động làm công việc có thời hạn từ đủ 01 tháng trở lên"
+     },
+     {
+      "unit_id": "283-2026-nd-cp/chapter-ii/section-2/article-15/clause-3/point-a",
+      "reason": "Thay điểm a khoản 3 Điều 9 NĐ 12/2022: buộc giao kết hợp đồng bằng văn bản",
+      "quote": "Buộc người sử dụng lao động giao kết hợp đồng lao động bằng văn bản với người lao động khi có hành vi giao kết hợp đồng lao động không bằng văn bản với người lao động làm công việc có thời hạn từ đủ 01 tháng trở lên"
+     },
+     {
+      "unit_id": "283-2026-nd-cp/chapter-i/article-7/clause-1",
+      "reason": "Quy tắc thay khoản 1 Điều 6 NĐ 12/2022: mức phạt trong Nghị định là mức đối với cá nhân, tổ chức bị phạt gấp đôi; điều phạt dùng trong câu này không nằm trong danh sách ngoại lệ của khoản này",
+      "quote": "Mức phạt tiền đối với tổ chức bằng 02 lần mức phạt tiền đối với cá nhân."
+     },
+     {
+      "unit_id": "283-2026-nd-cp/chapter-i/article-7/clause-2/point-b",
+      "reason": "Doanh nghiệp thuộc nhóm tổ chức bị phạt gấp 02 lần (câu dẫn khoản 2 Điều 7 NĐ 283)",
+      "quote": "Doanh nghiệp được thành lập và hoạt động theo pháp luật Việt Nam"
+     }
+    ],
+    "dropped": [],
+    "stale_pairs": [
+     {
+      "stale_unit_id": "12-2022-nd-cp/chapter-ii/article-9/clause-1/point-b",
+      "new_unit_id": "283-2026-nd-cp/chapter-ii/section-2/article-15/clause-1/point-b",
+      "old_quote": "Từ 5.000.000 đồng đến 10.000.000 đồng đối với vi phạm từ 11 người đến 50 người lao động",
+      "new_quote": "Từ 5.000.000 đồng đến 10.000.000 đồng đối với vi phạm từ 11 người đến 50 người lao động",
+      "reason": "NĐ 12/2022 hết hiệu lực từ 10/09/2026; cùng mức"
+     },
+     {
+      "stale_unit_id": "12-2022-nd-cp/chapter-ii/article-9/clause-3/point-a",
+      "new_unit_id": "283-2026-nd-cp/chapter-ii/section-2/article-15/clause-3/point-a",
+      "old_quote": "Buộc người sử dụng lao động giao kết hợp đồng lao động bằng văn bản với người lao động khi có hành vi giao kết hợp đồng lao động không bằng văn bản với người lao động làm công việc có thời hạn từ đủ 01 tháng trở lên",
+      "new_quote": "Buộc người sử dụng lao động giao kết hợp đồng lao động bằng văn bản với người lao động khi có hành vi giao kết hợp đồng lao động không bằng văn bản với người lao động làm công việc có thời hạn từ đủ 01 tháng trở lên",
+      "reason": "NĐ 12/2022 hết hiệu lực từ 10/09/2026; cùng biện pháp khắc phục"
+     },
+     {
+      "stale_unit_id": "12-2022-nd-cp/chapter-ii/article-9/clause-1",
+      "new_unit_id": "283-2026-nd-cp/chapter-ii/section-2/article-15/clause-1",
+      "old_quote": "giao kết hợp đồng lao động không bằng văn bản với người lao động làm công việc có thời hạn từ đủ 01 tháng trở lên",
+      "new_quote": "giao kết hợp đồng lao động không bằng văn bản với người lao động làm công việc có thời hạn từ đủ 01 tháng trở lên",
+      "reason": "NĐ 12/2022 hết hiệu lực từ 10/09/2026; cùng hành vi"
+     },
+     {
+      "stale_unit_id": "12-2022-nd-cp/chapter-i/article-6/clause-1",
+      "new_unit_id": "283-2026-nd-cp/chapter-i/article-7/clause-1",
+      "old_quote": "Mức phạt tiền đối với tổ chức bằng 02 lần mức phạt tiền đối với cá nhân.",
+      "new_quote": "Mức phạt tiền đối với tổ chức bằng 02 lần mức phạt tiền đối với cá nhân.",
+      "reason": "NĐ 12/2022 hết hiệu lực từ 10/09/2026 (khoản 4 Điều 66 NĐ 283); khoản 1 Điều 7 NĐ 283 giữ nguyên câu về mức phạt tổ chức gấp đôi"
+     }
+    ],
+    "ancestors_dropped": [
+     "41-2024-qh15/chapter-i/article-2/clause-1",
+     "283-2026-nd-cp/chapter-ii/section-2/article-15/clause-1"
+    ],
+    "outside_corpus": [],
+    "confidence": "medium",
+    "note": "Rà lại 15/11: 'dịp Tết' không phải ngày cụ thể nên theo quy ước 15/11 câu được hỏi tại 11/11/2026; bốn đơn vị NĐ 12/2022 lỗi thời, thay bằng NĐ 283 trích nguyên văn. Nếu người duyệt hiểu là Tết tháng 2/2026 (NĐ 12 còn hiệu lực) thì dùng lại bốn đơn vị NĐ 12 của nhãn 12/11; mức phạt và biện pháp khắc phục giống hệt nhau nên kết quả tham chiếu (không nêu số hiệu điều) đúng theo cả hai cách. Giữ độ tin cậy vừa vì cách hiểu ngày. Ghi chú 12/11: 20 người: 5-10 triệu, doanh nghiệp 10-20 triệu; buộc giao kết bằng văn bản. \"Dịp Tết\" gần nhất là 2/2026 nên NĐ 12 còn hiệu lực; nếu là Tết sau 10/09/2026 thì chế tài nằm ngoài corpus.",
+    "changed_from_2026_11_12": "Áp ngày 11/11/2026: thay bốn đơn vị NĐ 12/2022 bằng câu dẫn và điểm b khoản 1, điểm a khoản 3 Điều 15, khoản 1 và điểm b khoản 2 Điều 7 NĐ 283/2026 (cùng mức phạt).",
+    "checked_at": "2026-11-11",
+    "reference_outcome_supported": true
+   }
+  },
+  {
+   "question_id": "x23",
+   "question": "Công ty tuyển 5 nhân viên chính thức từ ngày 01/3/2026 nhưng đến giữa tháng 6/2026 vẫn chưa nộp hồ sơ đăng ký tham gia BHXH cho họ. Hạn đăng ký là khi nào, đến thời điểm này hành vi bị xác định là gì, và mức phạt có thể ra sao?",
+   "complex_kind": "obligation_and_sanction",
+   "family_id": "xf23",
+   "split": "dev",
+   "documents": [
+    "12-2022-nd-cp",
+    "41-2024-qh15"
+   ],
+   "question_type": "synthesis",
+   "expected_status": "answer",
+   "relevant_unit_ids": [
+    "41-2024-qh15/chapter-iv/section-1/article-28/clause-1",
+    "41-2024-qh15/chapter-iv/section-2/article-39/clause-1/point-a",
+    "12-2022-nd-cp/chapter-iii/article-41/clause-4/point-a",
+    "12-2022-nd-cp/chapter-iii/article-39/clause-7/point-a",
+    "12-2022-nd-cp/chapter-iii/article-39/clause-10/point-a",
+    "41-2024-qh15/chapter-iv/section-2/article-38/clause-2",
+    "12-2022-nd-cp/chapter-i/article-6/clause-1"
+   ],
+   "as_of": "2026-06-15",
+   "as_of_source": "câu hỏi nêu 'đến giữa tháng 6/2026'",
+   "issues": [
+    "Thời hạn 30 ngày đăng ký tham gia BHXH",
+    "Mốc 60 ngày sau thời hạn để bị coi là trốn đóng theo Luật BHXH 2024",
+    "Chế tài không lập hồ sơ đúng hạn và chế tài trốn đóng trong NĐ 12/2022",
+    "Biện pháp khắc phục"
+   ],
+   "reference_outcome": "Hạn đăng ký là 30 ngày kể từ 01/3/2026 (khoảng 31/3/2026); quá thêm 60 ngày (khoảng 30/5/2026) mà vẫn chưa đăng ký thì theo điểm a khoản 1 Điều 39 Luật BHXH 2024 hành vi đã là trốn đóng, không chỉ là chậm lập hồ sơ. NĐ 12 cho phép phạt việc không lập hồ sơ đúng hạn 2 - 4 triệu đồng mỗi người và hành vi trốn đóng 50 - 75 triệu đồng (mức cá nhân, doanh nghiệp gấp đôi), kèm buộc đóng đủ; khái niệm trốn đóng mà NĐ 12 xử phạt nay được xác định theo Luật BHXH 2024.",
+   "annotation_status": "model_review",
+   "model_review": {
+    "date": "2026-11-15",
+    "corpus_version_id": "v48feefc6d53b",
+    "label_2026_11_12": {
+     "relevant_unit_ids": [
+      "41-2024-qh15/chapter-iv/section-1/article-28/clause-1",
+      "41-2024-qh15/chapter-iv/section-2/article-39/clause-1/point-a",
+      "12-2022-nd-cp/chapter-iii/article-41/clause-4/point-a",
+      "12-2022-nd-cp/chapter-iii/article-39/clause-7/point-a",
+      "12-2022-nd-cp/chapter-iii/article-39/clause-10/point-a",
+      "41-2024-qh15/chapter-iv/section-2/article-38/clause-2",
+      "12-2022-nd-cp/chapter-i/article-6/clause-1"
+     ],
+     "expected_status": "answer",
+     "confidence": "medium"
+    },
+    "kept": [
+     "41-2024-qh15/chapter-iv/section-1/article-28/clause-1",
+     "41-2024-qh15/chapter-iv/section-2/article-39/clause-1/point-a",
+     "12-2022-nd-cp/chapter-iii/article-41/clause-4/point-a",
+     "12-2022-nd-cp/chapter-iii/article-39/clause-7/point-a",
+     "12-2022-nd-cp/chapter-iii/article-39/clause-10/point-a",
+     "41-2024-qh15/chapter-iv/section-2/article-38",
+     "41-2024-qh15/chapter-iv/section-2/article-38/clause-2",
+     "41-2024-qh15/chapter-iv/section-2/article-39/clause-1",
+     "12-2022-nd-cp/chapter-iii/article-41/clause-4",
+     "12-2022-nd-cp/chapter-iii/article-39/clause-7",
+     "12-2022-nd-cp/chapter-i/article-6/clause-1"
+    ],
+    "added": [],
+    "dropped": [],
+    "stale_pairs": [],
+    "ancestors_dropped": [
+     "41-2024-qh15/chapter-iv/section-2/article-38",
+     "41-2024-qh15/chapter-iv/section-2/article-39/clause-1",
+     "12-2022-nd-cp/chapter-iii/article-41/clause-4",
+     "12-2022-nd-cp/chapter-iii/article-39/clause-7"
+    ],
+    "outside_corpus": [
+     "Luật Xử lý vi phạm hành chính (không phạt hai lần một hành vi)"
+    ],
+    "confidence": "medium",
+    "note": "Rà lại 15/11: tại 15/06/2026 NĐ 12/2022 còn hiệu lực, nên giữ các đơn vị NĐ 12; NĐ 283/2026 chưa có hiệu lực ở ngày này. Để người duyệt biết: từ 10/09/2026 NĐ 283 tách riêng hành vi 'không đăng ký hoặc đăng ký không đầy đủ số người phải tham gia' (khoản 2 Điều 43) với mức theo số người; nếu hành vi còn kéo dài sau ngày đó thì khoản 2 Điều 67 NĐ 283 cho áp NĐ 283. Ghi chú 12/11: Hạn 30 ngày đến khoảng 31/3/2026, quá 60 ngày (khoảng 30/5/2026) là trốn đóng theo điểm a khoản 1 Điều 39. Hành vi 3-6/2026 nên NĐ 12 còn hiệu lực. Việc cộng cả hai mức phạt cho cùng một sự việc chưa chắc chắn.",
+    "changed_from_2026_11_12": "Không đổi; ghi ngày áp dụng giữa tháng 6/2026 theo câu hỏi, khi NĐ 12/2022 còn hiệu lực.",
+    "checked_at": "2026-06-15",
+    "reference_outcome_supported": true
+   }
+  },
+  {
+   "question_id": "x24",
+   "question": "Hợp đồng của 3 nhân viên hết hạn ngày 01/4/2026 và công ty không ký tiếp. Công ty đã xác định mỗi người còn được trợ cấp thôi việc cho thời gian chưa tham gia bảo hiểm thất nghiệp, nhưng đã 40 ngày vẫn chưa trả vì đang khó khăn dòng tiền. Công ty đang vi phạm gì và có thể bị phạt ra sao?",
+   "complex_kind": "obligation_and_sanction",
+   "family_id": "xf24",
+   "split": "dev",
+   "documents": [
+    "12-2022-nd-cp",
+    "45-2019-qh14"
+   ],
+   "question_type": "synthesis",
+   "expected_status": "answer",
+   "relevant_unit_ids": [
+    "45-2019-qh14/chapter-iii/section-3/article-46/clause-1",
+    "45-2019-qh14/chapter-iii/section-3/article-48/clause-1/point-b",
+    "12-2022-nd-cp/chapter-ii/article-12/clause-2/point-a",
+    "12-2022-nd-cp/chapter-ii/article-12/clause-4/point-a",
+    "12-2022-nd-cp/chapter-i/article-6/clause-1",
+    "45-2019-qh14/chapter-iii/section-3/article-34/clause-1",
+    "145-2020-nd-cp/chapter-iii/section-2/article-8/clause-1"
+   ],
+   "as_of": "2026-05-11",
+   "as_of_source": "câu hỏi nêu hợp đồng hết hạn ngày 01/4/2026 và 'đã 40 ngày', tức ngày 11/05/2026",
+   "issues": [
+    "Trợ cấp thôi việc khi hợp đồng hết hạn",
+    "Thời hạn thanh toán 14 ngày làm việc và trường hợp kéo dài tối đa 30 ngày",
+    "Mức phạt theo số người và nhân hai đối với tổ chức",
+    "Biện pháp khắc phục kèm tiền lãi"
+   ],
+   "reference_outcome": "Đã quá 14 ngày làm việc và quá cả mốc tối đa 30 ngày (ngay cả khi viện dẫn lý do kinh tế để kéo dài), nên công ty vi phạm thời hạn thanh toán và nghĩa vụ trả trợ cấp thôi việc. Với 3 người, khung phạt cá nhân 1 - 2 triệu đồng nên doanh nghiệp bị phạt 2 - 4 triệu đồng, và bị buộc trả đủ trợ cấp kèm tiền lãi theo lãi suất tiền gửi không kỳ hạn cao nhất của các ngân hàng thương mại nhà nước.",
+   "annotation_status": "model_review",
+   "model_review": {
+    "date": "2026-11-15",
+    "corpus_version_id": "v48feefc6d53b",
+    "label_2026_11_12": {
+     "relevant_unit_ids": [
+      "45-2019-qh14/chapter-iii/section-3/article-46/clause-1",
+      "45-2019-qh14/chapter-iii/section-3/article-48/clause-1/point-b",
+      "12-2022-nd-cp/chapter-ii/article-12/clause-2/point-a",
+      "12-2022-nd-cp/chapter-ii/article-12/clause-4/point-a",
+      "12-2022-nd-cp/chapter-i/article-6/clause-1",
+      "45-2019-qh14/chapter-iii/section-3/article-34/clause-1"
+     ],
+     "expected_status": "answer",
+     "confidence": "high"
+    },
+    "kept": [
+     "45-2019-qh14/chapter-iii/section-3/article-46/clause-1",
+     "45-2019-qh14/chapter-iii/section-3/article-48/clause-1/point-b",
+     "12-2022-nd-cp/chapter-ii/article-12/clause-2/point-a",
+     "12-2022-nd-cp/chapter-ii/article-12/clause-4/point-a",
+     "12-2022-nd-cp/chapter-i/article-6/clause-1",
+     "45-2019-qh14/chapter-iii/section-3/article-34/clause-1",
+     "45-2019-qh14/chapter-iii/section-3/article-48/clause-1",
+     "12-2022-nd-cp/chapter-ii/article-12/clause-2"
+    ],
+    "added": [
+     {
+      "unit_id": "145-2020-nd-cp/chapter-iii/section-2/article-8/clause-1",
+      "reason": "Nhắc lại câu dẫn khoản 1 Điều 46 BLLĐ (cùng 'từ đủ 12 tháng trở lên' và cùng các khoản của Điều 34, trong đó khoản 1 là hết hạn hợp đồng)",
+      "quote": "từ đủ 12 tháng trở lên khi hợp đồng lao động chấm dứt theo quy định tại các khoản 1, 2, 3, 4, 6, 7, 9 và 10 Điều 34 của Bộ luật Lao động"
+     }
+    ],
+    "dropped": [],
+    "stale_pairs": [],
+    "ancestors_dropped": [
+     "45-2019-qh14/chapter-iii/section-3/article-48/clause-1",
+     "12-2022-nd-cp/chapter-ii/article-12/clause-2"
+    ],
+    "outside_corpus": [],
+    "confidence": "high",
+    "note": "Rà lại 15/11: tại 11/05/2026 NĐ 12/2022 còn hiệu lực nên giữ các đơn vị NĐ 12; NĐ 283/2026 chưa có hiệu lực ở ngày này. Thêm khoản 1 Điều 8 NĐ 145 vì nhắc lại khoản 1 Điều 46 BLLĐ. Ghi chú 12/11: 40 ngày vượt cả 14 ngày làm việc và mốc 30 ngày; 3 người: 1-2 triệu, doanh nghiệp 2-4 triệu; buộc trả kèm lãi. Hành vi 4-5/2026 nên NĐ 12 còn hiệu lực. Điểm b khoản 1 Điều 48 không tự chứa thời hạn, cần câu dẫn.",
+    "changed_from_2026_11_12": "Thêm khoản 1 Điều 8 NĐ 145/2020 vì nhắc lại khoản 1 Điều 46 BLLĐ; ghi ngày áp dụng 11/05/2026, khi NĐ 12/2022 còn hiệu lực.",
+    "checked_at": "2026-05-11",
+    "reference_outcome_supported": true
+   }
+  }
+ ]
+}

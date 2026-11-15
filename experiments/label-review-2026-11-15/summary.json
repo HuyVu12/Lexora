@@ -1,0 +1,184 @@
+{
+ "review_date": "2026-11-15",
+ "corpus_version_id": "v48feefc6d53b",
+ "unit_status": "unit-status-v2",
+ "edges": "data/kb/amendments-scope-v3-v48feefc6d53b-v2/edges.jsonl",
+ "sets": {
+  "cases": {
+   "questions_source": 44,
+   "excluded": [
+    {
+     "question_id": "k01",
+     "reason": "Loại khỏi bộ theo quyết định 15/11/2026 (docs/decisions.md). Lý do từ lượt rà 12/11: Tòa phúc thẩm chỉ công nhận thỏa thuận, không phân tích nội dung; nhãn dựa trên các vấn đề của hồ sơ, đặt lại theo luật hiện hành (Điều 13, 20 BLLĐ 2019; Luật BHXH 2024). Vụ việc 2019-2020 theo BLLĐ 2012."
+    },
+    {
+     "question_id": "k09",
+     "reason": "Loại khỏi bộ theo quyết định 15/11/2026 (docs/decisions.md). Lý do từ lượt rà 12/11: Tòa chỉ công nhận thỏa thuận, không phân tích tính hợp pháp; các đơn vị Điều 36, 39, 41 dựa trên vấn đề của hồ sơ. Sự việc 11/2020 trước khi BLLĐ 2019 có hiệu lực nhưng tòa viện dẫn BLLĐ 2019. Điều 47 được viện dẫn nhưng không áp dụng cho trường hợp này nên không gán."
+    },
+    {
+     "question_id": "k15",
+     "reason": "Loại khỏi bộ theo quyết định 15/11/2026 (docs/decisions.md). Lý do từ lượt rà 12/11: Tòa chỉ buộc đóng tiền còn nợ, không phân loại chậm đóng hay trốn đóng; trốn đóng (điểm đ khoản 1 Điều 39) cần thêm điều kiện quá 60 ngày và đã bị đôn đốc, nên giữ cả định nghĩa chậm đóng và trốn đóng cùng biện pháp tương ứng. Điều 85, 86 Luật 2014 (mức và phương thức đóng) không ánh xạ."
+    },
+    {
+     "question_id": "k17",
+     "reason": "Loại khỏi bộ theo quyết định 15/11/2026 (docs/decisions.md). Lý do từ lượt rà 12/11: Bản án chỉ viện dẫn khoản 4 Điều 97 (lãi chậm trả) và Luật BHXH, câu hỏi không hỏi hai vấn đề này; các đơn vị về cách chức, trình tự kỷ luật và quy chế thưởng là căn cứ gợi ý trong hồ sơ, khớp với kết luận 'có căn cứ và đúng trình tự' của tòa."
+    },
+    {
+     "question_id": "k24",
+     "reason": "Loại khỏi bộ theo quyết định 15/11/2026 (docs/decisions.md). Lý do từ lượt rà 12/11: Kết quả lấy từ báo chí. Tòa phúc thẩm kết luận trái pháp luật dựa trên BLLĐ 2012 (ngoài corpus) và việc sai lệch chưa chứng minh cố ý; theo chữ BLLĐ 2019 thì khoản 2 Điều 16 và điểm g khoản 1 Điều 36 cho phép chấm dứt, nên câu trả lời cần nêu cả hai hướng. Hậu quả tòa buộc khớp khoản 1 Điều 41. Khoản 2 Điều 220 (hợp đồng giao kết trước 2021) có thể liên quan nhưng tòa không viện dẫn."
+    },
+    {
+     "question_id": "k25",
+     "reason": "Loại khỏi bộ theo quyết định 15/11/2026 (docs/decisions.md). Lý do từ lượt rà 12/11: Nguồn là báo chí, không viện dẫn điều luật; nhãn dựa trên kết quả (bồi thường tai nạn lao động, chi phí điều trị, lập hồ sơ BHXH) và các vấn đề của hồ sơ. Bài báo không cho biết tòa có xét việc chấm dứt hợp đồng; giữ khoản 1 Điều 37 vì câu hỏi hỏi trực tiếp. Điểm a khoản 2 Điều 38 giả định người lao động có bảo hiểm y tế."
+    },
+    {
+     "question_id": "k26",
+     "reason": "Loại khỏi bộ theo quyết định 15/11/2026 (docs/decisions.md). Lý do từ lượt rà 12/11: Nguồn là báo chí; sự việc năm 2016 theo BLLĐ 2012 (Điều 99 về cai thầu tương ứng Điều 100 BLLĐ 2019) và Luật ATVSLĐ 2015."
+    },
+    {
+     "question_id": "k40",
+     "reason": "Loại khỏi bộ theo quyết định 15/11/2026 (docs/decisions.md). Lý do từ lượt rà 12/11: Diễn đạt lại của k15 (cùng vụ c17), giữ nhãn giống k15. Tòa chỉ buộc đóng tiền còn nợ; phần 'bị xử lý thế nào' về xử phạt hành chính tòa không xét nên không gán đơn vị NĐ 12/2022. Tòa chỉ buộc đóng tiền còn nợ, không phân loại chậm đóng hay trốn đóng; trốn đóng (điểm đ khoản 1 Điều 39) cần thêm điều kiện quá 60 ngày và đã bị đôn đốc, nên giữ cả định nghĩa chậm đóng và trốn đóng cùng biện pháp tương ứng. Điều 85, 86 Luật 2014 (mức và phương thức đóng) không ánh xạ."
+    },
+    {
+     "question_id": "k41",
+     "reason": "Loại khỏi bộ theo quyết định 15/11/2026 (docs/decisions.md). Lý do từ lượt rà 12/11: Diễn đạt lại của k25 (cùng vụ c29), phạm vi hẹp hơn: không hỏi bồi thường nên không thêm khoản 2, 4 Điều 38. Nguồn báo chí không viện dẫn điều luật; nhãn dựa trên kết quả (lập hồ sơ BHXH, bồi thường tai nạn lao động) và các vấn đề của hồ sơ; bài báo không cho biết tòa có xét việc chấm dứt hợp đồng."
+    }
+   ],
+   "questions": 35,
+   "answer": 35,
+   "refuse": 0,
+   "units_2026_11_12": 192,
+   "units": 155,
+   "ancestors_dropped": 0,
+   "kept": 149,
+   "added": 6,
+   "removed": 43,
+   "stale": 0,
+   "not_yet_effective": 2,
+   "unchanged": 13,
+   "status_changed": 0,
+   "confidence": {
+    "high": 2,
+    "medium": 21,
+    "low": 12
+   },
+   "with_as_of": 22,
+   "old_law_cases": [
+    {
+     "question_id": "k03",
+     "event_date": "2019-07-01"
+    },
+    {
+     "question_id": "k10",
+     "event_date": "2018-08-01"
+    },
+    {
+     "question_id": "k16",
+     "event_date": "2011-08"
+    },
+    {
+     "question_id": "k18",
+     "event_date": "2020-08"
+    },
+    {
+     "question_id": "k20",
+     "event_date": "2020-05"
+    },
+    {
+     "question_id": "k21",
+     "event_date": "2016-02"
+    },
+    {
+     "question_id": "k22",
+     "event_date": "2016-11-25"
+    },
+    {
+     "question_id": "k23",
+     "event_date": "2013-12"
+    },
+    {
+     "question_id": "k28",
+     "event_date": "2016-06"
+    },
+    {
+     "question_id": "k29",
+     "event_date": "2020-11-01"
+    },
+    {
+     "question_id": "k32",
+     "event_date": "2019-11-12"
+    },
+    {
+     "question_id": "k36",
+     "event_date": "2017-10-16"
+    },
+    {
+     "question_id": "k42",
+     "event_date": "2017-10-16"
+    }
+   ],
+   "outcome_issues": [],
+   "families": 31,
+   "families_with_two_or_more": 4
+  },
+  "conflict": {
+   "questions_source": 25,
+   "excluded": [],
+   "questions": 25,
+   "answer": 25,
+   "refuse": 0,
+   "units_2026_11_12": 156,
+   "units": 175,
+   "ancestors_dropped": 38,
+   "kept": 144,
+   "added": 31,
+   "removed": 2,
+   "stale": 18,
+   "not_yet_effective": 0,
+   "unchanged": 14,
+   "status_changed": 0,
+   "confidence": {
+    "medium": 5,
+    "high": 19,
+    "low": 1
+   },
+   "with_as_of": 25,
+   "old_law_cases": [],
+   "outcome_issues": [
+    "x04",
+    "x10",
+    "x17",
+    "x20",
+    "x21"
+   ],
+   "families": 25,
+   "families_with_two_or_more": 0
+  },
+  "complex": {
+   "questions_source": 30,
+   "excluded": [],
+   "questions": 30,
+   "answer": 30,
+   "refuse": 0,
+   "units_2026_11_12": 119,
+   "units": 144,
+   "ancestors_dropped": 0,
+   "kept": 111,
+   "added": 33,
+   "removed": 0,
+   "stale": 8,
+   "not_yet_effective": 0,
+   "unchanged": 19,
+   "status_changed": 0,
+   "confidence": {
+    "medium": 14,
+    "high": 16
+   },
+   "with_as_of": 30,
+   "old_law_cases": [],
+   "outcome_issues": [],
+   "families": 24,
+   "families_with_two_or_more": 6
+  }
+ }
+}

@@ -1,0 +1,507 @@
+[
+ {
+  "text": "Trường mầm non của chúng tôi không còn được giao vị trí và không có nguồn trả lương cho một nhân viên cấp dưỡng làm hợp đồng không xác định thời hạn, vì trẻ nghỉ học kéo dài do dịch bệnh. Chị ấy không đồng ý tạm hoãn hợp đồng và trường cũng không còn vị trí khác để bố trí. Trường có được đơn phương chấm dứt hợp đồng không, phải báo trước bao lâu và phải thanh toán những khoản gì?",
+  "question_type": "synthesis",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-iii/section-3/article-36/clause-1/point-c",
+   "45-2019-qh14/chapter-iii/section-3/article-36/clause-2/point-a",
+   "45-2019-qh14/chapter-iii/section-2/article-30/clause-1/point-h",
+   "45-2019-qh14/chapter-iii/section-3/article-48/clause-1",
+   "45-2019-qh14/chapter-iii/section-3/article-48/clause-3/point-a"
+  ],
+  "rationale": "Đề xuất của model (rà soát 2026-11-15 trên corpus v3), không phải nhãn người. Độ tin cậy: cao. Ngày áp dụng: 2021-09-15 (ngày nêu trong câu hoặc hồ sơ). Căn cứ và lưu ý: Mọi đơn vị là căn cứ bản án nêu đích danh (điểm c khoản 1, điểm a khoản 2 Điều 36, điểm h khoản 1 Điều 30, Điều 48). Vấn đề \"Trợ cấp thôi việc\" tòa chỉ xét qua kết luận đã thanh toán đủ theo Điều 48, không viện dẫn Điều 46; nếu người gán đọc bản án và thấy tòa dẫn Điều 46 thì thêm lại khoản 1 Điều 46. Thẩm quyền ký quyết định tại trường công lập cần văn bản ngoài corpus.",
+  "paraphrase_of": null,
+  "source_question_id": "k00"
+ },
+ {
+  "text": "Đơn hàng giảm do suy thoái, công ty bao bì cho thôi việc một nhân viên quản lý chất lượng làm hợp đồng 01 năm. Công ty đã lập phương án sử dụng lao động, báo trước 30 ngày, trao đổi với công đoàn cơ sở nhưng không gửi thông báo cho Ủy ban nhân dân cấp tỉnh vì chỉ cắt giảm một người. Việc cho thôi việc có hợp pháp không và nếu bị kiện công ty phải trả những gì?",
+  "question_type": "synthesis",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-iii/section-3/article-42/clause-2/point-a",
+   "45-2019-qh14/chapter-iii/section-3/article-42/clause-6",
+   "45-2019-qh14/chapter-iii/section-3/article-42/clause-4",
+   "45-2019-qh14/chapter-iii/section-3/article-44/clause-2",
+   "45-2019-qh14/chapter-iii/section-3/article-41/clause-1",
+   "45-2019-qh14/chapter-vi/article-104/clause-1"
+  ],
+  "rationale": "Đề xuất của model (rà soát 2026-11-15 trên corpus v3), không phải nhãn người. Độ tin cậy: vừa. Ngày áp dụng: 2023-01-03 (ngày nêu trong câu hoặc hồ sơ). Không còn hiệu lực hoặc chưa có hiệu lực tại ngày đó, không có đơn vị thay: khoản 4 Điều 13, Luật Bảo hiểm xã hội số 41/2024/QH15. Căn cứ và lưu ý: Căn cứ quyết định: khoản 6 Điều 42 (không thông báo Ủy ban nhân dân cấp tỉnh) và Điều 41. Điểm a khoản 2 Điều 42 là lý do kinh tế tòa chấp nhận; khoản 4 Điều 42 và khoản 2 Điều 44 theo Điều 44 được viện dẫn; khoản 1 Điều 104 để bác thưởng tháng 13. Phần Luật BHXH 2014 tòa viện dẫn không có trong corpus. Điều 36 và Điều 90 được viện dẫn chung, không xác định được điểm, khoản nên không gán.",
+  "paraphrase_of": null,
+  "source_question_id": "k02"
+ },
+ {
+  "text": "Một thợ lái máy khoan làm cho công ty từ năm 2016 chỉ theo thỏa thuận miệng nhưng vẫn được đóng bảo hiểm. Khi công trình kết thúc, quản lý họp miệng với nhóm thợ và mọi người đồng ý nghỉ; công ty ra quyết định thôi việc, chốt sổ và trả trợ cấp thôi việc, anh đã nhận. Nay anh cho rằng bị đơn phương chấm dứt trái luật. Hợp đồng miệng như vậy có hợp lệ không, chấm dứt bằng thỏa thuận miệng có giá trị không và công ty cần lưu ý gì về hồ sơ?",
+  "question_type": "synthesis",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-iii/section-3/article-34/clause-3"
+  ],
+  "rationale": "Đề xuất của model (rà soát 2026-11-15 trên corpus v3), không phải nhãn người. Độ tin cậy: thấp. Không có ngày áp dụng trong corpus; đơn vị là quy định hiện hành, kiểm hiệu lực tại 2026-11-11. Cần quyết định: sự việc (2019-07-01) theo luật cũ không có trong corpus; giữ hay loại câu (cờ old_law_case). Căn cứ và lưu ý: Sự việc 2019 theo BLLĐ 2012, không có trong corpus v3; khoản 3 Điều 34 BLLĐ 2019 là quy định tương ứng theo ghi chú case-research, chưa đối chiếu được với chữ của luật cũ. Vấn đề \"Trợ cấp thôi việc đã nhận\" tòa xét như chứng cứ, không có điều luật nội dung. Người gán nên cân nhắc loại câu nếu bộ chỉ giữ câu có luật áp dụng nằm trong corpus.",
+  "paraphrase_of": null,
+  "source_question_id": "k03"
+ },
+ {
+  "text": "Một nhân viên đã ký hợp đồng 01 năm sau 02 tháng thử việc, rồi đề nghị công ty cho ký lại hợp đồng thử việc mới ở vị trí khác và ký lại hợp đồng 01 năm mới để chị tiện làm hồ sơ trợ cấp thất nghiệp từ chỗ làm cũ. Gần hết hạn, công ty thông báo không ký tiếp thì chị nộp đơn xin nghỉ. Việc cho thử việc lần hai có vi phạm không, có bị phạt không, và hợp đồng chấm dứt theo căn cứ nào?",
+  "question_type": "synthesis",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-iii/section-3/article-34/clause-1",
+   "45-2019-qh14/chapter-iii/section-3/article-34/clause-3",
+   "45-2019-qh14/chapter-iii/section-1/article-20/clause-2/point-b",
+   "45-2019-qh14/chapter-iii/section-3/article-45/clause-1"
+  ],
+  "rationale": "Đề xuất của model (rà soát 2026-11-15 trên corpus v3), không phải nhãn người. Độ tin cậy: vừa. Ngày áp dụng: 2022-04-01 (ngày nêu trong câu hoặc hồ sơ). Căn cứ và lưu ý: Căn cứ bản án: khoản 1, khoản 3 Điều 34, điểm b khoản 2 Điều 20, Điều 45. Vấn đề \"Thử việc lần hai\" được giữ vì tòa có nhận định việc ký lại là không đúng quy định, nhưng hồ sơ không ghi điều luật cho nhận định đó; người gán nên mở bản án (đường dẫn trong case-research c05) và thêm câu dẫn Điều 25 nếu tòa viện dẫn nó.",
+  "paraphrase_of": null,
+  "source_question_id": "k04"
+ },
+ {
+  "text": "Công ty dịch vụ kỹ thuật cử một kỹ thuật viên làm tại nhà máy của khách hàng; kèm hợp đồng lao động anh ký cam kết soạn sẵn là trong 12 tháng sau khi nghỉ không làm việc cho bất kỳ ai tại nhà máy đó. Anh nghỉ việc và 3 tháng sau ký hợp đồng thẳng với nhà máy. Công ty có đòi bồi thường được không, và thỏa thuận như vậy có giá trị đến đâu?",
+  "question_type": "synthesis",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-i/article-5/clause-1/point-a",
+   "45-2019-qh14/chapter-ii/article-10/clause-1"
+  ],
+  "rationale": "Đề xuất của model (rà soát 2026-11-15 trên corpus v3), không phải nhãn người. Độ tin cậy: vừa. Ngày áp dụng: 2021-06-15 (ngày nêu trong câu hoặc hồ sơ). Căn cứ và lưu ý: Căn cứ nội dung trong corpus: điểm a khoản 1 Điều 5 và khoản 1 Điều 10 BLLĐ 2019. \"Điều kiện để đòi bồi thường\" tòa giải quyết bằng nghĩa vụ chứng minh (BLTTDS), không có đơn vị trong corpus. Thỏa thuận ký năm 2019 nhưng hành vi và tranh chấp xảy ra năm 2021, tòa áp dụng BLLĐ 2019.",
+  "paraphrase_of": null,
+  "source_question_id": "k05"
+ },
+ {
+  "text": "Một nữ công nhân may được chuyển sang tổ khác sau khi kiểm tra tay nghề không đạt; chị đã đồng ý trong cuộc họp có công đoàn. Sau đó chị tự nghỉ hơn một tháng, chỉ nói miệng với quản đốc và bảo đã gửi đơn nghỉ ốm qua bảo vệ nhưng không có giấy tờ. Công ty có được chấm dứt hợp đồng với chị không, có phải báo trước không, và việc điều chuyển trước đó có hợp lệ không?",
+  "question_type": "synthesis",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-iii/section-3/article-36/clause-1/point-e",
+   "45-2019-qh14/chapter-iii/section-3/article-36/clause-3",
+   "45-2019-qh14/chapter-iii/section-2/article-29/clause-1"
+  ],
+  "rationale": "Đề xuất của model (rà soát 2026-11-15 trên corpus v3), không phải nhãn người. Độ tin cậy: cao. Ngày áp dụng: 2022-10-01 (ngày nêu trong câu hoặc hồ sơ). Căn cứ và lưu ý: Bản án viết điểm c khoản 1 Điều 36 nhưng chữ của khoản 3 Điều 36 (bản án cũng viện dẫn) chỉ miễn báo trước cho điểm d và e, và tình tiết là tự ý bỏ việc từ 05 ngày làm việc liên tục, nên chọn điểm e. Điều 20 viện dẫn chung, câu hỏi không hỏi loại hợp đồng.",
+  "paraphrase_of": null,
+  "source_question_id": "k06"
+ },
+ {
+  "text": "Doanh số giảm gần 70%, công ty ô tô quyết định tái cấu trúc: đã lập phương án sử dụng lao động, đối thoại, lấy ý kiến ban chấp hành công đoàn và đề nghị thỏa thuận nghỉ với người dôi dư. Một kỹ sư làm từ năm 2011 không đồng ý thỏa thuận. Công ty có được cho anh thôi việc không, phải làm đủ những bước nào, có cần tiêu chí lựa chọn người bị cắt giảm không và phải trả trợ cấp gì?",
+  "question_type": "synthesis",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-iii/section-3/article-42/clause-1/point-a",
+   "45-2019-qh14/chapter-iii/section-3/article-42/clause-3",
+   "45-2019-qh14/chapter-iii/section-3/article-42/clause-4",
+   "45-2019-qh14/chapter-iii/section-3/article-42/clause-6",
+   "45-2019-qh14/chapter-iii/section-3/article-44/clause-1/point-c",
+   "45-2019-qh14/chapter-iii/section-3/article-44/clause-2"
+  ],
+  "rationale": "Đề xuất của model (rà soát 2026-11-15 trên corpus v3), không phải nhãn người. Độ tin cậy: vừa. Ngày áp dụng: 2024-02-01 (ngày nêu trong câu hoặc hồ sơ). Căn cứ và lưu ý: Tòa kết luận công ty chứng minh lý do kinh tế và làm đúng Điều 42, Điều 44. Hồ sơ nêu cả thay đổi cơ cấu và lý do kinh tế nên giữ cả khoản 3 và khoản 4 Điều 42. Về tiêu chí lựa chọn, tòa chấp nhận cách chọn ngẫu nhiên; điểm c khoản 1 Điều 44 là nội dung phương án gần nhất, không có quy định nào trong corpus bắt buộc tiêu chí. Điều 13, 90, 94, 95 viện dẫn chung, không gán. Người gán có thể xem bản án để biết vì sao tòa dẫn Điều 46.",
+  "paraphrase_of": null,
+  "source_question_id": "k07"
+ },
+ {
+  "text": "Công ty tuyển một trưởng phòng tài chính, hết 60 ngày thử việc thì gửi hợp đồng 01 năm nhưng chị chưa ký mà vẫn đi làm, nhận lương. Sau đó công ty xác minh với các nơi cũ và phát hiện hồ sơ kê thời gian làm việc ở các doanh nghiệp lớn dài hơn thực tế 1-2 năm. Quan hệ hiện tại là gì, công ty có được đơn phương chấm dứt không và phải báo trước bao lâu?",
+  "question_type": "synthesis",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-iii/section-1/article-16/clause-2",
+   "45-2019-qh14/chapter-iii/section-3/article-36/clause-1/point-g",
+   "45-2019-qh14/chapter-iii/section-3/article-36/clause-2/point-b",
+   "45-2019-qh14/chapter-iii/section-1/article-20/clause-1/point-b"
+  ],
+  "rationale": "Đề xuất của model (rà soát 2026-11-15 trên corpus v3), không phải nhãn người. Độ tin cậy: vừa. Ngày áp dụng: 2022-06-13 (ngày nêu trong câu hoặc hồ sơ). Căn cứ và lưu ý: Căn cứ bản án: khoản 2 Điều 16, điểm g khoản 1 và điểm b khoản 2 Điều 36. Điểm b khoản 1 Điều 20 suy từ việc bản án viện dẫn Điều 20 và áp thời hạn báo trước 30 ngày. Điều 38, 41, 48 viện dẫn để bác yêu cầu, không gắn với câu hỏi.",
+  "paraphrase_of": null,
+  "source_question_id": "k08"
+ },
+ {
+  "text": "Bệnh viện tư cử một bác sĩ đi học chuyên khoa 09 tháng, có cam kết làm việc 05 năm sau khóa học, vi phạm thì bồi thường gấp 04 lần chi phí đào tạo. Học xong được một năm thì chị xin nghỉ, có báo trước. Bệnh viện được đòi những khoản nào, những chi phí nào được tính là chi phí đào tạo và mức gấp 04 lần có được không?",
+  "question_type": "synthesis",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-iv/article-62/clause-1",
+   "45-2019-qh14/chapter-iv/article-62/clause-2/point-c",
+   "45-2019-qh14/chapter-iv/article-62/clause-2/point-d",
+   "45-2019-qh14/chapter-iv/article-62/clause-3",
+   "45-2019-qh14/chapter-iii/section-3/article-40/clause-3"
+  ],
+  "rationale": "Đề xuất của model (rà soát 2026-11-15 trên corpus v3), không phải nhãn người. Độ tin cậy: thấp. Không có ngày áp dụng trong corpus; đơn vị là quy định hiện hành, kiểm hiệu lực tại 2026-11-11. Cần quyết định: sự việc (2018-08-01) theo luật cũ không có trong corpus; giữ hay loại câu (cờ old_law_case). Căn cứ và lưu ý: Theo BLLĐ 2012 tòa áp dụng nghĩa vụ hoàn trả chi phí đào tạo (Điều 43, Điều 62). Khi đặt sang BLLĐ 2019 cần lưu ý: khoản 1 Điều 35 cho người lao động quyền đơn phương chấm dứt khi báo trước, nên khoản 3 Điều 40 chỉ áp dụng nếu việc nghỉ là trái pháp luật; nghĩa vụ hoàn trả theo hợp đồng đào tạo (điểm d khoản 2 Điều 62) vẫn đứng. Mức gấp 04 lần và cam kết trả nợ thuộc BLDS, ngoài corpus. Người gán nên cân nhắc loại câu vì luật áp dụng không có trong corpus.",
+  "paraphrase_of": null,
+  "source_question_id": "k10"
+ },
+ {
+  "text": "Một công nhân kỹ thuật được cử sang nhà máy mẹ ở nước ngoài học 67 ngày theo hợp đồng đào tạo, cam kết làm việc ít nhất 01 năm sau đào tạo. Một tuần sau khi sang, anh bỏ khóa học, không về nước và công ty không liên lạc được. Công ty nên xử lý thế nào, chấm dứt hợp đồng hay sa thải, và được đòi những khoản gì?",
+  "question_type": "synthesis",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-iii/section-3/article-40/clause-3",
+   "45-2019-qh14/chapter-iv/article-62/clause-2/point-c",
+   "45-2019-qh14/chapter-iv/article-62/clause-2/point-d",
+   "45-2019-qh14/chapter-iv/article-62/clause-3"
+  ],
+  "rationale": "Đề xuất của model (rà soát 2026-11-15 trên corpus v3), không phải nhãn người. Độ tin cậy: vừa. Ngày áp dụng: 2024-01-01 (ngày nêu trong câu hoặc hồ sơ). Căn cứ và lưu ý: Căn cứ bản án: khoản 2, khoản 3 Điều 40 và Điều 62; phần khoản 2 Điều 40 đã bị rút nên không gán. Điểm b khoản 1 Điều 20 và khoản 1 Điều 187 viện dẫn cho loại hợp đồng và thẩm quyền, câu hỏi không hỏi. Bản án sơ thẩm, có thể đã bị kháng cáo.",
+  "paraphrase_of": null,
+  "source_question_id": "k11"
+ },
+ {
+  "text": "Một kỹ thuật viên lắp ráp vào làm theo thỏa thuận miệng, thử việc 01 tháng; hết thử việc công ty không thông báo kết quả, anh vẫn làm tiếp. Một hôm anh từ chối tăng ca vì mệt; hôm sau quản lý bắt anh chọn bị phạt 01 triệu đồng hoặc viết đơn xin nghỉ, anh từ chối nhưng vẫn bị giao phiếu ra cổng. Công ty xử lý như vậy có đúng không và có rủi ro gì?",
+  "question_type": "synthesis",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-iii/section-1/article-13/clause-1",
+   "45-2019-qh14/chapter-iii/section-1/article-25/clause-3",
+   "45-2019-qh14/chapter-iii/section-1/article-27/clause-1",
+   "45-2019-qh14/chapter-iii/section-3/article-36/clause-2/point-b",
+   "45-2019-qh14/chapter-iii/section-3/article-41/clause-1"
+  ],
+  "rationale": "Đề xuất của model (rà soát 2026-11-15 trên corpus v3), không phải nhãn người. Độ tin cậy: vừa. Ngày áp dụng: 2022-11-30 (ngày nêu trong câu hoặc hồ sơ). Căn cứ và lưu ý: Căn cứ bản án: Điều 13, khoản 3 Điều 25, khoản 1 Điều 27, điểm b khoản 2 Điều 36 và Điều 41 (tiền vi phạm báo trước nằm ở đoạn cuối khoản 1 Điều 41). Khoản 2 Điều 15 viện dẫn chung, không gán. Tòa tính tiền lương bồi thường gồm lương cơ bản và phụ cấp gắn với công việc nhưng hồ sơ không ghi điều luật cho cách tính này.",
+  "paraphrase_of": null,
+  "source_question_id": "k12"
+ },
+ {
+  "text": "Công ty cao su ký với công nhân cạo mủ mỗi năm một hợp đồng dưới 12 tháng theo mùa vụ, giữa các hợp đồng nghỉ 2-3 tháng, và không giao bản hợp đồng cho họ. Năm nay đội sản xuất không xếp một công nhân vào lô cạo mới và công ty báo chấm dứt hợp đồng khi hết hạn. Cách ký hợp đồng như vậy có đúng không, khi hết hạn công ty phải làm gì?",
+  "question_type": "synthesis",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-iii/section-1/article-20/clause-1/point-b",
+   "45-2019-qh14/chapter-iii/section-3/article-34/clause-1",
+   "45-2019-qh14/chapter-iii/section-3/article-39",
+   "45-2019-qh14/chapter-iii/section-3/article-45/clause-1",
+   "45-2019-qh14/chapter-xiii/article-177/clause-4"
+  ],
+  "rationale": "Đề xuất của model (rà soát 2026-11-15 trên corpus v3), không phải nhãn người. Độ tin cậy: vừa. Ngày áp dụng: 2023-04-01 (ngày nêu trong câu hoặc hồ sơ). Căn cứ và lưu ý: Căn cứ bản án: điểm b khoản 1 Điều 20, khoản 1 Điều 34, Điều 39, khoản 1 Điều 45, khoản 4 Điều 177. Câu hỏi còn hỏi cách ký liên tiếp và việc không giao bản hợp đồng, nhưng tòa không xét hai điểm này nên chúng không có đơn vị.",
+  "paraphrase_of": null,
+  "source_question_id": "k13"
+ },
+ {
+  "text": "Một lễ tân nhà khách đang nuôi con dưới 12 tháng tuổi bị xếp trực ca 24 giờ cả ngày lẫn đêm, và phải làm thêm nhiều giờ khi ca trực giảm từ 3 xuống 2 người mà không được trả tiền làm thêm đúng mức. Nay đơn vị thay đổi mô hình, giải thể bộ phận nhà khách và muốn chấm dứt hợp đồng không xác định thời hạn của chị. Việc bố trí ca trước đây có vi phạm không, phải trả làm thêm giờ thế nào, và chấm dứt hợp đồng theo căn cứ nào?",
+  "question_type": "synthesis",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-iii/section-3/article-36/clause-1/point-c",
+   "45-2019-qh14/chapter-iii/section-3/article-36/clause-2/point-a",
+   "45-2019-qh14/chapter-iii/section-3/article-42/clause-1/point-a",
+   "45-2019-qh14/chapter-iii/section-3/article-47/clause-1",
+   "145-2020-nd-cp/chapter-iii/section-2/article-8/clause-2"
+  ],
+  "rationale": "Đề xuất của model (rà soát 2026-11-15 trên corpus v3), không phải nhãn người. Độ tin cậy: vừa. Ngày áp dụng: 2023-01-01 (ngày nêu trong câu hoặc hồ sơ). Căn cứ và lưu ý: Tòa viện dẫn cả điểm c khoản 1 Điều 36 và Điều 42 cho việc chấm dứt, điểm a khoản 2 Điều 36 cho báo trước và Điều 47 cho trợ cấp mất việc làm. Điều 42 viện dẫn chung; tình tiết giải thể bộ phận khớp điểm a khoản 1 Điều 42. Vấn đề tiền làm thêm giờ được giữ vì tòa buộc trả 600.000 đồng, nhưng hồ sơ không ghi điều luật; người gán nên xem bản án để quyết định có thêm điểm a khoản 1 Điều 98 không. Điều 41 viện dẫn để bác yêu cầu, không gán.",
+  "paraphrase_of": null,
+  "source_question_id": "k14"
+ },
+ {
+  "text": "Một cô gái 17 tuổi mượn căn cước của người khác để ký hợp đồng 12 tháng làm công nhân may, bảo hiểm cũng đóng dưới tên người cho mượn. Khi phát hiện, công ty phải xử lý hợp đồng này thế nào, ai có quyền tuyên bố hợp đồng vô hiệu, và nếu muốn tiếp tục sử dụng chị thì cần điều kiện gì?",
+  "question_type": "synthesis",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-iii/section-1/article-18/clause-1",
+   "45-2019-qh14/chapter-iii/section-4/article-49/clause-1/point-b"
+  ],
+  "rationale": "Đề xuất của model (rà soát 2026-11-15 trên corpus v3), không phải nhãn người. Độ tin cậy: thấp. Không có ngày áp dụng trong corpus; đơn vị là quy định hiện hành, kiểm hiệu lực tại 2026-11-11. Cần quyết định: sự việc (2011-08) theo luật cũ không có trong corpus; giữ hay loại câu (cờ old_law_case). Căn cứ và lưu ý: Sự việc 2011 theo BLLĐ 1994, không có trong corpus. Chỉ còn một vấn đề được tòa xét; hai trong ba ý của câu hỏi (ai có quyền tuyên vô hiệu, điều kiện để tiếp tục sử dụng) không có căn cứ từ bản án. Đề nghị người gán cân nhắc loại câu này.",
+  "paraphrase_of": null,
+  "source_question_id": "k16"
+ },
+ {
+  "text": "Công ty muốn điều chuyển một quản lý cấp cao xuống làm nhân viên xưởng, tạm đình chỉ công việc 30 ngày để xác minh, rồi sa thải vì tự ý nghỉ việc; người này đang là ủy viên ban chấp hành công đoàn cơ sở. Công ty phải tuân thủ những gì, và việc xếp anh ngồi riêng, không giao việc trong thời gian chờ có rủi ro gì?",
+  "question_type": "synthesis",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-xiii/article-177/clause-3",
+   "45-2019-qh14/chapter-viii/section-1/article-128/clause-1",
+   "45-2019-qh14/chapter-i/article-8/clause-2",
+   "45-2019-qh14/chapter-viii/section-1/article-124/clause-3"
+  ],
+  "rationale": "Đề xuất của model (rà soát 2026-11-15 trên corpus v3), không phải nhãn người. Độ tin cậy: thấp. Không có ngày áp dụng trong corpus; đơn vị là quy định hiện hành, kiểm hiệu lực tại 2026-11-11. Cần quyết định: sự việc (2020-08) theo luật cũ không có trong corpus; giữ hay loại câu (cờ old_law_case). Căn cứ và lưu ý: Ánh xạ: khoản 7 Điều 192 BLLĐ 2012 sang khoản 3 Điều 177 (thỏa thuận bằng văn bản với ban lãnh đạo tổ chức đại diện khi chuyển làm công việc khác, kỷ luật sa thải), khoản 1 Điều 129 sang khoản 1 Điều 128, khoản 2 Điều 8 giữ số. Case-research ghi \"Điều 125\" BLLĐ 2019 là tương ứng, nhưng Điều 125 BLLĐ 2019 là các trường hợp sa thải; hình thức cách chức nằm ở Điều 124, nên giữ khoản 3 Điều 124 như lượt 12/11. Ánh xạ chưa đối chiếu được với chữ BLLĐ 2012 vì văn bản này không có trong corpus.",
+  "paraphrase_of": null,
+  "source_question_id": "k18"
+ },
+ {
+  "text": "Một trưởng phòng tạo mẫu nói rằng từ năm 2016 đến hết năm 2021 gần như ngày nào cũng tăng ca theo máy chấm công khuôn mặt nhưng không được trả tiền; bảng đề nghị làm thêm giờ do chính anh ký thì ghi ít hơn. Đầu năm 2022 anh yêu cầu hòa giải rồi khởi kiện đòi toàn bộ tiền làm thêm giờ. Anh còn quyền đòi khoảng thời gian nào, tiền làm thêm tính theo mức nào, và công ty có vi phạm giới hạn làm thêm giờ không?",
+  "question_type": "synthesis",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-vi/article-98/clause-1/point-a",
+   "45-2019-qh14/chapter-vi/article-98/clause-1/point-b",
+   "45-2019-qh14/chapter-vii/section-1/article-107/clause-2/point-b",
+   "45-2019-qh14/chapter-vii/section-1/article-107/clause-2/point-c",
+   "45-2019-qh14/chapter-vii/section-1/article-107/clause-3/point-a",
+   "45-2019-qh14/chapter-xiv/section-2/article-190/clause-1",
+   "45-2019-qh14/chapter-xiv/section-2/article-190/clause-3",
+   "145-2020-nd-cp/chapter-vi/section-2/article-55/clause-1/point-a",
+   "145-2020-nd-cp/chapter-vi/section-2/article-55/clause-1/point-b",
+   "145-2020-nd-cp/chapter-vii/article-60/clause-1"
+  ],
+  "rationale": "Đề xuất của model (rà soát 2026-11-15 trên corpus v3), không phải nhãn người. Độ tin cậy: vừa. Ngày áp dụng: 2022-01-01 (ngày nêu trong câu hoặc hồ sơ). Căn cứ và lưu ý: Căn cứ bản án: Điều 98, Điều 107, khoản 1, khoản 3 Điều 190 BLLĐ 2019 và NĐ 145/2020 (không ghi điều; ánh xạ sang Điều 55, Điều 60). Điểm a khoản 3 Điều 107 (300 giờ) chỉ áp dụng nếu doanh nghiệp sản xuất, gia công xuất khẩu giày; hồ sơ chỉ ghi công ty sản xuất giày có vốn nước ngoài. Kết quả không ghi tòa kết luận gì về giới hạn làm thêm, dù Điều 107 có trong căn cứ. Điểm a khoản 1 Điều 55 NĐ 145 loại tiền nhà ở khỏi tiền lương giờ làm căn cứ, khớp câu hỏi phụ cấp nhà ở của hồ sơ.",
+  "paraphrase_of": null,
+  "source_question_id": "k19"
+ },
+ {
+  "text": "Công ty phát hiện giám đốc điều hành không kê khai theo nội quy mối quan hệ với thành viên của đối tác cung cấp nông sản, ký hợp tác phát triển vùng nguyên liệu và lập một hợp tác xã cùng ngành trong thời gian bị đình chỉ. Công ty có thể sa thải không, trong thời hạn nào, và trong thời gian tạm đình chỉ phải trả lương thế nào?",
+  "question_type": "synthesis",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-viii/section-1/article-125/clause-2",
+   "45-2019-qh14/chapter-viii/section-1/article-123/clause-1",
+   "45-2019-qh14/chapter-viii/section-1/article-128/clause-2",
+   "45-2019-qh14/chapter-viii/section-1/article-128/clause-3",
+   "145-2020-nd-cp/chapter-viii/article-70/clause-4",
+   "45-2019-qh14/chapter-viii/section-1/article-127/clause-3"
+  ],
+  "rationale": "Đề xuất của model (rà soát 2026-11-15 trên corpus v3), không phải nhãn người. Độ tin cậy: thấp. Không có ngày áp dụng trong corpus; đơn vị là quy định hiện hành, kiểm hiệu lực tại 2026-11-11. Cần quyết định: sự việc (2020-05) theo luật cũ không có trong corpus; giữ hay loại câu (cờ old_law_case). Căn cứ và lưu ý: Sự việc 2020 theo BLLĐ 2012. Về thẩm quyền: tòa dựa vào ủy quyền theo Luật Doanh nghiệp 2014 và khoản 12 Điều 1 NĐ 148/2018; khoản 4 Điều 70 NĐ 145 chỉ nói người có thẩm quyền ban hành quyết định, còn ai có thẩm quyền được định nghĩa ở điểm i khoản 2 Điều 69 NĐ 145 (dẫn khoản 3 Điều 18 BLLĐ); người gán nên chọn giữa hai đơn vị này. Khoản 3 Điều 127 là ánh xạ theo chữ do lượt 12/11 nêu, không có trong danh sách tương ứng của case-research. Điểm d khoản 4 Điều 123 BLLĐ 2012 (nuôi con dưới 12 tháng) tòa chỉ nêu khi so sánh nên không gán.",
+  "paraphrase_of": null,
+  "source_question_id": "k20"
+ },
+ {
+  "text": "Một công nhân xưởng nhựa làm từ năm 2013 không có hợp đồng và không được đóng bảo hiểm; khi xử lý vật liệu bị kẹt trong dây chuyền, máy cuốn cánh tay phải phải cắt bỏ, suy giảm khả năng lao động 65%. Công ty mới hỗ trợ viện phí. Công ty phải chịu những trách nhiệm gì khi không đóng bảo hiểm tai nạn lao động, và mức bồi thường tối thiểu là bao nhiêu?",
+  "question_type": "synthesis",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "84-2015-qh13/chapter-iii/section-2/article-38/clause-4/point-a"
+  ],
+  "rationale": "Đề xuất của model (rà soát 2026-11-15 trên corpus v3), không phải nhãn người. Độ tin cậy: thấp. Không có ngày áp dụng trong corpus; đơn vị là quy định hiện hành, kiểm hiệu lực tại 2026-11-11. Cần quyết định: sự việc (2016-02) theo luật cũ không có trong corpus; giữ hay loại câu (cờ old_law_case). Căn cứ và lưu ý: Tòa buộc bồi thường 141 triệu đồng theo mức suy giảm 65% theo TT 04/2015; điểm a khoản 4 Điều 38 Luật ATVSLĐ 2015 có cùng công thức. Câu hỏi hỏi trách nhiệm khi không đóng bảo hiểm, nhưng phần này người lao động đã rút nên tòa không xét; nếu giữ câu, câu trả lời chỉ có căn cứ cho mức bồi thường. Đề nghị người gán cân nhắc loại câu.",
+  "paraphrase_of": null,
+  "source_question_id": "k21"
+ },
+ {
+  "text": "Hợp đồng 12 tháng của một nhân viên sắp hết hạn; trước đó anh được chỉ định làm chủ tịch công đoàn lâm thời và hai bên đã gia hạn hợp đồng đến hết nhiệm kỳ lâm thời. Khi hợp đồng chỉ còn một tháng, đại hội công đoàn vẫn bầu anh làm chủ tịch nhiệm kỳ mới dù anh không đủ tiêu chuẩn vì hợp đồng sắp hết. Công ty có buộc phải gia hạn hợp đồng đến hết nhiệm kỳ mới không, hay được chấm dứt khi hết hạn?",
+  "question_type": "synthesis",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-xiii/article-177/clause-4",
+   "45-2019-qh14/chapter-iii/section-3/article-34/clause-1"
+  ],
+  "rationale": "Đề xuất của model (rà soát 2026-11-15 trên corpus v3), không phải nhãn người. Độ tin cậy: vừa. Không có ngày áp dụng trong corpus; đơn vị là quy định hiện hành, kiểm hiệu lực tại 2026-11-11. Cần quyết định: sự việc (2016-11-25) theo luật cũ không có trong corpus; giữ hay loại câu (cờ old_law_case). Căn cứ và lưu ý: Giải pháp án lệ: trúng cử không hợp lệ thì không phát sinh nghĩa vụ gia hạn theo khoản 4 Điều 177; chấm dứt khi hết hạn theo khoản 1 Điều 34 là đúng. Tiêu chuẩn ứng cử thuộc Luật Công đoàn, ngoài corpus. Giữ tin cậy vừa (không phải thấp như các vụ trước 2021 khác) vì ánh xạ sang BLLĐ 2019 do chính án lệ nêu.",
+  "paraphrase_of": null,
+  "source_question_id": "k22"
+ },
+ {
+  "text": "Công ty tuyển trưởng bộ phận siêu thị với thư mời ghi hợp đồng xác định thời hạn 12 tháng, thử việc 02 tháng. Hết thử việc, công ty không thông báo kết quả, không ký hợp đồng nhưng anh vẫn làm; sau đó công ty muốn \"thử việc thêm 01 tháng\" rồi chấm dứt vì không hoàn thành công việc, trong khi chưa có quy chế đánh giá. Quan hệ hiện tại là gì và công ty có chấm dứt được không?",
+  "question_type": "synthesis",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-iii/section-1/article-27/clause-1",
+   "45-2019-qh14/chapter-iii/section-1/article-25",
+   "45-2019-qh14/chapter-iii/section-3/article-36/clause-1/point-a"
+  ],
+  "rationale": "Đề xuất của model (rà soát 2026-11-15 trên corpus v3), không phải nhãn người. Độ tin cậy: thấp. Không có ngày áp dụng trong corpus; đơn vị là quy định hiện hành, kiểm hiệu lực tại 2026-11-11. Cần quyết định: sự việc (2013-12) theo luật cũ không có trong corpus; giữ hay loại câu (cờ old_law_case). Căn cứ và lưu ý: Án lệ áp dụng Điều 26-29, điểm a khoản 1 Điều 38 BLLĐ 2012; ánh xạ do case-research, không do án lệ tự nêu. Điểm a khoản 1 Điều 36 BLLĐ 2019 nay yêu cầu quy chế đánh giá, nên kết luận theo luật hiện hành còn rõ hơn kết luận của án lệ.",
+  "paraphrase_of": null,
+  "source_question_id": "k23"
+ },
+ {
+  "text": "Một nhà cung cấp tố cáo giám đốc hành chính nhân sự (hợp đồng 01 năm) đòi tiền không chính đáng. Phó tổng giám đốc thông báo miệng chấm dứt và 20 phút sau giao văn bản yêu cầu bàn giao, không họp kỷ luật. Lương trong hợp đồng là 32 triệu đồng nhưng lương đóng bảo hiểm thấp hơn. Nếu bị kiện, công ty phải trả những khoản gì và tính trên mức lương nào?",
+  "question_type": "synthesis",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-iii/section-3/article-41/clause-1",
+   "45-2019-qh14/chapter-iii/section-3/article-36/clause-2/point-b"
+  ],
+  "rationale": "Đề xuất của model (rà soát 2026-11-15 trên corpus v3), không phải nhãn người. Độ tin cậy: vừa. Ngày áp dụng: 2023-05-03 (ngày nêu trong câu hoặc hồ sơ). Căn cứ và lưu ý: Nguồn báo chí không nêu điều luật; mỗi đơn vị được chọn vì chữ của nó khớp từng khoản tòa buộc trả: lương những ngày không được làm việc, 02 tháng lương, truy đóng bảo hiểm và tiền vi phạm báo trước (khoản 1 Điều 41), thời hạn báo trước 30 ngày với hợp đồng 01 năm (điểm b khoản 2 Điều 36). Mức lương làm căn cứ là \"tiền lương theo hợp đồng lao động\" theo chữ khoản 1 Điều 41.",
+  "paraphrase_of": null,
+  "source_question_id": "k27"
+ },
+ {
+  "text": "Công ty bất động sản muốn sa thải trưởng bộ phận bán hàng vì lập hồ sơ chi hoa hồng 300 triệu đồng cho một khách (dùng chữ ký scan) mà công ty cho là không đủ điều kiện, và giữ hộ một phiếu quà tặng; chị giải thích có căn cứ và công ty chưa bị thiệt hại thực tế. Công ty cần chứng minh gì để sa thải, và nếu sa thải sai thì hậu quả thế nào?",
+  "question_type": "synthesis",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-viii/section-1/article-122/clause-1/point-a",
+   "45-2019-qh14/chapter-viii/section-1/article-122/clause-3",
+   "45-2019-qh14/chapter-viii/section-1/article-127/clause-3",
+   "45-2019-qh14/chapter-viii/section-1/article-125/clause-2",
+   "45-2019-qh14/chapter-iii/section-3/article-41/clause-1"
+  ],
+  "rationale": "Đề xuất của model (rà soát 2026-11-15 trên corpus v3), không phải nhãn người. Độ tin cậy: thấp. Không có ngày áp dụng trong corpus; đơn vị là quy định hiện hành, kiểm hiệu lực tại 2026-11-11. Cần quyết định: sự việc (2016-06) theo luật cũ không có trong corpus; giữ hay loại câu (cờ old_law_case). Căn cứ và lưu ý: Bài báo nêu điểm a khoản 1 và khoản 3 Điều 123 BLLĐ 2012 (nay điểm a khoản 1 và khoản 3 Điều 122). Các đơn vị khác chọn vì chữ khớp kết luận bài báo thuật lại: hành vi không thuộc trường hợp sa thải theo nội quy (khoản 3 Điều 127), không chứng minh được thiệt hại (khoản 2 Điều 125), nhận lại làm việc, trả lương và đóng bảo hiểm (khoản 1 Điều 41, áp dụng tương tự cho sa thải trái pháp luật). Sự việc 2016 theo BLLĐ 2012 nên tin cậy thấp.",
+  "paraphrase_of": null,
+  "source_question_id": "k28"
+ },
+ {
+  "text": "Công ty mẹ chấm dứt hợp đồng theo thỏa thuận với một nhân viên làm từ năm 2001 để anh chuyển sang công ty con 100% vốn, hứa miệng là công ty con sẽ trả trợ cấp thôi việc sau này. Nay công ty con từ chối. Ai phải trả trợ cấp thôi việc, thời gian nào được tính và tiền lương nào làm căn cứ?",
+  "question_type": "synthesis",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-iii/section-3/article-34/clause-3",
+   "45-2019-qh14/chapter-iii/section-3/article-46/clause-1",
+   "45-2019-qh14/chapter-iii/section-3/article-46/clause-2",
+   "45-2019-qh14/chapter-iii/section-3/article-46/clause-3",
+   "145-2020-nd-cp/chapter-iii/section-2/article-8/clause-1",
+   "145-2020-nd-cp/chapter-iii/section-2/article-8/clause-3",
+   "145-2020-nd-cp/chapter-iii/section-2/article-8/clause-5/point-a"
+  ],
+  "rationale": "Đề xuất của model (rà soát 2026-11-15 trên corpus v3), không phải nhãn người. Độ tin cậy: thấp. Không có ngày áp dụng trong corpus; đơn vị là quy định hiện hành, kiểm hiệu lực tại 2026-11-11. Cần quyết định: sự việc (2020-11-01) theo luật cũ không có trong corpus; giữ hay loại câu (cờ old_law_case). Căn cứ và lưu ý: Bài báo không nêu điều luật lao động cụ thể và chấm dứt xảy ra trước khi BLLĐ 2019 có hiệu lực. Các đơn vị là quy định tương ứng hiện hành, chọn vì chữ khớp cách tính tòa chấp nhận (8 năm làm việc trước khi có bảo hiểm thất nghiệp: khoản 2 Điều 46; lương bình quân: khoản 3 Điều 46). Ai phải trả và thỏa thuận chuyển giao nghĩa vụ tòa giải quyết theo BLDS, ngoài corpus. Đề nghị người gán cân nhắc loại câu này.",
+  "paraphrase_of": null,
+  "source_question_id": "k29"
+ },
+ {
+  "text": "Một chuyên viên kinh doanh (hợp đồng không xác định thời hạn) từng nói muốn nghỉ để về quê, sau đó lại xin làm tiếp; quản lý đề xuất làm đến hết 31/12, anh ký biên bản bàn giao khách hàng và trả lời \"Ok em\" qua Zalo khi nhân sự nhắc nộp đơn, nhưng chưa bao giờ nộp đơn. Công ty cho anh nghỉ từ 01/01. Đây là hai bên thỏa thuận chấm dứt hay công ty đơn phương chấm dứt, và rủi ro là gì?",
+  "question_type": "synthesis",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-iii/section-3/article-34/clause-3",
+   "45-2019-qh14/chapter-iii/section-3/article-41/clause-1",
+   "45-2019-qh14/chapter-iii/section-3/article-36/clause-2/point-a",
+   "45-2019-qh14/chapter-iii/section-3/article-41/clause-3"
+  ],
+  "rationale": "Đề xuất của model (rà soát 2026-11-15 trên corpus v3), không phải nhãn người. Độ tin cậy: vừa. Ngày áp dụng: 2024-12-30 (ngày nêu trong câu hoặc hồ sơ). Căn cứ và lưu ý: Nguồn báo chí nêu khoản 3 Điều 34; các khoản tòa buộc trả khớp chữ của khoản 1 Điều 41 (lương những ngày không được làm việc, 02 tháng lương, tiền vi phạm báo trước, bảo hiểm), khoản 3 Điều 41 (thêm ít nhất 02 tháng lương khi không nhận lại) và điểm a khoản 2 Điều 36 (45 ngày). Giá trị chứng cứ của vi bằng là vấn đề tố tụng.",
+  "paraphrase_of": null,
+  "source_question_id": "k30"
+ },
+ {
+  "text": "Ban lãnh đạo kết luận giám đốc truyền thông (hợp đồng 12 tháng) không hoàn thành nhiệm vụ và đề nghị chuyển xuống quản lý phòng; chị không đồng ý nên công ty báo chấm dứt sau 30 ngày với lý do \"không phù hợp định hướng phát triển\". Công ty chưa có quy chế đánh giá mức độ hoàn thành công việc. Việc chấm dứt có hợp pháp không, và nếu phải bồi thường thì khoản thưởng thành tích có tính vào tiền lương không?",
+  "question_type": "synthesis",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-iii/section-3/article-36/clause-1/point-a",
+   "45-2019-qh14/chapter-iii/section-3/article-41/clause-1",
+   "45-2019-qh14/chapter-vi/article-104/clause-1"
+  ],
+  "rationale": "Đề xuất của model (rà soát 2026-11-15 trên corpus v3), không phải nhãn người. Độ tin cậy: vừa. Ngày áp dụng: 2024-09-01 (ngày nêu trong câu hoặc hồ sơ). Căn cứ và lưu ý: Nguồn báo chí chỉ nêu Điều 36; điểm a khoản 1 là trường hợp không hoàn thành công việc theo quy chế, khớp tình tiết. Khoản 1 Điều 41 khớp các khoản tòa buộc trả. Về thưởng, ngoài khoản 1 Điều 104 còn đoạn cuối điểm c khoản 5 Điều 3 TT 10/2020 ghi thưởng theo Điều 104 thành mục riêng, khác các khoản bổ sung của tiền lương; người gán có thể chọn đơn vị đó nếu thấy khớp hơn. Ghi chú case-research c31 viết \"Điều 3 Nghị định 145/2020\" về tiền lương làm căn cứ, nhưng Điều 3 NĐ 145 là sổ quản lý lao động; có lẽ ý là Điều 3 TT 10/2020.",
+  "paraphrase_of": null,
+  "source_question_id": "k31"
+ },
+ {
+  "text": "Công ty muốn chấm dứt hợp đồng 12 tháng với một nữ giám đốc điều hành đang nuôi con dưới 12 tháng tuổi; trước đó hai bên đã ký biên bản thanh lý hợp đồng rồi công ty lại đề nghị hủy để chị làm tiếp. Lương hợp đồng 110 triệu đồng nhưng công ty đóng bảo hiểm trên mức thấp hơn. Công ty có được chấm dứt không, và có rủi ro gì về bảo hiểm?",
+  "question_type": "synthesis",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-iii/section-3/article-37/clause-3",
+   "45-2019-qh14/chapter-x/article-137/clause-3",
+   "45-2019-qh14/chapter-iii/section-3/article-41/clause-1",
+   "41-2024-qh15/chapter-iv/section-2/article-31/clause-1/point-b"
+  ],
+  "rationale": "Đề xuất của model (rà soát 2026-11-15 trên corpus v3), không phải nhãn người. Độ tin cậy: thấp. Không có ngày áp dụng trong corpus; đơn vị là quy định hiện hành, kiểm hiệu lực tại 2026-11-11. Cần quyết định: sự việc (2019-11-12) theo luật cũ không có trong corpus; giữ hay loại câu (cờ old_law_case). Căn cứ và lưu ý: Nguồn báo chí không nêu điều luật, sự việc 2019 theo luật cũ. Các đơn vị là quy định tương ứng hiện hành theo ghi chú case-research (khoản 3 Điều 37, khoản 3 Điều 137 BLLĐ 2019) và theo chữ khớp kết quả (khoản 1 Điều 41; điểm b khoản 1 Điều 31 Luật BHXH 2024 về tiền lương làm căn cứ đóng). Biên bản thanh lý đã hủy tòa xét như tình tiết, không có điều luật.",
+  "paraphrase_of": null,
+  "source_question_id": "k32"
+ },
+ {
+  "text": "Công ty cho giám đốc kiêm người đại diện theo pháp luật nghỉ hưởng nguyên lương để rà soát, rồi chấm dứt hợp đồng với lý do thay đổi cơ cấu, tổ chức lại vị trí quản lý, và trả hơn 2,8 tỷ đồng trợ cấp mất việc làm. Nếu không chứng minh được thay đổi cơ cấu theo luật, công ty phải trả những gì, và khoản trợ cấp mất việc làm đã trả được xử lý thế nào?",
+  "question_type": "synthesis",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-iii/section-3/article-42/clause-1/point-a",
+   "45-2019-qh14/chapter-iii/section-3/article-41/clause-1"
+  ],
+  "rationale": "Đề xuất của model (rà soát 2026-11-15 trên corpus v3), không phải nhãn người. Độ tin cậy: vừa. Ngày áp dụng: 2021-12-31 (ngày nêu trong câu hoặc hồ sơ). Căn cứ và lưu ý: Bài báo nêu khoản 1 Điều 41: nhận lại, trả lương và bảo hiểm những ngày không được làm việc, 02 tháng lương, và đoạn 2 của khoản này về hoàn trả trợ cấp mất việc làm khi được nhận lại. Điểm a khoản 1 Điều 42 chọn vì chữ khớp lý do công ty đưa ra mà tòa kết luận không được chứng minh. Bài báo không cho biết tòa có trừ thời gian người lao động làm việc nơi khác không, nên vấn đề phạm vi lương những ngày không được làm việc chỉ có căn cứ ở chữ của khoản 1 Điều 41.",
+  "paraphrase_of": null,
+  "source_question_id": "k33"
+ },
+ {
+  "text": "Một kiện hàng 60 triệu đồng bị thất lạc mà không xác định được người làm mất; công ty tự chịu một phần và trừ thẳng 30 triệu đồng vào lương tháng của 111 công nhân khâu hoàn thành theo chức vụ, hệ số và ngày công, không họp, không thông báo bằng văn bản. Việc trừ lương như vậy có đúng không, và nếu muốn đòi bồi thường thì phải làm thế nào?",
+  "question_type": "synthesis",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-vi/article-102/clause-1",
+   "45-2019-qh14/chapter-vi/article-102/clause-2",
+   "45-2019-qh14/chapter-vi/article-102/clause-3",
+   "45-2019-qh14/chapter-viii/section-2/article-129/clause-2",
+   "45-2019-qh14/chapter-viii/section-2/article-130/clause-1",
+   "45-2019-qh14/chapter-viii/section-1/article-122/clause-1/point-b",
+   "45-2019-qh14/chapter-viii/section-1/article-122/clause-1/point-c",
+   "145-2020-nd-cp/chapter-viii/article-71/clause-2/point-a"
+  ],
+  "rationale": "Đề xuất của model (rà soát 2026-11-15 trên corpus v3), không phải nhãn người. Độ tin cậy: vừa. Ngày áp dụng: 2024-05-07 (ngày nêu trong câu hoặc hồ sơ). Căn cứ và lưu ý: Không có phán quyết; căn cứ do bài báo và luật sư nêu (Điều 102, 129, 130, điểm b, c khoản 1 Điều 122 BLLĐ 2019, Điều 71 NĐ 145/2020). Điều 71 NĐ 145 được nêu chung; điểm a khoản 2 (thông báo họp trước ít nhất 05 ngày làm việc) khớp tình tiết không họp, không thông báo. Tranh chấp tập thể về quyền, con đường khiếu nại theo NĐ 24/2018 ngoài corpus.",
+  "paraphrase_of": null,
+  "source_question_id": "k34"
+ },
+ {
+  "text": "Công ty mẹ ở nước ngoài quyết định giải thể công ty tại Việt Nam và ra quyết định chấm dứt hợp đồng với giám đốc điều hành (hợp đồng không xác định thời hạn, đã đóng bảo hiểm thất nghiệp suốt thời gian làm việc). Hợp đồng chấm dứt từ thời điểm nào, có phải báo trước và trả trợ cấp thôi việc không, và thời hạn thanh toán là bao lâu?",
+  "question_type": "synthesis",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-iii/section-3/article-34/clause-7",
+   "45-2019-qh14/chapter-iii/section-3/article-45/clause-2",
+   "45-2019-qh14/chapter-iii/section-3/article-46/clause-1",
+   "45-2019-qh14/chapter-iii/section-3/article-46/clause-2",
+   "145-2020-nd-cp/chapter-iii/section-2/article-8/clause-1",
+   "145-2020-nd-cp/chapter-iii/section-2/article-8/clause-3"
+  ],
+  "rationale": "Đề xuất của model (rà soát 2026-11-15 trên corpus v3), không phải nhãn người. Độ tin cậy: vừa. Ngày áp dụng: 2024-12-30 (ngày nêu trong câu hoặc hồ sơ). Căn cứ và lưu ý: Nguồn báo chí không nêu điều luật; đơn vị chọn vì chữ khớp từng kết luận phúc thẩm: thời điểm chấm dứt tính từ thông báo chấm dứt hoạt động (khoản 2 Điều 45, khoản 7 Điều 34), không có trợ cấp thôi việc vì toàn bộ thời gian đã đóng bảo hiểm thất nghiệp (khoản 1, khoản 2 Điều 46 và khoản 1, khoản 3 Điều 8 NĐ 145). Việc bác tiền vi phạm báo trước không có đơn vị: khoản 2 Điều 36 chỉ áp dụng cho đơn phương chấm dứt theo Điều 36.",
+  "paraphrase_of": null,
+  "source_question_id": "k35"
+ },
+ {
+  "text": "Một nữ giám đốc chi nhánh (hợp đồng 12 tháng) đang mang thai tháng thứ năm bị công ty cáo buộc nghỉ không phép, đi trễ, nhắn tin đe dọa đồng nghiệp; công ty tạm đình chỉ công việc, gửi email mời họp trước một ngày, không lập biên bản vi phạm, rồi ra quyết định sa thải. Công ty sai ở đâu và phải chịu hậu quả gì?",
+  "question_type": "synthesis",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-viii/section-1/article-122/clause-4/point-d",
+   "45-2019-qh14/chapter-x/article-137/clause-3",
+   "145-2020-nd-cp/chapter-viii/article-70/clause-1",
+   "145-2020-nd-cp/chapter-viii/article-70/clause-2/point-a",
+   "45-2019-qh14/chapter-iii/section-3/article-41/clause-1"
+  ],
+  "rationale": "Đề xuất của model (rà soát 2026-11-15 trên corpus v3), không phải nhãn người. Độ tin cậy: thấp. Không có ngày áp dụng trong corpus; đơn vị là quy định hiện hành, kiểm hiệu lực tại 2026-11-11. Cần quyết định: sự việc (2017-10-16) theo luật cũ không có trong corpus; giữ hay loại câu (cờ old_law_case). Căn cứ và lưu ý: Nguồn báo chí; sự việc 2017 theo BLLĐ 2012 và NĐ 05/2015, không có trong corpus. Ánh xạ theo ghi chú case-research. Khoản 1 Điều 41 khớp một phần kết quả (đóng bảo hiểm; bài báo không nêu nhận lại làm việc hay 02 tháng lương). Đề nghị người gán cân nhắc loại câu nếu bộ chỉ giữ câu có luật áp dụng nằm trong corpus.",
+  "paraphrase_of": null,
+  "source_question_id": "k36"
+ },
+ {
+  "text": "Công ty tuyển giám đốc kinh doanh, thử việc 02 tháng hưởng 85% lương, rồi thỏa thuận miệng kéo dài thử việc thêm một tháng; chưa ký hợp đồng lao động và chưa đóng bảo hiểm. Cuối tháng thứ ba công ty muốn chấm dứt. Thời gian thử việc như vậy có hợp lệ không, công ty có phải báo trước hay bồi thường không?",
+  "question_type": "synthesis",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-iii/section-1/article-25/clause-1",
+   "45-2019-qh14/chapter-iii/section-1/article-27/clause-2"
+  ],
+  "rationale": "Đề xuất của model (rà soát 2026-11-15 trên corpus v3), không phải nhãn người. Độ tin cậy: vừa. Ngày áp dụng: 2022-09-01 (ngày nêu trong câu hoặc hồ sơ). Căn cứ và lưu ý: Nguồn báo chí không nêu điều luật; khoản 1 Điều 25 (180 ngày với người quản lý doanh nghiệp) và khoản 2 Điều 27 (hủy bỏ thử việc không báo trước, không bồi thường) khớp kết luận hai cấp. Mức 180 ngày là lập luận của công ty được bài báo thuật lại; giám đốc kinh doanh có phải người quản lý doanh nghiệp theo Luật Doanh nghiệp hay không chưa chắc (nếu không thì khoản 2 Điều 25: 60 ngày).",
+  "paraphrase_of": null,
+  "source_question_id": "k37"
+ },
+ {
+  "text": "Đơn hàng giảm, công ty chỉ cắt giảm đúng một nhân viên (hợp đồng 01 năm); đã có phương án, báo trước 30 ngày và trao đổi với công đoàn, nhưng không gửi thông báo cho Ủy ban nhân dân tỉnh vì nghĩ cắt một người thì không cần. Như vậy có ổn không, nếu bị kiện thì thua ở đâu và phải trả gì?",
+  "question_type": "synthesis",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-iii/section-3/article-42/clause-2/point-a",
+   "45-2019-qh14/chapter-iii/section-3/article-42/clause-6",
+   "45-2019-qh14/chapter-iii/section-3/article-42/clause-4",
+   "45-2019-qh14/chapter-iii/section-3/article-44/clause-2",
+   "45-2019-qh14/chapter-iii/section-3/article-41/clause-1",
+   "45-2019-qh14/chapter-vi/article-104/clause-1"
+  ],
+  "rationale": "Đề xuất của model (rà soát 2026-11-15 trên corpus v3), không phải nhãn người. Độ tin cậy: vừa. Ngày áp dụng: 2023-01-03 (ngày nêu trong câu hoặc hồ sơ). Không còn hiệu lực hoặc chưa có hiệu lực tại ngày đó, không có đơn vị thay: khoản 4 Điều 13, Luật Bảo hiểm xã hội số 41/2024/QH15. Căn cứ và lưu ý: Diễn đạt lại của k02 (cùng vụ c03), nhãn giống k02. Căn cứ quyết định: khoản 6 Điều 42 (không thông báo Ủy ban nhân dân cấp tỉnh) và Điều 41. Điểm a khoản 2 Điều 42 là lý do kinh tế tòa chấp nhận; khoản 4 Điều 42 và khoản 2 Điều 44 theo Điều 44 được viện dẫn; khoản 1 Điều 104 để bác thưởng tháng 13. Phần Luật BHXH 2014 tòa viện dẫn không có trong corpus. Điều 36 và Điều 90 được viện dẫn chung, không xác định được điểm, khoản nên không gán.",
+  "paraphrase_of": 1,
+  "source_question_id": "k38"
+ },
+ {
+  "text": "Hết 01 tháng thử việc theo thỏa thuận miệng, công ty không báo kết quả mà vẫn để anh làm; sau một lần anh không chịu tăng ca, quản lý ép viết đơn nghỉ hoặc nộp phạt 01 triệu đồng, anh không viết nhưng bị đưa phiếu ra cổng. Công ty có thể bị buộc trả những khoản nào?",
+  "question_type": "synthesis",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-iii/section-1/article-13/clause-1",
+   "45-2019-qh14/chapter-iii/section-1/article-25/clause-3",
+   "45-2019-qh14/chapter-iii/section-1/article-27/clause-1",
+   "45-2019-qh14/chapter-iii/section-3/article-36/clause-2/point-b",
+   "45-2019-qh14/chapter-iii/section-3/article-41/clause-1"
+  ],
+  "rationale": "Đề xuất của model (rà soát 2026-11-15 trên corpus v3), không phải nhãn người. Độ tin cậy: vừa. Ngày áp dụng: 2022-11-30 (ngày nêu trong câu hoặc hồ sơ). Căn cứ và lưu ý: Diễn đạt lại của k12 (cùng vụ c14), chỉ hỏi các khoản phải trả; nhãn giống k12. Căn cứ bản án: Điều 13, khoản 3 Điều 25, khoản 1 Điều 27, điểm b khoản 2 Điều 36 và Điều 41 (tiền vi phạm báo trước nằm ở đoạn cuối khoản 1 Điều 41). Khoản 2 Điều 15 viện dẫn chung, không gán. Tòa tính tiền lương bồi thường gồm lương cơ bản và phụ cấp gắn với công việc nhưng hồ sơ không ghi điều luật cho cách tính này.",
+  "paraphrase_of": 10,
+  "source_question_id": "k39"
+ },
+ {
+  "text": "Một quản lý nữ đang mang thai vi phạm nội quy nhiều lần: công ty có được sa thải ngay không, nếu muốn xử lý thì phải theo trình tự nào, và nếu làm sai thì hậu quả là gì?",
+  "question_type": "synthesis",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-viii/section-1/article-122/clause-4/point-d",
+   "45-2019-qh14/chapter-x/article-137/clause-3",
+   "145-2020-nd-cp/chapter-viii/article-70/clause-1",
+   "145-2020-nd-cp/chapter-viii/article-70/clause-2/point-a",
+   "45-2019-qh14/chapter-iii/section-3/article-41/clause-1"
+  ],
+  "rationale": "Đề xuất của model (rà soát 2026-11-15 trên corpus v3), không phải nhãn người. Độ tin cậy: thấp. Không có ngày áp dụng trong corpus; đơn vị là quy định hiện hành, kiểm hiệu lực tại 2026-11-11. Cần quyết định: sự việc (2017-10-16) theo luật cũ không có trong corpus; giữ hay loại câu (cờ old_law_case). Căn cứ và lưu ý: Diễn đạt lại của k36 (cùng vụ c45), nhãn giống k36. Nguồn báo chí; sự việc 2017 theo BLLĐ 2012 và NĐ 05/2015, không có trong corpus. Ánh xạ theo ghi chú case-research. Khoản 1 Điều 41 khớp một phần kết quả (đóng bảo hiểm; bài báo không nêu nhận lại làm việc hay 02 tháng lương). ",
+  "paraphrase_of": 29,
+  "source_question_id": "k42"
+ },
+ {
+  "text": "Không biết ai làm mất hàng, công ty có được chia đều tiền hàng cho cả tổ và trừ vào lương tháng này của mọi người không? Mức trừ tối đa và thủ tục ra sao?",
+  "question_type": "synthesis",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-vi/article-102/clause-1",
+   "45-2019-qh14/chapter-vi/article-102/clause-2",
+   "45-2019-qh14/chapter-vi/article-102/clause-3",
+   "45-2019-qh14/chapter-viii/section-2/article-129/clause-2",
+   "45-2019-qh14/chapter-viii/section-2/article-130/clause-1",
+   "45-2019-qh14/chapter-viii/section-1/article-122/clause-1/point-b",
+   "45-2019-qh14/chapter-viii/section-1/article-122/clause-1/point-c",
+   "145-2020-nd-cp/chapter-viii/article-71/clause-2/point-a"
+  ],
+  "rationale": "Đề xuất của model (rà soát 2026-11-15 trên corpus v3), không phải nhãn người. Độ tin cậy: vừa. Ngày áp dụng: 2024-05-07 (ngày nêu trong câu hoặc hồ sơ). Căn cứ và lưu ý: Diễn đạt lại của k34 (cùng vụ c42), nhãn giống k34. Không có phán quyết; căn cứ do bài báo và luật sư nêu (Điều 102, 129, 130, điểm b, c khoản 1 Điều 122 BLLĐ 2019, Điều 71 NĐ 145/2020). Điều 71 NĐ 145 được nêu chung; điểm a khoản 2 (thông báo họp trước ít nhất 05 ngày làm việc) khớp tình tiết không họp, không thông báo. Tranh chấp tập thể về quyền, con đường khiếu nại theo NĐ 24/2018 ngoài corpus.",
+  "paraphrase_of": 27,
+  "source_question_id": "k43"
+ }
+]
