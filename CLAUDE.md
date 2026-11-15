@@ -43,6 +43,7 @@ python -m legal_ai.cli amendment-build <bundle> --output data/kb/<new>          
 python -m legal_ai.cli enum-drafts <gold.jsonl> --bundle <bundle> --output <q.json>    # enumeration drafts + check sheet from the adjudicated gold; enum-gate <q.json> --kb-run <kb run> for extraction coverage
 python -m legal_ai.cli query-slots <q.json> --output <new> --max-calls N --router-model MODEL_OSS_120B --approve-router   # norm-query-v1 analysis shared by every condition (shared.query_slots)
 python -m legal_ai.cli preflight --retrieval <DK1..DK4 runs> --answers <answer runs>   # fairness checks before reporting RQ3; exits 1 on failure
+python -m legal_ai.cli paired-stats --metric judge.correctness --runs DK1=<answers> DK2=<answers> DK3=<answers> DK4=<answers> --sheet <sheet.csv> --key <key.json> --judge <judge run> --output <new>.json   # B6/B7: paired bootstrap 10,000 rounds + Holm over the four main pairs; --repeat/--regrade for generation/judge noise; also retrieval.*, answer.*, grades.*
 python -m legal_ai.cli kb-compare                                                    # extraction-model comparison -> docs/results/extraction-models.{md,json}
 python -m legal_ai.cli kb-audit-sheet <kb runs> --sheet <csv> --key <json>            # blinded sample of rejected/accepted claims to label; kb-audit-score <csv> --key <json> [--compare <csv>]
 python -m legal_ai.cli demo-build --store data/kb/demo-<date>.sqlite                  # fresh demo store (admin, reviewer, reader and dev accounts with printed passwords, frozen scope corpus); see docs/demo-runbook.md

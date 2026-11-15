@@ -192,6 +192,20 @@ def main():
     command.add_argument("judge_run")
     command.add_argument("--sheet", required=True)
     command.add_argument("--key", required=True)
+    command = commands.add_parser("paired-stats", help="paired bootstrap with Holm correction, and generation/grading noise, of a per-question metric across labelled runs; offline")
+    command.add_argument("--metric", required=True, help="retrieval.recall@10, retrieval.recall_at_tokens@3000, answer.citation_gold_char_precision, grades.correctness, judge.correctness, ...")
+    command.add_argument("--runs", nargs="+", required=True, metavar="LABEL=DIR", help="retrieval or answer run per label, e.g. DK1=<dir> DK2=<dir>")
+    command.add_argument("--pairs", nargs="+", default=["DK1:DK2", "DK2:DK3", "DK3:DK4", "DK1:DK4"], metavar="A:B", help="Holm family (default the four main comparisons); difference = B minus A")
+    command.add_argument("--exploratory", nargs="*", default=[], metavar="A:B", help="further pairs reported with raw p only")
+    command.add_argument("--repeat", nargs="*", default=[], metavar="LABEL=DIR", help="second generation run of a label (graded the same way): generation noise")
+    command.add_argument("--regrade", help="second grading of the same answers: an outcome judge run (judge.*) or a filled sheet of the same key (grades.*)")
+    command.add_argument("--questions", help="question file (answer.* metrics)")
+    command.add_argument("--sheet", help="grading sheet (grades.*: the filled sheet; judge.*: the sheet the judge read)")
+    command.add_argument("--key", help="key of the grading sheet")
+    command.add_argument("--judge", help="outcome judge run (judge.* metrics)")
+    command.add_argument("--rounds", type=int, default=10000)
+    command.add_argument("--seed", default="lexora-paired-v1")
+    command.add_argument("--output", required=True, help="new JSON report file")
     command = commands.add_parser("demo-build", help="new demo store: three accounts with printed random passwords and the frozen experiment-scope corpus; offline")
     command.add_argument("--store", required=True, help="new SQLite file")
     command.add_argument("--scope", default="configs/experiment-scope-v1.json")
@@ -450,7 +464,7 @@ def main():
             from legal_ai.evaluation.answer_grading import agreement, score_sheet
             report = score_sheet(args.sheet, args.key)
             if args.compare:
-                report["agreement"] = agreement(args.sheet, args.compare)
+                report["agreement"] = agreement(args.sheet, args.compare, args.key)
             print(json.dumps(report, ensure_ascii=False, indent=2))
         elif args.command == "answer-outcome-judge":
             from legal_ai.evaluation.outcome_judge import judge as outcome_judge
@@ -461,6 +475,15 @@ def main():
         elif args.command == "answer-outcome-score":
             from legal_ai.evaluation.outcome_judge import score as outcome_score
             print(json.dumps(outcome_score(args.judge_run, args.sheet, args.key), ensure_ascii=False, indent=2))
+        elif args.command == "paired-stats":
+            from legal_ai.evaluation import stats
+            if Path(args.output).exists():
+                raise ValueError(f"{args.output} exists; write the report to a new file")
+            report = stats.compare_runs(args.metric, stats.labelled(args.runs), stats.parse_pairs(args.pairs), stats.parse_pairs(args.exploratory),
+                                        stats.labelled(args.repeat), args.regrade, args.questions, args.sheet, args.key, args.judge, args.rounds, args.seed)
+            write_json(args.output, report)
+            print(stats.table(report))
+            print(f"\nreport: {Path(args.output).as_posix()}")
         elif args.command == "demo-build":
             from legal_ai.demo_setup import build as demo_build
             result = demo_build(args.store, args.scope)

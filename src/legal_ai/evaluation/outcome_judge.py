@@ -11,7 +11,9 @@ Per answer: `addressed` 0/1/2 for every issue, `outcome` 0/1/2 (conclusion agree
 as they arrive and an interrupted run resumes.
 
 `score` reports per answer model and condition, and paired differences between conditions of the same answer
-model (same questions) with a seeded percentile bootstrap over questions.
+model (same questions) with a seeded percentile bootstrap over questions. Two runs of one model and condition keep
+separate labels; failed answers (listed in the key), unjudged items and questions only one side of a pair has are
+counted and listed, never dropped silently.
 """
 
 from concurrent.futures import ThreadPoolExecutor
@@ -61,7 +63,8 @@ def _items(sheet_path, key, questions):
 
 def judge(sheet_path, key_path, questions_path, provider, output, prompt="judge-v2.md", workers=1, log=None):
     output = Path(output)
-    key = json.loads(Path(key_path).read_text(encoding="utf-8"))["items"]
+    key_file = json.loads(Path(key_path).read_text(encoding="utf-8"))
+    key = key_file["items"]
     questions = {q["question_id"]: q for q in json.loads(Path(questions_path).read_text(encoding="utf-8"))["questions"]}
     system, system_sha = system_prompt(prompt)
     manifest = {"judge_version": JUDGE_VERSION, "judge_model": provider.model, "effort": getattr(provider, "effort", None), "prompt": prompt,
@@ -80,7 +83,9 @@ def judge(sheet_path, key_path, questions_path, provider, output, prompt="judge-
     path = output / "judged.jsonl"
     done = {row["item_id"] for row in read_jsonl(path) if row.get("error") is None} if path.exists() else set()
     todo = [item for item in _items(sheet_path, key, questions) if item["item_id"] not in done]
-    counts = {"items": len(todo) + len(done), "already_done": len(done), "judged": 0, "failed": 0}
+    # failed: judge calls that failed; failed_answers: answers that failed before grading, never sent (None for old keys).
+    counts = {"items": len(todo) + len(done), "already_done": len(done), "judged": 0, "failed": 0,
+              "failed_answers": None if key_file.get("failed") is None else len(key_file["failed"])}
     lock, stop = threading.Lock(), threading.Event()
 
     def one(item):
@@ -140,38 +145,71 @@ def _bootstrap(diffs, rounds=5000, seed="lexora-outcome-v1"):
     return means[int(0.025 * rounds)], means[int(0.975 * rounds) - 1]
 
 
+def run_labels(entries):
+    """{answer_dir: (model, label)} for the answer runs of a key: the label is the condition, or, when several runs of
+    the same answer model share a condition (e.g. two generations pooled in one sheet), the condition and the run's
+    directory name (its full path if the names collide), so no run overwrites another."""
+    runs = {}
+    for entry in entries:
+        if entry["answer_dir"] not in runs:
+            model = json.loads((Path(entry["answer_dir"]) / "manifest.json").read_text(encoding="utf-8"))["model"]
+            runs[entry["answer_dir"]] = (model, entry["condition"])
+    groups = {}
+    for answer_dir, (model, condition) in runs.items():
+        groups.setdefault((model, condition), []).append(answer_dir)
+    labels = {}
+    for (model, condition), dirs in groups.items():
+        names = [Path(d).name for d in dirs]
+        for answer_dir, name in zip(dirs, names):
+            suffix = name if names.count(name) == 1 else Path(answer_dir).as_posix()
+            labels[answer_dir] = (model, condition if len(dirs) == 1 else f"{condition}:{suffix}")
+    return labels
+
+
 def score(output, sheet_path, key_path, pairs=(("DK1", "DK2"), ("DK2", "DK3"), ("DK3", "DK4"), ("DK1", "DK4"), ("DK2", "DK4"))):
-    key = json.loads(Path(key_path).read_text(encoding="utf-8"))["items"]
+    """Per answer run (labelled by condition, see `run_labels`) and paired differences between conditions of the same
+    answer model. Each condition also reports its answer run, the answers that failed before grading (from the key) and
+    the items the judge has not graded; each pair lists the questions only one side has, which the pairing leaves out."""
+    key_file = json.loads(Path(key_path).read_text(encoding="utf-8"))
+    key, failed = key_file["items"], key_file.get("failed")  # Keys made before failures were recorded: unknown (None).
     scores = item_scores(output, sheet_path)
-    models = {}
-    table = {}  # (model, condition) -> {question_id: metrics}
+    labels = run_labels(list(key.values()) + list((failed or {}).values()))
+    table = {}  # (model, label) -> {question_id: metrics}
     for item_id, metrics in scores.items():
         entry = key[item_id]
-        if entry["answer_dir"] not in models:
-            models[entry["answer_dir"]] = json.loads((Path(entry["answer_dir"]) / "manifest.json").read_text(encoding="utf-8"))["model"]
-        table.setdefault((models[entry["answer_dir"]], entry["condition"]), {})[entry["question_id"]] = metrics
-    report = {"judge_version": JUDGE_VERSION, "items": len(scores), "by_model": {}}
+        table.setdefault(labels[entry["answer_dir"]], {})[entry["question_id"]] = metrics
+    run_of = {label: answer_dir for answer_dir, label in labels.items()}
+    count = lambda entries, answer_dir, test=lambda item_id: True: sum(e["answer_dir"] == answer_dir and test(i) for i, e in entries.items())
+    report = {"judge_version": JUDGE_VERSION, "items": len(scores), "unjudged": len(set(key) - set(scores)),
+              "failed_answers": None if failed is None else len(failed),
+              "by_model": {}}
     for model in sorted({m for m, _ in table}):
-        block = {"conditions": {}, "paired": {}}
-        for (m, condition), rows in sorted(table.items()):
+        block = {"conditions": {}, "paired": {}, "unpaired": {}}
+        for (m, label), rows in sorted(table.items()):
             if m != model:
                 continue
-            block["conditions"][condition] = {"n": len(rows)} | {
+            answer_dir = run_of[(m, label)]
+            block["conditions"][label] = {"n": len(rows)} | {
                 name: (lambda v: round(sum(v) / len(v), 4) if v else None)([r[name] for r in rows.values() if r[name] is not None])
-                for name in METRICS}
+                for name in METRICS} | {"answer_dir": answer_dir, "failed_answers": None if failed is None else count(failed, answer_dir),
+                                        "unjudged": count(key, answer_dir, lambda item_id: item_id not in scores)}
         for a, b in pairs:
-            first, second = table.get((model, a)), table.get((model, b))
-            if not first or not second:
-                continue
-            common = sorted(set(first) & set(second))
-            block["paired"][f"{b}-{a}"] = {}
-            for name in METRICS:
-                qs = [q for q in common if first[q][name] is not None and second[q][name] is not None]
-                if not qs:
-                    continue
-                diffs = [second[q][name] - first[q][name] for q in qs]
-                low, high = _bootstrap(diffs)
-                block["paired"][f"{b}-{a}"][name] = {"n": len(qs), "diff": round(sum(diffs) / len(qs), 4), "ci95": [round(low, 4), round(high, 4)],
-                                                     "wins": sum(d > 0 for d in diffs), "losses": sum(d < 0 for d in diffs)}
+            for la in [l for m, l in table if m == model and l.split(":", 1)[0] == a]:
+                for lb in [l for m, l in table if m == model and l.split(":", 1)[0] == b]:
+                    if la == lb:
+                        continue
+                    first, second = table[(model, la)], table[(model, lb)]
+                    common = sorted(set(first) & set(second))
+                    only = {la: sorted(set(first) - set(second)), lb: sorted(set(second) - set(first))}
+                    block["unpaired"][f"{lb}-{la}"] = {"count": sum(len(v) for v in only.values()), "only_in": only}
+                    block["paired"][f"{lb}-{la}"] = {}
+                    for name in METRICS:
+                        qs = [q for q in common if first[q][name] is not None and second[q][name] is not None]
+                        if not qs:
+                            continue
+                        diffs = [second[q][name] - first[q][name] for q in qs]
+                        low, high = _bootstrap(diffs)
+                        block["paired"][f"{lb}-{la}"][name] = {"n": len(qs), "diff": round(sum(diffs) / len(qs), 4), "ci95": [round(low, 4), round(high, 4)],
+                                                               "wins": sum(d > 0 for d in diffs), "losses": sum(d < 0 for d in diffs)}
         report["by_model"][model] = block
     return report

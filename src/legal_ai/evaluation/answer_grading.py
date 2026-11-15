@@ -12,7 +12,8 @@ Rubric (the same one the judge prompt gives the model):
 
 `score_sheet` reads a filled sheet (people or judge) with the key and reports per condition: citation support,
 grounding (fully supported statements / graded statements), mean correctness, strict success (correctness 2)
-and appropriate refusals, each with its denominator. `agreement` compares two filled sheets (Cohen's kappa).
+and appropriate refusals, each with its denominator, and the answers that failed before grading (listed in the key,
+never put on the sheet). `agreement` compares two filled sheets (Cohen's kappa).
 """
 
 import csv
@@ -40,30 +41,48 @@ def _show(unit_ids, units):
     return "\n\n".join(f"[{uid}]\n{units[uid]['text'].strip()}" for uid in unit_ids if uid in units)
 
 
-def items(answer_dirs, questions_path):
-    """One grading item per (answer run, question) with the texts graders need; order follows the inputs."""
+def _collect(answer_dirs, questions_path):
+    """Gradable items, failed answers (with their error code) and answers whose question is not in the file."""
     questions = {q["question_id"]: q for q in json.loads(Path(questions_path).read_text(encoding="utf-8"))["questions"]}
-    result = []
+    result, failed, outside = [], [], []
     for answer_dir in answer_dirs:
         manifest = json.loads((Path(answer_dir) / "manifest.json").read_text(encoding="utf-8"))
         units = _units_for(answer_dir)
         for qid, answer in sorted(latest_answers(Path(answer_dir) / "answers.jsonl").items()):
-            if answer.get("error") is not None or qid not in questions:
+            where = {"answer_dir": Path(answer_dir).as_posix(), "condition": manifest["condition"], "question_id": qid}
+            if qid not in questions:
+                outside.append(where)
+                continue
+            if answer.get("error") is not None:
+                failed.append(where | {"error": answer["error"]})
                 continue
             question = questions[qid]
             result.append({"answer_dir": Path(answer_dir).as_posix(), "condition": manifest["condition"], "question_id": qid,
                            "question": question["question"], "status": answer["status"],
                            "gold": _show(question.get("relevant_unit_ids") or [], units),
                            "statements": [{"text": s["text"], "cited": _show(s["unit_ids"], units)} for s in answer["statements"]]})
-    return result
+    return result, failed, outside
+
+
+def items(answer_dirs, questions_path):
+    """One grading item per (answer run, question) with the texts graders need; order follows the inputs. Failed
+    answers and answers to questions outside the file are not items; `make_sheet` records them in the key."""
+    return _collect(answer_dirs, questions_path)[0]
+
+
+def _item_id(seed, answer_dir, question_id):
+    return "A" + digest(canonical([seed, answer_dir, question_id]))[:10]
 
 
 def make_sheet(answer_dirs, questions_path, sheet_path, key_path, seed="lexora-grading-v1"):
-    pool = items(answer_dirs, questions_path)
+    """Blinded sheet of the gradable answers and its key. Graders never get an empty answer: failed answers stay off
+    the sheet and are listed in the key under `failed` (with their error code, same item ID scheme), and answers to
+    questions outside the question file under `not_in_questions`, so every score can count them per condition."""
+    pool, failed, outside = _collect(answer_dirs, questions_path)
     random.Random(seed).shuffle(pool)
     key, rows = {}, []
     for item in pool:
-        item_id = "A" + digest(canonical([seed, item["answer_dir"], item["question_id"]]))[:10]
+        item_id = _item_id(seed, item["answer_dir"], item["question_id"])
         key[item_id] = {k: item[k] for k in ("answer_dir", "condition", "question_id")}
         rows.append({"item_id": item_id, "row": "answer", "question": item["question"], "status": item["status"], "gold_units": item["gold"]})
         rows.extend({"item_id": item_id, "row": f"statement-{n}", "statement": s["text"], "cited_units": s["cited"]}
@@ -72,8 +91,19 @@ def make_sheet(answer_dirs, questions_path, sheet_path, key_path, seed="lexora-g
         writer = csv.DictWriter(handle, fieldnames=COLUMNS)
         writer.writeheader()
         writer.writerows(rows)
-    write_json(key_path, {"grading_version": GRADING_VERSION, "seed": seed, "items": key})
-    return {"items": len(pool), "rows": len(rows)}
+    write_json(key_path, {"grading_version": GRADING_VERSION, "seed": seed, "items": key,
+                          "failed": {_item_id(seed, f["answer_dir"], f["question_id"]): f for f in failed}, "not_in_questions": outside})
+    return {"items": len(pool), "rows": len(rows), "failed_answers": len(failed), "answers_not_in_questions": len(outside)}
+
+
+def failed_by_condition(key_file):
+    """{condition: failed answers} from a key, or None for a key made before failures were recorded."""
+    if key_file.get("failed") is None:
+        return None
+    counts = {}
+    for entry in key_file["failed"].values():
+        counts[entry["condition"]] = counts.get(entry["condition"], 0) + 1
+    return counts
 
 
 def read_sheet(path):
@@ -105,12 +135,15 @@ def grades(sheet_rows):
 
 
 def score_sheet(sheet_path, key_path):
-    key = json.loads(Path(key_path).read_text(encoding="utf-8"))["items"]
+    """Per-condition scores of a filled sheet; `failed_answers` (per condition and in total) counts the answers that
+    failed before grading, None when the key predates that record."""
+    key_file = json.loads(Path(key_path).read_text(encoding="utf-8"))
+    key, failed = key_file["items"], failed_by_condition(key_file)
     graded = grades(read_sheet(sheet_path))
     unknown = sorted(set(graded) - set(key))
     if unknown:
         raise ValueError(f"items not in the key: {unknown[:3]}")
-    by_condition = {}
+    by_condition = {condition: [] for condition in failed or {}}
     for item_id, entry in graded.items():
         by_condition.setdefault(key[item_id]["condition"], []).append(entry)
     mean = lambda values: (sum(values) / len(values) if values else None, len(values))
@@ -125,12 +158,37 @@ def score_sheet(sheet_path, key_path):
         rows = {"citation_support": mean(citations), "grounding_full": mean([v == 2 for v in supported]),
                 "grounding_mean": mean([v / 2 for v in supported]), "correctness_mean": mean(correctness),
                 "strict_success": mean([v == 2 for v in correctness]), "refusal_appropriate": mean(refusals)}
-        report[condition] = {name: {"value": value, "n": n} for name, (value, n) in rows.items()} | {"items": len(entries)}
-    return {"grading_version": GRADING_VERSION, "by_condition": report}
+        report[condition] = {name: {"value": value, "n": n} for name, (value, n) in rows.items()} | {
+            "items": len(entries), "failed_answers": None if failed is None else failed.get(condition, 0)}
+    outside = key_file.get("not_in_questions")
+    return {"grading_version": GRADING_VERSION, "by_condition": report, "failed_answers": None if failed is None else sum(failed.values()),
+            "answers_not_in_questions": None if outside is None else len(outside)}
 
 
-def agreement(first_sheet, second_sheet):
-    """Cohen's kappa between two filled sheets of the same items (e.g. a person and the judge)."""
+SHEET_METRICS = ("citation_support", "grounding_full", "grounding_mean", "correctness", "strict_success", "refusal_appropriate")
+
+
+def item_scores(sheet_path):
+    """{item_id: metrics} of a filled sheet, for paired statistics; a metric is None when nothing of it is graded.
+    Statement metrics are the item's own share of graded statements, so their mean over items differs from
+    `score_sheet`, which pools the statements of a condition; `correctness` keeps the 0-2 scale."""
+    share = lambda values: sum(values) / len(values) if values else None
+    result = {}
+    for item_id, entry in grades(read_sheet(sheet_path)).items():
+        supported = [s["supported"] for s in entry["statements"] if s["supported"] is not None]
+        citations = [s["citation_correct"] for s in entry["statements"] if s["citation_correct"] is not None]
+        correctness = entry["answer"].get("correctness")
+        refusal = entry["answer"].get("refusal_appropriate") if entry["answer"].get("status") in REFUSED else None
+        result[item_id] = {"citation_support": share(citations), "grounding_full": share([v == 2 for v in supported]),
+                           "grounding_mean": share([v / 2 for v in supported]), "correctness": correctness,
+                           "strict_success": None if correctness is None else float(correctness == 2),
+                           "refusal_appropriate": None if refusal is None else float(refusal)}
+    return result
+
+
+def agreement(first_sheet, second_sheet, key_path=None):
+    """Cohen's kappa between two filled sheets of the same items (e.g. a person and the judge). Items only one sheet
+    holds are listed in `unpaired_items`; with the key, `failed_answers` gives the answers never graded per condition."""
     a, b = grades(read_sheet(first_sheet)), grades(read_sheet(second_sheet))
     pairs = {"supported": [], "citation_correct": [], "correctness": []}
     for item_id in sorted(set(a) & set(b)):
@@ -141,8 +199,12 @@ def agreement(first_sheet, second_sheet):
         x, y = a[item_id]["answer"].get("correctness"), b[item_id]["answer"].get("correctness")
         if x is not None and y is not None:
             pairs["correctness"].append((x, y))
-    return {name: {"kappa": kappa([p[0] for p in values], [p[1] for p in values]) if values else None, "n": len(values)}
-            for name, values in pairs.items()}
+    result = {name: {"kappa": kappa([p[0] for p in values], [p[1] for p in values]) if values else None, "n": len(values)}
+              for name, values in pairs.items()}
+    result["unpaired_items"] = {"first_only": sorted(set(a) - set(b)), "second_only": sorted(set(b) - set(a))}
+    if key_path:
+        result["failed_answers"] = failed_by_condition(json.loads(Path(key_path).read_text(encoding="utf-8")))
+    return result
 
 
 JUDGE_SCHEMA = {"type": "object", "additionalProperties": False, "required": ["statements", "correctness", "refusal_appropriate"], "properties": {

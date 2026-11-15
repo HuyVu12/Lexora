@@ -277,43 +277,97 @@ def verification_load(answers, records, units):
             "single_leaf_citation_rate": single / citations if citations else None, "citations": citations}
 
 
-def score(answer_dir, questions_path):
-    """Automatic metrics of one answer run; writes and returns metrics.json."""
+def _joined(answer_dir, questions_path):
+    """The latest answers of a run joined with their questions, the records and units its retrieval run pinned, and
+    the IDs of answers whose question is not in the file (left out of every metric, so callers report them)."""
     answer_dir = Path(answer_dir)
     answers = latest_answers(answer_dir / "answers.jsonl")
     questions = {q["question_id"]: q for q in json.loads(Path(questions_path).read_text(encoding="utf-8"))["questions"]}
     rows = [(questions[qid], a) for qid, a in answers.items() if qid in questions]
-    ok = [(q, a) for q, a in rows if a.get("error") is None]
-    refuse = [(q, a) for q, a in ok if q.get("expected_status") == "refuse"]
-    answer = [(q, a) for q, a in ok if q.get("expected_status") == "answer"]
+    outside = sorted(qid for qid in answers if qid not in questions)
     manifest = json.loads((answer_dir / "manifest.json").read_text(encoding="utf-8"))
     retrieval = Path(manifest["retrieval_run"])
     records = {r["record_id"]: r for r in read_jsonl(retrieval / "records.jsonl")} if (retrieval / "records.jsonl").exists() else {}
     units_path = Path(json.loads((retrieval / "manifest.json").read_text(encoding="utf-8"))["inputs"]["units"]["path"]) if records else None
     units = {u["unit_id"]: u for u in read_jsonl(units_path)} if units_path and units_path.exists() else {}
-    precision, recall, chars = [], [], []
-    for q, a in answer:
-        gold = q.get("relevant_unit_ids") or []
-        cited = [s["unit_ids"] for s in a["statements"]]
-        if a["status"] in ANSWERED and gold and cited:
-            precision.append(sum(any(_covers(units, g) for g in gold) for units in cited) / len(cited))
-            recall.append(sum(any(_covers(units, g) for units in cited) for g in gold) / len(gold))
-            ids = {r for s in a["statements"] for r in s.get("record_ids", [])}
-            if units and ids <= records.keys() and all(g in units for g in gold):
-                chars.append(char_precision([records[r] for r in ids], [units[g] for g in gold]))
+    return rows, records, units, outside
+
+
+def _question_metrics(q, a, records, units):
+    """Automatic metrics of one successful answer; None where a metric does not apply to the question."""
+    refused = float(a["status"] in REFUSED)
+    row = {"answered": float(a["status"] in ANSWERED), "refused": refused,
+           "refusal_when_expected": refused if q.get("expected_status") == "refuse" else None,
+           "false_refusal": refused if q.get("expected_status") == "answer" else None,
+           "citation_gold_precision": None, "citation_gold_recall": None, "citation_gold_char_precision": None,
+           "statements": len(a["statements"]), "context_tokens": a["context_tokens"],
+           "uncited_statements_removed": a["gate"]["uncited_removed"], "downgraded_to_insufficient": float(a["gate"]["downgraded_to_insufficient"]),
+           "cost_usd": a.get("cost_usd") or 0,
+           # Validity questions: does an answer cite a unit that is outdated at the question's date (H3)?
+           "stale_citation": float(cites_stale(a, q["stale_unit_ids"])) if q.get("stale_unit_ids") else None}
+    gold = q.get("relevant_unit_ids") or []
+    cited = [s["unit_ids"] for s in a["statements"]]
+    if q.get("expected_status") == "answer" and a["status"] in ANSWERED and gold and cited:
+        row["citation_gold_precision"] = sum(any(_covers(units, g) for g in gold) for units in cited) / len(cited)
+        row["citation_gold_recall"] = sum(any(_covers(units, g) for units in cited) for g in gold) / len(gold)
+        ids = {r for s in a["statements"] for r in s.get("record_ids", [])}
+        if units and ids <= records.keys() and all(g in units for g in gold):
+            row["citation_gold_char_precision"] = char_precision([records[r] for r in ids], [units[g] for g in gold])
+    return row
+
+
+ANSWER_METRICS = ("answered", "refused", "refusal_when_expected", "false_refusal", "citation_gold_precision", "citation_gold_recall",
+                  "citation_gold_char_precision", "statements", "context_tokens", "uncited_statements_removed",
+                  "downgraded_to_insufficient", "cost_usd", "stale_citation", "cited_tokens_per_statement", "single_leaf_citation_rate")
+
+
+def question_scores(answer_dir, questions_path):
+    """Per-question automatic metrics of one answer run, for paired statistics; reads only, writes nothing.
+
+    {question_id: {"expected_status", "status", "error", <ANSWER_METRICS>}}: a failed answer keeps its error code and
+    has every metric None. The verification load is the answer's own (cited tokens over its statements), so its mean
+    over questions differs from `score`'s, which pools all statements of the run. Answers to questions outside the file
+    are not in the result; `answers_not_in_questions` lists them."""
+    rows, records, units, _ = _joined(answer_dir, questions_path)
+    result = {}
+    for q, a in rows:
+        base = {"expected_status": q.get("expected_status"), "status": a.get("status"), "error": a.get("error")}
+        if a.get("error") is not None:
+            result[q["question_id"]] = base | dict.fromkeys(ANSWER_METRICS)
+            continue
+        load = verification_load([a], records, units)
+        result[q["question_id"]] = base | _question_metrics(q, a, records, units) | {
+            "cited_tokens_per_statement": load["cited_tokens_per_statement"], "single_leaf_citation_rate": load["single_leaf_citation_rate"]}
+    return result
+
+
+def answers_not_in_questions(answer_dir, questions_path):
+    """IDs of the run's answers whose question is not in the question file."""
+    questions = {q["question_id"] for q in json.loads(Path(questions_path).read_text(encoding="utf-8"))["questions"]}
+    return sorted(qid for qid in latest_answers(Path(answer_dir) / "answers.jsonl") if qid not in questions)
+
+
+def score(answer_dir, questions_path):
+    """Automatic metrics of one answer run; writes and returns metrics.json (`question_scores` gives them per question).
+    Failed answers count in `errors`; answers to questions outside the file in `answers_not_in_questions`."""
+    answer_dir = Path(answer_dir)
+    rows, records, units, outside = _joined(answer_dir, questions_path)
+    ok = [(q, a) for q, a in rows if a.get("error") is None]
+    scored = [_question_metrics(q, a, records, units) for q, a in ok]
+    values = lambda name: [row[name] for row in scored if row[name] is not None]
     mean = lambda values: sum(values) / len(values) if values else None
     load = verification_load([a for _, a in ok], records, units)
-    # Validity questions: does an answer cite a unit that is outdated at the question's date (H3)?
-    stale = [(q, a) for q, a in ok if q.get("stale_unit_ids")]
-    if stale:
-        load |= {"stale_citation_rate": mean([cites_stale(a, q["stale_unit_ids"]) for q, a in stale]), "questions_with_stale_units": len(stale)}
+    if values("stale_citation"):
+        load |= {"stale_citation_rate": mean(values("stale_citation")), "questions_with_stale_units": len(values("stale_citation"))}
     metrics = {
         "run_version": RUN_VERSION, "questions": len(rows), "errors": len(rows) - len(ok),
-        "refusal_rate_when_expected": mean([a["status"] in REFUSED for _, a in refuse]), "expected_refusals": len(refuse),
-        "false_refusal_rate": mean([a["status"] in REFUSED for _, a in answer]), "expected_answers": len(answer),
-        "answered_rate": mean([a["status"] in ANSWERED for _, a in ok]),
-        "citation_gold_precision": mean(precision), "citation_gold_recall": mean(recall), "citation_scored_answers": len(precision),
-        "citation_gold_char_precision": mean([c for c in chars if c is not None]),
+        "answers_not_in_questions": len(outside), "answers_not_in_questions_ids": outside,
+        "refusal_rate_when_expected": mean(values("refusal_when_expected")), "expected_refusals": len(values("refusal_when_expected")),
+        "false_refusal_rate": mean(values("false_refusal")), "expected_answers": len(values("false_refusal")),
+        "answered_rate": mean(values("answered")),
+        "citation_gold_precision": mean(values("citation_gold_precision")), "citation_gold_recall": mean(values("citation_gold_recall")),
+        "citation_scored_answers": len(values("citation_gold_precision")),
+        "citation_gold_char_precision": mean(values("citation_gold_char_precision")),
         "uncited_statements_removed": sum(a["gate"]["uncited_removed"] for _, a in ok),
         "downgraded_to_insufficient": sum(a["gate"]["downgraded_to_insufficient"] for _, a in ok),
         "mean_statements": mean([len(a["statements"]) for _, a in ok]), "mean_context_tokens": mean([a["context_tokens"] for _, a in ok]),
