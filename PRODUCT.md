@@ -44,7 +44,7 @@ Chạy cục bộ trên một máy, server loopback có đăng nhập ba vai tr�
 Luồng chính trên giao diện: nhập văn bản (tìm trong danh mục hoặc dán link vbpl.vn rồi chọn các Điều, tải tệp TXT/HTML/DOCX/PDF có lớp chữ, dán nội dung), duyệt quy phạm cạnh nguyên văn, xem trước và công bố thành phiên bản mới của kho, hỏi đáp trên một đến năm kho, xem sơ đồ quy phạm và sơ đồ cấu trúc văn bản.
 Khu vực Nghiên cứu cho người duyệt: corpus có phiên bản khóa bằng mã băm và bộ câu hỏi do hai người gán nhãn độc lập rồi đối soát.
 Mỗi trang có khung hướng dẫn "Trang này là gì?" với các bước, ẩn được.
-Thiết kế thực nghiệm gồm bốn cấu hình ĐK1 đến ĐK4 (đoạn cắt cố định, đoạn theo cấu trúc, kho quy phạm do mô hình ngôn ngữ trích xuất trước và sau kiểm chứng); ĐK1 và ĐK2 đã chạy được, ĐK3 và ĐK4 chưa làm.
+Thiết kế thực nghiệm gồm bốn cấu hình ĐK1 đến ĐK4 (đoạn cắt cố định, đoạn theo cấu trúc, kho quy phạm do mô hình ngôn ngữ trích xuất trước và sau kiểm chứng); cả bốn cấu hình đã chạy thử được trên nhãn nháp do mô hình soạn, lượt chạy chính chờ nhãn do người gán.
 
 ## Capabilities and Constraints
 
@@ -68,8 +68,8 @@ Không ghi tên trường, giảng viên hướng dẫn hay thành viên nhóm t
 
 Dữ liệu demo là dữ liệu minh họa tổng hợp, luôn được gắn nhãn "Dữ liệu minh họa".
 Có bản chụp VBPL và artifact pilot cục bộ trong `data/` (không đưa vào Git).
-Chưa có kết quả thực nghiệm, số liệu đánh giá hay phản hồi người dùng; không được bịa số liệu, kết quả hoặc lời nhận xét.
-Các con số về bộ dữ liệu (khoảng 150 câu hỏi, 40 đến 60 điều khoản gán nhãn) là mục tiêu theo đề cương, chưa phải dữ liệu đã có.
+Số liệu hiện có là kết quả chạy thử trên nhãn nháp do mô hình soạn (`docs/results/`), chỉ dùng để chọn cấu hình và kiểm tra công cụ; chưa có kết quả trên nhãn do người gán hay phản hồi người dùng, và không được bịa số liệu, kết quả hoặc lời nhận xét.
+Bộ dữ liệu đang được gán nhãn (bộ tra cứu 152 câu, bộ khó 90 câu, gold trích xuất 40 Điều); tình trạng từng bộ ghi ở `docs/planning/progress-2026-11-16.md`.
 
 ## Product Principles
 

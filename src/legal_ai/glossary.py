@@ -291,6 +291,10 @@ GLOSSARY = {
         "term": "Chốt nhãn",
         "definition": "Sau khi so hai người gán, chọn hoặc sửa thành một nhãn cuối cho mỗi câu. Nhãn cuối là đáp án dùng trong thực nghiệm.",
     },
+    "agreement_sample": {
+        "term": "Mẫu đồng thuận",
+        "definition": "Phần gold mà cả hai người gán độc lập: khoảng 30% số Điều, chọn ngẫu nhiên bằng hạt giống cố định và chia theo tỉ lệ số Điều của từng văn bản, trước khi người thứ hai bắt đầu. Kappa và F1 giữa hai người đo trên phần này; các câu còn lại dùng nhãn của một người và được đánh dấu là một người gán.",
+    },
     "frozen_version": {
         "term": "Phiên bản đã khóa",
         "definition": "Bản chụp cố định các văn bản của corpus, có mã băm. Bộ câu hỏi, gold set và thực nghiệm đều gắn với một phiên bản nên văn bản không thay đổi giữa chừng.",

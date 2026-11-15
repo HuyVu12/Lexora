@@ -43,6 +43,8 @@ Câu cùng ý khác cách hỏi thuộc cùng "nhóm diễn đạt" và luôn n�
   Nếu cả hai người cùng xem đề xuất, độ đồng thuận đo được là đồng thuận khi duyệt đề xuất, thường cao hơn gán độc lập; trang đối soát nhắc điều này và tệp đã khóa ghi chế độ của từng người.
   Khuyên ít nhất một người tự gán.
 - Câu hỏi do model soạn nháp được ghi nguồn `model` (kèm mã lần gọi và cờ đã sửa câu chữ); báo cáo nên tách kết quả theo nguồn câu hỏi.
+- Ô tìm đơn vị xếp hạng các đơn vị lá bằng BM25, nhưng mỗi kết quả kèm Khoản (hoặc Điểm) cha của nó; khoản cha hiện một lần, ngay trên các điểm tìm được, và chọn được như mọi đơn vị.
+  Trước 15/11/2026 ô này chỉ hiện đơn vị lá, nên quy định nằm ở câu dẫn của khoản có chia điểm (ví dụ khoản 1 Điều 48: 14 ngày, tối đa 30 ngày) không chọn được và người gán phải tạm chọn một điểm.
 - Kappa dùng cho loại câu và hành vi; tập đơn vị dùng Dice và tỉ lệ khớp hoàn toàn.
   Đây là đồng thuận giữa hai sinh viên, không phải xác nhận của chuyên gia pháp lý.
 - Chia dev/held-out theo nhóm diễn đạt, phân tầng theo loại câu, thứ tự nhóm theo SHA-256 của `seed:family_id`; seed và tỉ lệ được ghi trong tệp đã khóa.

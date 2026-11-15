@@ -22,5 +22,7 @@
     "max_seq_length": 1024,
     "cache": "models/bge-m3-vectors.sqlite"
   },
-  "note": "Shared retrieval settings for DK1-DK4 (one embedding model, one fusion rule). Compare bm25/dense/hybrid on dev only, then freeze."
+  "note": "Shared retrieval settings for DK1-DK4 (one embedding model, one fusion rule). Compare bm25/dense/hybrid on dev only, then freeze.",
+  "validity_as_of": "2026-11-11",
+  "validity_note": "Date of a question without as_of in validity conditions: the freeze date of corpus v3, decided 15/11/2026 (docs/decisions.md). Runs record the date per question (validity.as_of, as_of_source) and preflight fails when validity conditions of one comparison used different defaults."
 }

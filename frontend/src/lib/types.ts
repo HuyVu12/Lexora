@@ -383,10 +383,20 @@ export interface FrozenVersionOption {
 	frozen_at: string;
 }
 
-export interface UnitCandidate {
+// A unit as the labelling form shows it: `document` is the short title a reader cites ("Nghị định số 145/2020/NĐ-CP"),
+// `document_title` the full one, `order` its start in the document (statute order among siblings).
+export interface UnitRef {
 	unit_id: string;
+	document: string;
+	document_title: string;
 	path: string;
 	text: string;
+	order: number;
+}
+
+// A leaf unit found by search, with the Clauses (or Points) it hangs under, outermost first.
+export interface UnitCandidate extends UnitRef {
+	parents: UnitRef[];
 }
 
 export interface QuestionDraft {
@@ -455,6 +465,19 @@ export interface GoldSetSummary {
 	imported: boolean;
 	labelled: Record<string, number>;
 	adjudicated: number;
+	sample_size: { articles: number; sentences: number } | null;
+}
+
+/** The agreement sample: the articles both annotators label, chosen once with a fixed seed. */
+export interface GoldSample {
+	method: string;
+	share: string;
+	seed: string;
+	articles: string[];
+	article_count: number;
+	sentences: number;
+	declared_by: string;
+	declared_at: string;
 }
 
 export interface GoldItem {
@@ -464,6 +487,7 @@ export interface GoldItem {
 	path: string;
 	document_title: string;
 	context: string | null;
+	in_sample: boolean;
 	norms: GoldNorm[] | null;
 }
 
@@ -473,6 +497,26 @@ export interface GoldWorkspace extends GoldSetSummary {
 	slots: string[];
 	modalities: GoldModality[];
 	annotators: { annotator: string; annotator_name: string; imported: number; labels: number }[];
+	sample: GoldSample | null;
+	sample_declarable: boolean;
+	sample_defaults: { share: string; seed: string; articles: number };
+	blockers: GoldBlocker[];
+}
+
+/** What still stops the gold file; `message` is the server's Vietnamese text, the UI shows `gold.block.<kind>`. */
+export interface GoldBlocker {
+	kind: 'sample_short' | 'disagree' | 'agreed' | 'single' | 'outside_unlabelled' | 'unfinished';
+	n: number;
+	message: string;
+}
+
+export type GoldRowStatus = 'final' | 'agreed' | 'single' | 'disagree' | 'missing_second' | 'unlabelled';
+
+export interface GoldFinal {
+	norms: GoldNorm[];
+	decided_by: string;
+	kind: 'agreed' | 'single' | 'adjudicated';
+	people: string[];
 }
 
 export interface GoldAgreement {
@@ -491,7 +535,21 @@ export interface GoldComparison {
 	labelled_by_both: number;
 	agreement: GoldAgreement | null;
 	adjudicated: number;
-	items: { key: string; unit_id: string; text: string; first: GoldNorm[] | null; second: GoldNorm[] | null; agree: boolean; final: { norms: GoldNorm[]; decided_by: string } | null }[];
+	sample: GoldSample | null;
+	sample_progress: Record<string, number> | null;
+	plan: Record<GoldRowStatus, number>;
+	blockers: GoldBlocker[];
+	items: {
+		key: string;
+		unit_id: string;
+		text: string;
+		first: GoldNorm[] | null;
+		second: GoldNorm[] | null;
+		agree: boolean;
+		in_sample: boolean;
+		status: GoldRowStatus;
+		final: GoldFinal | null;
+	}[];
 }
 
 export interface KbInjection {

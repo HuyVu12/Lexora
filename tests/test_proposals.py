@@ -61,6 +61,49 @@ class ProposalTests(unittest.TestCase):
         self.assertEqual((len(calls), calls[0]["purpose"], calls[0]["prompt_file"]), (1, "question-label", "question-label-v1.md"))
         self.assertNotIn("output", calls[0])
 
+    def test_candidates_carry_the_clause_whose_lead_sentence_holds_the_rule(self):
+        law = ("Điều 3. Thanh toán khi chấm dứt\n1. Trong thời hạn 14 ngày làm việc, hai bên thanh toán đủ, trừ trường hợp sau đây có thể kéo dài nhưng không quá 30 ngày:\n"
+               "a) Doanh nghiệp giải thể;\nb) Do thiên tai, hỏa hoạn.\n2. Người sử dụng lao động trả chi phí.\n")
+        corpus = self.corpora.create("D", "", "vu")
+        self.corpora.add_file(corpus["id"], "luat2.txt", law.encode("utf-8"), "vu")
+        version = self.corpora.freeze(corpus["id"], "", "vu")
+        found = {c["unit_id"]: c for c in proposals.candidates(self.corpora, version["id"], "kéo dài thanh toán do thiên tai")}
+        point = found["luat2/article-3/clause-1/point-b"]
+        self.assertEqual([p["unit_id"] for p in point["parents"]], ["luat2/article-3/clause-1"])
+        self.assertTrue(point["parents"][0]["text"].startswith("1. Trong thời hạn 14 ngày"))
+        self.assertEqual(point["parents"][0]["path"], "Điều 3 > Khoản 1")
+        self.assertEqual(found["luat2/article-3/clause-2"]["parents"], [], "an Article with only its heading is not offered")
+        store = QuestionStore(Path(self.temp.name) / "w.sqlite", self.corpora)
+        qset = store.create("E", version["id"], "", "vu")
+        question = store.add_question(qset["id"], "Thanh toán trong bao lâu?", "vu")
+        store.set_mode(qset["id"], "vu", False)
+        saved = store.save_label(qset["id"], question["id"], "vu", "Vũ", {"question_type": "lookup", "expected_status": "answer",
+                                                                               "relevant_unit_ids": ["luat2/article-3/clause-1"]})
+        self.assertEqual(saved["fields"]["relevant_unit_ids"], ["luat2/article-3/clause-1"])
+
+    def test_rows_name_their_document_and_statute_order(self):
+        other = ("Điều 1. Thời hạn khác\n1. Bên A phải báo trước 15 ngày, trừ các trường hợp sau đây:\n"
+                 "a) Bên A ốm đau;\nb) Bên A báo trước bằng văn bản.\n")
+        corpus = self.corpora.create("Hai văn bản", "", "vu")
+        self.corpora.add_file(corpus["id"], "luat.txt", LAW.encode("utf-8"), "vu", title="Bộ luật Lao động số 45/2019/QH14")
+        self.corpora.add_file(corpus["id"], "nd.txt", other.encode("utf-8"), "vu",
+                              title="Nghị định số 145/2020/NĐ-CP Quy định chi tiết một số điều")
+        version = self.corpora.freeze(corpus["id"], "", "vu")
+        found = {c["unit_id"]: c for c in proposals.candidates(self.corpora, version["id"], "Bên A báo trước")}
+        clash = (found["luat/article-1/clause-1"], found["nd/article-1/clause-1/point-b"]["parents"][0])
+        self.assertEqual([u["path"] for u in clash], ["Điều 1 > Khoản 1", "Điều 1 > Khoản 1"], "same path in two documents")
+        self.assertEqual([u["document"] for u in clash], ["Bộ luật Lao động số 45/2019/QH14", "Nghị định số 145/2020/NĐ-CP"])
+        self.assertEqual(clash[1]["document_title"], "Nghị định số 145/2020/NĐ-CP Quy định chi tiết một số điều")
+        points = [found[f"nd/article-1/clause-1/point-{p}"]["order"] for p in "ab"]
+        self.assertLess(points[0], points[1], "order follows the statute, not the search rank")
+        refs = proposals.unit_refs(self.corpora, version["id"], ["nd/article-1/clause-1", "missing/unit", "luat/article-2"])
+        self.assertEqual([(r["unit_id"], r["document"], r["path"]) for r in refs],
+                         [("nd/article-1/clause-1", "Nghị định số 145/2020/NĐ-CP", "Điều 1 > Khoản 1"),
+                          ("luat/article-2", "Bộ luật Lao động số 45/2019/QH14", "Điều 2")])
+        self.assertTrue(refs[0]["text"].startswith("1. Bên A phải báo trước 15 ngày"))
+        self.assertEqual(proposals.short_title("Luật Việc làm số 74/2025/QH15"), "Luật Việc làm số 74/2025/QH15")
+        self.assertEqual(proposals.short_title("Quy định nội bộ"), "Quy định nội bộ")
+
     def test_failed_calls_are_logged_and_raised(self):
         question = self.store.add_question(self.set["id"], "Lương thử nghiệm bao nhiêu?", "vu")
         with self.assertRaises(ProviderError):

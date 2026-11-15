@@ -1,0 +1,1247 @@
+{
+ "description": "Validity question set v1 (research plan WP4.5): 30 questions on corpus scope v3 in four groups (expired document NĐ 12/2022 -> NĐ 283/2026, unit-level amendments, explicit past date, controls). Unreviewed model draft by Claude Opus 5.5 (Claude Code agent session, 2026-11-15); answer and stale sets follow from vbpl.vn document dates and amendment-rules-v2 edges, checked by validate.py; every question has an explicit as_of. Not human labels.",
+ "set_version": "validity-v1-draft",
+ "drafted_by": {
+  "model": "Claude Opus 5.5",
+  "via": "Claude Code agent session",
+  "date": "2026-11-15",
+  "status": "unreviewed model draft"
+ },
+ "corpus": {
+  "bundle": "data/normalized/experiment-scope-v3-v48feefc6d53b",
+  "units_sha256": "7a9666ac14aacdb9856f7effab4ea7d2f8188d69a637e36487495f3ea731b6bd"
+ },
+ "amendments": {
+  "edges": "data/kb/amendments-scope-v3-v48feefc6d53b-v2/edges.jsonl",
+  "edges_sha256": "519ca2f378ba02eb14588424d62df7eb1763614b95ef2fba0390ac77488276e3",
+  "status_version": "unit-status-v2"
+ },
+ "questions": [
+  {
+   "question_id": "hl-a01",
+   "question": "Công ty chúng tôi đang dùng 15 công nhân làm việc theo thỏa thuận miệng, mỗi người làm từ 3 đến 6 tháng, chưa ký hợp đồng lao động bằng văn bản. Nếu bị thanh tra phát hiện vào thời điểm hiện nay thì công ty có thể bị phạt tiền ở mức nào?",
+   "question_type": "temporal",
+   "group": "expired_document",
+   "family_id": "hlf-a01",
+   "expected_status": "answer",
+   "as_of": "2026-11-11",
+   "relevant_unit_ids": [
+    "283-2026-nd-cp/chapter-ii/section-2/article-15/clause-1/point-b",
+    "283-2026-nd-cp/chapter-i/article-7/clause-1"
+   ],
+   "stale_unit_ids": [
+    "12-2022-nd-cp/chapter-ii/article-9/clause-1/point-b",
+    "12-2022-nd-cp/chapter-i/article-6/clause-1"
+   ],
+   "pairs": [
+    {
+     "old": "12-2022-nd-cp/chapter-ii/article-9/clause-1/point-b",
+     "new": "283-2026-nd-cp/chapter-ii/section-2/article-15/clause-1/point-b",
+     "shared": "Từ 5.000.000 đồng đến 10.000.000 đồng đối với vi phạm từ 11 người đến 50 người lao động",
+     "context": [
+      {
+       "unit_id": "12-2022-nd-cp/chapter-ii/article-9/clause-1",
+       "quote": "giao kết hợp đồng lao động không bằng văn bản với người lao động làm công việc có thời hạn từ đủ 01 tháng trở lên"
+      },
+      {
+       "unit_id": "283-2026-nd-cp/chapter-ii/section-2/article-15/clause-1",
+       "quote": "giao kết hợp đồng lao động không bằng văn bản với người lao động làm công việc có thời hạn từ đủ 01 tháng trở lên"
+      }
+     ]
+    },
+    {
+     "old": "12-2022-nd-cp/chapter-i/article-6/clause-1",
+     "new": "283-2026-nd-cp/chapter-i/article-7/clause-1",
+     "manual": true,
+     "shared": "Mức phạt tiền đối với tổ chức bằng 02 lần mức phạt tiền đối với cá nhân."
+    }
+   ],
+   "rationale": "Cùng hành vi giao kết hợp đồng lao động không bằng văn bản, cùng khung 11-50 người ở cả hai nghị định; mức phạt trong nghị định là mức đối với cá nhân, tổ chức bị phạt gấp đôi. Từ 10/09/2026 căn cứ là NĐ 283/2026, NĐ 12/2022 đã hết hiệu lực.",
+   "annotation_status": "model_draft",
+   "drafted_by": {
+    "model": "Claude Opus 5.5",
+    "via": "Claude Code agent session",
+    "date": "2026-11-15",
+    "status": "unreviewed model draft"
+   }
+  },
+  {
+   "question_id": "hl-a02",
+   "question": "Doanh nghiệp trả lương thử việc cho nhân viên mới bằng 80% mức lương của công việc đó. Theo quy định xử phạt đang có hiệu lực, hành vi này bị phạt bao nhiêu tiền?",
+   "question_type": "temporal",
+   "group": "expired_document",
+   "family_id": "hlf-a02",
+   "expected_status": "answer",
+   "as_of": "2026-11-11",
+   "relevant_unit_ids": [
+    "283-2026-nd-cp/chapter-ii/section-2/article-16/clause-2/point-c",
+    "283-2026-nd-cp/chapter-i/article-7/clause-1"
+   ],
+   "stale_unit_ids": [
+    "12-2022-nd-cp/chapter-ii/article-10/clause-2/point-c",
+    "12-2022-nd-cp/chapter-i/article-6/clause-1"
+   ],
+   "pairs": [
+    {
+     "old": "12-2022-nd-cp/chapter-ii/article-10/clause-2/point-c",
+     "new": "283-2026-nd-cp/chapter-ii/section-2/article-16/clause-2/point-c",
+     "manual": true,
+     "shared": "thấp hơn 85% mức lương của công việc đó",
+     "context": [
+      {
+       "unit_id": "12-2022-nd-cp/chapter-ii/article-10/clause-2",
+       "quote": "Phạt tiền từ 2.000.000 đồng đến 5.000.000 đồng đối với người sử dụng lao động"
+      },
+      {
+       "unit_id": "283-2026-nd-cp/chapter-ii/section-2/article-16/clause-2",
+       "quote": "Phạt tiền từ 2.000.000 đồng đến 5.000.000 đồng đối với người sử dụng lao động"
+      }
+     ]
+    },
+    {
+     "old": "12-2022-nd-cp/chapter-i/article-6/clause-1",
+     "new": "283-2026-nd-cp/chapter-i/article-7/clause-1",
+     "manual": true,
+     "shared": "Mức phạt tiền đối với tổ chức bằng 02 lần mức phạt tiền đối với cá nhân."
+    }
+   ],
+   "rationale": "Hai điểm cùng mô tả việc trả lương thử việc thấp hơn 85% mức lương của công việc; NĐ 283/2026 viết thêm \"thấp hơn thỏa thuận\". Cặp này không có trong pairs-expired.jsonl (độ giống chữ dưới 0,85) nên được ghép tay, kèm cụm chữ chung.",
+   "annotation_status": "model_draft",
+   "drafted_by": {
+    "model": "Claude Opus 5.5",
+    "via": "Claude Code agent session",
+    "date": "2026-11-15",
+    "status": "unreviewed model draft"
+   }
+  },
+  {
+   "question_id": "hl-a03",
+   "question": "Công ty có 8 lao động đang được trả lương thấp hơn mức lương tối thiểu vùng. Hiện nay công ty có thể bị phạt tiền bao nhiêu?",
+   "question_type": "temporal",
+   "group": "expired_document",
+   "family_id": "hlf-a03",
+   "expected_status": "answer",
+   "as_of": "2026-11-11",
+   "relevant_unit_ids": [
+    "283-2026-nd-cp/chapter-ii/section-2/article-23/clause-3/point-a",
+    "283-2026-nd-cp/chapter-i/article-7/clause-1"
+   ],
+   "stale_unit_ids": [
+    "12-2022-nd-cp/chapter-ii/article-17/clause-3/point-a",
+    "12-2022-nd-cp/chapter-i/article-6/clause-1"
+   ],
+   "pairs": [
+    {
+     "old": "12-2022-nd-cp/chapter-ii/article-17/clause-3/point-a",
+     "new": "283-2026-nd-cp/chapter-ii/section-2/article-23/clause-3/point-a",
+     "shared": "Từ 20.000.000 đồng đến 30.000.000 đồng đối với vi phạm từ 01 người đến 10 người lao động",
+     "context": [
+      {
+       "unit_id": "12-2022-nd-cp/chapter-ii/article-17/clause-3",
+       "quote": "trả lương cho người lao động thấp hơn mức lương tối thiểu do Chính phủ quy định"
+      },
+      {
+       "unit_id": "283-2026-nd-cp/chapter-ii/section-2/article-23/clause-3",
+       "quote": "trả lương cho người lao động thấp hơn mức lương tối thiểu do Chính phủ quy định"
+      }
+     ]
+    },
+    {
+     "old": "12-2022-nd-cp/chapter-i/article-6/clause-1",
+     "new": "283-2026-nd-cp/chapter-i/article-7/clause-1",
+     "manual": true,
+     "shared": "Mức phạt tiền đối với tổ chức bằng 02 lần mức phạt tiền đối với cá nhân."
+    }
+   ],
+   "rationale": "Cùng hành vi trả lương thấp hơn mức lương tối thiểu, cùng khung 01-10 người.",
+   "annotation_status": "model_draft",
+   "drafted_by": {
+    "model": "Claude Opus 5.5",
+    "via": "Claude Code agent session",
+    "date": "2026-11-15",
+    "status": "unreviewed model draft"
+   }
+  },
+  {
+   "question_id": "hl-a04",
+   "question": "Tháng này nhà máy huy động 60 công nhân làm thêm giờ vượt quá số giờ tối đa pháp luật cho phép. Theo quy định hiện hành, công ty có thể bị phạt ở khung nào?",
+   "question_type": "temporal",
+   "group": "expired_document",
+   "family_id": "hlf-a04",
+   "expected_status": "answer",
+   "as_of": "2026-11-11",
+   "relevant_unit_ids": [
+    "283-2026-nd-cp/chapter-ii/section-2/article-24/clause-4/point-c",
+    "283-2026-nd-cp/chapter-i/article-7/clause-1"
+   ],
+   "stale_unit_ids": [
+    "12-2022-nd-cp/chapter-ii/article-18/clause-4/point-c",
+    "12-2022-nd-cp/chapter-i/article-6/clause-1"
+   ],
+   "pairs": [
+    {
+     "old": "12-2022-nd-cp/chapter-ii/article-18/clause-4/point-c",
+     "new": "283-2026-nd-cp/chapter-ii/section-2/article-24/clause-4/point-c",
+     "shared": "Từ 20.000.000 đồng đến 40.000.000 đồng đối với vi phạm từ 51 người đến 100 người lao động",
+     "context": [
+      {
+       "unit_id": "12-2022-nd-cp/chapter-ii/article-18/clause-4",
+       "quote": "huy động người lao động làm thêm giờ vượt quá số giờ theo quy định của pháp luật"
+      },
+      {
+       "unit_id": "283-2026-nd-cp/chapter-ii/section-2/article-24/clause-4",
+       "quote": "huy động người lao động làm thêm giờ vượt quá số giờ theo quy định của pháp luật"
+      }
+     ]
+    },
+    {
+     "old": "12-2022-nd-cp/chapter-i/article-6/clause-1",
+     "new": "283-2026-nd-cp/chapter-i/article-7/clause-1",
+     "manual": true,
+     "shared": "Mức phạt tiền đối với tổ chức bằng 02 lần mức phạt tiền đối với cá nhân."
+    }
+   ],
+   "rationale": "Cùng hành vi huy động làm thêm giờ vượt quá số giờ quy định, cùng khung 51-100 người.",
+   "annotation_status": "model_draft",
+   "drafted_by": {
+    "model": "Claude Opus 5.5",
+    "via": "Claude Code agent session",
+    "date": "2026-11-15",
+    "status": "unreviewed model draft"
+   }
+  },
+  {
+   "question_id": "hl-a05",
+   "question": "Công ty chậm đóng bảo hiểm xã hội bắt buộc cho người lao động đã mấy tháng nay. Theo quy định hiện hành, mức phạt tiền được tính như thế nào và tối đa là bao nhiêu?",
+   "question_type": "temporal",
+   "group": "expired_document",
+   "family_id": "hlf-a05",
+   "expected_status": "answer",
+   "as_of": "2026-11-11",
+   "relevant_unit_ids": [
+    "283-2026-nd-cp/chapter-iii/article-43/clause-3",
+    "283-2026-nd-cp/chapter-i/article-7/clause-1"
+   ],
+   "stale_unit_ids": [
+    "12-2022-nd-cp/chapter-iii/article-39/clause-5/point-a",
+    "12-2022-nd-cp/chapter-i/article-6/clause-1"
+   ],
+   "pairs": [
+    {
+     "old": "12-2022-nd-cp/chapter-iii/article-39/clause-5/point-a",
+     "new": "283-2026-nd-cp/chapter-iii/article-43/clause-3",
+     "manual": true,
+     "shared": "chậm đóng bảo hiểm xã hội bắt buộc",
+     "context": [
+      {
+       "unit_id": "12-2022-nd-cp/chapter-iii/article-39/clause-5",
+       "quote": "Phạt tiền từ 12% đến 15% tổng số tiền phải đóng bảo hiểm xã hội bắt buộc, bảo hiểm thất nghiệp tại thời điểm lập biên bản vi phạm hành chính nhưng tối đa không quá 75.000.000 đồng"
+      },
+      {
+       "unit_id": "283-2026-nd-cp/chapter-iii/article-43/clause-3",
+       "quote": "Phạt tiền từ 12% đến 15% tổng số tiền chậm đóng bảo hiểm xã hội bắt buộc tại thời điểm lập biên bản vi phạm hành chính nhưng tối đa không quá 75.000.000 đồng"
+      }
+     ]
+    },
+    {
+     "old": "12-2022-nd-cp/chapter-i/article-6/clause-1",
+     "new": "283-2026-nd-cp/chapter-i/article-7/clause-1",
+     "manual": true,
+     "shared": "Mức phạt tiền đối với tổ chức bằng 02 lần mức phạt tiền đối với cá nhân."
+    }
+   ],
+   "rationale": "NĐ 12/2022 phạt hành vi chậm đóng theo phần trăm \"tổng số tiền phải đóng\"; NĐ 283/2026 tách chậm đóng bảo hiểm xã hội bắt buộc thành Điều 43 và tính theo \"tổng số tiền chậm đóng\". Ghép tay theo cụm chữ chung (so không phân biệt hoa thường) vì hai đơn vị nằm ở hai Điều có tên khác nhau.",
+   "annotation_status": "model_draft",
+   "drafted_by": {
+    "model": "Claude Opus 5.5",
+    "via": "Claude Code agent session",
+    "date": "2026-11-15",
+    "status": "unreviewed model draft"
+   }
+  },
+  {
+   "question_id": "hl-a06",
+   "question": "Phòng nhân sự giữ bản gốc bằng đại học của nhân viên mới trong suốt thời gian làm việc để ràng buộc họ không nghỉ ngang. Việc này hiện nay bị xử phạt thế nào?",
+   "question_type": "temporal",
+   "group": "expired_document",
+   "family_id": "hlf-a06",
+   "expected_status": "answer",
+   "as_of": "2026-11-11",
+   "relevant_unit_ids": [
+    "283-2026-nd-cp/chapter-ii/section-2/article-15/clause-2/point-a",
+    "283-2026-nd-cp/chapter-i/article-7/clause-1"
+   ],
+   "stale_unit_ids": [
+    "12-2022-nd-cp/chapter-ii/article-9/clause-2/point-a",
+    "12-2022-nd-cp/chapter-i/article-6/clause-1"
+   ],
+   "pairs": [
+    {
+     "old": "12-2022-nd-cp/chapter-ii/article-9/clause-2/point-a",
+     "new": "283-2026-nd-cp/chapter-ii/section-2/article-15/clause-2/point-a",
+     "shared": "Giữ bản chính giấy tờ tùy thân, văn bằng hoặc chứng chỉ của người lao động khi giao kết hoặc thực hiện hợp đồng lao động",
+     "context": [
+      {
+       "unit_id": "12-2022-nd-cp/chapter-ii/article-9/clause-2",
+       "quote": "Phạt tiền từ 20.000.000 đồng đến 25.000.000 đồng đối với người sử dụng lao động"
+      },
+      {
+       "unit_id": "283-2026-nd-cp/chapter-ii/section-2/article-15/clause-2",
+       "quote": "Phạt tiền từ 20.000.000 đồng đến 25.000.000 đồng đối với người sử dụng lao động"
+      }
+     ]
+    },
+    {
+     "old": "12-2022-nd-cp/chapter-i/article-6/clause-1",
+     "new": "283-2026-nd-cp/chapter-i/article-7/clause-1",
+     "manual": true,
+     "shared": "Mức phạt tiền đối với tổ chức bằng 02 lần mức phạt tiền đối với cá nhân."
+    }
+   ],
+   "rationale": "Cùng hành vi giữ bản chính văn bằng của người lao động, cùng khung phạt.",
+   "annotation_status": "model_draft",
+   "drafted_by": {
+    "model": "Claude Opus 5.5",
+    "via": "Claude Code agent session",
+    "date": "2026-11-15",
+    "status": "unreviewed model draft"
+   }
+  },
+  {
+   "question_id": "hl-a07",
+   "question": "Quản lý xưởng trừ 500.000 đồng tiền lương của công nhân đi làm muộn thay cho việc xử lý kỷ luật lao động. Theo nghị định xử phạt hiện hành, công ty có thể bị phạt bao nhiêu?",
+   "question_type": "temporal",
+   "group": "expired_document",
+   "family_id": "hlf-a07",
+   "expected_status": "answer",
+   "as_of": "2026-11-11",
+   "relevant_unit_ids": [
+    "283-2026-nd-cp/chapter-ii/section-2/article-25/clause-3/point-c",
+    "283-2026-nd-cp/chapter-i/article-7/clause-1"
+   ],
+   "stale_unit_ids": [
+    "12-2022-nd-cp/chapter-ii/article-19/clause-3/point-b",
+    "12-2022-nd-cp/chapter-i/article-6/clause-1"
+   ],
+   "pairs": [
+    {
+     "old": "12-2022-nd-cp/chapter-ii/article-19/clause-3/point-b",
+     "new": "283-2026-nd-cp/chapter-ii/section-2/article-25/clause-3/point-c",
+     "shared": "Dùng hình thức phạt tiền hoặc cắt lương thay việc xử lý kỷ luật lao động",
+     "context": [
+      {
+       "unit_id": "12-2022-nd-cp/chapter-ii/article-19/clause-3",
+       "quote": "Phạt tiền từ 20.000.000 đồng đến 40.000.000 đồng đối với người sử dụng lao động"
+      },
+      {
+       "unit_id": "283-2026-nd-cp/chapter-ii/section-2/article-25/clause-3",
+       "quote": "Phạt tiền từ 20.000.000 đồng đến 40.000.000 đồng đối với người sử dụng lao động"
+      }
+     ]
+    },
+    {
+     "old": "12-2022-nd-cp/chapter-i/article-6/clause-1",
+     "new": "283-2026-nd-cp/chapter-i/article-7/clause-1",
+     "manual": true,
+     "shared": "Mức phạt tiền đối với tổ chức bằng 02 lần mức phạt tiền đối với cá nhân."
+    }
+   ],
+   "rationale": "Cùng hành vi phạt tiền hoặc cắt lương thay cho xử lý kỷ luật; ký hiệu điểm đổi từ b (NĐ 12/2022) sang c (NĐ 283/2026).",
+   "annotation_status": "model_draft",
+   "drafted_by": {
+    "model": "Claude Opus 5.5",
+    "via": "Claude Code agent session",
+    "date": "2026-11-15",
+    "status": "unreviewed model draft"
+   }
+  },
+  {
+   "question_id": "hl-a08",
+   "question": "Công ty có 25 nhân viên nhưng chưa có nội quy lao động bằng văn bản. Hiện nay công ty có bị phạt không và mức phạt là bao nhiêu?",
+   "question_type": "temporal",
+   "group": "expired_document",
+   "family_id": "hlf-a08",
+   "expected_status": "answer",
+   "as_of": "2026-11-11",
+   "relevant_unit_ids": [
+    "283-2026-nd-cp/chapter-ii/section-2/article-25/clause-2/point-a",
+    "283-2026-nd-cp/chapter-i/article-7/clause-1"
+   ],
+   "stale_unit_ids": [
+    "12-2022-nd-cp/chapter-ii/article-19/clause-2/point-a",
+    "12-2022-nd-cp/chapter-i/article-6/clause-1"
+   ],
+   "pairs": [
+    {
+     "old": "12-2022-nd-cp/chapter-ii/article-19/clause-2/point-a",
+     "new": "283-2026-nd-cp/chapter-ii/section-2/article-25/clause-2/point-a",
+     "shared": "Không có nội quy lao động bằng văn bản khi sử dụng từ 10 lao động trở lên",
+     "context": [
+      {
+       "unit_id": "12-2022-nd-cp/chapter-ii/article-19/clause-2",
+       "quote": "Phạt tiền từ 5.000.000 đồng đến 10.000.000 đồng đối với người sử dụng lao động"
+      },
+      {
+       "unit_id": "283-2026-nd-cp/chapter-ii/section-2/article-25/clause-2",
+       "quote": "Phạt tiền từ 5.000.000 đồng đến 10.000.000 đồng đối với người sử dụng lao động"
+      }
+     ]
+    },
+    {
+     "old": "12-2022-nd-cp/chapter-i/article-6/clause-1",
+     "new": "283-2026-nd-cp/chapter-i/article-7/clause-1",
+     "manual": true,
+     "shared": "Mức phạt tiền đối với tổ chức bằng 02 lần mức phạt tiền đối với cá nhân."
+    }
+   ],
+   "rationale": "Cùng hành vi không có nội quy lao động bằng văn bản khi sử dụng từ 10 lao động trở lên.",
+   "annotation_status": "model_draft",
+   "drafted_by": {
+    "model": "Claude Opus 5.5",
+    "via": "Claude Code agent session",
+    "date": "2026-11-15",
+    "status": "unreviewed model draft"
+   }
+  },
+  {
+   "question_id": "hl-a09",
+   "question": "Nhân viên nữ đang nuôi con 8 tháng tuổi xin nghỉ 60 phút mỗi ngày nhưng công ty không đồng ý, hai bên cũng không có thỏa thuận nào khác. Theo quy định hiện hành, công ty bị xử phạt thế nào?",
+   "question_type": "temporal",
+   "group": "expired_document",
+   "family_id": "hlf-a09",
+   "expected_status": "answer",
+   "as_of": "2026-11-11",
+   "relevant_unit_ids": [
+    "283-2026-nd-cp/chapter-ii/section-2/article-26/clause-2/point-đ",
+    "283-2026-nd-cp/chapter-i/article-7/clause-1"
+   ],
+   "stale_unit_ids": [
+    "12-2022-nd-cp/chapter-ii/article-28/clause-2/point-đ",
+    "12-2022-nd-cp/chapter-i/article-6/clause-1"
+   ],
+   "pairs": [
+    {
+     "old": "12-2022-nd-cp/chapter-ii/article-28/clause-2/point-đ",
+     "new": "283-2026-nd-cp/chapter-ii/section-2/article-26/clause-2/point-đ",
+     "shared": "Không cho lao động nữ trong thời gian nuôi con dưới 12 tháng tuổi nghỉ 60 phút mỗi ngày",
+     "context": [
+      {
+       "unit_id": "12-2022-nd-cp/chapter-ii/article-28/clause-2",
+       "quote": "Phạt tiền từ 10.000.000 đồng đến 20.000.000 đồng đối với người sử dụng lao động"
+      },
+      {
+       "unit_id": "283-2026-nd-cp/chapter-ii/section-2/article-26/clause-2",
+       "quote": "Phạt tiền từ 10.000.000 đồng đến 20.000.000 đồng đối với người sử dụng lao động"
+      }
+     ]
+    },
+    {
+     "old": "12-2022-nd-cp/chapter-i/article-6/clause-1",
+     "new": "283-2026-nd-cp/chapter-i/article-7/clause-1",
+     "manual": true,
+     "shared": "Mức phạt tiền đối với tổ chức bằng 02 lần mức phạt tiền đối với cá nhân."
+    }
+   ],
+   "rationale": "Cùng hành vi không cho lao động nữ nuôi con dưới 12 tháng tuổi nghỉ 60 phút mỗi ngày.",
+   "annotation_status": "model_draft",
+   "drafted_by": {
+    "model": "Claude Opus 5.5",
+    "via": "Claude Code agent session",
+    "date": "2026-11-15",
+    "status": "unreviewed model draft"
+   }
+  },
+  {
+   "question_id": "hl-a10",
+   "question": "Năm nay công ty không bố trí cho nhân viên nghỉ hằng năm theo quy định. Hành vi này hiện bị phạt bao nhiêu tiền?",
+   "question_type": "temporal",
+   "group": "expired_document",
+   "family_id": "hlf-a10",
+   "expected_status": "answer",
+   "as_of": "2026-11-11",
+   "relevant_unit_ids": [
+    "283-2026-nd-cp/chapter-ii/section-2/article-24/clause-2",
+    "283-2026-nd-cp/chapter-i/article-7/clause-1"
+   ],
+   "stale_unit_ids": [
+    "12-2022-nd-cp/chapter-ii/article-18/clause-2",
+    "12-2022-nd-cp/chapter-i/article-6/clause-1"
+   ],
+   "pairs": [
+    {
+     "old": "12-2022-nd-cp/chapter-ii/article-18/clause-2",
+     "new": "283-2026-nd-cp/chapter-ii/section-2/article-24/clause-2",
+     "shared": "Phạt tiền từ 10.000.000 đồng đến 20.000.000 đồng đối với người sử dụng lao động có hành vi vi phạm quy định của pháp luật về nghỉ hằng tuần hoặc nghỉ hằng năm hoặc nghỉ lễ, tết."
+    },
+    {
+     "old": "12-2022-nd-cp/chapter-i/article-6/clause-1",
+     "new": "283-2026-nd-cp/chapter-i/article-7/clause-1",
+     "manual": true,
+     "shared": "Mức phạt tiền đối với tổ chức bằng 02 lần mức phạt tiền đối với cá nhân."
+    }
+   ],
+   "rationale": "Hai khoản giống hệt nhau về chữ; chỉ văn bản chứa khoản là khác.",
+   "annotation_status": "model_draft",
+   "drafted_by": {
+    "model": "Claude Opus 5.5",
+    "via": "Claude Code agent session",
+    "date": "2026-11-15",
+    "status": "unreviewed model draft"
+   }
+  },
+  {
+   "question_id": "hl-b01",
+   "question": "Theo Luật An toàn, vệ sinh lao động hiện hành, những người lao động nào thuộc đối tượng áp dụng chế độ bảo hiểm tai nạn lao động, bệnh nghề nghiệp?",
+   "question_type": "temporal",
+   "group": "unit_amendment",
+   "family_id": "hlf-b01",
+   "expected_status": "answer",
+   "as_of": "2026-11-11",
+   "relevant_unit_ids": [
+    "41-2024-qh15-sua-doi/chapter-xi/article-139/clause-1/point-b",
+    "41-2024-qh15/chapter-i/article-2/clause-1"
+   ],
+   "stale_unit_ids": [
+    "84-2015-qh13/chapter-iii/section-3/article-43/clause-1"
+   ],
+   "amendments": [
+    {
+     "old": "84-2015-qh13/chapter-iii/section-3/article-43/clause-1",
+     "new": "41-2024-qh15-sua-doi/chapter-xi/article-139/clause-1/point-b"
+    }
+   ],
+   "quotes": [
+    {
+     "unit_id": "84-2015-qh13/chapter-iii/section-3/article-43/clause-1",
+     "quote": "các điểm a, b, c, d, đ, e và h khoản 1 Điều 2"
+    },
+    {
+     "unit_id": "41-2024-qh15-sua-doi/chapter-xi/article-139/clause-1/point-b",
+     "quote": "các điểm a, b, c, d, đ, e, i và l khoản 1 Điều 2"
+    }
+   ],
+   "rationale": "Luật BHXH 2024 sửa khoản 1 Điều 43 Luật ATVSLĐ: danh sách điểm dẫn chiếu tới khoản 1 Điều 2 Luật BHXH đổi từ \"a, b, c, d, đ, e và h\" thành \"a, b, c, d, đ, e, i và l\". Khoản 1 Điều 2 Luật BHXH 2024 là nơi các điểm đó được liệt kê.",
+   "annotation_status": "model_draft",
+   "drafted_by": {
+    "model": "Claude Opus 5.5",
+    "via": "Claude Code agent session",
+    "date": "2026-11-15",
+    "status": "unreviewed model draft"
+   }
+  },
+  {
+   "question_id": "hl-b02",
+   "question": "Người lao động đang hưởng trợ cấp tai nạn lao động hằng tháng chuẩn bị ra nước ngoài định cư. Hiện nay họ được giải quyết trợ cấp thế nào và hồ sơ làm theo quy định nào?",
+   "question_type": "temporal",
+   "group": "unit_amendment",
+   "family_id": "hlf-b02",
+   "expected_status": "answer",
+   "as_of": "2026-11-11",
+   "relevant_unit_ids": [
+    "41-2024-qh15-sua-doi/chapter-xi/article-139/clause-1/point-đ"
+   ],
+   "stale_unit_ids": [
+    "84-2015-qh13/chapter-iii/section-3/article-49/clause-5"
+   ],
+   "amendments": [
+    {
+     "old": "84-2015-qh13/chapter-iii/section-3/article-49/clause-5",
+     "new": "41-2024-qh15-sua-doi/chapter-xi/article-139/clause-1/point-đ"
+    }
+   ],
+   "quotes": [
+    {
+     "unit_id": "84-2015-qh13/chapter-iii/section-3/article-49/clause-5",
+     "quote": "theo quy định tại khoản 2, khoản 3 Điều 109 và khoản 4 Điều 110 của Luật bảo hiểm xã hội"
+    },
+    {
+     "unit_id": "41-2024-qh15-sua-doi/chapter-xi/article-139/clause-1/point-đ",
+     "quote": "Hồ sơ, trình tự giải quyết trợ cấp một lần thực hiện theo quy định của Luật Bảo hiểm xã hội."
+    }
+   ],
+   "rationale": "Mức trợ cấp một lần (03 tháng mức đang hưởng) giữ nguyên; phần dẫn chiếu hồ sơ đổi từ các điều cụ thể của luật cũ sang \"theo quy định của Luật Bảo hiểm xã hội\".",
+   "annotation_status": "model_draft",
+   "drafted_by": {
+    "model": "Claude Opus 5.5",
+    "via": "Claude Code agent session",
+    "date": "2026-11-15",
+    "status": "unreviewed model draft"
+   }
+  },
+  {
+   "question_id": "hl-b03",
+   "question": "Việc tạm dừng và hưởng tiếp trợ cấp tai nạn lao động, bệnh nghề nghiệp hằng tháng hiện nay được thực hiện theo điều nào của Luật Bảo hiểm xã hội?",
+   "question_type": "temporal",
+   "group": "unit_amendment",
+   "family_id": "hlf-b03",
+   "expected_status": "answer",
+   "as_of": "2026-11-11",
+   "relevant_unit_ids": [
+    "41-2024-qh15-sua-doi/chapter-xi/article-139/clause-1/point-d"
+   ],
+   "stale_unit_ids": [
+    "84-2015-qh13/chapter-iii/section-3/article-49/clause-3"
+   ],
+   "amendments": [
+    {
+     "old": "84-2015-qh13/chapter-iii/section-3/article-49/clause-3",
+     "new": "41-2024-qh15-sua-doi/chapter-xi/article-139/clause-1/point-d"
+    }
+   ],
+   "quotes": [
+    {
+     "unit_id": "84-2015-qh13/chapter-iii/section-3/article-49/clause-3",
+     "quote": "thực hiện theo quy định tại Điều 64 của Luật bảo hiểm xã hội"
+    },
+    {
+     "unit_id": "41-2024-qh15-sua-doi/chapter-xi/article-139/clause-1/point-d",
+     "quote": "thực hiện theo quy định tại Điều 75 của Luật Bảo hiểm xã hội"
+    }
+   ],
+   "rationale": "Dẫn chiếu đổi từ Điều 64 (luật cũ) sang Điều 75 Luật BHXH; hồ sơ hưởng tiếp đổi từ Điều 113, 114 sang Điều 80, 81.",
+   "annotation_status": "model_draft",
+   "drafted_by": {
+    "model": "Claude Opus 5.5",
+    "via": "Claude Code agent session",
+    "date": "2026-11-15",
+    "status": "unreviewed model draft"
+   }
+  },
+  {
+   "question_id": "hl-b04",
+   "question": "Người lao động bị tai nạn lao động và chết trong thời gian điều trị, khi chưa kịp giám định mức suy giảm khả năng lao động. Hồ sơ hưởng chế độ tử tuất cho thân nhân hiện nay làm theo quy định nào?",
+   "question_type": "temporal",
+   "group": "unit_amendment",
+   "family_id": "hlf-b04",
+   "expected_status": "answer",
+   "as_of": "2026-11-11",
+   "relevant_unit_ids": [
+    "41-2024-qh15-sua-doi/chapter-xi/article-139/clause-1/point-e"
+   ],
+   "stale_unit_ids": [
+    "84-2015-qh13/chapter-iii/section-3/article-53/clause-3"
+   ],
+   "amendments": [
+    {
+     "old": "84-2015-qh13/chapter-iii/section-3/article-53/clause-3",
+     "new": "41-2024-qh15-sua-doi/chapter-xi/article-139/clause-1/point-e"
+    }
+   ],
+   "quotes": [
+    {
+     "unit_id": "84-2015-qh13/chapter-iii/section-3/article-53/clause-3",
+     "quote": "thực hiện theo quy định tại khoản 1 Điều 111 của Luật bảo hiểm xã hội"
+    },
+    {
+     "unit_id": "41-2024-qh15-sua-doi/chapter-xi/article-139/clause-1/point-e",
+     "quote": "thực hiện theo quy định tại khoản 1 Điều 90 của Luật Bảo hiểm xã hội"
+    }
+   ],
+   "rationale": "Dẫn chiếu hồ sơ tử tuất đổi từ khoản 1 Điều 111 sang khoản 1 Điều 90 Luật BHXH.",
+   "annotation_status": "model_draft",
+   "drafted_by": {
+    "model": "Claude Opus 5.5",
+    "via": "Claude Code agent session",
+    "date": "2026-11-15",
+    "status": "unreviewed model draft"
+   }
+  },
+  {
+   "question_id": "hl-b05",
+   "question": "Quỹ bảo hiểm tai nạn lao động, bệnh nghề nghiệp hiện nay được hình thành từ những nguồn nào?",
+   "question_type": "temporal",
+   "group": "unit_amendment",
+   "family_id": "hlf-b05",
+   "expected_status": "answer",
+   "as_of": "2026-11-11",
+   "relevant_unit_ids": [
+    "84-2015-qh13/chapter-iii/section-3/article-44/clause-2/point-a",
+    "41-2024-qh15-sua-doi/chapter-xi/article-139/clause-1/point-c",
+    "84-2015-qh13/chapter-iii/section-3/article-44/clause-2/point-c"
+   ],
+   "stale_unit_ids": [
+    "84-2015-qh13/chapter-iii/section-3/article-44/clause-2/point-b"
+   ],
+   "amendments": [
+    {
+     "old": "84-2015-qh13/chapter-iii/section-3/article-44/clause-2/point-b",
+     "new": "41-2024-qh15-sua-doi/chapter-xi/article-139/clause-1/point-c"
+    }
+   ],
+   "quotes": [
+    {
+     "unit_id": "84-2015-qh13/chapter-iii/section-3/article-44/clause-2/point-b",
+     "quote": "theo quy định tại Điều 90 và Điều 91 của Luật bảo hiểm xã hội"
+    },
+    {
+     "unit_id": "41-2024-qh15-sua-doi/chapter-xi/article-139/clause-1/point-c",
+     "quote": "theo quy định tại Điều 120 và Điều 121 của Luật Bảo hiểm xã hội"
+    },
+    {
+     "unit_id": "84-2015-qh13/chapter-iii/section-3/article-44/clause-2/point-a",
+     "quote": "Khoản đóng thuộc trách nhiệm của người sử dụng lao động"
+    },
+    {
+     "unit_id": "84-2015-qh13/chapter-iii/section-3/article-44/clause-2/point-c",
+     "quote": "Các nguồn thu hợp pháp khác."
+    }
+   ],
+   "rationale": "Ba nguồn của khoản 2 Điều 44; chỉ điểm b (tiền sinh lời đầu tư) bị sửa dẫn chiếu, điểm a và c không có cạnh sửa đổi nên còn hiệu lực. Câu dẫn của khoản 2 không được đưa vào vì theo unit-status-v1 một khoản có điểm con bị sửa cũng mang trạng thái đã sửa đổi.",
+   "annotation_status": "model_draft",
+   "drafted_by": {
+    "model": "Claude Opus 5.5",
+    "via": "Claude Code agent session",
+    "date": "2026-11-15",
+    "status": "unreviewed model draft"
+   }
+  },
+  {
+   "question_id": "hl-b06",
+   "question": "Chi phí cho việc tổ chức và hoạt động bảo hiểm tai nạn lao động, bệnh nghề nghiệp hiện nay thực hiện theo quy định nào?",
+   "question_type": "temporal",
+   "group": "unit_amendment",
+   "family_id": "hlf-b06",
+   "expected_status": "answer",
+   "as_of": "2026-11-11",
+   "relevant_unit_ids": [
+    "41-2024-qh15-sua-doi/chapter-xi/article-139/clause-1/point-a"
+   ],
+   "stale_unit_ids": [
+    "84-2015-qh13/chapter-iii/section-3/article-42/clause-7"
+   ],
+   "amendments": [
+    {
+     "old": "84-2015-qh13/chapter-iii/section-3/article-42/clause-7",
+     "new": "41-2024-qh15-sua-doi/chapter-xi/article-139/clause-1/point-a"
+    }
+   ],
+   "quotes": [
+    {
+     "unit_id": "84-2015-qh13/chapter-iii/section-3/article-42/clause-7",
+     "quote": "Chi phí quản lý bảo hiểm tai nạn lao động, bệnh nghề nghiệp thực hiện theo quy định của Luật bảo hiểm xã hội."
+    },
+    {
+     "unit_id": "41-2024-qh15-sua-doi/chapter-xi/article-139/clause-1/point-a",
+     "quote": "Chi tổ chức và hoạt động bảo hiểm tai nạn lao động, bệnh nghề nghiệp thực hiện theo quy định của Luật Bảo hiểm xã hội."
+    }
+   ],
+   "rationale": "\"Chi phí quản lý\" đổi thành \"Chi tổ chức và hoạt động\"; cả hai vẫn dẫn chiếu Luật BHXH.",
+   "annotation_status": "model_draft",
+   "drafted_by": {
+    "model": "Claude Opus 5.5",
+    "via": "Claude Code agent session",
+    "date": "2026-11-15",
+    "status": "unreviewed model draft"
+   }
+  },
+  {
+   "question_id": "hl-b07",
+   "question": "Một tổ chức nước ngoài tại Việt Nam muốn tuyển người lao động Việt Nam thông qua tổ chức có thẩm quyền. Hiện nay những tổ chức nào có thẩm quyền tuyển dụng, quản lý người lao động Việt Nam làm việc cho tổ chức, cá nhân nước ngoài?",
+   "question_type": "temporal",
+   "group": "unit_amendment",
+   "family_id": "hlf-b07",
+   "expected_status": "answer",
+   "as_of": "2026-11-11",
+   "relevant_unit_ids": [
+    "152-2020-nd-cp/chapter-iii/article-22/clause-1/point-a",
+    "70-2023-nd-cp/article-1/clause-9"
+   ],
+   "stale_unit_ids": [
+    "152-2020-nd-cp/chapter-iii/article-22/clause-1/point-b"
+   ],
+   "amendments": [
+    {
+     "old": "152-2020-nd-cp/chapter-iii/article-22/clause-1/point-b",
+     "new": "70-2023-nd-cp/article-1/clause-9"
+    }
+   ],
+   "quotes": [
+    {
+     "unit_id": "152-2020-nd-cp/chapter-iii/article-22/clause-1/point-b",
+     "quote": "Tổ chức được Sở Lao động - Thương binh và Xã hội phân cấp, ủy quyền, giao nhiệm vụ, đặt hàng hoặc đấu thầu."
+    },
+    {
+     "unit_id": "70-2023-nd-cp/article-1/clause-9",
+     "quote": "Tổ chức được Ủy ban nhân dân cấp tỉnh phân cấp, uỷ quyền, giao nhiệm vụ, đặt hàng hoặc đấu thầu."
+    },
+    {
+     "unit_id": "152-2020-nd-cp/chapter-iii/article-22/clause-1/point-a",
+     "quote": "Tổ chức được Bộ Ngoại giao phân cấp, ủy quyền, giao nhiệm vụ, đặt hàng hoặc đấu thầu;"
+    }
+   ],
+   "rationale": "Điểm b khoản 1 Điều 22 NĐ 152/2020 đổi cơ quan giao nhiệm vụ từ Sở LĐTBXH sang UBND cấp tỉnh (NĐ 70/2023, hiệu lực 18/09/2023). Chương III NĐ 152/2020 (người lao động Việt Nam) không thuộc phần NĐ 219/2025 tuyên bố hết hiệu lực; vbpl.vn báo NĐ 152/2020 hết hiệu lực từ 15/11/2026, sau ngày áp dụng của câu.",
+   "annotation_status": "model_draft",
+   "drafted_by": {
+    "model": "Claude Opus 5.5",
+    "via": "Claude Code agent session",
+    "date": "2026-11-15",
+    "status": "unreviewed model draft"
+   }
+  },
+  {
+   "question_id": "hl-b08",
+   "question": "Tổ chức ở địa phương được giao tuyển dụng, quản lý người lao động Việt Nam làm việc cho tổ chức, cá nhân nước ngoài thì hiện nay phải báo cáo tình hình cho cơ quan nào?",
+   "question_type": "temporal",
+   "group": "unit_amendment",
+   "family_id": "hlf-b08",
+   "expected_status": "answer",
+   "as_of": "2026-11-11",
+   "relevant_unit_ids": [
+    "70-2023-nd-cp/article-1/clause-10"
+   ],
+   "stale_unit_ids": [
+    "152-2020-nd-cp/chapter-iii/article-27/clause-4/point-b"
+   ],
+   "amendments": [
+    {
+     "old": "152-2020-nd-cp/chapter-iii/article-27/clause-4/point-b",
+     "new": "70-2023-nd-cp/article-1/clause-10"
+    }
+   ],
+   "quotes": [
+    {
+     "unit_id": "152-2020-nd-cp/chapter-iii/article-27/clause-4/point-b",
+     "quote": "Tổ chức được Sở Lao động - Thương binh và Xã hội phân cấp"
+    },
+    {
+     "unit_id": "70-2023-nd-cp/article-1/clause-10",
+     "quote": "Tổ chức được Ủy ban nhân dân cấp tỉnh phân cấp, uỷ quyền, giao nhiệm vụ, đặt hàng hoặc đấu thầu thực hiện việc tuyển dụng, quản lý người lao động Việt Nam làm việc cho tổ chức, cá nhân nước ngoài thì báo cáo Sở Lao động - Thương binh và Xã hội."
+    }
+   ],
+   "rationale": "Nơi nhận báo cáo vẫn là Sở LĐTBXH; điểm sửa đổi đổi chủ thể giao nhiệm vụ cho tổ chức báo cáo. Câu hỏi tránh nêu thời hạn báo cáo vì thời hạn nằm ở câu dẫn của khoản 4, mà khoản 4 mang trạng thái đã sửa đổi.",
+   "annotation_status": "model_draft",
+   "drafted_by": {
+    "model": "Claude Opus 5.5",
+    "via": "Claude Code agent session",
+    "date": "2026-11-15",
+    "status": "unreviewed model draft"
+   }
+  },
+  {
+   "question_id": "hl-b09",
+   "question": "Tháng 3/2024, công ty dự định bổ nhiệm một người nước ngoài làm người đứng đầu chi nhánh tại Đà Nẵng và cần xác định người này có thuộc diện “giám đốc điều hành” khi làm hồ sơ giấy phép lao động hay không. Theo quy định áp dụng tại thời điểm đó, giám đốc điều hành được hiểu là ai?",
+   "question_type": "temporal",
+   "group": "unit_amendment",
+   "family_id": "hlf-b09",
+   "expected_status": "answer",
+   "as_of": "2024-03-15",
+   "relevant_unit_ids": [
+    "70-2023-nd-cp/article-1/clause-1/point-b"
+   ],
+   "stale_unit_ids": [
+    "152-2020-nd-cp/chapter-i/article-3/clause-5"
+   ],
+   "amendments": [
+    {
+     "old": "152-2020-nd-cp/chapter-i/article-3/clause-5",
+     "new": "70-2023-nd-cp/article-1/clause-1/point-b"
+    }
+   ],
+   "quotes": [
+    {
+     "unit_id": "152-2020-nd-cp/chapter-i/article-3/clause-5",
+     "quote": "Giám đốc điều hành là người đứng đầu và trực tiếp điều hành đơn vị trực thuộc cơ quan, tổ chức, doanh nghiệp."
+    },
+    {
+     "unit_id": "70-2023-nd-cp/article-1/clause-1/point-b",
+     "quote": "Người đứng đầu chi nhánh, văn phòng đại diện hoặc địa điểm kinh doanh của doanh nghiệp."
+    }
+   ],
+   "rationale": "Khái niệm giám đốc điều hành được NĐ 70/2023 viết lại (hiệu lực 18/09/2023). Ngày áp dụng đặt trong năm 2024, trước 07/08/2025, vì khoản 2 Điều 35 NĐ 219/2025 tuyên bố phần lao động nước ngoài của NĐ 152/2020 (đã sửa bởi NĐ 70/2023) hết hiệu lực từ ngày NĐ 219/2025 có hiệu lực, điều mà unit-status-v1 không thấy.",
+   "annotation_status": "model_draft",
+   "drafted_by": {
+    "model": "Claude Opus 5.5",
+    "via": "Claude Code agent session",
+    "date": "2026-11-15",
+    "status": "unreviewed model draft"
+   }
+  },
+  {
+   "question_id": "hl-b10",
+   "question": "Tháng 10/2024, công ty đổi tên nhưng giữ nguyên mã số doanh nghiệp, trong khi giấy phép lao động của các chuyên gia nước ngoài vẫn còn thời hạn. Theo quy định lúc đó, đây có phải là trường hợp được cấp lại giấy phép lao động không?",
+   "question_type": "temporal",
+   "group": "unit_amendment",
+   "family_id": "hlf-b10",
+   "expected_status": "answer",
+   "as_of": "2024-10-01",
+   "relevant_unit_ids": [
+    "70-2023-nd-cp/article-1/clause-7"
+   ],
+   "stale_unit_ids": [
+    "152-2020-nd-cp/chapter-ii/section-4/article-12/clause-3"
+   ],
+   "amendments": [
+    {
+     "old": "152-2020-nd-cp/chapter-ii/section-4/article-12/clause-3",
+     "new": "70-2023-nd-cp/article-1/clause-7"
+    }
+   ],
+   "quotes": [
+    {
+     "unit_id": "152-2020-nd-cp/chapter-ii/section-4/article-12/clause-3",
+     "quote": "Thay đổi họ và tên, quốc tịch, số hộ chiếu, địa điểm làm việc ghi trong giấy phép lao động còn thời hạn."
+    },
+    {
+     "unit_id": "70-2023-nd-cp/article-1/clause-7",
+     "quote": "đổi tên doanh nghiệp mà không thay đổi mã số doanh nghiệp ghi trong giấy phép lao động còn thời hạn"
+    }
+   ],
+   "rationale": "NĐ 70/2023 thêm trường hợp đổi tên doanh nghiệp mà không đổi mã số vào khoản 3 Điều 12. Ngày áp dụng trong năm 2024 vì cùng lý do với hl-b09.",
+   "annotation_status": "model_draft",
+   "drafted_by": {
+    "model": "Claude Opus 5.5",
+    "via": "Claude Code agent session",
+    "date": "2026-11-15",
+    "status": "unreviewed model draft"
+   }
+  },
+  {
+   "question_id": "hl-c01",
+   "question": "Doanh nghiệp chậm đóng bảo hiểm xã hội bắt buộc và bị thanh tra lập biên bản vi phạm ngày 20/5/2025. Theo quy định xử phạt có hiệu lực vào thời điểm đó, mức phạt tiền được tính thế nào?",
+   "question_type": "temporal",
+   "group": "past_date",
+   "family_id": "hlf-c01",
+   "expected_status": "answer",
+   "as_of": "2025-05-20",
+   "relevant_unit_ids": [
+    "12-2022-nd-cp/chapter-iii/article-39/clause-5/point-a",
+    "12-2022-nd-cp/chapter-i/article-6/clause-1"
+   ],
+   "stale_unit_ids": [],
+   "not_yet_effective_unit_ids": [
+    "283-2026-nd-cp/chapter-iii/article-43/clause-3",
+    "283-2026-nd-cp/chapter-i/article-7/clause-1"
+   ],
+   "pairs": [
+    {
+     "old": "12-2022-nd-cp/chapter-iii/article-39/clause-5/point-a",
+     "new": "283-2026-nd-cp/chapter-iii/article-43/clause-3",
+     "manual": true,
+     "shared": "chậm đóng bảo hiểm xã hội bắt buộc"
+    },
+    {
+     "old": "12-2022-nd-cp/chapter-i/article-6/clause-1",
+     "new": "283-2026-nd-cp/chapter-i/article-7/clause-1",
+     "manual": true,
+     "shared": "Mức phạt tiền đối với tổ chức bằng 02 lần mức phạt tiền đối với cá nhân."
+    }
+   ],
+   "rationale": "Cùng cặp đơn vị với hl-a05 nhưng ngày áp dụng là ngày lập biên bản 20/5/2025: NĐ 12/2022 đang có hiệu lực, NĐ 283/2026 chưa có hiệu lực. Theo unit-status-v1, đơn vị chưa có hiệu lực không phải đơn vị lỗi thời nên tập lỗi thời rỗng; đơn vị của NĐ 283/2026 được ghi riêng ở not_yet_effective_unit_ids.",
+   "annotation_status": "model_draft",
+   "drafted_by": {
+    "model": "Claude Opus 5.5",
+    "via": "Claude Code agent session",
+    "date": "2026-11-15",
+    "status": "unreviewed model draft"
+   }
+  },
+  {
+   "question_id": "hl-c02",
+   "question": "Tháng 8/2024, công ty huy động 30 công nhân làm thêm giờ vượt quá số giờ tối đa và bị xử phạt ngay trong tháng đó (ngày 15/8/2024). Mức phạt tiền áp dụng khi đó là bao nhiêu?",
+   "question_type": "temporal",
+   "group": "past_date",
+   "family_id": "hlf-c02",
+   "expected_status": "answer",
+   "as_of": "2024-08-15",
+   "relevant_unit_ids": [
+    "12-2022-nd-cp/chapter-ii/article-18/clause-4/point-b",
+    "12-2022-nd-cp/chapter-i/article-6/clause-1"
+   ],
+   "stale_unit_ids": [],
+   "not_yet_effective_unit_ids": [
+    "283-2026-nd-cp/chapter-ii/section-2/article-24/clause-4/point-b",
+    "283-2026-nd-cp/chapter-i/article-7/clause-1"
+   ],
+   "pairs": [
+    {
+     "old": "12-2022-nd-cp/chapter-ii/article-18/clause-4/point-b",
+     "new": "283-2026-nd-cp/chapter-ii/section-2/article-24/clause-4/point-b",
+     "shared": "Từ 10.000.000 đồng đến 20.000.000 đồng đối với vi phạm từ 11 người đến 50 người lao động",
+     "context": [
+      {
+       "unit_id": "12-2022-nd-cp/chapter-ii/article-18/clause-4",
+       "quote": "huy động người lao động làm thêm giờ vượt quá số giờ theo quy định của pháp luật"
+      },
+      {
+       "unit_id": "283-2026-nd-cp/chapter-ii/section-2/article-24/clause-4",
+       "quote": "huy động người lao động làm thêm giờ vượt quá số giờ theo quy định của pháp luật"
+      }
+     ]
+    },
+    {
+     "old": "12-2022-nd-cp/chapter-i/article-6/clause-1",
+     "new": "283-2026-nd-cp/chapter-i/article-7/clause-1",
+     "manual": true,
+     "shared": "Mức phạt tiền đối với tổ chức bằng 02 lần mức phạt tiền đối với cá nhân."
+    }
+   ],
+   "rationale": "Sự việc và ngày xử phạt đều trong năm 2024, khi NĐ 12/2022 còn hiệu lực; khung 11-50 người.",
+   "annotation_status": "model_draft",
+   "drafted_by": {
+    "model": "Claude Opus 5.5",
+    "via": "Claude Code agent session",
+    "date": "2026-11-15",
+    "status": "unreviewed model draft"
+   }
+  },
+  {
+   "question_id": "hl-c03",
+   "question": "Năm 2022, công ty làm hồ sơ đề nghị cấp giấy phép lao động cho một kỹ sư nước ngoài với tư cách chuyên gia (hồ sơ nộp ngày 01/6/2022). Theo quy định lúc đó, người có bằng đại học phải có kinh nghiệm làm việc như thế nào thì được coi là chuyên gia?",
+   "question_type": "temporal",
+   "group": "past_date",
+   "family_id": "hlf-c03",
+   "expected_status": "answer",
+   "as_of": "2022-06-01",
+   "relevant_unit_ids": [
+    "152-2020-nd-cp/chapter-i/article-3/clause-3/point-a"
+   ],
+   "stale_unit_ids": [],
+   "not_yet_effective_unit_ids": [
+    "70-2023-nd-cp/article-1/clause-1/point-a"
+   ],
+   "amendments": [
+    {
+     "old": "152-2020-nd-cp/chapter-i/article-3/clause-3/point-a",
+     "new": "70-2023-nd-cp/article-1/clause-1/point-a"
+    }
+   ],
+   "quotes": [
+    {
+     "unit_id": "152-2020-nd-cp/chapter-i/article-3/clause-3/point-a",
+     "quote": "có ít nhất 3 năm kinh nghiệm làm việc trong chuyên ngành được đào tạo phù hợp với vị trí công việc"
+    },
+    {
+     "unit_id": "70-2023-nd-cp/article-1/clause-1/point-a",
+     "quote": "có ít nhất 3 năm kinh nghiệm làm việc phù hợp với vị trí công việc"
+    }
+   ],
+   "rationale": "Trước 18/09/2023, điểm a khoản 3 Điều 3 NĐ 152/2020 còn đòi kinh nghiệm \"trong chuyên ngành được đào tạo\"; lời văn mới của NĐ 70/2023 bỏ yêu cầu này nhưng chưa có hiệu lực ở ngày áp dụng.",
+   "annotation_status": "model_draft",
+   "drafted_by": {
+    "model": "Claude Opus 5.5",
+    "via": "Claude Code agent session",
+    "date": "2026-11-15",
+    "status": "unreviewed model draft"
+   }
+  },
+  {
+   "question_id": "hl-c04",
+   "question": "Hồ sơ đề nghị cấp giấy phép lao động của công ty được nộp đủ ngày 10/5/2024. Theo quy định lúc đó, cơ quan có thẩm quyền phải cấp giấy phép trong bao lâu và giấy phép lao động có hình thức như thế nào?",
+   "question_type": "temporal",
+   "group": "past_date",
+   "family_id": "hlf-c04",
+   "expected_status": "answer",
+   "as_of": "2024-05-10",
+   "relevant_unit_ids": [
+    "70-2023-nd-cp/article-1/clause-6"
+   ],
+   "stale_unit_ids": [
+    "152-2020-nd-cp/chapter-ii/section-3/article-11/clause-2"
+   ],
+   "amendments": [
+    {
+     "old": "152-2020-nd-cp/chapter-ii/section-3/article-11/clause-2",
+     "new": "70-2023-nd-cp/article-1/clause-6"
+    }
+   ],
+   "quotes": [
+    {
+     "unit_id": "152-2020-nd-cp/chapter-ii/section-3/article-11/clause-2",
+     "quote": "Mẫu giấy phép lao động do Bộ Lao động - Thương binh và Xã hội in và phát hành thống nhất."
+    },
+    {
+     "unit_id": "70-2023-nd-cp/article-1/clause-6",
+     "quote": "Giấy phép lao động có kích thước khổ A4 (21 cm x 29,7 cm), gồm 2 trang"
+    }
+   ],
+   "rationale": "Thời hạn 05 ngày làm việc giữ nguyên; phần mô tả mẫu giấy phép đổi hẳn (khổ A4, mã số, bản điện tử). Ngày áp dụng trong năm 2024 vì cùng lý do với hl-b09.",
+   "annotation_status": "model_draft",
+   "drafted_by": {
+    "model": "Claude Opus 5.5",
+    "via": "Claude Code agent session",
+    "date": "2026-11-15",
+    "status": "unreviewed model draft"
+   }
+  },
+  {
+   "question_id": "hl-c05",
+   "question": "Tháng 3/2025, một người đang hưởng trợ cấp tai nạn lao động hằng tháng ra nước ngoài định cư (đề nghị giải quyết ngày 01/3/2025). Khi đó họ được trợ cấp một lần bao nhiêu và hồ sơ giải quyết theo những điều khoản nào?",
+   "question_type": "temporal",
+   "group": "past_date",
+   "family_id": "hlf-c05",
+   "expected_status": "answer",
+   "as_of": "2025-03-01",
+   "relevant_unit_ids": [
+    "84-2015-qh13/chapter-iii/section-3/article-49/clause-5"
+   ],
+   "stale_unit_ids": [],
+   "not_yet_effective_unit_ids": [
+    "41-2024-qh15-sua-doi/chapter-xi/article-139/clause-1/point-đ"
+   ],
+   "amendments": [
+    {
+     "old": "84-2015-qh13/chapter-iii/section-3/article-49/clause-5",
+     "new": "41-2024-qh15-sua-doi/chapter-xi/article-139/clause-1/point-đ"
+    }
+   ],
+   "quotes": [
+    {
+     "unit_id": "84-2015-qh13/chapter-iii/section-3/article-49/clause-5",
+     "quote": "mức trợ cấp một lần bằng 03 tháng mức trợ cấp đang hưởng"
+    },
+    {
+     "unit_id": "84-2015-qh13/chapter-iii/section-3/article-49/clause-5",
+     "quote": "theo quy định tại khoản 2, khoản 3 Điều 109 và khoản 4 Điều 110 của Luật bảo hiểm xã hội"
+    }
+   ],
+   "rationale": "Cùng khoản với hl-b02 nhưng trước 01/07/2025, khi Luật BHXH 2024 (và lệnh sửa Luật ATVSLĐ của nó) chưa có hiệu lực: căn cứ là lời văn gốc của khoản 5 Điều 49 Luật ATVSLĐ.",
+   "annotation_status": "model_draft",
+   "drafted_by": {
+    "model": "Claude Opus 5.5",
+    "via": "Claude Code agent session",
+    "date": "2026-11-15",
+    "status": "unreviewed model draft"
+   }
+  },
+  {
+   "question_id": "hl-d01",
+   "question": "Nhân viên văn phòng làm việc đủ 12 tháng trong điều kiện bình thường thì được nghỉ hằng năm bao nhiêu ngày?",
+   "question_type": "lookup",
+   "group": "control",
+   "family_id": "hlf-d01",
+   "expected_status": "answer",
+   "as_of": "2026-11-11",
+   "relevant_unit_ids": [
+    "45-2019-qh14/chapter-vii/section-2/article-113/clause-1/point-a"
+   ],
+   "stale_unit_ids": [],
+   "quotes": [
+    {
+     "unit_id": "45-2019-qh14/chapter-vii/section-2/article-113/clause-1/point-a",
+     "quote": "12 ngày làm việc đối với người làm công việc trong điều kiện bình thường"
+    }
+   ],
+   "rationale": "Bộ luật Lao động 2019, không có cạnh sửa đổi nào trong corpus nhắm tới đơn vị này.",
+   "annotation_status": "model_draft",
+   "drafted_by": {
+    "model": "Claude Opus 5.5",
+    "via": "Claude Code agent session",
+    "date": "2026-11-15",
+    "status": "unreviewed model draft"
+   }
+  },
+  {
+   "question_id": "hl-d02",
+   "question": "Nhân viên ký hợp đồng lao động không xác định thời hạn muốn nghỉ việc thì phải báo trước cho công ty ít nhất bao nhiêu ngày?",
+   "question_type": "lookup",
+   "group": "control",
+   "family_id": "hlf-d02",
+   "expected_status": "answer",
+   "as_of": "2026-11-11",
+   "relevant_unit_ids": [
+    "45-2019-qh14/chapter-iii/section-3/article-35/clause-1/point-a"
+   ],
+   "stale_unit_ids": [],
+   "quotes": [
+    {
+     "unit_id": "45-2019-qh14/chapter-iii/section-3/article-35/clause-1/point-a",
+     "quote": "Ít nhất 45 ngày nếu làm việc theo hợp đồng lao động không xác định thời hạn"
+    }
+   ],
+   "rationale": "Bộ luật Lao động 2019, không có cạnh sửa đổi nào trong corpus nhắm tới đơn vị này.",
+   "annotation_status": "model_draft",
+   "drafted_by": {
+    "model": "Claude Opus 5.5",
+    "via": "Claude Code agent session",
+    "date": "2026-11-15",
+    "status": "unreviewed model draft"
+   }
+  },
+  {
+   "question_id": "hl-d03",
+   "question": "Lao động nữ sinh một con được nghỉ thai sản tổng cộng bao lâu và được nghỉ trước khi sinh tối đa bao nhiêu tháng?",
+   "question_type": "lookup",
+   "group": "control",
+   "family_id": "hlf-d03",
+   "expected_status": "answer",
+   "as_of": "2026-11-11",
+   "relevant_unit_ids": [
+    "45-2019-qh14/chapter-x/article-139/clause-1"
+   ],
+   "stale_unit_ids": [],
+   "quotes": [
+    {
+     "unit_id": "45-2019-qh14/chapter-x/article-139/clause-1",
+     "quote": "Lao động nữ được nghỉ thai sản trước và sau khi sinh con là 06 tháng; thời gian nghỉ trước khi sinh không quá 02 tháng."
+    }
+   ],
+   "rationale": "Bộ luật Lao động 2019, không có cạnh sửa đổi nào trong corpus nhắm tới đơn vị này.",
+   "annotation_status": "model_draft",
+   "drafted_by": {
+    "model": "Claude Opus 5.5",
+    "via": "Claude Code agent session",
+    "date": "2026-11-15",
+    "status": "unreviewed model draft"
+   }
+  },
+  {
+   "question_id": "hl-d04",
+   "question": "Công ty tuyển kỹ sư có bằng đại học vào vị trí cần trình độ chuyên môn từ cao đẳng trở lên thì được thỏa thuận thử việc tối đa bao nhiêu ngày?",
+   "question_type": "lookup",
+   "group": "control",
+   "family_id": "hlf-d04",
+   "expected_status": "answer",
+   "as_of": "2026-11-11",
+   "relevant_unit_ids": [
+    "45-2019-qh14/chapter-iii/section-1/article-25/clause-2"
+   ],
+   "stale_unit_ids": [],
+   "quotes": [
+    {
+     "unit_id": "45-2019-qh14/chapter-iii/section-1/article-25/clause-2",
+     "quote": "Không quá 60 ngày đối với công việc có chức danh nghề nghiệp cần trình độ chuyên môn, kỹ thuật từ cao đẳng trở lên"
+    }
+   ],
+   "rationale": "Bộ luật Lao động 2019, không có cạnh sửa đổi nào trong corpus nhắm tới đơn vị này.",
+   "annotation_status": "model_draft",
+   "drafted_by": {
+    "model": "Claude Opus 5.5",
+    "via": "Claude Code agent session",
+    "date": "2026-11-15",
+    "status": "unreviewed model draft"
+   }
+  },
+  {
+   "question_id": "hl-d05",
+   "question": "Người lao động và công ty thỏa thuận chấm dứt hợp đồng sau 5 năm làm việc thường xuyên. Công ty có phải trả trợ cấp thôi việc không, và mỗi năm làm việc được tính bao nhiêu?",
+   "question_type": "lookup",
+   "group": "control",
+   "family_id": "hlf-d05",
+   "expected_status": "answer",
+   "as_of": "2026-11-11",
+   "relevant_unit_ids": [
+    "45-2019-qh14/chapter-iii/section-3/article-34/clause-3",
+    "45-2019-qh14/chapter-iii/section-3/article-46/clause-1"
+   ],
+   "stale_unit_ids": [],
+   "quotes": [
+    {
+     "unit_id": "45-2019-qh14/chapter-iii/section-3/article-34/clause-3",
+     "quote": "Hai bên thỏa thuận chấm dứt hợp đồng lao động."
+    },
+    {
+     "unit_id": "45-2019-qh14/chapter-iii/section-3/article-46/clause-1",
+     "quote": "mỗi năm làm việc được trợ cấp một nửa tháng tiền lương"
+    }
+   ],
+   "rationale": "Khoản 3 Điều 34 nằm trong các khoản mà khoản 1 Điều 46 dẫn chiếu; không có cạnh sửa đổi nào nhắm tới hai đơn vị này.",
+   "annotation_status": "model_draft",
+   "drafted_by": {
+    "model": "Claude Opus 5.5",
+    "via": "Claude Code agent session",
+    "date": "2026-11-15",
+    "status": "unreviewed model draft"
+   }
+  }
+ ]
+}

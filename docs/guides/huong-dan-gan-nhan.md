@@ -3,7 +3,7 @@ title: Hướng dẫn gán nhãn
 summary: Cách gán nhãn bộ câu hỏi, gold trích xuất và bảng kiểm tra quy phạm bị loại; giải thích các khái niệm và thuật ngữ liên quan.
 category: Gán nhãn
 order: 10
-updated: 2026-11-08
+updated: 2026-11-16
 ---
 
 ## Tóm tắt nhanh
@@ -13,7 +13,7 @@ Có ba việc gán nhãn, mỗi người làm độc lập trên tài khoản c�
 | Việc | Ở đâu | Khối lượng | Thời gian ước tính | Phục vụ |
 |---|---|---|---|---|
 | Bộ câu hỏi | Nghiên cứu > Bộ câu hỏi > "Bộ câu hỏi thực nghiệm v1" | 152 câu | 4-6 giờ | RQ3: chất lượng câu trả lời |
-| Gold trích xuất | Nghiên cứu > Gold > "Gold trích xuất v1 (40 Điều)" | 290 câu luật | 5-7 giờ | RQ1: chất lượng trích xuất |
+| Gold trích xuất | Nghiên cứu > Gold > "Gold trích xuất v1 (40 Điều)" | 290 câu luật; người thứ hai chỉ gán mẫu đồng thuận 101 câu | 5-7 giờ (mẫu: 2-3 giờ) | RQ1: chất lượng trích xuất |
 | Bảng kiểm tra quy phạm bị loại | Nghiên cứu > Kiểm tra quy phạm | 104 dòng | khoảng 2 giờ | RQ2: độ chính xác của bộ kiểm chứng |
 
 Làm theo thứ tự trên: bộ câu hỏi trước, vì đó là đầu vào của thực nghiệm chính.
@@ -21,6 +21,38 @@ Mỗi việc xong phần gán riêng thì hai người cùng đối soát và ch
 
 > Nguyên tắc quan trọng nhất: hai người không trao đổi về nhãn cho tới bước đối soát.
 > Nếu bàn trước, độ đồng thuận (kappa) sẽ cao giả tạo và không còn dùng được trong báo cáo.
+
+## Cập nhật 11/11/2026: thứ tự mới và corpus v2
+
+Theo kế hoạch nghiên cứu 11/11 (`docs/planning/research-plan-2026-11-11.md`, WP1), thứ tự gán nhãn đổi như sau:
+
+| Thứ tự | Bộ | Quy mô | Hạn khóa |
+|---|---|---|---|
+| 1 | Bộ khó: tình huống 44, xung đột 25, phức tạp 30 | 99 câu | 23/11 |
+| 2 | Gold trích xuất v1 | 40 Điều, 290 câu | 23/11 |
+| 3 | Bộ câu hỏi thực nghiệm v1 (bộ tra cứu) | 152 câu | 25/11 |
+| 4 | Bảng kiểm tra quy phạm bị loại | 104 dòng | 25/11 |
+
+Bộ hiệu lực (khoảng 30 câu) và bộ liệt kê (khoảng 40 câu) sẽ có hướng dẫn riêng khi soạn xong.
+
+Corpus của bộ khó là "Phạm vi thực nghiệm v2": toàn văn 9 văn bản, 711 Điều, chứa trọn 94 Điều của v1 với mã và nguyên văn giữ nguyên.
+Với bộ gắn với v2, "có căn cứ" nghĩa là nguyên văn nằm trong 711 Điều này; mục "Corpus và phiên bản đã khóa" bên dưới mô tả v1 và chỉ áp dụng cho bộ gắn với v1.
+Bộ tra cứu v1 được soạn trên v1; khi gán trên v2, tìm thêm đơn vị chỉ có ở v2 (ví dụ chế tài trong Nghị định 12/2022, Luật Bảo hiểm xã hội, Luật Việc làm).
+
+Quy tắc riêng cho câu tình huống (dựa trên bản án thật):
+
+- Đánh dấu mọi đơn vị mà kết luận của bản án dựa vào, kể cả quy định về thủ tục và hậu quả, không chỉ quy định chính.
+- Kết luận pháp lý lấy từ hồ sơ vụ việc (`experiments/case-research-v1/cases.json`): kết quả xét xử (`court_outcome`) và căn cứ bản án viện dẫn (`legal_bases_cited`), không lấy từ nhận định của nhóm.
+- Vụ việc xảy ra trước ngày 10/09/2026 thì Nghị định 12/2022 vẫn là căn cứ đúng, dù văn bản này nay đã hết hiệu lực.
+- Việc gán nhãn chỉ là đối chiếu chữ: đơn vị này có chứa căn cứ mà bản án dùng hay không.
+
+Quy trình cho mỗi bộ:
+
+1. Mỗi người gán thử 10 câu đầu, rồi đo kappa và Dice ở trang So sánh.
+2. Sửa hướng dẫn **một lần** dựa trên các chỗ bất đồng, ghi lại thay đổi; sau đó không sửa hướng dẫn nữa.
+3. Gán phần còn lại, đối soát, ghi lý do bất đồng, rồi khóa bộ (held-out 0,3, chia theo nhóm diễn đạt, phân tầng theo loại câu).
+
+Nếu tới 18/11 chưa xong một nửa bộ khó, giảm gold xuống 30 Điều và bộ tra cứu xuống mẫu phân tầng 80 câu; không dùng nhãn của model thay cho nhãn người.
 
 ## 1. Vì sao phải gán nhãn
 
@@ -153,6 +185,8 @@ Ví dụ: "Lương tối thiểu vùng I năm 2018 là bao nhiêu?" là Từ ch�
 
 - Bắt buộc khi Trả lời; để trống khi Từ chối.
 - Chọn **đơn vị nhỏ nhất** chứa căn cứ: điểm hoặc khoản, không chọn cả Điều nếu Điều có chia khoản.
+- Nếu căn cứ nằm ở câu dẫn của khoản có chia điểm (ví dụ "Trong thời hạn 14 ngày làm việc ... không được quá 30 ngày:" ở khoản 1 Điều 48), chọn chính khoản đó.
+  Trong kết quả tìm, khoản cha hiện ngay trên các điểm của nó, nền xám nhạt.
 - Câu tổng hợp chọn đủ mọi đơn vị cần thiết.
 - Tìm đơn vị bằng ô **Tìm đơn vị trong corpus** (gõ từ khóa trong điều luật), bấm **Chọn**.
 - Nếu đã xem đề xuất, có thể bấm **Điền theo đề xuất** rồi sửa.
@@ -211,11 +245,13 @@ Sau khi chốt, lệnh `gold-score` so trích xuất của bộ quy tắc, ĐK3 
 - Từ tình thái quyết định tính quy phạm: "phải" là Nghĩa vụ, "có quyền" là Quyền, "không được" là Điều cấm, "được" thường là Được phép.
 - Không có ô nào phù hợp thì bỏ trống, không ép vào ô gần nghĩa.
 
-### Đối soát
+### Mẫu đồng thuận và đối soát
 
+Kha gán đủ 290 câu; người thứ hai chỉ gán **mẫu đồng thuận** (12 Điều, 101 câu), chọn ở danh sách câu bằng nút **Mẫu đồng thuận**.
 Ở tab **Trao đổi**, bấm **Đối soát với** người còn lại.
-Trang hiện kappa có/không có quy phạm, kappa tính quy phạm; chọn **Chốt bản của** một người, hoặc **Sửa rồi chốt**.
-Khi chốt hết, bấm **Tải gold cuối (JSONL)** và gửi cho người chạy thực nghiệm.
+Trang hiện kappa có/không có quy phạm, kappa tính quy phạm trên các câu cả hai đã gán; với câu lệch, chọn **Chốt bản của** một người, hoặc **Sửa rồi chốt**.
+Bấm **Chốt hàng loạt** để chốt các câu giống nhau và các câu ngoài mẫu có nhãn của một người, rồi bấm **Tải gold cuối (JSONL)** khi không còn gì chặn.
+Chi tiết: mục "Mẫu đồng thuận và người gán thứ hai" của [Hướng dẫn gán nhãn gold trích xuất](/docs/huong-dan-gan-nhan-gold).
 
 ## 5. Việc 3: bảng kiểm tra quy phạm bị loại
 

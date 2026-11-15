@@ -80,7 +80,9 @@
 							<li>
 								<a class="serif name" href="/research/gold/{s.id}">{s.name}</a>
 								<p class="small muted">
-									{t('gold.counts', { articles: s.articles, sentences: s.sentences })} · {t('qs.onVersion', { n: s.corpus_version })} ·
+									{t('gold.counts', { articles: s.articles, sentences: s.sentences })} ·
+									{#if s.sample_size}{t('gold.sampleFacts', { articles: s.sample_size.articles, sentences: s.sample_size.sentences })} ·{/if}
+									{t('qs.onVersion', { n: s.corpus_version })} ·
 									{s.imported ? t('qs.importedFrom', { who: s.created_by }) : t('research.createdBy', { who: s.created_by, date: formatDay(s.created_at) })}
 								</p>
 								{#if Object.keys(s.labelled).length || s.adjudicated}

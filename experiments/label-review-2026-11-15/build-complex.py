@@ -1,0 +1,274 @@
+"""Generator for experiments/label-review-2026-11-15/complex.jsonl (kept in scratchpad; the output is the deliverable)."""
+import json
+from pathlib import Path
+
+ROOT = Path(r"C:\Users\T14S\Desktop\Lexora")
+OUT = ROOT / "experiments/label-review-2026-11-15/complex.jsonl"
+PREV = {json.loads(l)["question_id"]: json.loads(l) for l in (ROOT / "experiments/label-review-2026-11-12/complex.jsonl").open(encoding="utf-8")}
+SRC = json.loads((ROOT / "experiments/runs/dryrun-complex-v1/questions.json").read_text(encoding="utf-8"))["questions"]
+AS_OF = "2026-11-11"
+
+# Unit IDs
+B = "45-2019-qh14/chapter-iii/section-3/"
+D145 = "145-2020-nd-cp/chapter-iii/section-2/article-8/"
+L46_1, L46_2, L46_3 = B + "article-46/clause-1", B + "article-46/clause-2", B + "article-46/clause-3"
+L47_2 = B + "article-47/clause-2"
+N8_1, N8_3, N8_3c, N8_5a = D145 + "clause-1", D145 + "clause-3", D145 + "clause-3/point-c", D145 + "clause-5/point-a"
+VL35_3 = "74-2025-qh15/chapter-vii/section-2/article-35/clause-3"
+TT12_3 = "10-2020-tt-bldtbxh/chapter-v/article-12/clause-3"
+N60_2 = "145-2020-nd-cp/chapter-vii/article-60/clause-2"
+L107_2b = "45-2019-qh14/chapter-vii/section-1/article-107/clause-2/point-b"
+N55_1b = "145-2020-nd-cp/chapter-vi/section-2/article-55/clause-1/point-b"
+L98_1c = "45-2019-qh14/chapter-vi/article-98/clause-1/point-c"
+O6_1 = "12-2022-nd-cp/chapter-i/article-6/clause-1"
+O10_2 = "12-2022-nd-cp/chapter-ii/article-10/clause-2"
+O10_2b = "12-2022-nd-cp/chapter-ii/article-10/clause-2/point-b"
+O10_2c = "12-2022-nd-cp/chapter-ii/article-10/clause-2/point-c"
+O17_2 = "12-2022-nd-cp/chapter-ii/article-17/clause-2"
+O17_3 = "12-2022-nd-cp/chapter-ii/article-17/clause-3"
+O17_3b = "12-2022-nd-cp/chapter-ii/article-17/clause-3/point-b"
+O17_5a = "12-2022-nd-cp/chapter-ii/article-17/clause-5/point-a"
+P7_1 = "283-2026-nd-cp/chapter-i/article-7/clause-1"
+P7_2b = "283-2026-nd-cp/chapter-i/article-7/clause-2/point-b"
+P16_2 = "283-2026-nd-cp/chapter-ii/section-2/article-16/clause-2"
+P16_2b = "283-2026-nd-cp/chapter-ii/section-2/article-16/clause-2/point-b"
+P16_2c = "283-2026-nd-cp/chapter-ii/section-2/article-16/clause-2/point-c"
+P23_2 = "283-2026-nd-cp/chapter-ii/section-2/article-23/clause-2"
+P23_3 = "283-2026-nd-cp/chapter-ii/section-2/article-23/clause-3"
+P23_3b = "283-2026-nd-cp/chapter-ii/section-2/article-23/clause-3/point-b"
+P23_5a = "283-2026-nd-cp/chapter-ii/section-2/article-23/clause-5/point-a"
+
+# Quotes used more than once
+Q_DOUBLE = "Mức phạt tiền đối với tổ chức bằng 02 lần mức phạt tiền đối với cá nhân."
+Q_BHTN_46 = "trừ đi thời gian người lao động đã tham gia bảo hiểm thất nghiệp"
+Q_ELIG_46 = ("Khi hợp đồng lao động chấm dứt theo quy định tại các khoản 1, 2, 3, 4, 6, 7, 9 và 10 Điều 34 của Bộ luật này thì người sử dụng "
+             "lao động có trách nhiệm trả trợ cấp thôi việc cho người lao động đã làm việc thường xuyên cho mình từ đủ 12 tháng trở lên")
+Q_ELIG_145 = ("đối với người lao động đã làm việc thường xuyên cho mình từ đủ 12 tháng trở lên khi hợp đồng lao động chấm dứt theo quy định "
+              "tại các khoản 1, 2, 3, 4, 6, 7, 9 và 10 Điều 34 của Bộ luật Lao động")
+Q_TIME = "tổng thời gian người lao động đã làm việc thực tế cho người sử dụng lao động trừ đi thời gian người lao động đã tham gia bảo hiểm thất nghiệp"
+Q_VL = "Thời gian người lao động đóng bảo hiểm thất nghiệp không được tính để hưởng trợ cấp mất việc làm hoặc trợ cấp thôi việc"
+Q_WAGE_46 = "tiền lương bình quân của 06 tháng liền kề theo hợp đồng lao động trước khi người lao động thôi việc"
+Q_TT = "của 06 tháng liền kề trước khi người lao động thôi việc, mất việc làm"
+Q_ROUND = ("được tính theo năm (đủ 12 tháng); trường hợp có tháng lẻ ít hơn hoặc bằng 06 tháng được tính bằng 1/2 năm, "
+           "trên 06 tháng được tính bằng 01 năm làm việc")
+Q_FINE_2_5 = "Phạt tiền từ 2.000.000 đồng đến 5.000.000 đồng đối với người sử dụng lao động"
+Q_REMEDY = "Buộc người sử dụng lao động trả đủ tiền lương cộng với khoản tiền lãi của số tiền lương chậm trả, trả thiếu cho người lao động"
+
+
+def add(unit, reason, quote, pair=None, pair_quote=None):
+    item = {"unit_id": unit, "reason": reason, "quote": quote}
+    if pair:
+        item |= {"restates_unit_id": pair, "restates_quote": pair_quote}
+    return item
+
+
+A_46_3 = add(L46_3, "Quy định nhắc lại (quy ước 15/11): khoản 3 Điều 46 BLLĐ nêu cùng quy tắc lương tính trợ cấp với điểm a khoản 5 Điều 8 NĐ 145 đã có trong nhãn",
+             Q_WAGE_46, N8_5a, "tiền lương bình quân của 06 tháng liền kề theo hợp đồng lao động trước khi người lao động thôi việc, mất việc làm")
+A_8_1 = add(N8_1, "Quy định nhắc lại (quy ước 15/11): câu dẫn khoản 1 Điều 8 NĐ 145 nhắc lại điều kiện hưởng trợ cấp thôi việc của khoản 1 Điều 46 BLLĐ (đủ 12 tháng, các khoản của Điều 34)",
+            Q_ELIG_145, L46_1, Q_ELIG_46)
+A_8_3c = add(N8_3c, "Cách quy đổi thời gian làm việc ra số năm để nhân với 1/2 tháng lương (năm đủ 12 tháng, tháng lẻ làm tròn); câu dẫn khoản 3 Điều 8 đi kèm điểm này nhắc lại khoản 2 Điều 46 BLLĐ",
+             Q_ROUND)
+
+
+def A_VL(partner):
+    return add(VL35_3, "Quy định nhắc lại ở văn bản khác (quy ước 15/11): Luật Việc làm 74/2025/QH15 (hiệu lực 01/01/2026) nêu cùng quy tắc không tính thời gian đóng bảo hiểm thất nghiệp vào thời gian hưởng trợ cấp; có từ corpus v2 nhưng lượt 12/11 bỏ sót",
+               Q_VL, partner, Q_BHTN_46)
+
+
+def A_8_3(partner):
+    return add(N8_3, "Quy định nhắc lại (quy ước 15/11): câu dẫn khoản 3 Điều 8 NĐ 145 nêu đúng quy tắc thời gian tính trợ cấp của BLLĐ (trừ thời gian đóng bảo hiểm thất nghiệp)",
+               Q_TIME, partner, Q_TIME)
+
+
+A_TT = add(TT12_3, "Quy định nhắc lại ở văn bản khác (quy ước 15/11): TT 10/2020 nêu cùng quy tắc lương tính trợ cấp là bình quân 06 tháng liền kề theo hợp đồng lao động và liệt kê các khoản cấu thành; lượt 12/11 bỏ sót",
+           Q_TT, L46_3, "06 tháng liền kề theo hợp đồng lao động trước khi người lao động thôi việc")
+A_7_1 = add(P7_1, "Quy tắc tổ chức bị phạt gấp đôi trong NĐ 283/2026 (thay khoản 1 Điều 6 NĐ 12/2022): mức phạt ghi ở Chương II là mức với cá nhân, mức với tổ chức bằng 02 lần", Q_DOUBLE)
+A_7_2b = add(P7_2b, "Doanh nghiệp thuộc danh sách tổ chức bị phạt gấp 02 lần (câu dẫn khoản 2 Điều 7 NĐ 283/2026: 'Tổ chức bị xử phạt tiền gấp 02 lần mức phạt tiền đối với cá nhân'); NĐ 12/2022 không có danh sách này",
+             "Doanh nghiệp được thành lập và hoạt động theo pháp luật Việt Nam")
+
+PAIR_DOUBLE = {"stale_unit_id": O6_1, "new_unit_id": P7_1, "old_quote": Q_DOUBLE, "new_quote": Q_DOUBLE,
+               "reason": "NĐ 12/2022 hết hiệu lực từ 10/09/2026 (khoản 4 Điều 66 NĐ 283/2026); câu về tổ chức bị phạt gấp đôi giữ nguyên văn ở khoản 1 Điều 7 NĐ 283/2026"}
+PAIR_REMEDY = {"stale_unit_id": O17_5a, "new_unit_id": P23_5a, "old_quote": Q_REMEDY, "new_quote": Q_REMEDY,
+               "reason": "Biện pháp khắc phục hậu quả giữ nguyên văn ở điểm a khoản 5 Điều 23 NĐ 283/2026"}
+
+NOCHANGE = ("Không đổi so với 12/11: mọi đơn vị còn hiệu lực tại 2026-11-11 theo kb/validity.py; không tìm thấy văn bản nào khác trong corpus v3 "
+            "nhắc lại cùng quy định; không có đơn vị mới của v3 liên quan.")
+
+R = {
+ "cq00": dict(add=[A_46_3, A_8_1, A_8_3c, A_VL(L46_2), A_TT], conf="medium",
+   note=("Thỏa thuận chấm dứt (khoản 3 Điều 34) thuộc các trường hợp được trợ cấp thôi việc (khoản 1 Điều 46 BLLĐ, nhắc lại ở câu dẫn khoản 1 Điều 8 NĐ 145). "
+         "Số tiền: mỗi năm làm việc 1/2 tháng lương; thời gian tính trợ cấp trừ thời gian đóng bảo hiểm thất nghiệp (khoản 2 Điều 46, câu dẫn khoản 3 Điều 8 NĐ 145 đi kèm điểm c, "
+         "khoản 3 Điều 35 Luật Việc làm 2025), quy đổi theo năm đủ 12 tháng (điểm c khoản 3 Điều 8). "
+         "Lương tính trợ cấp: bình quân 06 tháng liền kề theo hợp đồng trước khi thôi việc (khoản 3 Điều 46, điểm a khoản 5 Điều 8 NĐ 145, khoản 3 Điều 12 TT 10/2020). "
+         "Người gán nên xem: đơn vị TT 10/2020 nằm dưới Điều 12 'Hiệu lực thi hành' theo cách tách của corpus, nên đối chiếu bản gốc xem có phải lỗi tách Điều."),
+   changed=("Thêm 5 đơn vị: bốn quy định nhắc lại theo quy ước 15/11 (khoản 3 Điều 46 BLLĐ, khoản 1 Điều 8 NĐ 145, khoản 3 Điều 35 Luật Việc làm 74/2025, "
+            "khoản 3 Điều 12 TT 10/2020) và điểm c khoản 3 Điều 8 NĐ 145 (quy đổi năm) để nhãn trùng với cq08 cùng nhóm diễn đạt."),
+   family_difference="cq00 nêu căn cứ chấm dứt là thỏa thuận nên có thêm khoản 3 Điều 34 BLLĐ; cq08 chỉ nói 'nghỉ việc' nên không có đơn vị này. Các đơn vị còn lại giống nhau."),
+ "cq08": dict(add=[A_46_3, A_8_1, A_VL(L46_2), A_TT], conf="medium",
+   note=("Công thức: số năm làm việc (đã trừ thời gian đóng bảo hiểm thất nghiệp theo khoản 2 Điều 46, câu dẫn khoản 3 Điều 8 NĐ 145, khoản 3 Điều 35 Luật Việc làm 2025; "
+         "quy đổi năm theo điểm c khoản 3 Điều 8, phù hợp chữ 'khoảng 4 năm') x 1/2 tháng lương bình quân 06 tháng liền kề "
+         "(khoản 3 Điều 46, điểm a khoản 5 Điều 8 NĐ 145, khoản 3 Điều 12 TT 10/2020). "
+         "Điều kiện hưởng (đủ 12 tháng, các trường hợp chấm dứt) ở khoản 1 Điều 46, nhắc lại ở khoản 1 Điều 8 NĐ 145. "
+         "Người gán nên xem: đơn vị TT 10/2020 nằm dưới Điều 12 'Hiệu lực thi hành' theo cách tách của corpus."),
+   changed="Thêm 4 quy định nhắc lại theo quy ước 15/11: khoản 3 Điều 46 BLLĐ, khoản 1 Điều 8 NĐ 145, khoản 3 Điều 35 Luật Việc làm 74/2025, khoản 3 Điều 12 TT 10/2020.",
+   family_difference="cq08 không nêu căn cứ chấm dứt nên không có khoản 3 Điều 34 BLLĐ (thỏa thuận) như cq00. Các đơn vị còn lại giống nhau."),
+ "cq01": dict(add=[A_VL(L46_2)], conf="high",
+   note=("Thử việc và nghỉ thai sản được tính vào thời gian làm việc thực tế (điểm a khoản 3 Điều 8 NĐ 145); thời gian đóng bảo hiểm thất nghiệp bị trừ "
+         "(khoản 2 Điều 46 BLLĐ, điểm b khoản 3 Điều 8 NĐ 145 mang câu dẫn khoản 3, khoản 3 Điều 35 Luật Việc làm 2025)."),
+   changed="Thêm khoản 3 Điều 35 Luật Việc làm 74/2025, quy định nhắc lại việc không tính thời gian đóng bảo hiểm thất nghiệp vào trợ cấp thôi việc (quy ước 15/11)."),
+ "cq06": dict(add=[add(N60_2, "Quy định nhắc lại (quy ước 15/11): khoản 2 Điều 60 NĐ 145 nhắc lại giới hạn 12 giờ/ngày khi áp dụng thời giờ làm việc theo tuần, nêu ở điểm b khoản 2 Điều 107 BLLĐ",
+                          "tổng số giờ làm việc bình thường và số giờ làm thêm không quá 12 giờ trong 01 ngày", L107_2b,
+                          "tổng số giờ làm việc bình thường và số giờ làm thêm không quá 12 giờ trong 01 ngày")], conf="high",
+   note=("Đồng ý về thời gian, địa điểm, công việc làm thêm (Điều 59 NĐ 145, điểm a khoản 2 Điều 107 BLLĐ); giới hạn ngày thường: không quá 50% giờ làm việc bình thường, "
+         "hoặc tổng 12 giờ nếu làm theo tuần (điểm b khoản 2 Điều 107, khoản 1 và khoản 2 Điều 60 NĐ 145)."),
+   changed="Thêm khoản 2 Điều 60 NĐ 145 (giới hạn 12 giờ/ngày khi làm theo tuần), quy định nhắc lại một phần của điểm b khoản 2 Điều 107 BLLĐ (quy ước 15/11)."),
+ "cq13": dict(add=[add(N55_1b, "Quy định nhắc lại (quy ước 15/11): điểm b khoản 1 Điều 55 NĐ 145 nhắc lại mức ít nhất 300% cho giờ làm thêm vào ngày lễ, tết của điểm c khoản 1 Điều 98 BLLĐ",
+                          "mức ít nhất bằng 300% so với tiền lương giờ thực trả của công việc đang làm vào ngày làm việc bình thường, áp dụng đối với giờ làm thêm vào ngày nghỉ lễ, tết",
+                          L98_1c, "Vào ngày nghỉ lễ, tết, ngày nghỉ có hưởng lương, ít nhất bằng 300%")], conf="high",
+   note=("Nghỉ bù ngày nghỉ hằng tuần vào ngày làm việc kế tiếp (khoản 3 Điều 111, Quốc khánh ở điểm đ khoản 1 Điều 112); đi làm hôm đó được trả lương làm thêm giờ ngày lễ "
+         "(khoản 3 Điều 55 NĐ 145), ít nhất 300% (điểm c khoản 1 Điều 98 BLLĐ, điểm b khoản 1 Điều 55 NĐ 145)."),
+   changed="Thêm điểm b khoản 1 Điều 55 NĐ 145, quy định nhắc lại mức 300% của điểm c khoản 1 Điều 98 BLLĐ (quy ước 15/11)."),
+ "cq21": dict(add=[A_8_1, A_8_3(L46_2), A_VL(L46_2)], conf="medium",
+   note=("Báo trước ít nhất 45 ngày (điểm a khoản 1 Điều 35); nghỉ đúng luật là khoản 9 Điều 34, thuộc các trường hợp được trợ cấp thôi việc (khoản 1 Điều 46, nhắc lại ở khoản 1 Điều 8 NĐ 145), "
+         "nhưng thời gian đã đóng bảo hiểm thất nghiệp bị trừ (khoản 2 Điều 46, khoản 3 Điều 8 NĐ 145, khoản 3 Điều 35 Luật Việc làm 2025), nên nếu cả 3 năm đều đóng bảo hiểm thất nghiệp "
+         "thì có thể không còn thời gian tính trợ cấp; thanh toán trong 14 ngày làm việc, tối đa 30 ngày trong các trường hợp liệt kê (khoản 1 Điều 48)."),
+   changed="Thêm 3 quy định nhắc lại theo quy ước 15/11: khoản 1 Điều 8 NĐ 145 (điều kiện hưởng), câu dẫn khoản 3 Điều 8 NĐ 145 (thời gian tính trợ cấp), khoản 3 Điều 35 Luật Việc làm 74/2025."),
+ "cq29": dict(add=[A_8_1, A_8_3(L46_2), A_VL(L46_2)], conf="medium",
+   note=("Cùng nội dung cq21: báo trước 45 ngày; được trợ cấp thôi việc theo khoản 1 Điều 46 (nhắc lại ở khoản 1 Điều 8 NĐ 145) sau khi trừ thời gian đóng bảo hiểm thất nghiệp "
+         "(khoản 2 Điều 46, khoản 3 Điều 8 NĐ 145, khoản 3 Điều 35 Luật Việc làm 2025); thanh toán trong 14 ngày làm việc (khoản 1 Điều 48)."),
+   changed="Thêm 3 quy định nhắc lại theo quy ước 15/11 như cq21: khoản 1 Điều 8 NĐ 145, câu dẫn khoản 3 Điều 8 NĐ 145, khoản 3 Điều 35 Luật Việc làm 74/2025."),
+ "cq22": dict(add=[add(L47_2, "Thời gian tính trợ cấp mất việc làm trừ thời gian đã đóng bảo hiểm thất nghiệp; cần để tính đúng số tiền câu hỏi hỏi (cùng lý do lượt 12/11 thêm khoản 2 Điều 46 ở cq00)",
+                          Q_BHTN_46), A_8_3(L47_2), A_VL(L47_2)], conf="medium",
+   note=("Trước khi cho nghỉ: xây dựng phương án sử dụng lao động (khoản 3 Điều 42), trao đổi ý kiến tổ chức đại diện và công khai phương án (khoản 2 Điều 44), "
+         "trao đổi ý kiến và thông báo trước 30 ngày cho UBND cấp tỉnh và người lao động (khoản 6 Điều 42). "
+         "Trợ cấp mất việc làm: mỗi năm 01 tháng lương, ít nhất 02 tháng (khoản 1 Điều 47, khoản 2 Điều 8 NĐ 145); số năm tính sau khi trừ thời gian đóng bảo hiểm thất nghiệp "
+         "(khoản 2 Điều 47, khoản 3 Điều 8 NĐ 145, khoản 3 Điều 35 Luật Việc làm 2025). "
+         "Người gán nên xem: ba đơn vị về thời gian tính trợ cấp là đề xuất mới, có thể bỏ nếu cho rằng câu chỉ hỏi mức trợ cấp theo năm; "
+         "lương tính trợ cấp (khoản 3 Điều 47) không thêm vì câu không hỏi."),
+   changed=("Thêm khoản 2 Điều 47 BLLĐ (trừ thời gian đóng bảo hiểm thất nghiệp khi tính trợ cấp mất việc làm) cùng hai quy định nhắc lại nó: "
+            "câu dẫn khoản 3 Điều 8 NĐ 145 và khoản 3 Điều 35 Luật Việc làm 74/2025.")),
+ "cq24": dict(stale=[
+     {"stale_unit_id": O10_2b, "new_unit_id": P16_2b, "old_quote": "Thử việc quá thời gian quy định",
+      "new_quote": "Thử việc quá thời gian thỏa thuận hoặc vượt quá điều kiện quy định tại Điều 25 của Bộ luật Lao động",
+      "old_context": {"unit_id": O10_2, "quote": Q_FINE_2_5}, "new_context": {"unit_id": P16_2, "quote": Q_FINE_2_5},
+      "reason": "Cùng hành vi thử việc quá thời gian trong Điều 'Vi phạm quy định về thử việc', cùng khung 2-5 triệu đồng; NĐ 283/2026 viết rõ hơn là vượt điều kiện Điều 25 BLLĐ"},
+     {"stale_unit_id": O10_2c, "new_unit_id": P16_2c, "old_quote": "thấp hơn 85% mức lương của công việc đó", "new_quote": "thấp hơn 85% mức lương của công việc đó",
+      "old_context": {"unit_id": O10_2, "quote": Q_FINE_2_5}, "new_context": {"unit_id": P16_2, "quote": Q_FINE_2_5},
+      "reason": "Cùng hành vi trả lương thử việc thấp hơn 85%, cùng khung 2-5 triệu đồng"},
+     PAIR_DOUBLE],
+   add=[add(P16_2b, "Thay điểm b khoản 2 Điều 10 NĐ 12/2022 (hết hiệu lực): phạt thử việc vượt điều kiện Điều 25 BLLĐ (90 ngày > 60 ngày)",
+            "Thử việc quá thời gian thỏa thuận hoặc vượt quá điều kiện quy định tại Điều 25 của Bộ luật Lao động"),
+        add(P16_2c, "Thay điểm c khoản 2 Điều 10 NĐ 12/2022 (hết hiệu lực): phạt trả lương thử việc dưới 85% (80%)",
+            "Trả lương thử việc thấp hơn thỏa thuận hoặc thấp hơn 85% mức lương của công việc đó"),
+        A_7_1, A_7_2b], conf="medium",
+   note=("Thử việc kỹ sư (trình độ đại học, từ cao đẳng trở lên) tối đa 60 ngày (khoản 2 Điều 25), lương thử việc ít nhất 85% (Điều 26). "
+         "Tại 2026-11-11 áp dụng NĐ 283/2026: phạt 2-5 triệu đồng (câu dẫn khoản 2 Điều 16, đi kèm điểm b, c) là mức với cá nhân; công ty là doanh nghiệp nên bị phạt gấp 02 lần, "
+         "4-10 triệu đồng (khoản 1 và điểm b khoản 2 Điều 7). Biện pháp khắc phục (điểm a khoản 3 Điều 16) không thêm vì câu chỉ hỏi phạt bao nhiêu. "
+         "Người gán nên xem: có cần giữ cả khoản 1 lẫn điểm b khoản 2 Điều 7 hay chỉ một."),
+   changed=("NĐ 12/2022 hết hiệu lực từ 10/09/2026: ba đơn vị NĐ 12/2022 chuyển sang stale_unit_ids, thay bằng điểm b, c khoản 2 Điều 16 và khoản 1 Điều 7 NĐ 283/2026; "
+            "thêm điểm b khoản 2 Điều 7 (doanh nghiệp thuộc diện phạt gấp đôi).")),
+ "cq25": dict(stale=[
+     {"stale_unit_id": O17_3b, "new_unit_id": P23_3b, "old_quote": "Từ 30.000.000 đồng đến 50.000.000 đồng đối với vi phạm từ 11 người đến 50 người lao động",
+      "new_quote": "Từ 30.000.000 đồng đến 50.000.000 đồng đối với vi phạm từ 11 người đến 50 người lao động",
+      "old_context": {"unit_id": O17_3, "quote": "trả lương cho người lao động thấp hơn mức lương tối thiểu do Chính phủ quy định"},
+      "new_context": {"unit_id": P23_3, "quote": "trả lương cho người lao động thấp hơn mức lương tối thiểu do Chính phủ quy định"},
+      "reason": "Cùng hành vi trả lương thấp hơn mức lương tối thiểu, cùng khung cho 11-50 người, nguyên văn giống nhau"},
+     PAIR_REMEDY, PAIR_DOUBLE],
+   add=[add(P23_3b, "Thay điểm b khoản 3 Điều 17 NĐ 12/2022 (hết hiệu lực): 15 người thuộc khung 11-50 người",
+            "Từ 30.000.000 đồng đến 50.000.000 đồng đối với vi phạm từ 11 người đến 50 người lao động"),
+        add(P23_5a, "Thay điểm a khoản 5 Điều 17 NĐ 12/2022 (hết hiệu lực): buộc trả đủ lương cộng tiền lãi cho vi phạm khoản 3",
+            "đối với hành vi vi phạm quy định tại khoản 2, khoản 3 Điều này"),
+        A_7_1, A_7_2b], conf="medium",
+   note=("Tại 2026-11-11 áp dụng NĐ 283/2026: 15 người thuộc điểm b khoản 3 Điều 23 (30-50 triệu đồng với cá nhân), doanh nghiệp bị phạt gấp 02 lần (khoản 1, điểm b khoản 2 Điều 7), "
+         "kèm buộc trả đủ lương cộng tiền lãi (điểm a khoản 5 Điều 23). Mức tối thiểu vùng I (khoản 1 Điều 3 NĐ 293/2025) áp theo nơi hoạt động của người sử dụng lao động "
+         "(điểm a khoản 3 Điều 3). Không thêm khoản 2 Điều 90 BLLĐ và khoản 1 Điều 4 NĐ 293/2025 (cùng quy tắc lương không được thấp hơn mức tối thiểu) vì khung phạt đã nêu hành vi; "
+         "người gán có thể thêm nếu muốn nhãn có căn cứ cấm."),
+   changed=("NĐ 12/2022 hết hiệu lực từ 10/09/2026: ba đơn vị NĐ 12/2022 chuyển sang stale_unit_ids, thay bằng điểm b khoản 3, điểm a khoản 5 Điều 23 và khoản 1 Điều 7 NĐ 283/2026; "
+            "thêm điểm b khoản 2 Điều 7 (doanh nghiệp thuộc diện phạt gấp đôi).")),
+ "cq26": dict(stale=[
+     {"stale_unit_id": O17_2, "new_unit_id": P23_2, "old_quote": "Trả lương không đúng hạn theo quy định của pháp luật",
+      "new_quote": "trả lương không đúng hạn theo quy định của pháp luật",
+      "reason": "Cùng danh sách hành vi về tiền lương, mở đầu bằng trả lương không đúng hạn; khác nhau chỉ ở chữ hoa đầu câu"},
+     PAIR_REMEDY],
+   add=[add(P23_2, "Thay khoản 2 Điều 17 NĐ 12/2022 (hết hiệu lực): phạt trả lương không đúng hạn, mức theo số người lao động bị vi phạm",
+            "trả lương không đúng hạn theo quy định của pháp luật"),
+        add(P23_5a, "Thay điểm a khoản 5 Điều 17 NĐ 12/2022 (hết hiệu lực): buộc trả đủ lương cộng tiền lãi của số tiền chậm trả",
+            "Buộc người sử dụng lao động trả đủ tiền lương cộng với khoản tiền lãi của số tiền lương chậm trả"),
+        A_7_1, A_7_2b], conf="medium",
+   note=("Chậm lương 2 tháng vượt mức 30 ngày của khoản 4 Điều 97 nên người lao động được nghỉ không cần báo trước (điểm b khoản 2 Điều 35); công ty phải đền bù tiền lãi khi chậm "
+         "từ 15 ngày (khoản 4 Điều 97) và bị buộc trả đủ lương cộng tiền lãi (điểm a khoản 5 Điều 23 NĐ 283/2026). Phạt theo khoản 2 Điều 23 NĐ 283/2026, mức tùy số người bị vi phạm "
+         "(câu hỏi không nêu nên giữ khoản); công ty bị phạt gấp 02 lần (khoản 1, điểm b khoản 2 Điều 7). "
+         "Người gán nên xem: 'khó khăn' có phải bất khả kháng theo khoản 4 Điều 97 không là suy luận; dù có thì 2 tháng vẫn quá 30 ngày."),
+   changed=("NĐ 12/2022 hết hiệu lực từ 10/09/2026: hai đơn vị NĐ 12/2022 chuyển sang stale_unit_ids, thay bằng khoản 2 và điểm a khoản 5 Điều 23 NĐ 283/2026; "
+            "thêm quy tắc tổ chức bị phạt gấp đôi (khoản 1, điểm b khoản 2 Điều 7 NĐ 283/2026) mà lượt 12/11 đã bỏ sót ở câu này.")),
+}
+
+UNCHANGED_NOTES = {
+ "cq02": ("Tự ý bỏ việc từ 05 ngày làm việc liên tục là căn cứ chấm dứt (điểm e khoản 1 Điều 36) và là trường hợp loại trừ trợ cấp thôi việc "
+          "(khoản 1 Điều 46 BLLĐ, nhắc lại ở điểm b khoản 1 Điều 8 NĐ 145; cả hai đã có trong nhãn)."),
+ "cq03": ("Ít nhất 45 ngày với nhân viên văn phòng (điểm a khoản 1 Điều 35) so với ít nhất 120 ngày với thành viên tổ lái tàu bay "
+          "(điểm d khoản 1 Điều 35 dẫn tới điểm a khoản 1 và điểm a khoản 2 Điều 7 NĐ 145)."),
+ "cq09": "Cùng nội dung cq03: 120 ngày so với 45 ngày, dài hơn 75 ngày.",
+ "cq04": ("Người quản lý doanh nghiệp, hợp đồng 2 năm (từ 12 tháng trở lên): ít nhất 120 ngày (điểm d khoản 2 Điều 36, điểm b khoản 1 và điểm a khoản 2 Điều 7 NĐ 145). "
+          "Giám đốc điều hành có là người quản lý doanh nghiệp hay không do Luật Doanh nghiệp định nghĩa (ngoài corpus)."),
+ "cq05": ("Làm thêm vào ngày lễ ít nhất 300% (điểm c khoản 1 Điều 98 BLLĐ, nhắc lại ở điểm b khoản 1 Điều 55 NĐ 145; cả hai đã có); "
+          "lương giờ thực trả xác định theo điểm a khoản 1 Điều 55 NĐ 145, công thức ở câu dẫn khoản 1 đi kèm các điểm."),
+ "cq07": ("Thông báo ít nhất 05 ngày làm việc (điểm a khoản 2 Điều 70 NĐ 145, quy định duy nhất nêu thời hạn này); thành phần bắt buộc là tổ chức đại diện người lao động "
+          "và chính người lao động (điểm b, c khoản 1 Điều 122)."),
+ "cq10": ("Khoản phải trả: khoản 1 Điều 41 (lương, bảo hiểm những ngày không làm, ít nhất 02 tháng lương, tiền những ngày không báo trước) và trợ cấp thôi việc "
+          "(khoản 2 Điều 41, khoản 1 Điều 46). Không thêm khoản 1 Điều 8 NĐ 145 vì quyền hưởng ở đây phát sinh từ khoản 2 Điều 41, khoản 1 Điều 46 chỉ dùng cho mức trợ cấp."),
+ "cq18": "Cùng nội dung cq10.",
+ "cq11": ("Nghỉ không báo trước đủ 45 ngày là đơn phương trái luật (Điều 39, điểm a khoản 1 Điều 35): không được trợ cấp thôi việc (khoản 1 Điều 40), "
+          "bồi thường nửa tháng lương và tiền lương những ngày không báo trước (khoản 2 Điều 40), hoàn trả chi phí đào tạo nếu có (khoản 3 Điều 40)."),
+ "cq12": ("Không được đơn phương khi người lao động đang điều trị theo chỉ định (khoản 1 Điều 37), ngoại lệ điểm b khoản 1 Điều 36 "
+          "(đã điều trị 12/06 tháng liên tục hoặc quá nửa thời hạn hợp đồng)."),
+ "cq14": "12 ngày (điểm a khoản 1 Điều 113) cộng 02 ngày thâm niên vì đủ 10 năm (Điều 114) = 14 ngày làm việc.",
+ "cq19": "Cùng nội dung cq14.",
+ "cq15": "Được tạm ứng ít nhất bằng tiền lương của những ngày nghỉ (khoản 5 Điều 113 dẫn tới khoản 3 Điều 101).",
+ "cq16": ("Được khấu trừ lương để bồi thường hư hỏng thiết bị (khoản 1 Điều 102, khoản 1 Điều 129), tối đa 30% lương thực trả hằng tháng sau khi trích nộp bảo hiểm, thuế "
+          "(khoản 3 Điều 102)."),
+ "cq17": ("Không xử lý kỷ luật khi đang mang thai, nghỉ thai sản, nuôi con dưới 12 tháng (điểm d khoản 4 Điều 122); hết thời gian đó được kéo dài thời hiệu tối đa 60 ngày "
+          "(khoản 2 Điều 123), thời hiệu gốc ở khoản 1 Điều 123."),
+ "cq20": ("5 ngày cộng dồn trong 30 ngày là căn cứ sa thải (khoản 4 Điều 125) nhưng không được xử lý khi đang mang thai, nghỉ thai sản, nuôi con dưới 12 tháng "
+          "(điểm d khoản 4 Điều 122); xử lý sau đó trong thời hiệu (khoản 1, khoản 2 Điều 123); họp: thông báo 05 ngày làm việc (điểm a khoản 2 Điều 70 NĐ 145) "
+          "tới các thành phần bắt buộc (điểm b, c khoản 1 Điều 122). Người gán có thể thêm điểm b, c khoản 2 và khoản 3 Điều 70 NĐ 145 nếu muốn trọn quy trình họp."),
+ "cq28": "Cùng nội dung cq20; 'chuẩn bị cuộc họp' gồm thông báo 05 ngày làm việc tới các thành phần tại điểm b, c khoản 1 Điều 122.",
+ "cq23": ("Tạm đình chỉ sau khi tham khảo tổ chức đại diện (khoản 1 Điều 128), tối đa 15 ngày, đặc biệt 90 ngày, tạm ứng 50% lương (khoản 2 Điều 128); "
+          "khoản lương sau đó theo khoản 3, khoản 4 Điều 128; trộm cắp là căn cứ sa thải (khoản 1 Điều 125)."),
+ "cq27": ("Thời hiệu xử lý bồi thường 06 tháng kể từ ngày làm mất (khoản 1 Điều 72 NĐ 145): 'nửa năm sau' là sát hạn, cần ngày cụ thể. "
+          "Bồi thường khi làm mất tài sản (khoản 2 Điều 129). Khoản 1 Điều 102 chỉ nêu khấu trừ cho hư hỏng; áp dụng cho làm mất tài sản là suy luận, người gán nên xem lại."),
+}
+
+
+def main():
+    OUT.parent.mkdir(parents=True, exist_ok=True)
+    lines = []
+    for q in SRC:
+        qid = q["question_id"]
+        prev = PREV[qid]
+        spec = R.get(qid, {})
+        stale_pairs = spec.get("stale", [])
+        stale = list(dict.fromkeys(p["stale_unit_id"] for p in stale_pairs))
+        dropped = spec.get("dropped", [])
+        gone = set(stale) | {d["unit_id"] for d in dropped}
+        kept = [u for u in prev["relevant_unit_ids"] if u not in gone]
+        added = spec.get("add", [])
+        relevant = list(dict.fromkeys(kept + [a["unit_id"] for a in added]))
+        rec = {"question_id": qid, "question_type": prev["question_type"], "expected_status": prev["expected_status"],
+               "relevant_unit_ids": relevant, "kept": kept, "dropped": dropped, "added": added,
+               "outside_corpus": prev.get("outside_corpus", []), "confidence": spec.get("conf", prev["confidence"]),
+               "note": spec.get("note") or UNCHANGED_NOTES[qid],
+               "as_of": AS_OF, "as_of_source": "no date in question, corpus freeze date",
+               "stale_unit_ids": stale, "stale_pairs": stale_pairs,
+               "changed_from_2026_11_12": spec.get("changed", NOCHANGE),
+               "family_id": q["family_id"],
+               "validity_model": "unit-status-v2 với cạnh amendment-rules-v2 (data/kb/amendments-scope-v3-v48feefc6d53b-v2); unit-status-v1 cho cùng kết quả; kiểm lại bằng check-complex.py"}
+        if spec.get("family_difference"):
+            rec["family_difference"] = spec["family_difference"]
+        lines.append(json.dumps(rec, ensure_ascii=False))
+    OUT.write_text("\n".join(lines) + "\n", encoding="utf-8", newline="\n")
+    print(len(lines), "records")
+
+
+if __name__ == "__main__":
+    main()

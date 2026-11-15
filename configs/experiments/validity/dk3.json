@@ -1,0 +1,28 @@
+{
+  "condition": "DK3",
+  "representation": "llm_kb_raw",
+  "automatic_validation": false,
+  "manual_review": false,
+  "status": "draft",
+  "kb_run": "experiments/runs/kb-scope-v3-sonnet",
+  "kb_model_note": "Extracted with Claude Sonnet 5.5 (effort medium, prompt norm-llm-v1, 863 batches, 16.97 USD, 12-13/11/2026) on corpus scope v3 (v48feefc6d53b). The v1 and v2 KBs used gpt-oss-120b via 9Router, which was unavailable (HTTP 503), so DK3/DK4 on v3 differ from v2 in both corpus and extraction model: do not compare v2 and v3 DK3/DK4 numbers as a corpus effect. On the 5,338 units shared with v2, Sonnet gives 3,835 DK3 / 3,644 DK4 claims vs 3,631 / 3,451, and far fewer 'unknown' modalities (484 vs 1,496 in DK4).",
+  "record": "unit_with_claims",
+  "max_tokens": 384,
+  "graph": {
+    "edges": [
+      "reference",
+      "referenced_by"
+    ],
+    "max_neighbors": 2,
+    "source_aliases": {
+      "Bộ luật Lao động": "45-2019-qh14"
+    },
+    "require_match": true
+  },
+  "claims_view": "compact",
+  "validity": {
+    "level": "unit",
+    "amendments": "data/kb/amendments-scope-v3-v48feefc6d53b-v2"
+  },
+  "note": "Research plan 11/11, WP4.4: unit status at the question's date (as_of, else shared.validity_as_of); amendment edges from cli amendment-build (amendment-rules-v2 since 15/11/2026: heading-only changes keep the points, phrase replacements per unit, expiry statements; rules, need human review), unit status unit-status-v2 (status per unit). Units expired, repealed or not yet in force are dropped; amended units carry a status note. Runs on corpus v3 (v48feefc6d53b) with the Sonnet 5.5 KB (kb_model_note)."
+}

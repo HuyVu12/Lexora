@@ -1,0 +1,11 @@
+{
+  "condition": "DK1",
+  "representation": "fixed_chunks",
+  "chunk_tokens": 128,
+  "overlap_tokens": 21,
+  "automatic_validation": false,
+  "manual_review": false,
+  "shared_config": "configs/pilot.json",
+  "status": "draft",
+  "note": "Sensitivity of DK1 to chunk size (research plan 11/11, WP2): 128 tokens, overlap about 1/6 of the chunk (21). Retrieval only, dev questions; the main DK1 stays 384/64."
+}

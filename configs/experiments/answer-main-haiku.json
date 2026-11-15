@@ -1,0 +1,13 @@
+{
+  "answer_version": "answer-run-v1",
+  "status": "draft",
+  "model": "claude-haiku-5-5",
+  "prompt": "answer-v4.md",
+  "top_k": 50,
+  "context_token_budget": 3000,
+  "token_counter": "lexora-syllable-v1",
+  "note": "Research plan 11/11, WP6 fallback: same settings as answer-main.json (answer-v4, 3,000 tokens, top 50) with Claude Haiku 5.5 through Claude Code, used while 9Router answers HTTP 503. One model per run for every condition.",
+  "effort": "medium",
+  "judge_model": "claude-sonnet-5-5",
+  "judge_effort": "medium"
+}

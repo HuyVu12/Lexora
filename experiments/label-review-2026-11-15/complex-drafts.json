@@ -1,0 +1,446 @@
+[
+ {
+  "text": "Nhân viên làm được 4 năm rồi nghỉ theo thỏa thuận với công ty thì được trợ cấp thôi việc bao nhiêu, và lương để tính trợ cấp lấy theo những tháng nào?",
+  "question_type": "synthesis",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-iii/section-3/article-46/clause-1",
+   "145-2020-nd-cp/chapter-iii/section-2/article-8/clause-5/point-a",
+   "45-2019-qh14/chapter-iii/section-3/article-34/clause-3",
+   "45-2019-qh14/chapter-iii/section-3/article-46/clause-2",
+   "45-2019-qh14/chapter-iii/section-3/article-46/clause-3",
+   "145-2020-nd-cp/chapter-iii/section-2/article-8/clause-1",
+   "145-2020-nd-cp/chapter-iii/section-2/article-8/clause-3/point-c",
+   "74-2025-qh15/chapter-vii/section-2/article-35/clause-3",
+   "10-2020-tt-bldtbxh/chapter-v/article-12/clause-3"
+  ],
+  "rationale": "Đề xuất của model (rà soát 2026-11-15 trên corpus v3), không phải nhãn người. Độ tin cậy: vừa. Ngày áp dụng: 2026-11-11 (câu không ghi ngày nên dùng ngày khóa corpus v3). Căn cứ và lưu ý: Thỏa thuận chấm dứt (khoản 3 Điều 34) thuộc các trường hợp được trợ cấp thôi việc (khoản 1 Điều 46 BLLĐ, nhắc lại ở câu dẫn khoản 1 Điều 8 NĐ 145). Số tiền: mỗi năm làm việc 1/2 tháng lương; thời gian tính trợ cấp trừ thời gian đóng bảo hiểm thất nghiệp (khoản 2 Điều 46, câu dẫn khoản 3 Điều 8 NĐ 145 đi kèm điểm c, khoản 3 Điều 35 Luật Việc làm 2025), quy đổi theo năm đủ 12 tháng (điểm c khoản 3 Điều 8). Lương tính trợ cấp: bình quân 06 tháng liền kề theo hợp đồng trước khi thôi việc (khoản 3 Điều 46, điểm a khoản 5 Điều 8 NĐ 145, khoản 3 Điều 12 TT 10/2020). Người gán nên xem: đơn vị TT 10/2020 nằm dưới Điều 12 'Hiệu lực thi hành' theo cách tách của corpus, nên đối chiếu bản gốc xem có phải lỗi tách Điều.",
+  "paraphrase_of": null,
+  "source_question_id": "cq00"
+ },
+ {
+  "text": "Thời gian thử việc và thời gian nghỉ thai sản có được tính vào thời gian làm việc để tính trợ cấp thôi việc không, còn những năm đã đóng bảo hiểm thất nghiệp thì xử lý sao?",
+  "question_type": "synthesis",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-iii/section-3/article-46/clause-2",
+   "145-2020-nd-cp/chapter-iii/section-2/article-8/clause-3/point-a",
+   "145-2020-nd-cp/chapter-iii/section-2/article-8/clause-3/point-b",
+   "74-2025-qh15/chapter-vii/section-2/article-35/clause-3"
+  ],
+  "rationale": "Đề xuất của model (rà soát 2026-11-15 trên corpus v3), không phải nhãn người. Độ tin cậy: cao. Ngày áp dụng: 2026-11-11 (câu không ghi ngày nên dùng ngày khóa corpus v3). Căn cứ và lưu ý: Thử việc và nghỉ thai sản được tính vào thời gian làm việc thực tế (điểm a khoản 3 Điều 8 NĐ 145); thời gian đóng bảo hiểm thất nghiệp bị trừ (khoản 2 Điều 46 BLLĐ, điểm b khoản 3 Điều 8 NĐ 145 mang câu dẫn khoản 3, khoản 3 Điều 35 Luật Việc làm 2025).",
+  "paraphrase_of": null,
+  "source_question_id": "cq01"
+ },
+ {
+  "text": "Nhân viên tự ý nghỉ liền 6 ngày làm việc không có lý do, công ty chấm dứt hợp đồng thì có còn phải trả trợ cấp thôi việc cho người đó không?",
+  "question_type": "synthesis",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-iii/section-3/article-36/clause-1/point-e",
+   "145-2020-nd-cp/chapter-iii/section-2/article-8/clause-1/point-b",
+   "45-2019-qh14/chapter-iii/section-3/article-46/clause-1"
+  ],
+  "rationale": "Đề xuất của model (rà soát 2026-11-15 trên corpus v3), không phải nhãn người. Độ tin cậy: cao. Ngày áp dụng: 2026-11-11 (câu không ghi ngày nên dùng ngày khóa corpus v3). Căn cứ và lưu ý: Tự ý bỏ việc từ 05 ngày làm việc liên tục là căn cứ chấm dứt (điểm e khoản 1 Điều 36) và là trường hợp loại trừ trợ cấp thôi việc (khoản 1 Điều 46 BLLĐ, nhắc lại ở điểm b khoản 1 Điều 8 NĐ 145; cả hai đã có trong nhãn).",
+  "paraphrase_of": null,
+  "source_question_id": "cq02"
+ },
+ {
+  "text": "Phi công của hãng bay ký hợp đồng không xác định thời hạn muốn nghỉ việc thì phải báo trước bao lâu, so với nhân viên văn phòng cùng loại hợp đồng thì khác thế nào?",
+  "question_type": "synthesis",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-iii/section-3/article-35/clause-1/point-a",
+   "45-2019-qh14/chapter-iii/section-3/article-35/clause-1/point-d",
+   "145-2020-nd-cp/chapter-iii/section-2/article-7/clause-1/point-a",
+   "145-2020-nd-cp/chapter-iii/section-2/article-7/clause-2/point-a"
+  ],
+  "rationale": "Đề xuất của model (rà soát 2026-11-15 trên corpus v3), không phải nhãn người. Độ tin cậy: cao. Ngày áp dụng: 2026-11-11 (câu không ghi ngày nên dùng ngày khóa corpus v3). Căn cứ và lưu ý: Ít nhất 45 ngày với nhân viên văn phòng (điểm a khoản 1 Điều 35) so với ít nhất 120 ngày với thành viên tổ lái tàu bay (điểm d khoản 1 Điều 35 dẫn tới điểm a khoản 1 và điểm a khoản 2 Điều 7 NĐ 145).",
+  "paraphrase_of": null,
+  "source_question_id": "cq03"
+ },
+ {
+  "text": "Công ty muốn đơn phương chấm dứt hợp đồng 2 năm với giám đốc điều hành (người quản lý doanh nghiệp) thì phải báo trước bao nhiêu ngày?",
+  "question_type": "synthesis",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-iii/section-3/article-36/clause-2/point-d",
+   "145-2020-nd-cp/chapter-iii/section-2/article-7/clause-1/point-b",
+   "145-2020-nd-cp/chapter-iii/section-2/article-7/clause-2/point-a"
+  ],
+  "rationale": "Đề xuất của model (rà soát 2026-11-15 trên corpus v3), không phải nhãn người. Độ tin cậy: cao. Ngày áp dụng: 2026-11-11 (câu không ghi ngày nên dùng ngày khóa corpus v3). Căn cứ và lưu ý: Người quản lý doanh nghiệp, hợp đồng 2 năm (từ 12 tháng trở lên): ít nhất 120 ngày (điểm d khoản 2 Điều 36, điểm b khoản 1 và điểm a khoản 2 Điều 7 NĐ 145). Giám đốc điều hành có là người quản lý doanh nghiệp hay không do Luật Doanh nghiệp định nghĩa (ngoài corpus).",
+  "paraphrase_of": null,
+  "source_question_id": "cq04"
+ },
+ {
+  "text": "Nhân viên hưởng lương tháng đi tăng ca vào ngày lễ thì được trả lương thế nào, và lương giờ làm căn cứ được xác định ra sao?",
+  "question_type": "synthesis",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-vi/article-98/clause-1/point-c",
+   "145-2020-nd-cp/chapter-vi/section-2/article-55/clause-1/point-a",
+   "145-2020-nd-cp/chapter-vi/section-2/article-55/clause-1/point-b"
+  ],
+  "rationale": "Đề xuất của model (rà soát 2026-11-15 trên corpus v3), không phải nhãn người. Độ tin cậy: cao. Ngày áp dụng: 2026-11-11 (câu không ghi ngày nên dùng ngày khóa corpus v3). Căn cứ và lưu ý: Làm thêm vào ngày lễ ít nhất 300% (điểm c khoản 1 Điều 98 BLLĐ, nhắc lại ở điểm b khoản 1 Điều 55 NĐ 145; cả hai đã có); lương giờ thực trả xác định theo điểm a khoản 1 Điều 55 NĐ 145, công thức ở câu dẫn khoản 1 đi kèm các điểm.",
+  "paraphrase_of": null,
+  "source_question_id": "cq05"
+ },
+ {
+  "text": "Công ty muốn cho công nhân tăng ca thì phải được họ đồng ý về những nội dung gì, và một ngày thường được tăng ca tối đa bao nhiêu giờ?",
+  "question_type": "synthesis",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-vii/section-1/article-107/clause-2/point-a",
+   "45-2019-qh14/chapter-vii/section-1/article-107/clause-2/point-b",
+   "145-2020-nd-cp/chapter-vii/article-60/clause-1",
+   "145-2020-nd-cp/chapter-vii/article-59/clause-1/point-a",
+   "145-2020-nd-cp/chapter-vii/article-59/clause-1/point-b",
+   "145-2020-nd-cp/chapter-vii/article-59/clause-1/point-c",
+   "145-2020-nd-cp/chapter-vii/article-60/clause-2"
+  ],
+  "rationale": "Đề xuất của model (rà soát 2026-11-15 trên corpus v3), không phải nhãn người. Độ tin cậy: cao. Ngày áp dụng: 2026-11-11 (câu không ghi ngày nên dùng ngày khóa corpus v3). Căn cứ và lưu ý: Đồng ý về thời gian, địa điểm, công việc làm thêm (Điều 59 NĐ 145, điểm a khoản 2 Điều 107 BLLĐ); giới hạn ngày thường: không quá 50% giờ làm việc bình thường, hoặc tổng 12 giờ nếu làm theo tuần (điểm b khoản 2 Điều 107, khoản 1 và khoản 2 Điều 60 NĐ 145).",
+  "paraphrase_of": null,
+  "source_question_id": "cq06"
+ },
+ {
+  "text": "Họp kỷ luật một nhân viên thì phải gửi thông báo trước mấy ngày, và những ai bắt buộc phải có mặt trong cuộc họp?",
+  "question_type": "synthesis",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-viii/section-1/article-122/clause-1/point-b",
+   "45-2019-qh14/chapter-viii/section-1/article-122/clause-1/point-c",
+   "145-2020-nd-cp/chapter-viii/article-70/clause-2/point-a"
+  ],
+  "rationale": "Đề xuất của model (rà soát 2026-11-15 trên corpus v3), không phải nhãn người. Độ tin cậy: cao. Ngày áp dụng: 2026-11-11 (câu không ghi ngày nên dùng ngày khóa corpus v3). Căn cứ và lưu ý: Thông báo ít nhất 05 ngày làm việc (điểm a khoản 2 Điều 70 NĐ 145, quy định duy nhất nêu thời hạn này); thành phần bắt buộc là tổ chức đại diện người lao động và chính người lao động (điểm b, c khoản 1 Điều 122).",
+  "paraphrase_of": null,
+  "source_question_id": "cq07"
+ },
+ {
+  "text": "Người lao động nghỉ việc sau khoảng 4 năm làm việc thì trợ cấp thôi việc được tính theo công thức nào, căn cứ vào mức lương của giai đoạn nào?",
+  "question_type": "synthesis",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-iii/section-3/article-46/clause-1",
+   "145-2020-nd-cp/chapter-iii/section-2/article-8/clause-5/point-a",
+   "45-2019-qh14/chapter-iii/section-3/article-46/clause-2",
+   "145-2020-nd-cp/chapter-iii/section-2/article-8/clause-3/point-c",
+   "45-2019-qh14/chapter-iii/section-3/article-46/clause-3",
+   "145-2020-nd-cp/chapter-iii/section-2/article-8/clause-1",
+   "74-2025-qh15/chapter-vii/section-2/article-35/clause-3",
+   "10-2020-tt-bldtbxh/chapter-v/article-12/clause-3"
+  ],
+  "rationale": "Đề xuất của model (rà soát 2026-11-15 trên corpus v3), không phải nhãn người. Độ tin cậy: vừa. Ngày áp dụng: 2026-11-11 (câu không ghi ngày nên dùng ngày khóa corpus v3). Căn cứ và lưu ý: Công thức: số năm làm việc (đã trừ thời gian đóng bảo hiểm thất nghiệp theo khoản 2 Điều 46, câu dẫn khoản 3 Điều 8 NĐ 145, khoản 3 Điều 35 Luật Việc làm 2025; quy đổi năm theo điểm c khoản 3 Điều 8, phù hợp chữ 'khoảng 4 năm') x 1/2 tháng lương bình quân 06 tháng liền kề (khoản 3 Điều 46, điểm a khoản 5 Điều 8 NĐ 145, khoản 3 Điều 12 TT 10/2020). Điều kiện hưởng (đủ 12 tháng, các trường hợp chấm dứt) ở khoản 1 Điều 46, nhắc lại ở khoản 1 Điều 8 NĐ 145. Người gán nên xem: đơn vị TT 10/2020 nằm dưới Điều 12 'Hiệu lực thi hành' theo cách tách của corpus.",
+  "paraphrase_of": 0,
+  "source_question_id": "cq08"
+ },
+ {
+  "text": "Với nhân viên tổ lái tàu bay làm hợp đồng vô thời hạn, nếu họ tự nghỉ thì phải báo trước tối thiểu bao nhiêu ngày, dài hơn bao nhiêu so với người lao động bình thường?",
+  "question_type": "synthesis",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-iii/section-3/article-35/clause-1/point-a",
+   "45-2019-qh14/chapter-iii/section-3/article-35/clause-1/point-d",
+   "145-2020-nd-cp/chapter-iii/section-2/article-7/clause-1/point-a",
+   "145-2020-nd-cp/chapter-iii/section-2/article-7/clause-2/point-a"
+  ],
+  "rationale": "Đề xuất của model (rà soát 2026-11-15 trên corpus v3), không phải nhãn người. Độ tin cậy: cao. Ngày áp dụng: 2026-11-11 (câu không ghi ngày nên dùng ngày khóa corpus v3). Căn cứ và lưu ý: Cùng nội dung cq03: 120 ngày so với 45 ngày, dài hơn 75 ngày.",
+  "paraphrase_of": 3,
+  "source_question_id": "cq09"
+ },
+ {
+  "text": "Công ty cho nhân viên nghỉ trái luật nhưng nhân viên không muốn quay lại làm nữa thì công ty phải trả những khoản gì?",
+  "question_type": "synthesis",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-iii/section-3/article-41/clause-1",
+   "45-2019-qh14/chapter-iii/section-3/article-41/clause-2",
+   "45-2019-qh14/chapter-iii/section-3/article-46/clause-1"
+  ],
+  "rationale": "Đề xuất của model (rà soát 2026-11-15 trên corpus v3), không phải nhãn người. Độ tin cậy: vừa. Ngày áp dụng: 2026-11-11 (câu không ghi ngày nên dùng ngày khóa corpus v3). Căn cứ và lưu ý: Khoản phải trả: khoản 1 Điều 41 (lương, bảo hiểm những ngày không làm, ít nhất 02 tháng lương, tiền những ngày không báo trước) và trợ cấp thôi việc (khoản 2 Điều 41, khoản 1 Điều 46). Không thêm khoản 1 Điều 8 NĐ 145 vì quyền hưởng ở đây phát sinh từ khoản 2 Điều 41, khoản 1 Điều 46 chỉ dùng cho mức trợ cấp.",
+  "paraphrase_of": null,
+  "source_question_id": "cq10"
+ },
+ {
+  "text": "Nhân viên hợp đồng không thời hạn nghỉ ngang mà không báo trước đủ ngày thì phải bồi thường gì cho công ty?",
+  "question_type": "synthesis",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-iii/section-3/article-35/clause-1/point-a",
+   "45-2019-qh14/chapter-iii/section-3/article-40/clause-1",
+   "45-2019-qh14/chapter-iii/section-3/article-40/clause-2",
+   "45-2019-qh14/chapter-iii/section-3/article-39",
+   "45-2019-qh14/chapter-iii/section-3/article-40/clause-3"
+  ],
+  "rationale": "Đề xuất của model (rà soát 2026-11-15 trên corpus v3), không phải nhãn người. Độ tin cậy: vừa. Ngày áp dụng: 2026-11-11 (câu không ghi ngày nên dùng ngày khóa corpus v3). Căn cứ và lưu ý: Nghỉ không báo trước đủ 45 ngày là đơn phương trái luật (Điều 39, điểm a khoản 1 Điều 35): không được trợ cấp thôi việc (khoản 1 Điều 40), bồi thường nửa tháng lương và tiền lương những ngày không báo trước (khoản 2 Điều 40), hoàn trả chi phí đào tạo nếu có (khoản 3 Điều 40).",
+  "paraphrase_of": null,
+  "source_question_id": "cq11"
+ },
+ {
+  "text": "Nhân viên đang nghỉ ốm điều trị theo chỉ định của bác sĩ thì công ty có được đơn phương chấm dứt hợp đồng không, có ngoại lệ nào không?",
+  "question_type": "synthesis",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-iii/section-3/article-37/clause-1",
+   "45-2019-qh14/chapter-iii/section-3/article-36/clause-1/point-b"
+  ],
+  "rationale": "Đề xuất của model (rà soát 2026-11-15 trên corpus v3), không phải nhãn người. Độ tin cậy: cao. Ngày áp dụng: 2026-11-11 (câu không ghi ngày nên dùng ngày khóa corpus v3). Căn cứ và lưu ý: Không được đơn phương khi người lao động đang điều trị theo chỉ định (khoản 1 Điều 37), ngoại lệ điểm b khoản 1 Điều 36 (đã điều trị 12/06 tháng liên tục hoặc quá nửa thời hạn hợp đồng).",
+  "paraphrase_of": null,
+  "source_question_id": "cq12"
+ },
+ {
+  "text": "Ngày nghỉ hằng tuần trùng đúng ngày Quốc khánh thì người lao động được nghỉ bù thế nào, còn nếu hôm đó vẫn phải đi làm thì lương tính bao nhiêu?",
+  "question_type": "synthesis",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-vii/section-2/article-111/clause-3",
+   "45-2019-qh14/chapter-vii/section-2/article-112/clause-1/point-đ",
+   "45-2019-qh14/chapter-vi/article-98/clause-1/point-c",
+   "145-2020-nd-cp/chapter-vi/section-2/article-55/clause-3",
+   "145-2020-nd-cp/chapter-vi/section-2/article-55/clause-1/point-b"
+  ],
+  "rationale": "Đề xuất của model (rà soát 2026-11-15 trên corpus v3), không phải nhãn người. Độ tin cậy: cao. Ngày áp dụng: 2026-11-11 (câu không ghi ngày nên dùng ngày khóa corpus v3). Căn cứ và lưu ý: Nghỉ bù ngày nghỉ hằng tuần vào ngày làm việc kế tiếp (khoản 3 Điều 111, Quốc khánh ở điểm đ khoản 1 Điều 112); đi làm hôm đó được trả lương làm thêm giờ ngày lễ (khoản 3 Điều 55 NĐ 145), ít nhất 300% (điểm c khoản 1 Điều 98 BLLĐ, điểm b khoản 1 Điều 55 NĐ 145).",
+  "paraphrase_of": null,
+  "source_question_id": "cq13"
+ },
+ {
+  "text": "Nhân viên văn phòng làm cho công ty được 11 năm thì mỗi năm được nghỉ phép bao nhiêu ngày?",
+  "question_type": "synthesis",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-vii/section-2/article-113/clause-1/point-a",
+   "45-2019-qh14/chapter-vii/section-2/article-114"
+  ],
+  "rationale": "Đề xuất của model (rà soát 2026-11-15 trên corpus v3), không phải nhãn người. Độ tin cậy: cao. Ngày áp dụng: 2026-11-11 (câu không ghi ngày nên dùng ngày khóa corpus v3). Căn cứ và lưu ý: 12 ngày (điểm a khoản 1 Điều 113) cộng 02 ngày thâm niên vì đủ 10 năm (Điều 114) = 14 ngày làm việc.",
+  "paraphrase_of": null,
+  "source_question_id": "cq14"
+ },
+ {
+  "text": "Đi nghỉ phép năm mà chưa tới ngày lãnh lương thì có được ứng trước tiền lương không, ứng tối thiểu bao nhiêu?",
+  "question_type": "synthesis",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-vii/section-2/article-113/clause-5",
+   "45-2019-qh14/chapter-vi/article-101/clause-3"
+  ],
+  "rationale": "Đề xuất của model (rà soát 2026-11-15 trên corpus v3), không phải nhãn người. Độ tin cậy: cao. Ngày áp dụng: 2026-11-11 (câu không ghi ngày nên dùng ngày khóa corpus v3). Căn cứ và lưu ý: Được tạm ứng ít nhất bằng tiền lương của những ngày nghỉ (khoản 5 Điều 113 dẫn tới khoản 3 Điều 101).",
+  "paraphrase_of": null,
+  "source_question_id": "cq15"
+ },
+ {
+  "text": "Nhân viên làm hỏng máy móc, công ty trừ lương để bồi thường thì có được không và mỗi tháng được trừ tối đa bao nhiêu?",
+  "question_type": "synthesis",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-viii/section-2/article-129/clause-1",
+   "45-2019-qh14/chapter-vi/article-102/clause-1",
+   "45-2019-qh14/chapter-vi/article-102/clause-3"
+  ],
+  "rationale": "Đề xuất của model (rà soát 2026-11-15 trên corpus v3), không phải nhãn người. Độ tin cậy: cao. Ngày áp dụng: 2026-11-11 (câu không ghi ngày nên dùng ngày khóa corpus v3). Căn cứ và lưu ý: Được khấu trừ lương để bồi thường hư hỏng thiết bị (khoản 1 Điều 102, khoản 1 Điều 129), tối đa 30% lương thực trả hằng tháng sau khi trích nộp bảo hiểm, thuế (khoản 3 Điều 102).",
+  "paraphrase_of": null,
+  "source_question_id": "cq16"
+ },
+ {
+  "text": "Nhân viên đang mang thai vi phạm nội quy thì có bị xử lý kỷ luật ngay không, và sau khi nghỉ thai sản xong thì thời hiệu xử lý được tính thế nào?",
+  "question_type": "synthesis",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-viii/section-1/article-122/clause-4/point-d",
+   "45-2019-qh14/chapter-viii/section-1/article-123/clause-2",
+   "45-2019-qh14/chapter-viii/section-1/article-123/clause-1"
+  ],
+  "rationale": "Đề xuất của model (rà soát 2026-11-15 trên corpus v3), không phải nhãn người. Độ tin cậy: cao. Ngày áp dụng: 2026-11-11 (câu không ghi ngày nên dùng ngày khóa corpus v3). Căn cứ và lưu ý: Không xử lý kỷ luật khi đang mang thai, nghỉ thai sản, nuôi con dưới 12 tháng (điểm d khoản 4 Điều 122); hết thời gian đó được kéo dài thời hiệu tối đa 60 ngày (khoản 2 Điều 123), thời hiệu gốc ở khoản 1 Điều 123.",
+  "paraphrase_of": null,
+  "source_question_id": "cq17"
+ },
+ {
+  "text": "Nếu tòa kết luận công ty đuổi việc sai luật mà người lao động không muốn trở lại làm việc thì doanh nghiệp phải chi trả những khoản nào?",
+  "question_type": "synthesis",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-iii/section-3/article-41/clause-1",
+   "45-2019-qh14/chapter-iii/section-3/article-41/clause-2",
+   "45-2019-qh14/chapter-iii/section-3/article-46/clause-1"
+  ],
+  "rationale": "Đề xuất của model (rà soát 2026-11-15 trên corpus v3), không phải nhãn người. Độ tin cậy: vừa. Ngày áp dụng: 2026-11-11 (câu không ghi ngày nên dùng ngày khóa corpus v3). Căn cứ và lưu ý: Cùng nội dung cq10.",
+  "paraphrase_of": 10,
+  "source_question_id": "cq18"
+ },
+ {
+  "text": "Làm cho một công ty liên tục hơn 10 năm trong điều kiện bình thường thì số ngày phép năm tăng lên thành bao nhiêu?",
+  "question_type": "synthesis",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-vii/section-2/article-113/clause-1/point-a",
+   "45-2019-qh14/chapter-vii/section-2/article-114"
+  ],
+  "rationale": "Đề xuất của model (rà soát 2026-11-15 trên corpus v3), không phải nhãn người. Độ tin cậy: cao. Ngày áp dụng: 2026-11-11 (câu không ghi ngày nên dùng ngày khóa corpus v3). Căn cứ và lưu ý: Cùng nội dung cq14.",
+  "paraphrase_of": 14,
+  "source_question_id": "cq19"
+ },
+ {
+  "text": "Công ty muốn sa thải một nhân viên nữ đang mang thai vì tự ý nghỉ 5 ngày trong tháng mà không có lý do. Có làm được không, nếu được thì khi nào và phải họp kỷ luật theo thủ tục gì?",
+  "question_type": "synthesis",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-viii/section-1/article-125/clause-4",
+   "45-2019-qh14/chapter-viii/section-1/article-122/clause-4/point-d",
+   "45-2019-qh14/chapter-viii/section-1/article-123/clause-2",
+   "145-2020-nd-cp/chapter-viii/article-70/clause-2/point-a",
+   "45-2019-qh14/chapter-viii/section-1/article-123/clause-1",
+   "45-2019-qh14/chapter-viii/section-1/article-122/clause-1/point-b",
+   "45-2019-qh14/chapter-viii/section-1/article-122/clause-1/point-c"
+  ],
+  "rationale": "Đề xuất của model (rà soát 2026-11-15 trên corpus v3), không phải nhãn người. Độ tin cậy: vừa. Ngày áp dụng: 2026-11-11 (câu không ghi ngày nên dùng ngày khóa corpus v3). Căn cứ và lưu ý: 5 ngày cộng dồn trong 30 ngày là căn cứ sa thải (khoản 4 Điều 125) nhưng không được xử lý khi đang mang thai, nghỉ thai sản, nuôi con dưới 12 tháng (điểm d khoản 4 Điều 122); xử lý sau đó trong thời hiệu (khoản 1, khoản 2 Điều 123); họp: thông báo 05 ngày làm việc (điểm a khoản 2 Điều 70 NĐ 145) tới các thành phần bắt buộc (điểm b, c khoản 1 Điều 122). Người gán có thể thêm điểm b, c khoản 2 và khoản 3 Điều 70 NĐ 145 nếu muốn trọn quy trình họp.",
+  "paraphrase_of": null,
+  "source_question_id": "cq20"
+ },
+ {
+  "text": "Nhân viên làm hợp đồng không thời hạn được 3 năm muốn nghỉ việc: phải báo trước bao lâu, có được trợ cấp thôi việc không, và công ty phải thanh toán hết các khoản trong bao lâu?",
+  "question_type": "synthesis",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-iii/section-3/article-35/clause-1/point-a",
+   "45-2019-qh14/chapter-iii/section-3/article-46/clause-1",
+   "45-2019-qh14/chapter-iii/section-3/article-48/clause-1",
+   "45-2019-qh14/chapter-iii/section-3/article-34/clause-9",
+   "45-2019-qh14/chapter-iii/section-3/article-46/clause-2",
+   "145-2020-nd-cp/chapter-iii/section-2/article-8/clause-1",
+   "145-2020-nd-cp/chapter-iii/section-2/article-8/clause-3",
+   "74-2025-qh15/chapter-vii/section-2/article-35/clause-3"
+  ],
+  "rationale": "Đề xuất của model (rà soát 2026-11-15 trên corpus v3), không phải nhãn người. Độ tin cậy: vừa. Ngày áp dụng: 2026-11-11 (câu không ghi ngày nên dùng ngày khóa corpus v3). Căn cứ và lưu ý: Báo trước ít nhất 45 ngày (điểm a khoản 1 Điều 35); nghỉ đúng luật là khoản 9 Điều 34, thuộc các trường hợp được trợ cấp thôi việc (khoản 1 Điều 46, nhắc lại ở khoản 1 Điều 8 NĐ 145), nhưng thời gian đã đóng bảo hiểm thất nghiệp bị trừ (khoản 2 Điều 46, khoản 3 Điều 8 NĐ 145, khoản 3 Điều 35 Luật Việc làm 2025), nên nếu cả 3 năm đều đóng bảo hiểm thất nghiệp thì có thể không còn thời gian tính trợ cấp; thanh toán trong 14 ngày làm việc, tối đa 30 ngày trong các trường hợp liệt kê (khoản 1 Điều 48).",
+  "paraphrase_of": null,
+  "source_question_id": "cq21"
+ },
+ {
+  "text": "Công ty thay đổi công nghệ nên phải cắt giảm 20 người: công ty phải làm gì trước khi cho nghỉ, và người bị cho nghỉ được trợ cấp bao nhiêu?",
+  "question_type": "synthesis",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-iii/section-3/article-42/clause-3",
+   "45-2019-qh14/chapter-iii/section-3/article-47/clause-1",
+   "145-2020-nd-cp/chapter-iii/section-2/article-8/clause-2",
+   "45-2019-qh14/chapter-iii/section-3/article-42/clause-6",
+   "45-2019-qh14/chapter-iii/section-3/article-42/clause-5",
+   "45-2019-qh14/chapter-iii/section-3/article-44/clause-2",
+   "45-2019-qh14/chapter-iii/section-3/article-47/clause-2",
+   "145-2020-nd-cp/chapter-iii/section-2/article-8/clause-3",
+   "74-2025-qh15/chapter-vii/section-2/article-35/clause-3"
+  ],
+  "rationale": "Đề xuất của model (rà soát 2026-11-15 trên corpus v3), không phải nhãn người. Độ tin cậy: vừa. Ngày áp dụng: 2026-11-11 (câu không ghi ngày nên dùng ngày khóa corpus v3). Căn cứ và lưu ý: Trước khi cho nghỉ: xây dựng phương án sử dụng lao động (khoản 3 Điều 42), trao đổi ý kiến tổ chức đại diện và công khai phương án (khoản 2 Điều 44), trao đổi ý kiến và thông báo trước 30 ngày cho UBND cấp tỉnh và người lao động (khoản 6 Điều 42). Trợ cấp mất việc làm: mỗi năm 01 tháng lương, ít nhất 02 tháng (khoản 1 Điều 47, khoản 2 Điều 8 NĐ 145); số năm tính sau khi trừ thời gian đóng bảo hiểm thất nghiệp (khoản 2 Điều 47, khoản 3 Điều 8 NĐ 145, khoản 3 Điều 35 Luật Việc làm 2025). Người gán nên xem: ba đơn vị về thời gian tính trợ cấp là đề xuất mới, có thể bỏ nếu cho rằng câu chỉ hỏi mức trợ cấp theo năm; lương tính trợ cấp (khoản 3 Điều 47) không thêm vì câu không hỏi.",
+  "paraphrase_of": null,
+  "source_question_id": "cq22"
+ },
+ {
+  "text": "Nhân viên bị nghi trộm tài sản công ty, công ty muốn cho nghỉ ở nhà để điều tra rồi mới sa thải: được tạm đình chỉ bao lâu và lương trong thời gian đó trả thế nào?",
+  "question_type": "synthesis",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-viii/section-1/article-128/clause-1",
+   "45-2019-qh14/chapter-viii/section-1/article-128/clause-2",
+   "45-2019-qh14/chapter-viii/section-1/article-125/clause-1",
+   "45-2019-qh14/chapter-viii/section-1/article-128/clause-3",
+   "45-2019-qh14/chapter-viii/section-1/article-128/clause-4"
+  ],
+  "rationale": "Đề xuất của model (rà soát 2026-11-15 trên corpus v3), không phải nhãn người. Độ tin cậy: cao. Ngày áp dụng: 2026-11-11 (câu không ghi ngày nên dùng ngày khóa corpus v3). Căn cứ và lưu ý: Tạm đình chỉ sau khi tham khảo tổ chức đại diện (khoản 1 Điều 128), tối đa 15 ngày, đặc biệt 90 ngày, tạm ứng 50% lương (khoản 2 Điều 128); khoản lương sau đó theo khoản 3, khoản 4 Điều 128; trộm cắp là căn cứ sa thải (khoản 1 Điều 125).",
+  "paraphrase_of": null,
+  "source_question_id": "cq23"
+ },
+ {
+  "text": "Công ty trả lương thử việc 80% và bắt thử việc 90 ngày cho vị trí kỹ sư tốt nghiệp đại học: sai ở chỗ nào và có thể bị phạt bao nhiêu?",
+  "question_type": "synthesis",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-iii/section-1/article-26",
+   "45-2019-qh14/chapter-iii/section-1/article-25/clause-2",
+   "283-2026-nd-cp/chapter-ii/section-2/article-16/clause-2/point-b",
+   "283-2026-nd-cp/chapter-ii/section-2/article-16/clause-2/point-c",
+   "283-2026-nd-cp/chapter-i/article-7/clause-1",
+   "283-2026-nd-cp/chapter-i/article-7/clause-2/point-b"
+  ],
+  "rationale": "Đề xuất của model (rà soát 2026-11-15 trên corpus v3), không phải nhãn người. Độ tin cậy: vừa. Ngày áp dụng: 2026-11-11 (câu không ghi ngày nên dùng ngày khóa corpus v3). Lỗi thời và được thay: điểm b khoản 2 Điều 10, Nghị định số 12/2022/NĐ-CP -> điểm b khoản 2 Điều 16, Nghị định số 283/2026/NĐ-CP; điểm c khoản 2 Điều 10, Nghị định số 12/2022/NĐ-CP -> điểm c khoản 2 Điều 16, Nghị định số 283/2026/NĐ-CP; khoản 1 Điều 6, Nghị định số 12/2022/NĐ-CP -> khoản 1 Điều 7, Nghị định số 283/2026/NĐ-CP. Căn cứ và lưu ý: Thử việc kỹ sư (trình độ đại học, từ cao đẳng trở lên) tối đa 60 ngày (khoản 2 Điều 25), lương thử việc ít nhất 85% (Điều 26). Tại 2026-11-11 áp dụng NĐ 283/2026: phạt 2-5 triệu đồng (câu dẫn khoản 2 Điều 16, đi kèm điểm b, c) là mức với cá nhân; công ty là doanh nghiệp nên bị phạt gấp 02 lần, 4-10 triệu đồng (khoản 1 và điểm b khoản 2 Điều 7). Biện pháp khắc phục (điểm a khoản 3 Điều 16) không thêm vì câu chỉ hỏi phạt bao nhiêu. Người gán nên xem: có cần giữ cả khoản 1 lẫn điểm b khoản 2 Điều 7 hay chỉ một.",
+  "paraphrase_of": null,
+  "source_question_id": "cq24"
+ },
+ {
+  "text": "Doanh nghiệp ở vùng I trả lương tháng cho 15 công nhân làm việc giản đơn thấp hơn lương tối thiểu vùng thì bị xử lý thế nào, và mức tối thiểu đó áp theo địa bàn nào?",
+  "question_type": "synthesis",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "293-2025-nd-cp/article-3/clause-1",
+   "293-2025-nd-cp/article-3/clause-3/point-a",
+   "283-2026-nd-cp/chapter-ii/section-2/article-23/clause-3/point-b",
+   "283-2026-nd-cp/chapter-ii/section-2/article-23/clause-5/point-a",
+   "283-2026-nd-cp/chapter-i/article-7/clause-1",
+   "283-2026-nd-cp/chapter-i/article-7/clause-2/point-b"
+  ],
+  "rationale": "Đề xuất của model (rà soát 2026-11-15 trên corpus v3), không phải nhãn người. Độ tin cậy: vừa. Ngày áp dụng: 2026-11-11 (câu không ghi ngày nên dùng ngày khóa corpus v3). Lỗi thời và được thay: điểm b khoản 3 Điều 17, Nghị định số 12/2022/NĐ-CP -> điểm b khoản 3 Điều 23, Nghị định số 283/2026/NĐ-CP; điểm a khoản 5 Điều 17, Nghị định số 12/2022/NĐ-CP -> điểm a khoản 5 Điều 23, Nghị định số 283/2026/NĐ-CP; khoản 1 Điều 6, Nghị định số 12/2022/NĐ-CP -> khoản 1 Điều 7, Nghị định số 283/2026/NĐ-CP. Căn cứ và lưu ý: Tại 2026-11-11 áp dụng NĐ 283/2026: 15 người thuộc điểm b khoản 3 Điều 23 (30-50 triệu đồng với cá nhân), doanh nghiệp bị phạt gấp 02 lần (khoản 1, điểm b khoản 2 Điều 7), kèm buộc trả đủ lương cộng tiền lãi (điểm a khoản 5 Điều 23). Mức tối thiểu vùng I (khoản 1 Điều 3 NĐ 293/2025) áp theo nơi hoạt động của người sử dụng lao động (điểm a khoản 3 Điều 3). Không thêm khoản 2 Điều 90 BLLĐ và khoản 1 Điều 4 NĐ 293/2025 (cùng quy tắc lương không được thấp hơn mức tối thiểu) vì khung phạt đã nêu hành vi; người gán có thể thêm nếu muốn nhãn có căn cứ cấm.",
+  "paraphrase_of": null,
+  "source_question_id": "cq25"
+ },
+ {
+  "text": "Công ty chậm lương 2 tháng vì khó khăn: nhân viên có được nghỉ ngay mà không cần báo trước không, công ty phải trả thêm gì và có bị phạt không?",
+  "question_type": "synthesis",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-iii/section-3/article-35/clause-2/point-b",
+   "45-2019-qh14/chapter-vi/article-97/clause-4",
+   "283-2026-nd-cp/chapter-ii/section-2/article-23/clause-2",
+   "283-2026-nd-cp/chapter-ii/section-2/article-23/clause-5/point-a",
+   "283-2026-nd-cp/chapter-i/article-7/clause-1",
+   "283-2026-nd-cp/chapter-i/article-7/clause-2/point-b"
+  ],
+  "rationale": "Đề xuất của model (rà soát 2026-11-15 trên corpus v3), không phải nhãn người. Độ tin cậy: vừa. Ngày áp dụng: 2026-11-11 (câu không ghi ngày nên dùng ngày khóa corpus v3). Lỗi thời và được thay: khoản 2 Điều 17, Nghị định số 12/2022/NĐ-CP -> khoản 2 Điều 23, Nghị định số 283/2026/NĐ-CP; điểm a khoản 5 Điều 17, Nghị định số 12/2022/NĐ-CP -> điểm a khoản 5 Điều 23, Nghị định số 283/2026/NĐ-CP. Căn cứ và lưu ý: Chậm lương 2 tháng vượt mức 30 ngày của khoản 4 Điều 97 nên người lao động được nghỉ không cần báo trước (điểm b khoản 2 Điều 35); công ty phải đền bù tiền lãi khi chậm từ 15 ngày (khoản 4 Điều 97) và bị buộc trả đủ lương cộng tiền lãi (điểm a khoản 5 Điều 23 NĐ 283/2026). Phạt theo khoản 2 Điều 23 NĐ 283/2026, mức tùy số người bị vi phạm (câu hỏi không nêu nên giữ khoản); công ty bị phạt gấp 02 lần (khoản 1, điểm b khoản 2 Điều 7). Người gán nên xem: 'khó khăn' có phải bất khả kháng theo khoản 4 Điều 97 không là suy luận; dù có thì 2 tháng vẫn quá 30 ngày.",
+  "paraphrase_of": null,
+  "source_question_id": "cq26"
+ },
+ {
+  "text": "Nhân viên làm mất laptop công ty giao, nửa năm sau công ty mới đòi bồi thường: còn trong thời hiệu không, và nếu trừ vào lương thì trừ thế nào?",
+  "question_type": "synthesis",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-viii/section-2/article-129/clause-2",
+   "145-2020-nd-cp/chapter-viii/article-72/clause-1",
+   "45-2019-qh14/chapter-vi/article-102/clause-1",
+   "45-2019-qh14/chapter-vi/article-102/clause-3"
+  ],
+  "rationale": "Đề xuất của model (rà soát 2026-11-15 trên corpus v3), không phải nhãn người. Độ tin cậy: vừa. Ngày áp dụng: 2026-11-11 (câu không ghi ngày nên dùng ngày khóa corpus v3). Căn cứ và lưu ý: Thời hiệu xử lý bồi thường 06 tháng kể từ ngày làm mất (khoản 1 Điều 72 NĐ 145): 'nửa năm sau' là sát hạn, cần ngày cụ thể. Bồi thường khi làm mất tài sản (khoản 2 Điều 129). Khoản 1 Điều 102 chỉ nêu khấu trừ cho hư hỏng; áp dụng cho làm mất tài sản là suy luận, người gán nên xem lại.",
+  "paraphrase_of": null,
+  "source_question_id": "cq27"
+ },
+ {
+  "text": "Lao động nữ có thai bỏ việc 5 ngày cộng dồn trong vòng 30 ngày, doanh nghiệp có kỷ luật sa thải ngay được không hay phải chờ, và cuộc họp kỷ luật cần chuẩn bị thế nào?",
+  "question_type": "synthesis",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-viii/section-1/article-125/clause-4",
+   "45-2019-qh14/chapter-viii/section-1/article-122/clause-4/point-d",
+   "45-2019-qh14/chapter-viii/section-1/article-123/clause-2",
+   "145-2020-nd-cp/chapter-viii/article-70/clause-2/point-a",
+   "45-2019-qh14/chapter-viii/section-1/article-123/clause-1",
+   "45-2019-qh14/chapter-viii/section-1/article-122/clause-1/point-b",
+   "45-2019-qh14/chapter-viii/section-1/article-122/clause-1/point-c"
+  ],
+  "rationale": "Đề xuất của model (rà soát 2026-11-15 trên corpus v3), không phải nhãn người. Độ tin cậy: vừa. Ngày áp dụng: 2026-11-11 (câu không ghi ngày nên dùng ngày khóa corpus v3). Căn cứ và lưu ý: Cùng nội dung cq20; 'chuẩn bị cuộc họp' gồm thông báo 05 ngày làm việc tới các thành phần tại điểm b, c khoản 1 Điều 122.",
+  "paraphrase_of": 20,
+  "source_question_id": "cq28"
+ },
+ {
+  "text": "Nhân viên hợp đồng vô thời hạn làm 3 năm xin nghỉ: cần báo trước bao nhiêu ngày, được nhận trợ cấp gì và công ty phải trả hết tiền trong thời hạn nào?",
+  "question_type": "synthesis",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-iii/section-3/article-35/clause-1/point-a",
+   "45-2019-qh14/chapter-iii/section-3/article-46/clause-1",
+   "45-2019-qh14/chapter-iii/section-3/article-48/clause-1",
+   "45-2019-qh14/chapter-iii/section-3/article-34/clause-9",
+   "45-2019-qh14/chapter-iii/section-3/article-46/clause-2",
+   "145-2020-nd-cp/chapter-iii/section-2/article-8/clause-1",
+   "145-2020-nd-cp/chapter-iii/section-2/article-8/clause-3",
+   "74-2025-qh15/chapter-vii/section-2/article-35/clause-3"
+  ],
+  "rationale": "Đề xuất của model (rà soát 2026-11-15 trên corpus v3), không phải nhãn người. Độ tin cậy: vừa. Ngày áp dụng: 2026-11-11 (câu không ghi ngày nên dùng ngày khóa corpus v3). Căn cứ và lưu ý: Cùng nội dung cq21: báo trước 45 ngày; được trợ cấp thôi việc theo khoản 1 Điều 46 (nhắc lại ở khoản 1 Điều 8 NĐ 145) sau khi trừ thời gian đóng bảo hiểm thất nghiệp (khoản 2 Điều 46, khoản 3 Điều 8 NĐ 145, khoản 3 Điều 35 Luật Việc làm 2025); thanh toán trong 14 ngày làm việc (khoản 1 Điều 48).",
+  "paraphrase_of": 21,
+  "source_question_id": "cq29"
+ }
+]

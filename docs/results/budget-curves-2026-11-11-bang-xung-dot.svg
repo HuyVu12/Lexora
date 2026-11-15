@@ -1,0 +1,70 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="640" height="360" viewBox="0 0 640 360" font-family="Segoe UI, Arial, sans-serif" font-size="12">
+<rect width="640" height="360" fill="#ffffff"/>
+<text x="56" y="22" font-size="14" font-weight="600" fill="#222">Bộ xung đột (25 câu)</text>
+<line x1="56" x2="490" y1="316.0" y2="316.0" stroke="#e3e3e3"/>
+<text x="48" y="320.0" text-anchor="end" fill="#555">0,0</text>
+<line x1="56" x2="490" y1="260.0" y2="260.0" stroke="#e3e3e3"/>
+<text x="48" y="264.0" text-anchor="end" fill="#555">0,2</text>
+<line x1="56" x2="490" y1="204.0" y2="204.0" stroke="#e3e3e3"/>
+<text x="48" y="208.0" text-anchor="end" fill="#555">0,4</text>
+<line x1="56" x2="490" y1="148.0" y2="148.0" stroke="#e3e3e3"/>
+<text x="48" y="152.0" text-anchor="end" fill="#555">0,6</text>
+<line x1="56" x2="490" y1="92.0" y2="92.0" stroke="#e3e3e3"/>
+<text x="48" y="96.0" text-anchor="end" fill="#555">0,8</text>
+<line x1="56" x2="490" y1="36.0" y2="36.0" stroke="#e3e3e3"/>
+<text x="48" y="40.0" text-anchor="end" fill="#555">1,0</text>
+<text x="56.0" y="334" text-anchor="middle" fill="#555">250</text>
+<text x="118.0" y="334" text-anchor="middle" fill="#555">500</text>
+<text x="180.0" y="334" text-anchor="middle" fill="#555">1.000</text>
+<text x="242.0" y="334" text-anchor="middle" fill="#555">1.500</text>
+<text x="304.0" y="334" text-anchor="middle" fill="#555">2.000</text>
+<text x="366.0" y="334" text-anchor="middle" fill="#555">3.000</text>
+<text x="428.0" y="334" text-anchor="middle" fill="#555">4.000</text>
+<text x="490.0" y="334" text-anchor="middle" fill="#555">6.000</text>
+<text x="273.0" y="352" text-anchor="middle" fill="#333">Ngân sách ngữ cảnh (token âm tiết)</text>
+<text x="14" y="176.0" transform="rotate(-90 14 176.0)" text-anchor="middle" fill="#333">Recall trung bình</text>
+<polyline fill="none" stroke="#1f5fa8" stroke-width="2" points="56.0,263.9 118.0,263.9 180.0,234.8 242.0,205.7 304.0,185.5 366.0,165.4 428.0,150.8 490.0,137.4"/>
+<circle cx="56.0" cy="263.9" r="3" fill="#1f5fa8"/>
+<circle cx="118.0" cy="263.9" r="3" fill="#1f5fa8"/>
+<circle cx="180.0" cy="234.8" r="3" fill="#1f5fa8"/>
+<circle cx="242.0" cy="205.7" r="3" fill="#1f5fa8"/>
+<circle cx="304.0" cy="185.5" r="3" fill="#1f5fa8"/>
+<circle cx="366.0" cy="165.4" r="3" fill="#1f5fa8"/>
+<circle cx="428.0" cy="150.8" r="3" fill="#1f5fa8"/>
+<circle cx="490.0" cy="137.4" r="3" fill="#1f5fa8"/>
+<line x1="506" x2="526" y1="50" y2="50" stroke="#1f5fa8" stroke-width="2"/>
+<text x="532" y="54" fill="#222">ĐK1</text>
+<polyline fill="none" stroke="#c4572a" stroke-width="2" points="56.0,280.2 118.0,256.6 180.0,217.4 242.0,206.2 304.0,194.5 366.0,171.5 428.0,153.6 490.0,141.8"/>
+<circle cx="56.0" cy="280.2" r="3" fill="#c4572a"/>
+<circle cx="118.0" cy="256.6" r="3" fill="#c4572a"/>
+<circle cx="180.0" cy="217.4" r="3" fill="#c4572a"/>
+<circle cx="242.0" cy="206.2" r="3" fill="#c4572a"/>
+<circle cx="304.0" cy="194.5" r="3" fill="#c4572a"/>
+<circle cx="366.0" cy="171.5" r="3" fill="#c4572a"/>
+<circle cx="428.0" cy="153.6" r="3" fill="#c4572a"/>
+<circle cx="490.0" cy="141.8" r="3" fill="#c4572a"/>
+<line x1="506" x2="526" y1="68" y2="68" stroke="#c4572a" stroke-width="2"/>
+<text x="532" y="72" fill="#222">ĐK2</text>
+<polyline fill="none" stroke="#2f8a4f" stroke-width="2" points="56.0,284.6 118.0,258.9 180.0,242.1 242.0,219.1 304.0,196.7 366.0,171.0 428.0,159.2 490.0,143.5"/>
+<circle cx="56.0" cy="284.6" r="3" fill="#2f8a4f"/>
+<circle cx="118.0" cy="258.9" r="3" fill="#2f8a4f"/>
+<circle cx="180.0" cy="242.1" r="3" fill="#2f8a4f"/>
+<circle cx="242.0" cy="219.1" r="3" fill="#2f8a4f"/>
+<circle cx="304.0" cy="196.7" r="3" fill="#2f8a4f"/>
+<circle cx="366.0" cy="171.0" r="3" fill="#2f8a4f"/>
+<circle cx="428.0" cy="159.2" r="3" fill="#2f8a4f"/>
+<circle cx="490.0" cy="143.5" r="3" fill="#2f8a4f"/>
+<line x1="506" x2="526" y1="86" y2="86" stroke="#2f8a4f" stroke-width="2"/>
+<text x="532" y="90" fill="#222">ĐK3</text>
+<polyline fill="none" stroke="#7b4fa0" stroke-width="2" points="56.0,284.6 118.0,256.6 180.0,242.1 242.0,216.9 304.0,194.5 366.0,171.0 428.0,161.4 490.0,143.5"/>
+<circle cx="56.0" cy="284.6" r="3" fill="#7b4fa0"/>
+<circle cx="118.0" cy="256.6" r="3" fill="#7b4fa0"/>
+<circle cx="180.0" cy="242.1" r="3" fill="#7b4fa0"/>
+<circle cx="242.0" cy="216.9" r="3" fill="#7b4fa0"/>
+<circle cx="304.0" cy="194.5" r="3" fill="#7b4fa0"/>
+<circle cx="366.0" cy="171.0" r="3" fill="#7b4fa0"/>
+<circle cx="428.0" cy="161.4" r="3" fill="#7b4fa0"/>
+<circle cx="490.0" cy="143.5" r="3" fill="#7b4fa0"/>
+<line x1="506" x2="526" y1="104" y2="104" stroke="#7b4fa0" stroke-width="2"/>
+<text x="532" y="108" fill="#222">ĐK4</text>
+</svg>

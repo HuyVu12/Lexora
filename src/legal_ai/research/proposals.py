@@ -7,10 +7,11 @@ as an enum, and the store drops anything outside the corpus version anyway. Prom
 """
 
 from pathlib import Path
+import re
 import threading
 
 from legal_ai.common.io import digest
-from legal_ai.indexing.records import structural_records
+from legal_ai.indexing.records import structural_records, unit_path
 from legal_ai.providers.claude_code import ProviderError
 from legal_ai.research.questions import QUESTION_TYPES, STATUSES
 from legal_ai.retrieval.bm25 import BM25, tokens
@@ -32,27 +33,63 @@ def _records(corpora, version_id):
         if version_id not in _cache:
             documents, units, texts = corpora.bundle(version_id)
             records = structural_records(documents, units, texts)
-            _cache[version_id] = (records, BM25([tokens(r["index_text"]) for r in records]), {u["unit_id"]: u for u in units})
+            titles = {d["document_id"]: {"document": short_title(d["title"]), "document_title": d["title"]} for d in documents}
+            _cache[version_id] = (records, BM25([tokens(r["index_text"]) for r in records]), {u["unit_id"]: u for u in units}, titles)
         return _cache[version_id]
+
+
+_DOCUMENT_NUMBER = re.compile(r"(.+?\bsố\s+\d+/\S+)")
+
+
+def short_title(title):
+    """The type and number a reader cites a document by: "Nghị định số 145/2020/NĐ-CP Quy định chi tiết ..." ->
+    "Nghị định số 145/2020/NĐ-CP". A title without a "số <number>" part is kept whole."""
+    match = _DOCUMENT_NUMBER.match(title.strip())
+    return match.group(1) if match else title.strip()
 
 
 def _path(record):
     return record["index_text"].split("\n", 2)[1]
 
 
+def _ref(unit, by_id, titles, text=None):
+    """A unit as the labelling form shows it: ID, document (short and full title), path, exact text and `order`
+    (its start in the document, so siblings can be listed in statute order)."""
+    return {"unit_id": unit["unit_id"], **titles[unit["document_id"]], "path": unit_path(unit, by_id)[0],
+            "text": unit["text"] if text is None else text, "order": unit["source_start"]}
+
+
+def _parents(unit, by_id, titles):
+    """Ancestors whose own text the leaf depends on, outermost first: every Clause or Point above it (a Clause with
+    Points holds the lead sentence, often the rule itself) and an Article only when it has text beyond its heading."""
+    chain = unit_path(unit, by_id)[1]
+    keep = [u for u in chain if u["unit_type"] in ("clause", "point")
+            or (u["unit_type"] == "article" and len([line for line in u["text"].splitlines() if line.strip()]) > 1)]
+    return [_ref(u, by_id, titles) for u in keep]
+
+
 def candidates(corpora, version_id, question, k=8):
-    """Up to `k` distinct leaf units for a question: unit ID, path and the exact text (split parts joined)."""
-    records, index, _ = _records(corpora, version_id)
+    """Up to `k` distinct leaf units for a question: unit ID, document, path, the exact text (split parts joined) and
+    the parent units it hangs under (`parents`), so an annotator can choose a Clause whose lead sentence carries the rule."""
+    records, index, by_id, titles = _records(corpora, version_id)
     found = {}
     for position, _score in index.rank(tokens(question)):
         record = records[position]
         unit_id = record["unit_ids"][0]
         if unit_id in found:
             continue
-        found[unit_id] = {"unit_id": unit_id, "path": _path(record), "text": "".join(r["text"] for r in records if r["unit_ids"] == [unit_id])}
+        text = "".join(r["text"] for r in records if r["unit_ids"] == [unit_id])
+        found[unit_id] = _ref(by_id[unit_id], by_id, titles, text) | {"parents": _parents(by_id[unit_id], by_id, titles)}
         if len(found) == k:
             break
     return list(found.values())
+
+
+def unit_refs(corpora, version_id, unit_ids):
+    """The given units of a frozen version, shaped like `candidates` rows (without parents), in the order asked;
+    IDs outside the version are skipped. Used for units chosen earlier that the current search does not show."""
+    _, _, by_id, titles = _records(corpora, version_id)
+    return [_ref(by_id[u], by_id, titles) for u in dict.fromkeys(unit_ids) if u in by_id]
 
 
 def _units_block(items):
@@ -99,7 +136,7 @@ def draft_questions(provider, store, set_id, unit_ids, count=4):
     if not 1 <= count <= MAX_DRAFTS:
         raise ValueError(f"Số câu nháp mỗi lần từ 1 đến {MAX_DRAFTS}")
     summary = store.summary(set_id)
-    records, _, units = _records(store.corpora, summary["corpus_version_id"])
+    records, _, units, _ = _records(store.corpora, summary["corpus_version_id"])
     chosen = [u for u in unit_ids if u in units]
     if not chosen or len(chosen) != len(unit_ids):
         raise ValueError("Chọn các đơn vị có trong phiên bản corpus của bộ câu hỏi")

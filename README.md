@@ -4,16 +4,16 @@
 Mọi khẳng định đều truy được về đúng câu trong văn bản gốc, kèm vị trí ký tự và mã băm SHA-256 của bản đã chuẩn hóa.
 Quy phạm do máy đề xuất chỉ được dùng sau khi người duyệt chấp nhận; Lexora không xác minh hiệu lực pháp luật và không phải tư vấn pháp lý.
 
-## Trạng thái (07/11/2026)
+## Trạng thái (16/11/2026)
 
 - Ứng dụng web chạy trên máy cục bộ (FastAPI + SvelteKit, song ngữ Việt/Anh) với ba vai trò: quản trị, người duyệt, người tra cứu.
 - Nhập văn bản vào kho tri thức: tìm trong danh mục 171.547 văn bản hoặc dán link vbpl.vn rồi chọn các Điều cần nhập; hoặc tải tệp TXT/HTML/DOCX/PDF có lớp chữ.
 - Tách quy phạm theo quy tắc, hoặc bằng AI (Opus 5.5 qua Claude Code) cho kho công khai; người duyệt duyệt từng quy phạm trên nguyên văn rồi công bố thành phiên bản mới của kho.
 - Hỏi đáp có dẫn nguồn trên 1-5 kho; sơ đồ tri thức trong app.
-- Nghiên cứu: corpus có phiên bản khóa bằng mã băm, chạy truy xuất ĐK1/ĐK2 với Recall@K, gán nhãn bộ câu hỏi bởi hai người độc lập rồi đối soát.
-- Chưa có: bộ câu hỏi thật, ĐK3/ĐK4, sinh và chấm câu trả lời theo giao thức.
+- Nghiên cứu: corpus có phiên bản khóa bằng mã băm; truy xuất, sinh và chấm câu trả lời cho ĐK1-ĐK4; lọc hiệu lực theo từng Khoản, Điểm; gán nhãn bộ câu hỏi và gold trích xuất bởi hai người rồi đối soát; kiểm định thống kê ghép cặp.
+- Chưa có: bộ câu hỏi và gold đã khóa bằng nhãn người, nên mọi số liệu hiện có chỉ là chạy thử trên nhãn nháp do model soạn; lượt chạy chính dự kiến 28/11 đến 02/12.
 
-Chi tiết tiến độ và việc tiếp theo: [progress-2026-11-07](docs/planning/progress-2026-11-07.md).
+Chi tiết tiến độ và việc tiếp theo: [progress-2026-11-16](docs/planning/progress-2026-11-16.md).
 
 ## Chạy ứng dụng
 
@@ -61,7 +61,7 @@ node scripts/check_app_browser.cjs http://127.0.0.1:<port> <thư mục ảnh>   
 
 | Tài liệu | Nội dung |
 |---|---|
-| [docs/planning/progress-2026-11-07.md](docs/planning/progress-2026-11-07.md) | Đã làm gì, việc tiếp theo |
+| [docs/planning/progress-2026-11-16.md](docs/planning/progress-2026-11-16.md) | Đã làm gì, việc tiếp theo |
 | [docs/decisions.md](docs/decisions.md) | Nhật ký quyết định |
 | [docs/architecture.md](docs/architecture.md) | Kiến trúc hiện tại |
 | [docs/features/README.md](docs/features/README.md) | Danh sách tính năng và tài liệu từng tính năng |

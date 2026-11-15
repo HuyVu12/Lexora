@@ -1,8 +1,9 @@
 """Cited answers for one retrieval run (`answer-run-v1`) and their automatic scores.
 
 For every question of a retrieval run, the top-K records (the same `top_k` for DK1-DK4) are packed into evidence
-blocks E01.. within a token budget, in rank order; a block shows the record's `index_text`, i.e. exactly what the
-condition retrieved (fixed chunk, structural unit with its path, or serialized claim). One structured model call
+blocks E01.. within a token budget, in rank order, by the retrieval run's `context_packing` (`indexing.packing`: flat
+P0, or grouped per Article P1/P2 with the shared header printed once); a block shows what the condition retrieved
+(fixed chunk, structural unit with its path, or the unit with its claims). One structured model call
 per question returns a status and statements that each cite block IDs; the schema lists only this question's IDs.
 
 Citation gate (the same for every condition): a statement without a citation is removed and counted; an
@@ -22,7 +23,7 @@ from pathlib import Path
 
 from legal_ai.common.io import canonical, digest, read_jsonl, write_json
 from legal_ai.evaluation.retrieval_run import adaptive_budget, check_adaptive
-from legal_ai.indexing.records import token_spans
+from legal_ai.indexing.packing import Packer, evidence_payload
 from legal_ai.providers.pilot import ProviderError
 
 RUN_VERSION = "answer-run-v1"
@@ -47,23 +48,35 @@ def schema(evidence_ids):
         "limitations": {"type": "array", "maxItems": 4, "items": {"type": "string", "maxLength": 500}}}}
 
 
-def pack(ranked, records, top_k, budget):
-    """Evidence blocks from the first `top_k` ranked records, skipping repeated text, within `budget` tokens.
-    The first block is always kept so a long record cannot leave the model with nothing."""
-    blocks, seen, used = [], set(), 0
-    for item in ranked[:top_k]:
-        record = records[item["record_id"]]
-        text = record.get("generator_text") or record["index_text"]  # What the generator reads (compact KB claims).
-        if text in seen:
-            continue
-        cost = len(token_spans(text))
-        if blocks and used + cost > budget:
-            break
-        seen.add(text)
-        used += cost
-        blocks.append({"id": f"E{len(blocks) + 1:02d}", "record_id": record["record_id"], "unit_ids": record["unit_ids"],
-                       "token_count": cost, "text": text})
-    return blocks
+def pack(ranked, records, top_k, budget, packer=None):
+    """Evidence blocks from the first `top_k` ranked records within `budget` tokens, packed by `packer`
+    (`indexing.packing`, the same function the retrieval run scores budgets with; flat P0 by default).
+    The first block is always kept so a long record cannot leave the model with nothing.
+
+    Returns the blocks; `pack_with_groups` also returns the Article groups and the total tokens."""
+    return pack_with_groups(ranked, records, top_k, budget, packer)[0]
+
+
+def pack_with_groups(ranked, records, top_k, budget, packer=None):
+    # A ranked item keeps the status note the validity filter gave it, as in the retrieval run's own packing.
+    shown = [records[item["record_id"]] | ({"status_note": item["status_note"]} if item.get("status_note") else {}) for item in ranked]
+    packed = (packer or Packer("P0")).pack(shown, budget, top_k)
+    blocks = [{"id": b["id"], "record_id": b["record"]["record_id"], "unit_ids": b["record"]["unit_ids"], "token_count": b["token_count"],
+               "text": b["text"], "group": b["group"], **({"sibling": True} if b["sibling"] else {})} for b in packed["blocks"]]
+    return blocks, packed
+
+
+def packer_for(retrieval, records):
+    """The packer of a retrieval run (its `context_packing`, P0 for runs made before packing existed), built from the
+    bundle the run pinned; the bundle must still hash to the run's inputs."""
+    mode = (retrieval.get("context_packing") or {}).get("mode", "P0")
+    if mode == "P0":
+        return Packer("P0")
+    paths = {name: Path(retrieval["inputs"][name]["path"]) for name in ("units", "documents")}
+    for name, path in paths.items():
+        if digest(path.read_bytes()) != retrieval["inputs"][name]["sha256"]:
+            raise ValueError(f"the bundle {name} changed since the retrieval run")
+    return Packer(mode, records, read_jsonl(paths["units"]), read_jsonl(paths["documents"]))
 
 
 def chain_edges(retrieval):
@@ -120,6 +133,10 @@ def run(retrieval_dir, questions_path, config_path, provider, output, *, split=N
     # Issues of a decomposed retrieval run go to the generator with the question, the same for every condition.
     edges = chain_edges(retrieval) if config.get("relations_in_context") else None
     record_list = list(records.values())
+    packer = packer_for(retrieval, record_list)
+    # P2 siblings pass the validity rule of the retrieval run at each question's date (`kb.validity.RecordFilter`).
+    from legal_ai.evaluation.retrieval_run import validity_of_run
+    rfilter = validity_of_run(retrieval, record_list) if packer.mode == "P2" else None
     issues = {}
     if retrieval.get("subqueries"):
         from legal_ai.evaluation.decompose import load
@@ -130,7 +147,9 @@ def run(retrieval_dir, questions_path, config_path, provider, output, *, split=N
                 "effort": getattr(provider, "effort", None), "prompt": config["prompt"],
                 "system_sha256": system_sha, "top_k": config["top_k"], "context_token_budget": config["context_token_budget"],
                 "token_counter": "lexora-syllable-v1",
-                **({"relations_in_context": retrieval["graph"]["version"]} if edges is not None else {})}
+                **({"relations_in_context": retrieval["graph"]["version"]} if edges is not None else {}),
+                # Recorded only when not flat, so runs made before packing existed still resume.
+                **({"context_packing": retrieval["context_packing"]} if packer.mode != "P0" else {})}
     manifest_path = output / "manifest.json"
     if manifest_path.exists():
         earlier = json.loads(manifest_path.read_text(encoding="utf-8"))
@@ -154,7 +173,10 @@ def run(retrieval_dir, questions_path, config_path, provider, output, *, split=N
             budget = config["context_token_budget"]
             if isinstance(budget, dict):  # Adaptive: grows with the shared decomposition's issue count, as in run-retrieval.
                 budget = adaptive_budget(check_adaptive(budget), len(issues.get(question["question_id"], [])))
-            blocks = pack(prediction["ranked"], records, config["top_k"], budget)
+            question_packer = packer
+            if rfilter is not None and rfilter.level == "unit":
+                question_packer = packer.bind(lambda record, day=prediction["validity"]["as_of"]: rfilter.admit_record(record, day))
+            blocks, packed = pack_with_groups(prediction["ranked"], records, config["top_k"], budget, question_packer)
             request = {"question": question["question"]}
             if issues.get(question["question_id"]):
                 request["issues"] = [i["issue"] for i in issues[question["question_id"]]]
@@ -164,10 +186,13 @@ def run(retrieval_dir, questions_path, config_path, provider, output, *, split=N
                 relations = block_relations(blocks, record_list, edges)
                 if relations:
                     request["relations"] = relation_lines(relations)
-            prompt = json.dumps(request | {"evidence": [{"id": b["id"], "text": b["text"]} for b in blocks]}, ensure_ascii=False)
+            prompt = json.dumps(request | {"evidence": evidence_payload(packed)}, ensure_ascii=False)
+            grouped = packer.mode != "P0"
             row = {"question_id": question["question_id"], "condition": manifest["condition"],
-                   "context": [{k: b[k] for k in ("id", "record_id", "unit_ids", "token_count")} for b in blocks],
-                   "context_tokens": sum(b["token_count"] for b in blocks), "context_token_budget": budget, "prompt_sha256": digest(prompt),
+                   "context": [{k: b[k] for k in ("id", "record_id", "unit_ids", "token_count", *(("group", "sibling") if grouped else ())) if k in b}
+                               for b in blocks],
+                   **({"context_groups": [{"header_tokens": g["header_tokens"]} for g in packed["groups"]]} if grouped else {}),
+                   "context_tokens": packed["tokens"], "context_token_budget": budget, "prompt_sha256": digest(prompt),
                    **({"relations": relations} if edges is not None else {})}
             try:
                 answer = provider.structured(system, prompt, schema(b["id"] for b in blocks), purpose="answer")
@@ -229,43 +254,143 @@ def latest_answers(path):
     return rows
 
 
-def score(answer_dir, questions_path):
-    """Automatic metrics of one answer run; writes and returns metrics.json."""
+def cites_stale(answer, stale_unit_ids):
+    """True when a statement of the answer cites a record overlapping a stale unit (the unit, a part or a whole of it)."""
+    cited = {u for s in answer.get("statements", []) for u in s["unit_ids"]}
+    return any(u == s or u.startswith(s + "/") or s.startswith(u + "/") for u in cited for s in stale_unit_ids)
+
+
+def verification_load(answers, records, units):
+    """What a reader pays to check the citations of the answered statements: cited tokens per statement, and the
+    share of citations that point at a single leaf unit (so the claim can be checked against one Clause or Point)."""
+    parents = {u["parent_id"] for u in units.values() if u.get("parent_id")}
+    leaves = {uid for uid in units if uid not in parents}
+    statements = cited_tokens = citations = single = 0
+    for answer in answers:
+        if answer.get("status") not in ANSWERED:
+            continue
+        blocks = {b["id"]: b for b in answer.get("context", [])}
+        headers = answer.get("context_groups")
+        for statement in answer.get("statements", []):
+            cited = [blocks[e] for e in statement["evidence_ids"] if e in blocks]
+            statements += 1
+            cited_tokens += sum(b["token_count"] for b in cited)
+            if headers:
+                cited_tokens += sum(headers[g]["header_tokens"] for g in {b["group"] for b in cited})
+            for block in cited:
+                citations += 1
+                record_units = (records.get(block["record_id"]) or {}).get("unit_ids", block["unit_ids"])
+                single += len([u for u in record_units if u in leaves]) == 1 if leaves else len(record_units) == 1
+    return {"cited_tokens_per_statement": cited_tokens / statements if statements else None,
+            "single_leaf_citation_rate": single / citations if citations else None, "citations": citations}
+
+
+def _joined(answer_dir, questions_path):
+    """The latest answers of a run joined with their questions, the records and units its retrieval run pinned, and
+    the IDs of answers whose question is not in the file (left out of every metric, so callers report them)."""
     answer_dir = Path(answer_dir)
     answers = latest_answers(answer_dir / "answers.jsonl")
     questions = {q["question_id"]: q for q in json.loads(Path(questions_path).read_text(encoding="utf-8"))["questions"]}
     rows = [(questions[qid], a) for qid, a in answers.items() if qid in questions]
-    ok = [(q, a) for q, a in rows if a.get("error") is None]
-    refuse = [(q, a) for q, a in ok if q.get("expected_status") == "refuse"]
-    answer = [(q, a) for q, a in ok if q.get("expected_status") == "answer"]
+    outside = sorted(qid for qid in answers if qid not in questions)
     manifest = json.loads((answer_dir / "manifest.json").read_text(encoding="utf-8"))
     retrieval = Path(manifest["retrieval_run"])
     records = {r["record_id"]: r for r in read_jsonl(retrieval / "records.jsonl")} if (retrieval / "records.jsonl").exists() else {}
     units_path = Path(json.loads((retrieval / "manifest.json").read_text(encoding="utf-8"))["inputs"]["units"]["path"]) if records else None
     units = {u["unit_id"]: u for u in read_jsonl(units_path)} if units_path and units_path.exists() else {}
-    precision, recall, chars = [], [], []
-    for q, a in answer:
-        gold = q.get("relevant_unit_ids") or []
-        cited = [s["unit_ids"] for s in a["statements"]]
-        if a["status"] in ANSWERED and gold and cited:
-            precision.append(sum(any(_covers(units, g) for g in gold) for units in cited) / len(cited))
-            recall.append(sum(any(_covers(units, g) for units in cited) for g in gold) / len(gold))
-            ids = {r for s in a["statements"] for r in s.get("record_ids", [])}
-            if units and ids <= records.keys() and all(g in units for g in gold):
-                chars.append(char_precision([records[r] for r in ids], [units[g] for g in gold]))
+    return rows, records, units, outside
+
+
+def _question_metrics(q, a, records, units):
+    """Automatic metrics of one successful answer; None where a metric does not apply to the question."""
+    refused = float(a["status"] in REFUSED)
+    row = {"answered": float(a["status"] in ANSWERED), "refused": refused,
+           "refusal_when_expected": refused if q.get("expected_status") == "refuse" else None,
+           "false_refusal": refused if q.get("expected_status") == "answer" else None,
+           "citation_gold_precision": None, "citation_gold_recall": None, "citation_gold_char_precision": None,
+           "statements": len(a["statements"]), "context_tokens": a["context_tokens"],
+           "uncited_statements_removed": a["gate"]["uncited_removed"], "downgraded_to_insufficient": float(a["gate"]["downgraded_to_insufficient"]),
+           "cost_usd": a.get("cost_usd") or 0,
+           # Validity questions: does an answer cite a unit that is outdated at the question's date (H3)?
+           "stale_citation": float(cites_stale(a, q["stale_unit_ids"])) if q.get("stale_unit_ids") else None,
+           # Supplementary: a cited unit of the wrong version, stale or not yet in force at the date (a past event).
+           "wrong_version_citation": (float(cites_stale(a, (q.get("stale_unit_ids") or []) + (q.get("not_yet_effective_unit_ids") or [])))
+                                      if q.get("stale_unit_ids") or q.get("not_yet_effective_unit_ids") else None)}
+    gold = q.get("relevant_unit_ids") or []
+    cited = [s["unit_ids"] for s in a["statements"]]
+    if q.get("expected_status") == "answer" and a["status"] in ANSWERED and gold and cited:
+        row["citation_gold_precision"] = sum(any(_covers(units, g) for g in gold) for units in cited) / len(cited)
+        row["citation_gold_recall"] = sum(any(_covers(units, g) for units in cited) for g in gold) / len(gold)
+        ids = {r for s in a["statements"] for r in s.get("record_ids", [])}
+        if units and ids <= records.keys() and all(g in units for g in gold):
+            row["citation_gold_char_precision"] = char_precision([records[r] for r in ids], [units[g] for g in gold])
+    return row
+
+
+ANSWER_METRICS = ("answered", "refused", "refusal_when_expected", "false_refusal", "citation_gold_precision", "citation_gold_recall",
+                  "citation_gold_char_precision", "statements", "context_tokens", "uncited_statements_removed",
+                  "downgraded_to_insufficient", "cost_usd", "stale_citation", "wrong_version_citation", "cited_tokens_per_statement",
+                  "single_leaf_citation_rate")
+
+
+def question_scores(answer_dir, questions_path):
+    """Per-question automatic metrics of one answer run, for paired statistics; reads only, writes nothing.
+
+    {question_id: {"expected_status", "status", "error", <ANSWER_METRICS>}}: a failed answer keeps its error code and
+    has every metric None. The verification load is the answer's own (cited tokens over its statements), so its mean
+    over questions differs from `score`'s, which pools all statements of the run. Answers to questions outside the file
+    are not in the result; `answers_not_in_questions` lists them."""
+    rows, records, units, _ = _joined(answer_dir, questions_path)
+    result = {}
+    for q, a in rows:
+        base = {"expected_status": q.get("expected_status"), "status": a.get("status"), "error": a.get("error")}
+        if a.get("error") is not None:
+            result[q["question_id"]] = base | dict.fromkeys(ANSWER_METRICS)
+            continue
+        load = verification_load([a], records, units)
+        result[q["question_id"]] = base | _question_metrics(q, a, records, units) | {
+            "cited_tokens_per_statement": load["cited_tokens_per_statement"], "single_leaf_citation_rate": load["single_leaf_citation_rate"]}
+    return result
+
+
+def answers_not_in_questions(answer_dir, questions_path):
+    """IDs of the run's answers whose question is not in the question file."""
+    questions = {q["question_id"] for q in json.loads(Path(questions_path).read_text(encoding="utf-8"))["questions"]}
+    return sorted(qid for qid in latest_answers(Path(answer_dir) / "answers.jsonl") if qid not in questions)
+
+
+def score(answer_dir, questions_path):
+    """Automatic metrics of one answer run; writes and returns metrics.json (`question_scores` gives them per question).
+    Failed answers count in `errors`; answers to questions outside the file in `answers_not_in_questions`."""
+    answer_dir = Path(answer_dir)
+    rows, records, units, outside = _joined(answer_dir, questions_path)
+    ok = [(q, a) for q, a in rows if a.get("error") is None]
+    scored = [_question_metrics(q, a, records, units) for q, a in ok]
+    values = lambda name: [row[name] for row in scored if row[name] is not None]
     mean = lambda values: sum(values) / len(values) if values else None
+    load = verification_load([a for _, a in ok], records, units)
+    if values("stale_citation"):
+        load |= {"stale_citation_rate": mean(values("stale_citation")), "questions_with_stale_units": len(values("stale_citation"))}
+    if values("wrong_version_citation"):
+        load |= {"wrong_version_citation_rate": mean(values("wrong_version_citation")),
+                 "questions_with_wrong_version_units": len(values("wrong_version_citation"))}
     metrics = {
         "run_version": RUN_VERSION, "questions": len(rows), "errors": len(rows) - len(ok),
-        "refusal_rate_when_expected": mean([a["status"] in REFUSED for _, a in refuse]), "expected_refusals": len(refuse),
-        "false_refusal_rate": mean([a["status"] in REFUSED for _, a in answer]), "expected_answers": len(answer),
-        "answered_rate": mean([a["status"] in ANSWERED for _, a in ok]),
-        "citation_gold_precision": mean(precision), "citation_gold_recall": mean(recall), "citation_scored_answers": len(precision),
-        "citation_gold_char_precision": mean([c for c in chars if c is not None]),
+        "answers_not_in_questions": len(outside), "answers_not_in_questions_ids": outside,
+        "refusal_rate_when_expected": mean(values("refusal_when_expected")), "expected_refusals": len(values("refusal_when_expected")),
+        "false_refusal_rate": mean(values("false_refusal")), "expected_answers": len(values("false_refusal")),
+        "answered_rate": mean(values("answered")),
+        "citation_gold_precision": mean(values("citation_gold_precision")), "citation_gold_recall": mean(values("citation_gold_recall")),
+        "citation_scored_answers": len(values("citation_gold_precision")),
+        "citation_gold_char_precision": mean(values("citation_gold_char_precision")),
         "uncited_statements_removed": sum(a["gate"]["uncited_removed"] for _, a in ok),
         "downgraded_to_insufficient": sum(a["gate"]["downgraded_to_insufficient"] for _, a in ok),
         "mean_statements": mean([len(a["statements"]) for _, a in ok]), "mean_context_tokens": mean([a["context_tokens"] for _, a in ok]),
         "cost_usd": round(sum(a.get("cost_usd") or 0 for _, a in ok), 4),
-        "notes": ["citation_gold_* compares cited records with gold units; it is a proxy, not human-judged citation support",
+        **load,
+        "notes": ["cited_tokens_per_statement: tokens a reader must check per statement (the cited blocks, plus their Article "
+                  "header once when the context is grouped); single_leaf_citation_rate: share of citations whose record maps "
+                  "to exactly one leaf unit (Article without Clauses, Clause without Points, or Point)","citation_gold_* compares cited records with gold units; it is a proxy, not human-judged citation support",
                   "citation_gold_precision counts a record as right when it contains a gold unit, which favours long records; "
                   "citation_gold_char_precision is the share of cited source characters inside gold units",
                   "grounding and correctness come from the human answer sheet"],

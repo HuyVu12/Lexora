@@ -372,6 +372,40 @@ class WebApiTests(unittest.TestCase):
         frozen = vu.get("/api/question-set/frozen", params={"id": qset["id"]}).json()
         self.assertEqual(frozen["questions"][0]["relevant_unit_ids"], [unit])
 
+    def test_gold_agreement_sample_bulk_finalise_and_file_on_one_shared_store(self):
+        AccountStore(self.store.path).create("kha", "Kha", "reviewer", "review password 2")
+        vu, kha, reader = self.client("phapche", "review password 1"), self.client("kha", "review password 2"), self.client("nhansu", "reader password 1")
+        version = self._frozen_corpus(vu)
+        made = self.post(vu, "/api/gold", {"name": "Gold mẫu", "corpus_version_id": version["id"], "articles": ["luat/article-1"]}).json()
+        first, second = [i["key"] for i in kha.get("/api/gold/set", params={"id": made["id"]}).json()["items"]]
+        duty = {"modality": "obligation", "modality_cue": "phải", "slots": {"actor": "Người lao động", "action": "thông báo"}}
+        right = {"modality": "entitlement", "modality_cue": "có quyền", "slots": {"actor": "Người lao động", "action": "nghỉ việc"}}
+        for key, norms in ((first, [duty]), (second, [right])):
+            self.assertEqual(self.post(kha, "/api/gold/label", {"set_id": made["id"], "key": key, "norms": norms}).status_code, 200)
+
+        self.assertEqual(self.post(reader, "/api/gold/sample", {"set_id": made["id"]}).status_code, 403)
+        declared = self.post(vu, "/api/gold/sample", {"set_id": made["id"]})
+        self.assertEqual(declared.status_code, 200, declared.text)
+        self.assertEqual((declared.json()["articles"], declared.json()["seed"], declared.json()["share"]), (["luat/article-1"], "lexora-gold-agreement-v1", "0.3"))
+        self.assertIn("không đổi được", self.post(vu, "/api/gold/sample", {"set_id": made["id"], "share": 0.5}).json()["error"])
+        view = vu.get("/api/gold/set", params={"id": made["id"]}).json()
+        self.assertEqual(([i["in_sample"] for i in view["items"]], view["sample"]["sentences"], view["sample_declarable"]), ([True, True], 2, False))
+
+        self.post(vu, "/api/gold/label", {"set_id": made["id"], "key": first, "norms": [duty]})
+        self.post(vu, "/api/gold/label", {"set_id": made["id"], "key": second, "norms": []})
+        report = vu.get("/api/gold/compare", params={"id": made["id"], "other": "kha"}).json()
+        self.assertEqual((report["sample_progress"], report["plan"]["agreed"], report["plan"]["disagree"]), ({"phapche": 2, "kha": 2}, 1, 1))
+        self.assertEqual(self.post(reader, "/api/gold/finalise", {"set_id": made["id"]}).status_code, 403)
+        done = self.post(vu, "/api/gold/finalise", {"set_id": made["id"]}).json()
+        self.assertEqual((done["agreed"], done["single"]), (1, 0))
+        early = vu.get("/api/gold/file", params={"id": made["id"]})
+        self.assertEqual(early.status_code, 400)
+        self.assertEqual(early.json()["error"], "Chưa xuất được gold cuối: 1 câu hai người gán khác nhau, cần đối soát từng câu")
+        self.post(vu, "/api/gold/adjudicate", {"set_id": made["id"], "key": second, "norms": [right]})
+        rows = [json.loads(line) for line in vu.get("/api/gold/file", params={"id": made["id"]}).text.splitlines()]
+        self.assertEqual([r["annotation"]["decided_by"] for r in rows], ["agreed:kha+phapche", "adjudicated:phapche"])
+        self.assertEqual({r["annotation"]["mode"] for r in rows}, {"double"})
+
     def test_dev_monitors_calls_and_usage_and_only_dev_changes_controls(self):
         class Proposer:
             model, effort, max_calls, calls = "stand-in", "low", 5, 0

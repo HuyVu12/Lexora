@@ -1,0 +1,427 @@
+[
+ {
+  "text": "Một kỹ sư nam sinh tháng 5/1965, làm việc trong điều kiện lao động bình thường và đã đóng BHXH bắt buộc 22 năm. Phòng nhân sự cần xác định chính xác ngày anh nghỉ hưu và ngày bắt đầu hưởng lương hưu để chuẩn bị quyết định chấm dứt hợp đồng. Hai mốc đó là ngày nào?",
+  "question_type": "synthesis",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-xii/article-169/clause-2",
+   "135-2020-nd-cp/article-4/clause-2",
+   "135-2020-nd-cp/article-3/clause-1",
+   "135-2020-nd-cp/article-3/clause-2",
+   "41-2024-qh15/chapter-v/section-3/article-64/clause-1/point-a",
+   "41-2024-qh15/chapter-v/section-3/article-69/clause-1",
+   "135-2020-nd-cp/article-4/clause-1"
+  ],
+  "rationale": "Đề xuất của model (rà soát 2026-11-15 trên corpus v3), không phải nhãn người. Độ tin cậy: vừa. Ngày áp dụng: 2026-11-11 (câu không ghi ngày nên dùng ngày khóa corpus v3). Căn cứ và lưu ý: Rà lại 15/11 trên corpus v3 tại 11/11/2026: mọi đơn vị còn hiệu lực. Thêm khoản 1 Điều 4 NĐ 135 vì nhắc lại nguyên văn lộ trình của khoản 2 Điều 169 BLLĐ. Khoản 1 Điều 69 Luật BHXH 2024 và khoản 2 Điều 3 NĐ 135 là hai quy định khác nhau về thời điểm hưởng (theo văn bản chấm dứt HĐLĐ, và ngày đầu tiên của tháng liền kề sau thời điểm nghỉ hưu), không phải nhắc lại; cả hai là đơn vị trả lời. Ghi chú 12/11: Kết luận đúng (61 tuổi 6 tháng, đủ vào tháng 11/2026; nghỉ hưu hết 30/11/2026, hưởng từ 01/12/2026). Điều kiện 15 năm nằm ở câu dẫn khoản 1 Điều 64, không ở điểm a. Khoản 1 Điều 69 Luật BHXH 2024 định thời điểm hưởng theo văn bản chấm dứt HĐLĐ, cần đọc cùng khoản 2 Điều 3 NĐ 135.",
+  "paraphrase_of": null,
+  "source_question_id": "x00"
+ },
+ {
+  "text": "Nhà máy của công ty đặt trong một khu công nghiệp nằm vắt qua hai địa bàn, một bên thuộc vùng I, một bên thuộc vùng II. Từ tháng 1/2026 công ty định thuê sinh viên làm bán thời gian, trả lương theo giờ 23.000 đồng. Mức này có hợp pháp không và phải căn cứ mức lương tối thiểu của vùng nào?",
+  "question_type": "synthesis",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-vi/article-90/clause-2",
+   "293-2025-nd-cp/article-3/clause-1",
+   "293-2025-nd-cp/article-3/clause-3/point-c",
+   "293-2025-nd-cp/article-4/clause-2",
+   "293-2025-nd-cp/article-5/clause-1"
+  ],
+  "rationale": "Đề xuất của model (rà soát 2026-11-15 trên corpus v3), không phải nhãn người. Độ tin cậy: cao. Ngày áp dụng: 2026-01-01 (ngày nêu trong câu hoặc hồ sơ). Căn cứ và lưu ý: Rà lại 15/11: mọi đơn vị còn hiệu lực tại 01/01/2026. Khoản 2 Điều 90 BLLĐ và khoản 2 Điều 4 NĐ 293 cùng nêu mức lương theo công việc hoặc chức danh 'không được thấp hơn mức lương tối thiểu' (NĐ 293 chi tiết cho lương giờ), là nhắc lại nên giữ cả hai. Corpus v3 không có văn bản mới về lương tối thiểu. Ghi chú 12/11: 23.000 đ/giờ thấp hơn 25.500 đ/giờ vùng I; điểm c khoản 3 Điều 3 NĐ 293 chọn địa bàn có mức cao nhất. Khoản 2 Điều 91 BLLĐ chỉ liên quan chủ đề nên bỏ.",
+  "paraphrase_of": null,
+  "source_question_id": "x01"
+ },
+ {
+  "text": "Một trưởng phòng làm việc cho công ty có trụ sở ở Hà Nội (vùng I), lương tháng ghi trong hợp đồng 50 triệu đồng và đã đóng bảo hiểm thất nghiệp đủ 60 tháng trên mức lương đó, nghỉ việc hợp pháp vào tháng 3/2026. Anh ấy sẽ nhận trợ cấp thất nghiệp mỗi tháng bao nhiêu và trong bao lâu?",
+  "question_type": "synthesis",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "74-2025-qh15/chapter-vii/section-4/article-39/clause-1",
+   "74-2025-qh15/chapter-vii/section-4/article-39/clause-2",
+   "74-2025-qh15/chapter-vii/section-2/article-34/clause-2",
+   "293-2025-nd-cp/article-3/clause-1",
+   "293-2025-nd-cp/article-3/clause-3/point-a",
+   "293-2025-nd-cp/article-5/clause-1"
+  ],
+  "rationale": "Đề xuất của model (rà soát 2026-11-15 trên corpus v3), không phải nhãn người. Độ tin cậy: cao. Ngày áp dụng: 2026-03-01 (ngày nêu trong câu hoặc hồ sơ). Căn cứ và lưu ý: Rà lại 15/11: mọi đơn vị còn hiệu lực tại 03/2026; corpus v3 không có văn bản mới về bảo hiểm thất nghiệp hay lương tối thiểu. Ghi chú 12/11: 50 triệu < 20 x 5,31 triệu; 60% = 30 triệu bị giới hạn ở 26.550.000 đ; 60 tháng đóng = 3 + 2 = 5 tháng. Văn bản hỗ trợ đầy đủ.",
+  "paraphrase_of": null,
+  "source_question_id": "x02"
+ },
+ {
+  "text": "Công ty phần mềm muốn ràng buộc một kỹ sư R&D không được tiết lộ mã nguồn và thuật toán của công ty, kể cả trong 2 năm sau khi nghỉ việc. Thỏa thuận này lập ở đâu, nên có những nội dung gì, và nếu kỹ sư vi phạm thì công ty xử lý theo thủ tục nào khi vi phạm xảy ra lúc còn làm việc và khi đã nghỉ?",
+  "question_type": "synthesis",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-iii/section-1/article-21/clause-2",
+   "10-2020-tt-bldtbxh/chapter-ii/article-4/clause-1",
+   "10-2020-tt-bldtbxh/chapter-ii/article-4/clause-2/point-c",
+   "10-2020-tt-bldtbxh/chapter-ii/article-4/clause-3/point-a",
+   "10-2020-tt-bldtbxh/chapter-ii/article-4/clause-3/point-b",
+   "10-2020-tt-bldtbxh/chapter-ii/article-4/clause-2/point-a",
+   "10-2020-tt-bldtbxh/chapter-ii/article-4/clause-2/point-b",
+   "10-2020-tt-bldtbxh/chapter-ii/article-4/clause-2/point-d",
+   "10-2020-tt-bldtbxh/chapter-ii/article-4/clause-2/point-đ",
+   "10-2020-tt-bldtbxh/chapter-ii/article-4/clause-2/point-e"
+  ],
+  "rationale": "Đề xuất của model (rà soát 2026-11-15 trên corpus v3), không phải nhãn người. Độ tin cậy: cao. Ngày áp dụng: 2026-11-11 (câu không ghi ngày nên dùng ngày khóa corpus v3). Căn cứ và lưu ý: Rà lại 15/11: mọi đơn vị còn hiệu lực tại 11/11/2026. Khoản 1 Điều 4 TT 10 nhắc lại quyền thỏa thuận của khoản 2 Điều 21 BLLĐ ('Khi người lao động làm việc có liên quan trực tiếp đến bí mật kinh doanh, bí mật công nghệ theo quy định của pháp luật thì người sử dụng lao động có quyền thỏa thuận') và thêm hình thức 'trong hợp đồng lao động hoặc bằng văn bản khác'; cả hai đã có trong nhãn. Ghi chú 12/11: Câu hỏi hỏi \"nên có những nội dung gì\" nên cần đủ các điểm a-e khoản 2 Điều 4 TT 10; bản nháp chỉ có điểm c. Trình tự bồi thường chi tiết nằm ở Điều 71 NĐ 145 (khoản 2 Điều 130 BLLĐ giao Chính phủ); không bắt buộc vì kết quả tham chiếu chỉ dẫn chiếu.",
+  "paraphrase_of": null,
+  "source_question_id": "x03"
+ },
+ {
+  "text": "Nhà máy gia công linh kiện điện tử xuất khẩu dự kiến cho công nhân tăng ca tổng cộng khoảng 280 giờ trong năm 2026, rải đều các tháng. Công ty có được làm vậy không, phải thông báo cho cơ quan nào và chậm nhất khi nào?",
+  "question_type": "synthesis",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-vii/section-1/article-107/clause-3/point-a",
+   "45-2019-qh14/chapter-vii/section-1/article-107/clause-2/point-b",
+   "45-2019-qh14/chapter-vii/section-1/article-107/clause-4",
+   "145-2020-nd-cp/chapter-vii/article-62/clause-1/point-a",
+   "145-2020-nd-cp/chapter-vii/article-62/clause-2",
+   "45-2019-qh14/chapter-vii/section-1/article-107/clause-2/point-a",
+   "45-2019-qh14/chapter-vii/section-1/article-107/clause-2/point-c",
+   "145-2020-nd-cp/chapter-vii/article-62/clause-1/point-b",
+   "145-2020-nd-cp/chapter-vii/article-59/clause-1",
+   "283-2026-nd-cp/chapter-ii/section-2/article-24/clause-1/point-b"
+  ],
+  "rationale": "Đề xuất của model (rà soát 2026-11-15 trên corpus v3), không phải nhãn người. Độ tin cậy: vừa. Ngày áp dụng: 2026-11-11 (ngày nêu trong câu hoặc hồ sơ). Cần quyết định: kết quả tham chiếu phải sửa (xem bảng kiểm). Căn cứ và lưu ý: Rà lại 15/11: các đơn vị BLLĐ và NĐ 145 còn hiệu lực tại 11/11/2026. Thêm khoản 1 Điều 59 NĐ 145 (nhắc lại yêu cầu đồng ý) và điểm b khoản 1 Điều 24 NĐ 283 (tên cơ quan nhận thông báo hiện nay là Sở Nội vụ). Khoản 2 Điều 60 NĐ 145 chỉ nhắc giới hạn 12 giờ/ngày, không nhắc giới hạn 40 giờ/tháng, nên không thêm. Hạ độ tin cậy vì tên cơ quan trong NĐ 145 và NĐ 283 khác nhau, cần người xem. Ghi chú 12/11: Điểm a khoản 3 không tự chứa mức 300 giờ; mức này ở câu dẫn khoản 3. BLLĐ nói \"cơ quan chuyên môn về lao động thuộc UBND cấp tỉnh\", NĐ 145 nói \"Sở LĐTBXH\"; thời hạn là chậm nhất sau 15 ngày kể từ ngày làm thêm trên 200 giờ.",
+  "paraphrase_of": null,
+  "source_question_id": "x04"
+ },
+ {
+  "text": "Nhân viên kế toán thử việc 2 tháng theo hợp đồng thử việc riêng, sau đó ký hợp đồng không xác định thời hạn và được công ty đóng bảo hiểm thất nghiệp đủ 6 năm. Nay chị nghỉ việc đúng luật, có báo trước 45 ngày. Công ty còn phải trả trợ cấp thôi việc không, tính thế nào, và chị có được hưởng trợ cấp thất nghiệp không?",
+  "question_type": "synthesis",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-iii/section-3/article-46/clause-2",
+   "145-2020-nd-cp/chapter-iii/section-2/article-8/clause-3/point-a",
+   "145-2020-nd-cp/chapter-iii/section-2/article-8/clause-3/point-c",
+   "74-2025-qh15/chapter-vii/section-1/article-31/clause-2",
+   "74-2025-qh15/chapter-vii/section-4/article-38/clause-1/point-a",
+   "45-2019-qh14/chapter-iii/section-3/article-34/clause-9",
+   "45-2019-qh14/chapter-iii/section-3/article-46/clause-1",
+   "45-2019-qh14/chapter-iii/section-3/article-46/clause-3",
+   "74-2025-qh15/chapter-vii/section-4/article-38/clause-1/point-b",
+   "145-2020-nd-cp/chapter-iii/section-2/article-8/clause-1",
+   "145-2020-nd-cp/chapter-iii/section-2/article-8/clause-5/point-a"
+  ],
+  "rationale": "Đề xuất của model (rà soát 2026-11-15 trên corpus v3), không phải nhãn người. Độ tin cậy: cao. Ngày áp dụng: 2026-11-11 (câu không ghi ngày nên dùng ngày khóa corpus v3). Căn cứ và lưu ý: Rà lại 15/11: mọi đơn vị còn hiệu lực tại 11/11/2026. Thêm hai đơn vị NĐ 145 nhắc lại khoản 1 và khoản 3 Điều 46 BLLĐ. Câu dẫn khoản 3 Điều 8 NĐ 145 nhắc lại khoản 2 Điều 46 BLLĐ nhưng đã có hai điểm con (a, c) trong nhãn nên không cần ghi riêng. Ghi chú 12/11: 1/2 năm x 1/2 tháng = 1/4 tháng lương bình quân 06 tháng: đúng. Bản nháp thiếu khoản 1 và khoản 3 Điều 46. Điều kiện c, d khoản 1 Điều 38 Luật Việc làm (hồ sơ, chưa có việc làm) chưa có dữ kiện; thời gian thử việc 6 năm trước thuộc Luật Việc làm 2013 nhưng kết quả không đổi.",
+  "paraphrase_of": null,
+  "source_question_id": "x05"
+ },
+ {
+  "text": "Một nhân viên mới vào công ty được 5 tháng thì sinh đôi; trước đó chị chưa từng tham gia BHXH. Chồng chị làm ở công ty khác và đã đóng BHXH bắt buộc liên tục 3 năm. Chị được nghỉ sinh bao lâu, có được BHXH trả trợ cấp thai sản không, và gia đình có được nhận khoản trợ cấp một lần nào không?",
+  "question_type": "synthesis",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-x/article-139/clause-1",
+   "41-2024-qh15/chapter-v/section-2/article-53/clause-1",
+   "41-2024-qh15/chapter-v/section-2/article-50/clause-2",
+   "41-2024-qh15/chapter-v/section-2/article-58/clause-1",
+   "41-2024-qh15/chapter-v/section-2/article-58/clause-4"
+  ],
+  "rationale": "Đề xuất của model (rà soát 2026-11-15 trên corpus v3), không phải nhãn người. Độ tin cậy: cao. Ngày áp dụng: 2026-11-11 (câu không ghi ngày nên dùng ngày khóa corpus v3). Căn cứ và lưu ý: Rà lại 15/11: mọi đơn vị còn hiệu lực tại 11/11/2026. Khoản 1 Điều 53 Luật BHXH 2024 dẫn chiếu thẳng khoản 1 Điều 139 BLLĐ (không chép lại nội dung); cả hai đã có trong nhãn. Ghi chú 12/11: Bản nháp đủ: 06 tháng + 01 tháng cho con thứ hai; chị đóng 5 tháng không đạt khoản 2 Điều 50; chồng đủ điều kiện nên nhận 02 x 2 con = 04 lần mức tham chiếu.",
+  "paraphrase_of": null,
+  "source_question_id": "x06"
+ },
+ {
+  "text": "Công ty muốn chấm dứt hợp đồng với một nhân viên bảo vệ nam đã đủ tuổi nghỉ hưu theo lộ trình năm 2026. Anh có tổng cộng 16 năm đóng BHXH bắt buộc và đã làm cho công ty 9 năm. Anh có được hưởng lương hưu không, tỷ lệ bao nhiêu, và công ty có phải trả trợ cấp thôi việc cho 9 năm đó không?",
+  "question_type": "synthesis",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-iii/section-3/article-36/clause-1/point-đ",
+   "41-2024-qh15/chapter-v/section-3/article-64/clause-1/point-a",
+   "41-2024-qh15/chapter-v/section-3/article-66/clause-1/point-b",
+   "45-2019-qh14/chapter-iii/section-3/article-46/clause-1",
+   "145-2020-nd-cp/chapter-iii/section-2/article-8/clause-1/point-a"
+  ],
+  "rationale": "Đề xuất của model (rà soát 2026-11-15 trên corpus v3), không phải nhãn người. Độ tin cậy: cao. Ngày áp dụng: 2026-11-11 (ngày nêu trong câu hoặc hồ sơ). Căn cứ và lưu ý: Rà lại 15/11: mọi đơn vị còn hiệu lực tại 11/11/2026. Khoản 1 Điều 46 BLLĐ và khoản 1 Điều 8 NĐ 145 là nhắc lại (cùng 'từ đủ 12 tháng trở lên', cùng các khoản của Điều 34), cả hai đã có; điểm a khoản 1 Điều 8 NĐ 145 chi tiết ngoại lệ 'đủ điều kiện hưởng lương hưu'. Ghi chú 12/11: 16 năm đóng: 40% + 1% = 41%. Điều kiện 15 năm ở câu dẫn khoản 1 Điều 64; điểm đ khoản 1 Điều 36 và điểm a khoản 1 Điều 8 NĐ 145 cần câu dẫn mới có hiệu lực pháp lý.",
+  "paraphrase_of": null,
+  "source_question_id": "x07"
+ },
+ {
+  "text": "Một công nhân bị máy dập cắt vào tay ngay tại xưởng, nghỉ điều trị 2 tháng rồi được Hội đồng giám định y khoa kết luận suy giảm 25% khả năng lao động; biên bản điều tra xác định anh không có lỗi. Trong 2 tháng điều trị ai trả tiền cho anh, anh có được trợ cấp ốm đau không, và công ty phải bồi thường tối thiểu bao nhiêu?",
+  "question_type": "synthesis",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "84-2015-qh13/chapter-iii/section-2/article-38/clause-3",
+   "84-2015-qh13/chapter-iii/section-2/article-38/clause-4/point-a",
+   "41-2024-qh15/chapter-v/section-1/article-42/clause-2/point-c",
+   "84-2015-qh13/chapter-iii/section-3/article-45/clause-2",
+   "84-2015-qh13/chapter-iii/section-3/article-45/clause-1/point-a"
+  ],
+  "rationale": "Đề xuất của model (rà soát 2026-11-15 trên corpus v3), không phải nhãn người. Độ tin cậy: cao. Ngày áp dụng: 2026-11-11 (câu không ghi ngày nên dùng ngày khóa corpus v3). Căn cứ và lưu ý: Rà lại 15/11: các đơn vị Luật ATVSLĐ dùng ở đây (khoản 3, điểm a khoản 4 Điều 38; Điều 45) không bị Điều 139 Luật BHXH 2024 sửa (các khoản bị sửa là khoản 7 Điều 42, khoản 1 Điều 43, điểm b khoản 2 Điều 44, khoản 3 và 5 Điều 49, khoản 3 Điều 53), nên còn hiệu lực tại 11/11/2026. Ghi chú 12/11: 25%: 1,5 + 15 x 0,4 = 7,5 tháng lương: đúng. Điểm c khoản 2 Điều 42 không tự chứa phủ định, cần câu dẫn khoản 2.",
+  "paraphrase_of": null,
+  "source_question_id": "x08"
+ },
+ {
+  "text": "Hợp đồng của một trưởng ca ghi: mức lương 12 triệu đồng, phụ cấp trách nhiệm 2 triệu đồng và phụ cấp độc hại 1 triệu đồng trả cố định hằng tháng, cộng thưởng KPI theo quý tùy kết quả. Công ty muốn đăng ký đóng BHXH và BHTN chỉ trên 12 triệu đồng. Làm vậy có đúng không?",
+  "question_type": "synthesis",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "10-2020-tt-bldtbxh/chapter-ii/article-3/clause-5/point-b",
+   "10-2020-tt-bldtbxh/chapter-ii/article-3/clause-5/point-c",
+   "41-2024-qh15/chapter-iv/section-2/article-31/clause-1/point-b",
+   "74-2025-qh15/chapter-vii/section-2/article-34/clause-1/point-b",
+   "41-2024-qh15/chapter-iv/section-2/article-39/clause-1/point-c",
+   "41-2024-qh15/chapter-iv/section-2/article-39/clause-1/point-d"
+  ],
+  "rationale": "Đề xuất của model (rà soát 2026-11-15 trên corpus v3), không phải nhãn người. Độ tin cậy: cao. Ngày áp dụng: 2026-11-11 (câu không ghi ngày nên dùng ngày khóa corpus v3). Căn cứ và lưu ý: Rà lại 15/11: mọi đơn vị còn hiệu lực tại 11/11/2026. Điểm b khoản 1 Điều 31 Luật BHXH 2024 và điểm b khoản 1 Điều 34 Luật Việc làm 2025 nhắc lại cùng một quy tắc ('phụ cấp lương và các khoản bổ sung khác được thỏa thuận trả thường xuyên, ổn định trong mỗi kỳ trả lương'), cả hai đã có. Không thêm chế tài: câu hỏi chỉ hỏi đúng hay sai; nếu người duyệt muốn nêu mức phạt thì căn cứ hiện hành là điểm a khoản 2 Điều 44 và điểm a khoản 2 Điều 46 NĐ 283/2026 (đăng ký tiền lương đóng BHXH, BHTN thấp hơn quy định). Ghi chú 12/11: Hai phụ cấp cố định là phụ cấp lương (b1); thưởng KPI không xác định trước, không ổn định nên không vào căn cứ đóng; căn cứ tối thiểu 15 triệu. Câu hỏi hỏi cả BHTN nên thêm điểm d.",
+  "paraphrase_of": null,
+  "source_question_id": "x09"
+ },
+ {
+  "text": "Công ty muốn ký hợp đồng 2 năm với một kế toán trưởng đã nghỉ hưu và đang nhận lương hưu. Công ty có phải đóng BHXH bắt buộc và bảo hiểm thất nghiệp cho ông không, và nếu không đóng thì có phải trả thêm khoản gì cho ông?",
+  "question_type": "synthesis",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-xi/section-2/article-149/clause-2",
+   "41-2024-qh15/chapter-i/article-2/clause-7/point-a",
+   "74-2025-qh15/chapter-vii/section-1/article-31/clause-2",
+   "45-2019-qh14/chapter-xii/article-168/clause-3",
+   "283-2026-nd-cp/chapter-ii/section-2/article-23/clause-4/point-a",
+   "283-2026-nd-cp/chapter-i/article-7/clause-1",
+   "283-2026-nd-cp/chapter-i/article-7/clause-2/point-b"
+  ],
+  "rationale": "Đề xuất của model (rà soát 2026-11-15 trên corpus v3), không phải nhãn người. Độ tin cậy: cao. Ngày áp dụng: 2026-11-11 (câu không ghi ngày nên dùng ngày khóa corpus v3). Lỗi thời và được thay: điểm a khoản 4 Điều 17, Nghị định số 12/2022/NĐ-CP -> điểm a khoản 4 Điều 23, Nghị định số 283/2026/NĐ-CP; khoản 4 Điều 17, Nghị định số 12/2022/NĐ-CP -> khoản 4 Điều 23, Nghị định số 283/2026/NĐ-CP. Cần quyết định: kết quả tham chiếu phải sửa (xem bảng kiểm). Căn cứ và lưu ý: Rà lại 15/11: câu không nêu ngày nên hỏi tại 11/11/2026. Phần chế tài mà 12/11 để ngoài corpus nay có trong NĐ 283/2026 (khoản 4 Điều 23, kèm khoản 1 và điểm b khoản 2 Điều 7 về mức phạt doanh nghiệp gấp đôi). Phần nghĩa vụ không đổi. Ghi chú 12/11: Phần nghĩa vụ (không đóng BHXH, BHTN; trả thêm khoản tương đương theo khoản 3 Điều 168) được hỗ trợ. Phần chế tài dựa vào khoản 4 Điều 17 NĐ 12 không còn đúng cho hợp đồng ký từ nay (NĐ 12 hết hiệu lực 10/09/2026). Nếu đối soát coi sự việc xảy ra trước 10/09/2026 thì giữ khoản 4 Điều 17 (câu dẫn) và điểm a.",
+  "paraphrase_of": null,
+  "source_question_id": "x10"
+ },
+ {
+  "text": "Một nhân viên bị xe máy khác tông khi đang trên đường từ nhà đến công ty, đúng tuyến đường và thời gian hợp lý. Anh nằm viện 3 tuần, sau đó được giám định suy giảm 12% khả năng lao động. Thời gian nằm viện anh được hưởng chế độ gì, sau đó có được hưởng chế độ tai nạn lao động không, và công ty có trách nhiệm gì?",
+  "question_type": "synthesis",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "41-2024-qh15/chapter-v/section-1/article-42/clause-1/point-c",
+   "41-2024-qh15/chapter-v/section-1/article-42/clause-2/point-c",
+   "84-2015-qh13/chapter-iii/section-3/article-45/clause-1/point-c",
+   "84-2015-qh13/chapter-iii/section-3/article-45/clause-2",
+   "84-2015-qh13/chapter-iii/section-2/article-39/clause-2",
+   "84-2015-qh13/chapter-iii/section-2/article-38/clause-5",
+   "84-2015-qh13/chapter-iii/section-2/article-38/clause-4/point-a"
+  ],
+  "rationale": "Đề xuất của model (rà soát 2026-11-15 trên corpus v3), không phải nhãn người. Độ tin cậy: cao. Ngày áp dụng: 2026-11-11 (câu không ghi ngày nên dùng ngày khóa corpus v3). Căn cứ và lưu ý: Rà lại 15/11: các đơn vị Luật ATVSLĐ dùng ở đây (Điều 38, 39, 45) không bị Điều 139 Luật BHXH 2024 sửa, còn hiệu lực tại 11/11/2026. Ghi chú 12/11: Điểm c khoản 1 Điều 42 quy định riêng cho tai nạn trên đường đi làm nên hưởng ốm đau; sau đó 12% đủ điều kiện TNLĐ. Khoản 2 Điều 39 dẫn chiếu khoản 5 Điều 38 nên cần khoản 5 (và điểm a khoản 4 để tính: 40% x 2,3 tháng = 0,92 tháng lương).",
+  "paraphrase_of": null,
+  "source_question_id": "x11"
+ },
+ {
+  "text": "Một công nhân nam sinh tháng 6/1970 đã làm 17 năm công việc đặc biệt nặng nhọc, độc hại thuộc danh mục của Bộ, tổng thời gian đóng BHXH bắt buộc 25 năm, muốn nghỉ hưu sớm. Anh có được nghỉ hưu trước tuổi chung không, sớm nhất khi nào, và có được hưởng lương hưu không?",
+  "question_type": "synthesis",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-xii/article-169/clause-3",
+   "135-2020-nd-cp/article-5/clause-1/point-a",
+   "135-2020-nd-cp/article-5/clause-2",
+   "135-2020-nd-cp/article-3/clause-1",
+   "41-2024-qh15/chapter-v/section-3/article-64/clause-1/point-b"
+  ],
+  "rationale": "Đề xuất của model (rà soát 2026-11-15 trên corpus v3), không phải nhãn người. Độ tin cậy: cao. Ngày áp dụng: 2026-11-11 (câu không ghi ngày nên dùng ngày khóa corpus v3). Căn cứ và lưu ý: Rà lại 15/11: mọi đơn vị còn hiệu lực tại 11/11/2026. Câu dẫn khoản 1 Điều 5 NĐ 135 nhắc lại khoản 3 Điều 169 BLLĐ ('có thể nghỉ hưu ở tuổi thấp hơn nhưng không quá 05 tuổi'), cả hai đã có. Ghi chú 12/11: Sinh 6/1970: năm 2025 chưa đủ 56 tuổi 3 tháng; năm 2026 đủ 56 tuổi 6 tháng vào tháng 12/2026, nghỉ hưu hết 31/12/2026. Văn bản hỗ trợ.",
+  "paraphrase_of": null,
+  "source_question_id": "x12"
+ },
+ {
+  "text": "Công ty tự ý điều chuyển một nhân viên kế toán từ trụ sở Hà Nội vào chi nhánh Đà Nẵng làm việc lâu dài, trong khi hợp đồng ghi địa điểm làm việc là Hà Nội; chị nghỉ việc ngay mà không báo trước. Chị có được trợ cấp thôi việc và trợ cấp thất nghiệp không? Nếu chị nghỉ ngang không báo trước chỉ vì đã tìm được việc mới thì kết quả khác thế nào?",
+  "question_type": "synthesis",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-iii/section-3/article-35/clause-2/point-a",
+   "45-2019-qh14/chapter-iii/section-3/article-46/clause-1",
+   "45-2019-qh14/chapter-iii/section-3/article-40/clause-1",
+   "74-2025-qh15/chapter-vii/section-4/article-38/clause-1/point-a",
+   "45-2019-qh14/chapter-iii/section-3/article-35/clause-1",
+   "45-2019-qh14/chapter-iii/section-3/article-34/clause-9",
+   "45-2019-qh14/chapter-iii/section-3/article-39",
+   "45-2019-qh14/chapter-iii/section-3/article-46/clause-2",
+   "145-2020-nd-cp/chapter-iii/section-2/article-8/clause-1",
+   "145-2020-nd-cp/chapter-iii/section-2/article-8/clause-3"
+  ],
+  "rationale": "Đề xuất của model (rà soát 2026-11-15 trên corpus v3), không phải nhãn người. Độ tin cậy: cao. Ngày áp dụng: 2026-11-11 (câu không ghi ngày nên dùng ngày khóa corpus v3). Căn cứ và lưu ý: Rà lại 15/11: mọi đơn vị còn hiệu lực tại 11/11/2026. Thêm hai đơn vị NĐ 145 nhắc lại khoản 1 và khoản 2 Điều 46 BLLĐ. Ghi chú 12/11: Điều chuyển lâu dài sai địa điểm thuộc điểm a khoản 2 Điều 35; nghỉ ngang vì có việc mới vi phạm khoản 1 Điều 35 nên trái pháp luật (Điều 39), mất trợ cấp thôi việc và trợ cấp thất nghiệp. Câu hỏi không cho thời gian làm việc nên điều kiện từ đủ 12 tháng của khoản 1 Điều 46 chưa kiểm được.",
+  "paraphrase_of": null,
+  "source_question_id": "x13"
+ },
+ {
+  "text": "Một nhân viên đã đóng BHXH bắt buộc 3 năm, mang thai được hơn 1 tháng thì bác sĩ chỉ định nghỉ dưỡng thai và chị xin tạm hoãn hợp đồng lao động đến khi sinh. Tính ra trong 12 tháng trước khi sinh chị chỉ đóng BHXH được 4 tháng. Chị có được hưởng chế độ thai sản khi sinh con không?",
+  "question_type": "synthesis",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-x/article-138/clause-1",
+   "45-2019-qh14/chapter-x/article-138/clause-2",
+   "41-2024-qh15/chapter-v/section-2/article-50/clause-2",
+   "41-2024-qh15/chapter-v/section-2/article-50/clause-3"
+  ],
+  "rationale": "Đề xuất của model (rà soát 2026-11-15 trên corpus v3), không phải nhãn người. Độ tin cậy: cao. Ngày áp dụng: 2026-11-11 (câu không ghi ngày nên dùng ngày khóa corpus v3). Căn cứ và lưu ý: Rà lại 15/11: mọi đơn vị còn hiệu lực tại 11/11/2026. Điều 138 BLLĐ (quyền tạm hoãn) và khoản 3 Điều 50 Luật BHXH 2024 (ngưỡng 03 tháng) là hai quy định khác nhau, không phải nhắc lại; cả hai là đơn vị trả lời. Ghi chú 12/11: Bản nháp đủ: không đạt khoản 2 Điều 50 (4 < 6 tháng) nhưng đạt khoản 3 Điều 50 (đã đóng từ đủ 12 tháng, nghỉ dưỡng thai theo chỉ định, chỉ cần 03 tháng).",
+  "paraphrase_of": null,
+  "source_question_id": "x14"
+ },
+ {
+  "text": "Công ty TNHH của chúng tôi chậm đóng BHXH bắt buộc và bảo hiểm thất nghiệp cho nhân viên từ tháng 3/2025 đến nay, chưa bị cơ quan nào đôn đốc. Tháng 2/2026 thanh tra lập biên bản. Ngoài việc đóng bù, công ty bị phạt tiền khoảng bao nhiêu, và tiền lãi chậm đóng tính theo NĐ 12/2022 (gấp 2 lần lãi suất đầu tư quỹ) hay theo Luật BHXH 2024?",
+  "question_type": "synthesis",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "12-2022-nd-cp/chapter-iii/article-39/clause-5/point-a",
+   "12-2022-nd-cp/chapter-i/article-6/clause-1",
+   "12-2022-nd-cp/chapter-iii/article-39/clause-10/point-b",
+   "41-2024-qh15/chapter-iv/section-2/article-40/clause-1",
+   "41-2024-qh15/chapter-xi/article-141/clause-12",
+   "12-2022-nd-cp/chapter-iii/article-39/clause-10/point-a",
+   "41-2024-qh15/chapter-iv/section-2/article-38/clause-1",
+   "41-2024-qh15/chapter-iv/section-2/article-39/clause-1/point-đ",
+   "74-2025-qh15/chapter-vii/section-2/article-33/clause-5"
+  ],
+  "rationale": "Đề xuất của model (rà soát 2026-11-15 trên corpus v3), không phải nhãn người. Độ tin cậy: vừa. Ngày áp dụng: 2026-02-01 (ngày nêu trong câu hoặc hồ sơ). Căn cứ và lưu ý: Rà lại 15/11: sự việc ở tháng 2/2026, khi NĐ 12/2022 còn hiệu lực (hết hiệu lực 10/09/2026), nên các đơn vị NĐ 12 vẫn là đơn vị trả lời và không lỗi thời tại ngày này; NĐ 283/2026 chưa có hiệu lực nên không đưa vào. Để người duyệt biết: NĐ 283 (điểm b khoản 4 Điều 43) nay tự quy định 'nộp số tiền bằng 0,03%/ngày', tức xung đột với cách tính lãi của NĐ 12 không còn từ 10/09/2026; khoản 2 Điều 67 NĐ 283 cho áp dụng NĐ 283 nếu hành vi chậm đóng còn kéo dài sau 10/09/2026, khoản 1 Điều 67 giữ nghị định có hiệu lực lúc vi phạm cho hành vi đã kết thúc trước ngày đó. Thêm khoản 5 Điều 33 Luật Việc làm 2025. Ghi chú 12/11: Mức phạt 24%-30%, tối đa 150 triệu là đúng (gấp đôi khoản 5 Điều 39 NĐ 12; biên bản 2/2026 khi NĐ 12 còn hiệu lực). Chi tiết \"chưa bị đôn đốc\" quyết định đây là chậm đóng, không phải trốn đóng (điểm đ khoản 1 Điều 39 Luật BHXH 2024). Nguyên tắc luật cao hơn thắng nghị định nằm ngoài corpus.",
+  "paraphrase_of": null,
+  "source_question_id": "x15"
+ },
+ {
+  "text": "Một nữ nhân viên đủ tuổi nghỉ hưu theo lộ trình trong năm 2026 nhưng chỉ có 17 năm đóng BHXH bắt buộc. Phòng nhân sự đọc khoản 1 Điều 7 NĐ 135/2020 thấy dẫn chiếu Điều 54, Điều 55 Luật BHXH về điều kiện hưởng lương hưu và lo chị chưa đủ điều kiện. Hiện nay chị có được hưởng lương hưu không, tỷ lệ bao nhiêu?",
+  "question_type": "synthesis",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-xii/article-169/clause-1",
+   "135-2020-nd-cp/article-7/clause-1",
+   "41-2024-qh15/chapter-xi/article-140/clause-2",
+   "41-2024-qh15/chapter-v/section-3/article-64/clause-1/point-a",
+   "41-2024-qh15/chapter-v/section-3/article-66/clause-1/point-a",
+   "41-2024-qh15/chapter-xi/article-140/clause-1"
+  ],
+  "rationale": "Đề xuất của model (rà soát 2026-11-15 trên corpus v3), không phải nhãn người. Độ tin cậy: cao. Ngày áp dụng: 2026-11-11 (ngày nêu trong câu hoặc hồ sơ). Căn cứ và lưu ý: Rà lại 15/11: mọi đơn vị còn hiệu lực tại 11/11/2026; corpus v3 không có văn bản sửa khoản 1 Điều 7 NĐ 135. Ghi chú 12/11: 17 năm, nữ: 45% + 2 x 2% = 49%. Điều kiện 15 năm nằm ở câu dẫn khoản 1 Điều 64, bản nháp bỏ sót. Khoản 1 Điều 7 NĐ 135 thực chất nói về điều kiện tuổi, không về số năm đóng.",
+  "paraphrase_of": null,
+  "source_question_id": "x16"
+ },
+ {
+  "text": "Công ty có hai trường hợp chưa được giới thiệu đi giám định suy giảm khả năng lao động: một công nhân bị tai nạn lao động đã điều trị ổn định nhưng còn di chứng, và một nhân viên bị bệnh thông thường muốn giám định để nghỉ hưu do suy giảm khả năng lao động. Nếu thanh tra kiểm tra năm 2026, công ty có thể bị phạt theo căn cứ nào và căn cứ nào còn vướng?",
+  "question_type": "synthesis",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "84-2015-qh13/chapter-iii/section-3/article-47/clause-1/point-a",
+   "41-2024-qh15/chapter-ii/section-1/article-13/clause-5",
+   "84-2015-qh13/chapter-iii/section-2/article-38/clause-6",
+   "283-2026-nd-cp/chapter-ii/section-3/article-34/clause-1/point-d",
+   "283-2026-nd-cp/chapter-iii/article-48/clause-3/point-đ",
+   "41-2024-qh15/chapter-v/section-3/article-65/clause-1",
+   "283-2026-nd-cp/chapter-i/article-7/clause-1",
+   "283-2026-nd-cp/chapter-i/article-7/clause-2/point-b",
+   "283-2026-nd-cp/chapter-vi/article-67/clause-2"
+  ],
+  "rationale": "Đề xuất của model (rà soát 2026-11-15 trên corpus v3), không phải nhãn người. Độ tin cậy: thấp. Ngày áp dụng: 2026-11-11 (ngày nêu trong câu hoặc hồ sơ). Lỗi thời và được thay: điểm d khoản 1 Điều 23, Nghị định số 12/2022/NĐ-CP -> điểm d khoản 1 Điều 34, Nghị định số 283/2026/NĐ-CP; khoản 1 Điều 23, Nghị định số 12/2022/NĐ-CP -> khoản 1 Điều 34, Nghị định số 283/2026/NĐ-CP; điểm c khoản 4 Điều 41, Nghị định số 12/2022/NĐ-CP -> điểm đ khoản 3 Điều 48, Nghị định số 283/2026/NĐ-CP; khoản 4 Điều 41, Nghị định số 12/2022/NĐ-CP -> khoản 3 Điều 48, Nghị định số 283/2026/NĐ-CP; khoản 1 Điều 6, Nghị định số 12/2022/NĐ-CP -> khoản 1 Điều 7, Nghị định số 283/2026/NĐ-CP. Cần quyết định: kết quả tham chiếu phải sửa (xem bảng kiểm). Căn cứ và lưu ý: Rà lại 15/11: câu chỉ nêu 'năm 2026', nên áp ngày khóa corpus 11/11/2026; khi đó NĐ 12/2022 đã hết hiệu lực và hành vi (chưa giới thiệu) vẫn tiếp diễn, nên theo khoản 2 Điều 67 NĐ 283 áp dụng NĐ 283. Năm đơn vị NĐ 12 chuyển sang lỗi thời, thay bằng các đơn vị NĐ 283 trích nguyên văn. Độ tin cậy thấp vì (1) 'năm 2026' có thể được người duyệt hiểu là trước 10/09/2026, khi đó nhãn 12/11 (NĐ 12) đúng; (2) kết quả tham chiếu phải viết lại. Corpus v3 không có phần mở đầu của NĐ 283 nên không đọc được số hiệu Luật BHXH mà NĐ 283 gọi là 'Luật Bảo hiểm xã hội'; việc coi đó là Luật 41/2024 dựa vào trùng số Điều 65 với khoản 5 Điều 13 Luật BHXH 2024, người duyệt nên kiểm. Ghi chú 12/11: Hai điều khoản NĐ 12 cùng mức 2-4 triệu/người (doanh nghiệp gấp đôi). NĐ 12/2022 hết hiệu lực từ 10/09/2026: nếu thanh tra kiểm tra sau mốc này thì cả hai căn cứ phạt đều phải tra văn bản thay thế ngoài corpus; kết quả tham chiếu chỉ nêu điều đó cho trường hợp thứ hai.",
+  "paraphrase_of": null,
+  "source_question_id": "x17"
+ },
+ {
+  "text": "Một nhân viên nghỉ việc ngày 15/12/2025 và nộp hồ sơ hưởng trợ cấp thất nghiệp ngày 22/12/2025, nhưng đến đầu tháng 1/2026 vẫn chưa có quyết định vì công ty chưa hoàn thành thủ tục xác nhận thời gian đóng bảo hiểm thất nghiệp. Hồ sơ của anh được giải quyết theo luật nào, và công ty có bị xử lý gì không?",
+  "question_type": "synthesis",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "74-2025-qh15/chapter-viii/article-54/clause-1",
+   "74-2025-qh15/chapter-viii/article-54/clause-2",
+   "74-2025-qh15/chapter-viii/article-55/clause-4",
+   "45-2019-qh14/chapter-iii/section-3/article-48/clause-3/point-a",
+   "12-2022-nd-cp/chapter-iii/article-39/clause-3",
+   "12-2022-nd-cp/chapter-i/article-6/clause-1"
+  ],
+  "rationale": "Đề xuất của model (rà soát 2026-11-15 trên corpus v3), không phải nhãn người. Độ tin cậy: cao. Ngày áp dụng: 2026-01-05 (ngày nêu trong câu hoặc hồ sơ). Căn cứ và lưu ý: Rà lại 15/11: tại đầu tháng 1/2026 Luật Việc làm 2025 đã có hiệu lực và NĐ 12/2022 còn hiệu lực, nên giữ nguyên nhãn; NĐ 283/2026 chưa có hiệu lực ở ngày này nên không đưa vào. Khoản 1 Điều 67 NĐ 283 xác nhận hành vi đã kết thúc trước 10/09/2026 vẫn xử theo nghị định có hiệu lực lúc vi phạm (NĐ 12). Khoản 3 Điều 13 Luật BHXH 2024 nói về phối hợp xác nhận thời gian đóng bảo hiểm xã hội, không phải bảo hiểm thất nghiệp, nên không coi là nhắc lại điểm a khoản 3 Điều 48 BLLĐ. Ghi chú 12/11: Khoản 4 Điều 55 Luật Việc làm 2025: hồ sơ nộp trước 01/01/2026 chưa có quyết định thì theo luật mới. Hành vi xảy ra 12/2025-1/2026 nên NĐ 12 còn hiệu lực.",
+  "paraphrase_of": null,
+  "source_question_id": "x18"
+ },
+ {
+  "text": "Sau khi sắp xếp lại đơn vị hành chính, địa bàn nơi xưởng may của chúng tôi hoạt động bị xếp vào vùng có lương tối thiểu thấp hơn theo Phụ lục NĐ 293/2025. Từ 01/01/2026 công ty có được hạ mức lương tối thiểu áp dụng cho công nhân cũ không, còn công nhân tuyển từ năm 2026 thì sao?",
+  "question_type": "synthesis",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "293-2025-nd-cp/article-5/clause-1",
+   "293-2025-nd-cp/article-5/clause-2",
+   "293-2025-nd-cp/article-5/clause-5",
+   "45-2019-qh14/chapter-vi/article-90/clause-2",
+   "293-2025-nd-cp/article-3/clause-3/point-a"
+  ],
+  "rationale": "Đề xuất của model (rà soát 2026-11-15 trên corpus v3), không phải nhãn người. Độ tin cậy: cao. Ngày áp dụng: 2026-01-01 (ngày nêu trong câu hoặc hồ sơ). Căn cứ và lưu ý: Rà lại 15/11: mọi đơn vị còn hiệu lực tại 01/01/2026; NĐ 74/2024 và Phụ lục NĐ 293 vẫn không có trong corpus v3. Ghi chú 12/11: Khoản 5 Điều 5 NĐ 293 giữ mức tại 31/12/2025 cho người tuyển dụng đến hết ngày đó; người tuyển từ 2026 theo mức vùng mới.",
+  "paraphrase_of": null,
+  "source_question_id": "x19"
+ },
+ {
+  "text": "Xưởng hóa chất của chúng tôi vẫn để một thợ hàn nam 63 tuổi, đã quá tuổi nghỉ hưu, làm công việc độc hại liên tục 6 năm nay, có lúc làm một mình trong ca đêm. Việc này có vi phạm không, và doanh nghiệp có thể bị phạt bao nhiêu?",
+  "question_type": "synthesis",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-xi/section-2/article-149/clause-3",
+   "84-2015-qh13/chapter-iv/article-64/clause-1/point-c",
+   "84-2015-qh13/chapter-iv/article-64/clause-1/point-d",
+   "45-2019-qh14/chapter-xi/section-2/article-148/clause-1",
+   "283-2026-nd-cp/chapter-ii/section-2/article-29/clause-2",
+   "283-2026-nd-cp/chapter-i/article-7/clause-1",
+   "283-2026-nd-cp/chapter-i/article-7/clause-2/point-b",
+   "283-2026-nd-cp/chapter-vi/article-67/clause-2"
+  ],
+  "rationale": "Đề xuất của model (rà soát 2026-11-15 trên corpus v3), không phải nhãn người. Độ tin cậy: cao. Ngày áp dụng: 2026-11-11 (câu không ghi ngày nên dùng ngày khóa corpus v3). Lỗi thời và được thay: khoản 2 Điều 31, Nghị định số 12/2022/NĐ-CP -> khoản 2 Điều 29, Nghị định số 283/2026/NĐ-CP; khoản 1 Điều 6, Nghị định số 12/2022/NĐ-CP -> khoản 1 Điều 7, Nghị định số 283/2026/NĐ-CP. Cần quyết định: kết quả tham chiếu phải sửa (xem bảng kiểm). Căn cứ và lưu ý: Rà lại 15/11: hành vi 'liên tục 6 năm nay' vẫn đang diễn ra tại 11/11/2026, nên theo khoản 2 Điều 67 NĐ 283 xử theo NĐ 283. Chế tài mà 12/11 để ngoài corpus nay có trong NĐ 283 (khoản 2 Điều 29, khoản 1 và điểm b khoản 2 Điều 7). Phần vi phạm (khoản 3 Điều 149 BLLĐ; điểm c, d khoản 1 Điều 64 Luật ATVSLĐ) không đổi. Ghi chú 12/11: Phần vi phạm được hỗ trợ (quá 05 năm, có lúc không có người không cao tuổi cùng làm). Mức phạt 20-30 triệu theo NĐ 12 không còn áp dụng cho hành vi đang tiếp diễn sau 10/09/2026. Nếu đối soát coi sự việc xảy ra trước mốc này thì giữ khoản 2 Điều 31 và khoản 1 Điều 6 NĐ 12.",
+  "paraphrase_of": null,
+  "source_question_id": "x20"
+ },
+ {
+  "text": "Một nữ công nhân mang thai tháng thứ 7 bị tổ trưởng xếp làm ca đêm và tăng ca; khi chị từ chối, công ty ra quyết định đơn phương chấm dứt hợp đồng với lý do không chấp hành phân công. Công ty sai ở đâu, bị phạt thế nào và phải khắc phục ra sao?",
+  "question_type": "synthesis",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-x/article-137/clause-1/point-a",
+   "45-2019-qh14/chapter-x/article-137/clause-3",
+   "45-2019-qh14/chapter-iii/section-3/article-41/clause-1",
+   "283-2026-nd-cp/chapter-ii/section-2/article-26/clause-2/point-a",
+   "283-2026-nd-cp/chapter-ii/section-2/article-26/clause-2/point-i",
+   "283-2026-nd-cp/chapter-ii/section-2/article-26/clause-3/point-c",
+   "283-2026-nd-cp/chapter-i/article-7/clause-1",
+   "283-2026-nd-cp/chapter-i/article-7/clause-2/point-b"
+  ],
+  "rationale": "Đề xuất của model (rà soát 2026-11-15 trên corpus v3), không phải nhãn người. Độ tin cậy: cao. Ngày áp dụng: 2026-11-11 (câu không ghi ngày nên dùng ngày khóa corpus v3). Lỗi thời và được thay: điểm a khoản 2 Điều 28, Nghị định số 12/2022/NĐ-CP -> điểm a khoản 2 Điều 26, Nghị định số 283/2026/NĐ-CP; điểm i khoản 2 Điều 28, Nghị định số 12/2022/NĐ-CP -> điểm i khoản 2 Điều 26, Nghị định số 283/2026/NĐ-CP; điểm c khoản 3 Điều 28, Nghị định số 12/2022/NĐ-CP -> điểm c khoản 3 Điều 26, Nghị định số 283/2026/NĐ-CP; khoản 2 Điều 28, Nghị định số 12/2022/NĐ-CP -> khoản 2 Điều 26, Nghị định số 283/2026/NĐ-CP; khoản 1 Điều 6, Nghị định số 12/2022/NĐ-CP -> khoản 1 Điều 7, Nghị định số 283/2026/NĐ-CP. Cần quyết định: kết quả tham chiếu phải sửa (xem bảng kiểm). Căn cứ và lưu ý: Rà lại 15/11: câu không nêu ngày nên hỏi tại 11/11/2026; năm đơn vị NĐ 12/2022 lỗi thời, thay bằng NĐ 283 trích nguyên văn. Độ tin cậy nâng lên vì quy ước 15/11 đã chốt ngày áp dụng. Ghi chú 12/11: Điểm a khoản 1 Điều 137 chỉ nêu điều kiện, điều cấm nằm ở câu dẫn khoản 1. Mức 20-40 triệu mỗi hành vi đúng theo NĐ 12, nhưng chỉ áp dụng nếu sự việc xảy ra trước 10/09/2026 (câu hỏi không nêu thời điểm). Khắc phục đầy đủ còn gồm khoản 1 Điều 41 BLLĐ mà kết quả tham chiếu bỏ qua.",
+  "paraphrase_of": null,
+  "source_question_id": "x21"
+ },
+ {
+  "text": "Một chuỗi nhà hàng tuyển 20 nhân viên phục vụ thời vụ làm 3 tháng dịp Tết, chỉ thỏa thuận miệng và trả lương tiền mặt, không ký hợp đồng và không đóng BHXH. Doanh nghiệp vi phạm những gì, và riêng việc không ký hợp đồng bằng văn bản bị phạt bao nhiêu?",
+  "question_type": "synthesis",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-iii/section-1/article-14/clause-1",
+   "45-2019-qh14/chapter-iii/section-1/article-14/clause-2",
+   "41-2024-qh15/chapter-i/article-2/clause-1/point-a",
+   "283-2026-nd-cp/chapter-ii/section-2/article-15/clause-1/point-b",
+   "283-2026-nd-cp/chapter-ii/section-2/article-15/clause-3/point-a",
+   "283-2026-nd-cp/chapter-i/article-7/clause-1",
+   "283-2026-nd-cp/chapter-i/article-7/clause-2/point-b"
+  ],
+  "rationale": "Đề xuất của model (rà soát 2026-11-15 trên corpus v3), không phải nhãn người. Độ tin cậy: vừa. Ngày áp dụng: 2026-11-11 (câu không ghi ngày nên dùng ngày khóa corpus v3). Lỗi thời và được thay: điểm b khoản 1 Điều 9, Nghị định số 12/2022/NĐ-CP -> điểm b khoản 1 Điều 15, Nghị định số 283/2026/NĐ-CP; điểm a khoản 3 Điều 9, Nghị định số 12/2022/NĐ-CP -> điểm a khoản 3 Điều 15, Nghị định số 283/2026/NĐ-CP; khoản 1 Điều 9, Nghị định số 12/2022/NĐ-CP -> khoản 1 Điều 15, Nghị định số 283/2026/NĐ-CP; khoản 1 Điều 6, Nghị định số 12/2022/NĐ-CP -> khoản 1 Điều 7, Nghị định số 283/2026/NĐ-CP. Căn cứ và lưu ý: Rà lại 15/11: 'dịp Tết' không phải ngày cụ thể nên theo quy ước 15/11 câu được hỏi tại 11/11/2026; bốn đơn vị NĐ 12/2022 lỗi thời, thay bằng NĐ 283 trích nguyên văn. Nếu người duyệt hiểu là Tết tháng 2/2026 (NĐ 12 còn hiệu lực) thì dùng lại bốn đơn vị NĐ 12 của nhãn 12/11; mức phạt và biện pháp khắc phục giống hệt nhau nên kết quả tham chiếu (không nêu số hiệu điều) đúng theo cả hai cách. Giữ độ tin cậy vừa vì cách hiểu ngày. Ghi chú 12/11: 20 người: 5-10 triệu, doanh nghiệp 10-20 triệu; buộc giao kết bằng văn bản. \"Dịp Tết\" gần nhất là 2/2026 nên NĐ 12 còn hiệu lực; nếu là Tết sau 10/09/2026 thì chế tài nằm ngoài corpus.",
+  "paraphrase_of": null,
+  "source_question_id": "x22"
+ },
+ {
+  "text": "Công ty tuyển 5 nhân viên chính thức từ ngày 01/3/2026 nhưng đến giữa tháng 6/2026 vẫn chưa nộp hồ sơ đăng ký tham gia BHXH cho họ. Hạn đăng ký là khi nào, đến thời điểm này hành vi bị xác định là gì, và mức phạt có thể ra sao?",
+  "question_type": "synthesis",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "41-2024-qh15/chapter-iv/section-1/article-28/clause-1",
+   "41-2024-qh15/chapter-iv/section-2/article-39/clause-1/point-a",
+   "12-2022-nd-cp/chapter-iii/article-41/clause-4/point-a",
+   "12-2022-nd-cp/chapter-iii/article-39/clause-7/point-a",
+   "12-2022-nd-cp/chapter-iii/article-39/clause-10/point-a",
+   "41-2024-qh15/chapter-iv/section-2/article-38/clause-2",
+   "12-2022-nd-cp/chapter-i/article-6/clause-1"
+  ],
+  "rationale": "Đề xuất của model (rà soát 2026-11-15 trên corpus v3), không phải nhãn người. Độ tin cậy: vừa. Ngày áp dụng: 2026-06-15 (ngày nêu trong câu hoặc hồ sơ). Căn cứ và lưu ý: Rà lại 15/11: tại 15/06/2026 NĐ 12/2022 còn hiệu lực, nên giữ các đơn vị NĐ 12; NĐ 283/2026 chưa có hiệu lực ở ngày này. Để người duyệt biết: từ 10/09/2026 NĐ 283 tách riêng hành vi 'không đăng ký hoặc đăng ký không đầy đủ số người phải tham gia' (khoản 2 Điều 43) với mức theo số người; nếu hành vi còn kéo dài sau ngày đó thì khoản 2 Điều 67 NĐ 283 cho áp NĐ 283. Ghi chú 12/11: Hạn 30 ngày đến khoảng 31/3/2026, quá 60 ngày (khoảng 30/5/2026) là trốn đóng theo điểm a khoản 1 Điều 39. Hành vi 3-6/2026 nên NĐ 12 còn hiệu lực. Việc cộng cả hai mức phạt cho cùng một sự việc chưa chắc chắn.",
+  "paraphrase_of": null,
+  "source_question_id": "x23"
+ },
+ {
+  "text": "Hợp đồng của 3 nhân viên hết hạn ngày 01/4/2026 và công ty không ký tiếp. Công ty đã xác định mỗi người còn được trợ cấp thôi việc cho thời gian chưa tham gia bảo hiểm thất nghiệp, nhưng đã 40 ngày vẫn chưa trả vì đang khó khăn dòng tiền. Công ty đang vi phạm gì và có thể bị phạt ra sao?",
+  "question_type": "synthesis",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-iii/section-3/article-46/clause-1",
+   "45-2019-qh14/chapter-iii/section-3/article-48/clause-1/point-b",
+   "12-2022-nd-cp/chapter-ii/article-12/clause-2/point-a",
+   "12-2022-nd-cp/chapter-ii/article-12/clause-4/point-a",
+   "12-2022-nd-cp/chapter-i/article-6/clause-1",
+   "45-2019-qh14/chapter-iii/section-3/article-34/clause-1",
+   "145-2020-nd-cp/chapter-iii/section-2/article-8/clause-1"
+  ],
+  "rationale": "Đề xuất của model (rà soát 2026-11-15 trên corpus v3), không phải nhãn người. Độ tin cậy: cao. Ngày áp dụng: 2026-05-11 (ngày nêu trong câu hoặc hồ sơ). Căn cứ và lưu ý: Rà lại 15/11: tại 11/05/2026 NĐ 12/2022 còn hiệu lực nên giữ các đơn vị NĐ 12; NĐ 283/2026 chưa có hiệu lực ở ngày này. Thêm khoản 1 Điều 8 NĐ 145 vì nhắc lại khoản 1 Điều 46 BLLĐ. Ghi chú 12/11: 40 ngày vượt cả 14 ngày làm việc và mốc 30 ngày; 3 người: 1-2 triệu, doanh nghiệp 2-4 triệu; buộc trả kèm lãi. Hành vi 4-5/2026 nên NĐ 12 còn hiệu lực. Điểm b khoản 1 Điều 48 không tự chứa thời hạn, cần câu dẫn.",
+  "paraphrase_of": null,
+  "source_question_id": "x24"
+ }
+]

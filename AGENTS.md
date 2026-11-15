@@ -15,11 +15,11 @@ This workspace holds Lexora, a thesis-scale RAG system for Vietnamese labour law
 `tests/` contains offline tests; `tests/fixtures/` contains synthetic contract data and draft pilot questions.
 `configs/` pins sources, graph settings and the DK1-DK4 conditions; `prompts/` holds versioned prompts.
 `data/`, `experiments/runs/` and `.my_docs/` hold local artifacts excluded from Git.
-`docs/` holds the proposal, design, plans, decisions, guidelines and dated review reports; start with `docs/planning/progress-2026-11-07.md`.
+`docs/` holds the proposal, design, plans, decisions, guidelines and dated review reports; start with `docs/planning/progress-2026-11-16.md`.
 
 Extracted norms and question proposals are review-only until a person accepts them; never present outputs as independently verified legal facts or legal validity.
 
-Keep project documents in `docs/`. Avoid introducing empty scaffolding without a concrete need. Keep research configurations separate from the product knowledge bases; DK3/DK4, answer generation and answer scoring are not implemented yet.
+Keep project documents in `docs/`. Avoid introducing empty scaffolding without a concrete need. Keep research configurations separate from the product knowledge bases; DK1-DK4 retrieval, answer generation and scoring are implemented and have dry-run results on model-drafted labels only; reportable results wait for the human-labelled, frozen question sets.
 
 ## Build, Test, and Development Commands
 

@@ -52,6 +52,15 @@ def main():
     command.add_argument("--store", required=True, help="workspace SQLite store of the web app")
     command.add_argument("--version", required=True, help="corpus version ID (shown in the app)")
     command.add_argument("--output", required=True, help="new, empty directory")
+    command = commands.add_parser("corpus-version-export", help="write one frozen research corpus version (rows, source bytes, hashes) to a JSON file for another store; offline")
+    command.add_argument("--store", required=True, help="workspace SQLite store holding the version")
+    command.add_argument("--version", required=True, help="corpus version ID (shown in the app)")
+    command.add_argument("--output", required=True, help="new JSON file")
+    command = commands.add_parser("corpus-version-import", help="add a frozen corpus version from a corpus-version-export file to a store, same ID and bundle hash; offline")
+    command.add_argument("file", help="file written by corpus-version-export")
+    command.add_argument("--store", required=True, help="workspace SQLite store to add the version to")
+    command.add_argument("--actor", required=True, help="account recorded as the importer")
+    command.add_argument("--expect-version", help="refuse the file unless it holds this version ID")
     command = commands.add_parser("corpus-scope", help="create a research corpus from the chosen articles of pinned local vbpl.vn snapshots; no network")
     command.add_argument("--store", required=True, help="workspace SQLite store of the web app")
     command.add_argument("--config", default="configs/experiment-scope-v1.json")
@@ -71,6 +80,22 @@ def main():
     command = commands.add_parser("kb-materialize", help="rebuild dk3/dk4 and the validation report of a knowledge-base run from raw.jsonl; offline")
     command.add_argument("run", help="knowledge-base run directory")
     command.add_argument("--bundle", help="contract bundle (default: the one recorded in the run manifest)")
+    command = commands.add_parser("amendment-build", help="amendment edges (amendment-rules-v2) of pinned vbpl.vn snapshots against a corpus bundle; offline, no model")
+    command.add_argument("bundle", help="contract bundle whose units are the targets")
+    command.add_argument("--config", default="configs/amendments-v1.json", help="amending sources (pinned snapshots)")
+    command.add_argument("--output", required=True, help="new directory for edges.jsonl and manifest.json")
+    command = commands.add_parser("amendment-sheet", help="CSV check sheet with one row per amendment edge (resolved or not) for two people to compare with the source text; offline")
+    command.add_argument("edges", help="amendment-build output directory (edges.jsonl, manifest.json)")
+    command.add_argument("--sheet", required=True, help="new CSV file to write")
+    command.add_argument("--bundle", help="contract bundle (default: the one recorded in the edge manifest)")
+    command = commands.add_parser("amendment-score", help="verdict counts of a filled amendment check sheet; with --compare, agreement of two checkers; offline")
+    command.add_argument("sheet")
+    command.add_argument("--compare", help="the second checker's sheet of the same edges: raw agreement and Cohen's kappa")
+    command = commands.add_parser("budget-report", help="recall-by-token-budget tables and SVG curves from retrieval runs; offline")
+    command.add_argument("--runs", nargs="+", required=True, help="LABEL=RUN_DIR pairs; the label groups runs into one figure (SET:CONDITION)")
+    command.add_argument("--output", required=True, help="Markdown file; one SVG per question set is written next to it")
+    command.add_argument("--title", default="Đường cong recall theo ngân sách token")
+    command.add_argument("--set-title", nargs="*", default=[], help="SET=Title pairs for headings and figure titles")
     command = commands.add_parser("answer-run", help="cited answers for one retrieval run through Claude Code; resumes an earlier run")
     command.add_argument("retrieval_run", help="run directory written by run-retrieval")
     command.add_argument("--questions", required=True, help="the question file the retrieval run used")
@@ -122,6 +147,28 @@ def main():
     command.add_argument("--claude-model", help="decompose through the local claude CLI instead, e.g. claude-sonnet-5-5")
     command.add_argument("--claude-effort", default="medium", choices=["low", "medium", "high", "xhigh", "max"])
     command.add_argument("--approve-claude", action="store_true", help="explicit approval of the Claude Code calls")
+    command = commands.add_parser("query-slots", help="norm-query-v1: modality, actor, required slots and topic query of each enumeration question, once for every condition; resumes")
+    command.add_argument("questions", help="question file")
+    command.add_argument("--output", required=True, help="new directory, or an earlier analysis run of the same file")
+    command.add_argument("--max-calls", type=int, required=True, help="call budget of this session")
+    command.add_argument("--router-model", help="one approved 9Router model (a MODEL_* alias or a name)")
+    command.add_argument("--approve-router", action="store_true", help="explicit approval of the 9Router calls")
+    command.add_argument("--timeout", type=int, default=300, help="seconds per 9Router call")
+    command.add_argument("--max-tokens", type=int, default=2000)
+    command.add_argument("--claude-model", help="analyze through the local claude CLI instead")
+    command.add_argument("--claude-effort", default="medium", choices=["low", "medium", "high", "xhigh", "max"])
+    command.add_argument("--approve-claude", action="store_true", help="explicit approval of the Claude Code calls")
+    command = commands.add_parser("enum-drafts", help="draft enumeration questions and a check sheet from an adjudicated extraction gold file; offline")
+    command.add_argument("gold", help="adjudicated gold JSONL (extraction-gold-v1)")
+    command.add_argument("--bundle", required=True, help="contract bundle the gold was labelled on")
+    command.add_argument("--aliases", default="configs/experiments/actor-aliases.json")
+    command.add_argument("--level", default="article", choices=["article", "chapter"], help="topic scope of a question")
+    command.add_argument("--min-units", type=int, default=2)
+    command.add_argument("--output", required=True, help="new question file (JSON); the check sheet is written next to it as .csv")
+    command = commands.add_parser("enum-gate", help="extraction coverage of the gold answer units of an enumeration set by a knowledge-base run (WP5 gate); offline")
+    command.add_argument("questions", help="enumeration question file")
+    command.add_argument("--kb-run", required=True, help="knowledge-base run directory")
+    command.add_argument("--claims", default="dk3.jsonl", choices=["dk3.jsonl", "dk4.jsonl"])
     command = commands.add_parser("answer-score", help="automatic metrics of an answer run (refusals, citations against gold units); offline")
     command.add_argument("answer_run")
     command.add_argument("--questions", required=True)
@@ -154,6 +201,20 @@ def main():
     command.add_argument("judge_run")
     command.add_argument("--sheet", required=True)
     command.add_argument("--key", required=True)
+    command = commands.add_parser("paired-stats", help="paired bootstrap with Holm correction, and generation/grading noise, of a per-question metric across labelled runs; offline")
+    command.add_argument("--metric", required=True, help="retrieval.recall@10, retrieval.recall_at_tokens@3000, answer.citation_gold_char_precision, grades.correctness, judge.correctness, ...")
+    command.add_argument("--runs", nargs="+", required=True, metavar="LABEL=DIR", help="retrieval or answer run per label, e.g. DK1=<dir> DK2=<dir>")
+    command.add_argument("--pairs", nargs="+", default=["DK1:DK2", "DK2:DK3", "DK3:DK4", "DK1:DK4"], metavar="A:B", help="Holm family (default the four main comparisons); difference = B minus A")
+    command.add_argument("--exploratory", nargs="*", default=[], metavar="A:B", help="further pairs reported with raw p only")
+    command.add_argument("--repeat", nargs="*", default=[], metavar="LABEL=DIR", help="second generation run of a label (graded the same way): generation noise")
+    command.add_argument("--regrade", help="second grading of the same answers: an outcome judge run (judge.*) or a filled sheet of the same key (grades.*)")
+    command.add_argument("--questions", help="question file (answer.* metrics)")
+    command.add_argument("--sheet", help="grading sheet (grades.*: the filled sheet; judge.*: the sheet the judge read)")
+    command.add_argument("--key", help="key of the grading sheet")
+    command.add_argument("--judge", help="outcome judge run (judge.* metrics)")
+    command.add_argument("--rounds", type=int, default=10000)
+    command.add_argument("--seed", default="lexora-paired-v1")
+    command.add_argument("--output", required=True, help="new JSON report file")
     command = commands.add_parser("demo-build", help="new demo store: three accounts with printed random passwords and the frozen experiment-scope corpus; offline")
     command.add_argument("--store", required=True, help="new SQLite file")
     command.add_argument("--scope", default="configs/experiment-scope-v1.json")
@@ -248,6 +309,21 @@ def main():
         elif args.command == "corpus-export":
             from legal_ai.research.corpus import CorpusStore
             print(json.dumps(CorpusStore(args.store).export_version(args.version, args.output), ensure_ascii=False, indent=2))
+        elif args.command == "corpus-version-export":
+            from legal_ai.research.corpus import CorpusStore
+            output = Path(args.output)
+            if output.exists():
+                raise ValueError("output file exists: use a new file name")
+            body = CorpusStore(args.store).version_file(args.version)
+            output.parent.mkdir(parents=True, exist_ok=True)
+            output.write_text(json.dumps(body, ensure_ascii=False), encoding="utf-8")
+            manifest = body["payload"]["version"]["manifest"]
+            print(json.dumps({"output": output.as_posix(), "version_id": body["version_id"], "bundle_sha256": body["bundle_sha256"],
+                              "documents": len(manifest["documents"]), "units": manifest["unit_count"]}, ensure_ascii=False, indent=2))
+        elif args.command == "corpus-version-import":
+            from legal_ai.research.corpus import CorpusStore
+            body = json.loads(Path(args.file).read_text(encoding="utf-8"))
+            print(json.dumps(CorpusStore(args.store).import_version_file(body, args.actor, args.expect_version), ensure_ascii=False, indent=2))
         elif args.command == "corpus-scope":
             from legal_ai.research.corpus import CorpusStore
             from legal_ai.research.scope import build_scope
@@ -255,8 +331,22 @@ def main():
             print(json.dumps({"corpus_id": corpus["id"], "name": corpus["name"],
                               "documents": [{"document_id": d["document_id"], "articles": d["article_count"], "audit": d["audit_count"]} for d in corpus["documents"]]},
                              ensure_ascii=False, indent=2))
+        elif args.command == "amendment-build":
+            from legal_ai.kb.amendments import build
+            print(json.dumps(build(args.bundle, args.config, args.output), ensure_ascii=False, indent=2))
+        elif args.command in ("amendment-sheet", "amendment-score"):
+            from legal_ai.kb import amendment_check
+            if args.command == "amendment-sheet":
+                report = amendment_check.make_sheet(args.edges, args.sheet, args.bundle)
+            else:
+                report = amendment_check.score_sheet(args.sheet)
+                if args.compare:
+                    report["agreement"] = amendment_check.agreement(args.sheet, args.compare)
+            print(json.dumps(report, ensure_ascii=False, indent=2))
+        elif args.command == "budget-report":
+            from legal_ai.evaluation.budget_report import write_report
+            print(json.dumps(write_report(args.runs, args.output, args.title, args.set_title), ensure_ascii=False, indent=2))
         elif args.command in ("kb-extract", "kb-materialize"):
-            from legal_ai.common.io import read_jsonl
             from legal_ai.evaluation import kb_run
             if args.command == "kb-materialize":
                 bundle = args.bundle or json.loads((Path(args.run) / "manifest.json").read_text(encoding="utf-8"))["bundle"]
@@ -313,7 +403,6 @@ def main():
                     print(json.dumps(neighbor_select.select(args.output, provider, log=lambda line: print(line, flush=True), workers=args.workers)))
                 print(json.dumps(neighbor_select.materialize(args.output), ensure_ascii=False, indent=2))
         elif args.command == "kb-relations":
-            from legal_ai.common.io import read_jsonl
             from legal_ai.evaluation import relation_run
             units = read_jsonl(Path(args.bundle) / "units.jsonl")
             aliases = {"Bộ luật Lao động": "45-2019-qh14"}
@@ -356,6 +445,39 @@ def main():
                 provider = ChatStructured(chat, max_tokens=args.max_tokens)
             counts = decompose_run(args.questions, provider, args.output, log=lambda line: print(line, flush=True))
             print(json.dumps(counts, indent=2))
+        elif args.command == "query-slots":
+            from legal_ai.retrieval.norm_query import analyze
+            if bool(args.router_model) == bool(args.claude_model):
+                parser.error("query-slots needs one of --router-model (with --approve-router) or --claude-model (with --approve-claude)")
+            if args.claude_model:
+                from legal_ai.providers.claude_code import ClaudeCodeProvider
+                provider = ClaudeCodeProvider(args.claude_model, args.claude_effort, args.max_calls, approved=args.approve_claude)
+            else:
+                from legal_ai.providers.router import ChatStructured, RouterProvider, read_settings
+                settings = read_settings(Path.cwd() / ".env")
+                name = settings.get(args.router_model, args.router_model) if args.router_model.startswith("MODEL_") else args.router_model
+                chat = RouterProvider(settings, model=name, approved_route=args.approve_router, max_calls=args.max_calls, timeout=args.timeout)
+                provider = ChatStructured(chat, max_tokens=args.max_tokens)
+            print(json.dumps(analyze(args.questions, provider, args.output, log=lambda line: print(line, flush=True)), indent=2))
+        elif args.command == "enum-drafts":
+            from legal_ai.research.enumeration import DRAFT_VERSION, check_sheet, drafts
+            from legal_ai.retrieval.norm_query import load_aliases
+            output = Path(args.output)
+            if output.exists():
+                parser.error("output exists: use a new question file")
+            gold, bundle = read_jsonl(args.gold), Path(args.bundle)
+            units, documents = read_jsonl(bundle / "units.jsonl"), read_jsonl(bundle / "documents.jsonl")
+            rows = drafts(gold, units, documents, load_aliases(args.aliases), args.level, args.min_units)
+            write_json(output, {"description": f"Enumeration drafts ({DRAFT_VERSION}) from {Path(args.gold).as_posix()}, scope {args.level}; "
+                                               "annotators rewrite and check every question before freezing", "questions": rows})
+            check_sheet(output.with_suffix(".csv"), rows, gold, units)
+            print(json.dumps({"questions": len(rows), "answer_units": sum(len(r["relevant_unit_ids"]) for r in rows),
+                              "sheet": output.with_suffix(".csv").as_posix()}, ensure_ascii=False, indent=2))
+        elif args.command == "enum-gate":
+            from legal_ai.retrieval.norm_query import coverage
+            questions = json.loads(Path(args.questions).read_text(encoding="utf-8"))["questions"]
+            result = coverage(questions, read_jsonl(Path(args.kb_run) / args.claims))
+            print(json.dumps(result | {"uncovered": result["uncovered"][:50]}, ensure_ascii=False, indent=2))
         elif args.command == "answer-score":
             from legal_ai.evaluation.answer_run import score
             print(json.dumps(score(args.answer_run, args.questions), ensure_ascii=False, indent=2))
@@ -366,7 +488,7 @@ def main():
             from legal_ai.evaluation.answer_grading import agreement, score_sheet
             report = score_sheet(args.sheet, args.key)
             if args.compare:
-                report["agreement"] = agreement(args.sheet, args.compare)
+                report["agreement"] = agreement(args.sheet, args.compare, args.key)
             print(json.dumps(report, ensure_ascii=False, indent=2))
         elif args.command == "answer-outcome-judge":
             from legal_ai.evaluation.outcome_judge import judge as outcome_judge
@@ -377,6 +499,15 @@ def main():
         elif args.command == "answer-outcome-score":
             from legal_ai.evaluation.outcome_judge import score as outcome_score
             print(json.dumps(outcome_score(args.judge_run, args.sheet, args.key), ensure_ascii=False, indent=2))
+        elif args.command == "paired-stats":
+            from legal_ai.evaluation import stats
+            if Path(args.output).exists():
+                raise ValueError(f"{args.output} exists; write the report to a new file")
+            report = stats.compare_runs(args.metric, stats.labelled(args.runs), stats.parse_pairs(args.pairs), stats.parse_pairs(args.exploratory),
+                                        stats.labelled(args.repeat), args.regrade, args.questions, args.sheet, args.key, args.judge, args.rounds, args.seed)
+            write_json(args.output, report)
+            print(stats.table(report))
+            print(f"\nreport: {Path(args.output).as_posix()}")
         elif args.command == "demo-build":
             from legal_ai.demo_setup import build as demo_build
             result = demo_build(args.store, args.scope)
@@ -386,7 +517,6 @@ def main():
             for username, role, password in result["accounts"]:
                 print(f"  {username:8} {role:9} {password}")
         elif args.command == "preflight":
-            from legal_ai.common.io import write_json
             from legal_ai.evaluation.preflight import check
             report = check(args.retrieval, args.answers)
             if args.output:
@@ -401,12 +531,10 @@ def main():
             print(json.dumps([{k: s[k] for k in ("model", "batches_ok", "batches_attempted", "dk3_claims", "dk4_claims", "rejected")} for s in summaries],
                              ensure_ascii=False, indent=2))
         elif args.command == "kb-inject":
-            from legal_ai.common.io import read_jsonl
             from legal_ai.evaluation.error_injection import run as inject_run
             bundle = json.loads((Path(args.run) / "manifest.json").read_text(encoding="utf-8"))["bundle"]
             print(json.dumps(inject_run(args.run, read_jsonl(Path(bundle) / "units.jsonl"), args.output, args.per_type, args.seed), ensure_ascii=False, indent=2))
         elif args.command == "kb-plant":
-            from legal_ai.common.io import read_jsonl
             from legal_ai.evaluation.error_injection import plant
             bundle = json.loads((Path(args.run) / "manifest.json").read_text(encoding="utf-8"))["bundle"]
             questions = json.loads(Path(args.questions).read_text(encoding="utf-8"))["questions"]
@@ -442,7 +570,6 @@ def main():
                 report["agreement"] = audit_agreement(args.sheet, args.compare)
             print(json.dumps(report, ensure_ascii=False, indent=2))
         elif args.command.startswith("gold-"):
-            from legal_ai.common.io import read_jsonl, write_jsonl
             from legal_ai.evaluation import extraction_gold as gold
             if args.command == "gold-agreement":
                 print(json.dumps(gold.agreement(read_jsonl(args.first), read_jsonl(args.second)), ensure_ascii=False, indent=2))

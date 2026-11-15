@@ -1,9 +1,10 @@
 <script lang="ts">
+	import { tick } from 'svelte';
 	import Icon from './Icon.svelte';
 	import Term from './Term.svelte';
 	import { api } from '#lib/api.js';
 	import { t } from '#lib/i18n/index.svelte.js';
-	import type { LabelFields, QuestionType, ExpectedStatus, UnitCandidate } from '#lib/types.js';
+	import type { LabelFields, QuestionType, ExpectedStatus, UnitCandidate, UnitRef } from '#lib/types.js';
 	import type { MessageKey } from '#lib/i18n/vi.js';
 
 	// One annotation: question type, expected behaviour, relevant units (searched by BM25 over the frozen corpus) and a note.
@@ -17,18 +18,19 @@
 
 	const TYPES: QuestionType[] = ['lookup', 'synthesis', 'temporal', 'out_of_scope'];
 	const STATUSES: ExpectedStatus[] = ['answer', 'refuse'];
-	let texts = $state<Record<string, string>>({});
+	// Every unit seen so far (search results, their parents, chosen units loaded from a saved label), by ID.
+	let known = $state<Record<string, UnitRef>>({});
 	let query = $state('');
 	let found = $state<UnitCandidate[]>([]);
 	let searching = $state(false);
 
-	// Show the text of every chosen unit; fetch the ones not seen yet.
+	// Show the document, path and text of every chosen unit; fetch the ones not seen yet.
 	$effect(() => {
-		const missing = fields.relevant_unit_ids.filter((id) => !(id in texts));
+		const missing = fields.relevant_unit_ids.filter((id) => !(id in known));
 		if (!missing.length) return;
-		api<{ units: { unit_id: string; text: string }[] }>(`/api/question-set/units?set_id=${encodeURIComponent(setId)}&ids=${encodeURIComponent(missing.join(','))}`)
+		api<{ units: UnitRef[] }>(`/api/question-set/units?set_id=${encodeURIComponent(setId)}&ids=${encodeURIComponent(missing.join(','))}`)
 			.then((r) => {
-				for (const u of r.units) texts[u.unit_id] = u.text;
+				for (const u of r.units) known[u.unit_id] = u;
 			})
 			.catch(() => undefined);
 	});
@@ -52,7 +54,7 @@
 				const r = await api<{ candidates: UnitCandidate[] }>(`/api/question-set/candidates?k=8&set_id=${encodeURIComponent(setId)}&q=${encodeURIComponent(q)}`);
 				if (mine === ticket) {
 					found = r.candidates;
-					for (const c of r.candidates) texts[c.unit_id] ??= c.text;
+					for (const c of r.candidates) for (const u of [...c.parents, c]) known[u.unit_id] ??= u;
 				}
 			} finally {
 				if (mine === ticket) searching = false;
@@ -61,12 +63,61 @@
 		return () => clearTimeout(timer);
 	});
 
+	// Results as a tree: each parent Clause once, with every leaf found under it grouped below it, so a rule that sits
+	// in a Clause's lead sentence ("trong thời hạn 14 ngày ..., trừ trường hợp sau đây") can be chosen, not only its
+	// Points, and an indented row always sits under its real parent. Top-level groups keep the rank of their best
+	// member; the rows under one parent follow the statute (a, b, c, d).
+	type Row = UnitRef & { depth: number; parent: boolean };
+	const rows = $derived.by(() => {
+		const children = new Map<string, Row[]>();
+		const seen = new Set<string>();
+		for (const c of found) {
+			const chain: UnitRef[] = [...c.parents, c];
+			chain.forEach((u, depth) => {
+				if (seen.has(u.unit_id)) return;
+				seen.add(u.unit_id);
+				const under = depth ? chain[depth - 1].unit_id : '';
+				const row = { unit_id: u.unit_id, document: u.document, document_title: u.document_title, path: u.path, text: u.text, order: u.order, depth, parent: depth < c.parents.length };
+				children.set(under, [...(children.get(under) ?? []), row]);
+			});
+		}
+		const out: Row[] = [];
+		const walk = (id: string) => {
+			const level = children.get(id) ?? [];
+			for (const row of id ? [...level].sort((a, b) => a.order - b.order) : level) {
+				out.push(row);
+				walk(row.unit_id);
+			}
+		};
+		walk('');
+		return out;
+	});
+
 	const short = (id: string) => id.split('/').slice(1).join('/') || id;
-	const add = (id: string) => {
+	const spoken = (id: string) => (known[id] ? `${known[id].document}, ${known[id].path}` : short(id));
+
+	// Keep keyboard focus in place: choosing a unit focuses its "chosen" mark in the same row; removing one focuses the
+	// next remove button (or the previous one, or the search box when the list is empty).
+	let foundList = $state<HTMLUListElement>();
+	let chosenList = $state<HTMLUListElement>();
+	let searchBox = $state<HTMLInputElement>();
+	const add = async (id: string) => {
 		if (!fields.relevant_unit_ids.includes(id)) fields.relevant_unit_ids = [...fields.relevant_unit_ids, id];
+		await tick();
+		foundList?.querySelector<HTMLElement>(`li[data-unit="${CSS.escape(id)}"] .picked-mark`)?.focus();
 	};
-	const drop = (id: string) => (fields.relevant_unit_ids = fields.relevant_unit_ids.filter((u) => u !== id));
+	const drop = async (id: string) => {
+		const at = fields.relevant_unit_ids.indexOf(id);
+		fields.relevant_unit_ids = fields.relevant_unit_ids.filter((u) => u !== id);
+		await tick();
+		const buttons = chosenList?.querySelectorAll<HTMLButtonElement>('button') ?? [];
+		(buttons[Math.min(at, buttons.length - 1)] ?? searchBox)?.focus();
+	};
 </script>
+
+{#snippet where(u: UnitRef | undefined, id: string)}
+	<span class="small where" title={id}>{#if u}<span class="doc" title={u.document_title}>{u.document}</span><span class="sep" aria-hidden="true">·</span><span class="muted">{u.path}</span>{:else}<span class="muted">{short(id)}</span>{/if}</span>
+{/snippet}
 
 <div class="label-form">
 	<fieldset>
@@ -90,11 +141,11 @@
 	<fieldset>
 		<legend class="label"><Term key="relevant_units">{t('qs.field.units', { n: fields.relevant_unit_ids.length })}</Term></legend>
 		{#if fields.relevant_unit_ids.length}
-			<ul class="chosen">
+			<ul class="chosen" bind:this={chosenList}>
 				{#each fields.relevant_unit_ids as id (id)}
 					<li>
-						<div><code>{short(id)}</code><span class="serif">{texts[id]?.trim() ?? '…'}</span></div>
-						<button type="button" class="btn quiet small" onclick={() => drop(id)} aria-label={t('qs.unit.remove', { id: short(id) })}><Icon name="x" size={16} /></button>
+						<div>{@render where(known[id], id)}<span class="serif">{known[id]?.text.trim() ?? '…'}</span></div>
+						<button type="button" class="btn quiet small" onclick={() => drop(id)} aria-label={t('qs.unit.remove', { id: spoken(id) })}><Icon name="x" size={16} /></button>
 					</li>
 				{/each}
 			</ul>
@@ -103,16 +154,16 @@
 		{/if}
 		<label class="field search">
 			<span>{t('qs.unit.search')}</span>
-			<input type="search" bind:value={query} placeholder={t('qs.unit.searchPh')} autocomplete="off" />
+			<input type="search" bind:this={searchBox} bind:value={query} placeholder={t('qs.unit.searchPh')} autocomplete="off" />
 		</label>
 		{#if searching}<p class="small muted">{t('common.loading')}</p>{/if}
 		{#if found.length}
-			<ul class="found">
-				{#each found as c (c.unit_id)}
-					<li class:picked={fields.relevant_unit_ids.includes(c.unit_id)}>
-						<div><span class="small muted">{c.path}</span><span class="serif">{c.text.trim()}</span></div>
+			<ul class="found" bind:this={foundList}>
+				{#each rows as c (c.unit_id)}
+					<li class:picked={fields.relevant_unit_ids.includes(c.unit_id)} class:parent={c.parent} style:--depth={Math.min(c.depth, 3)} data-unit={c.unit_id}>
+						<div>{@render where(c, c.unit_id)}<span class="serif">{c.text.trim()}</span></div>
 						{#if fields.relevant_unit_ids.includes(c.unit_id)}
-							<span class="small picked-mark"><Icon name="check" size={16} />{t('qs.unit.added')}</span>
+							<span class="small picked-mark" tabindex="-1"><Icon name="check" size={16} />{t('qs.unit.added')}</span>
 						{:else}
 							<button type="button" class="btn small" onclick={() => add(c.unit_id)}><Icon name="plus" size={16} />{t('qs.unit.add')}</button>
 						{/if}
@@ -196,6 +247,10 @@
 	}
 	.found li {
 		border: 1px solid var(--rule);
+		margin-inline-start: calc(var(--depth, 0) * 20px);
+	}
+	.found li.parent {
+		background: color-mix(in srgb, var(--desk) 40%, var(--paper));
 	}
 	.found li.picked {
 		border-color: #b9dcc5;
@@ -207,13 +262,22 @@
 		gap: 2px;
 		min-width: 0;
 	}
-	.chosen code {
-		font-size: 12px;
+	.where {
+		display: flex;
+		flex-wrap: wrap;
+		column-gap: 6px;
+	}
+	.where .doc {
 		color: var(--ink-2);
+		font-weight: 600;
+	}
+	.where .sep {
+		color: var(--muted);
 	}
 	.serif {
 		font-size: 15px;
 		line-height: 1.5;
+		white-space: pre-line;
 	}
 	.picked-mark {
 		display: inline-flex;
@@ -228,6 +292,21 @@
 	@media (max-width: 700px) {
 		.options {
 			grid-template-columns: 1fr;
+		}
+		/* Narrow screens: a smaller indent step, and the action under the text so nested rows keep a readable measure. */
+		.found li {
+			flex-wrap: wrap;
+			margin-inline-start: calc(var(--depth, 0) * 12px);
+		}
+		.found li > div {
+			flex: 1 1 100%;
+		}
+		.found li > :last-child {
+			margin-inline-start: auto;
+		}
+		/* Document and path usually wrap onto two lines here; a separator would dangle at the line end. */
+		.where .sep {
+			display: none;
 		}
 	}
 </style>

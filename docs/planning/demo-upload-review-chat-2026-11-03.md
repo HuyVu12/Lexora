@@ -57,7 +57,7 @@ Vũ phụ trách toàn bộ phần demo tuần này theo xác nhận người d�
 
 Ngày 02/11 đã qua: ghi nhận là nền local đã chuẩn bị, không lùi ngày bắt đầu giả định. Số giờ Vũ còn lại tuần này chưa được đo; lịch trên có rủi ro nếu provider/pilot hoặc extraction bị chặn. Giữ phạm vi nhỏ thay vì mở thêm chủ đề.
 
-Các mã W45 là tên local của bốn subtask mới dưới SCRUM-21; kết quả đồng bộ sẽ ghi trong `jira-sync-demo-2026-11-03.md`.
+Các mã W45 là tên local của bốn subtask mới dưới SCRUM-21; kết quả đồng bộ nằm trên Jira (tệp local `jira-sync-demo-2026-11-03.md` đã được dọn ngày 11/11/2026).
 
 ## 5. Provider cần dùng
 
@@ -123,6 +123,6 @@ Việc đọc catalog/quota đã được duyệt; thử inference hoặc gửi 
 
 ## 9. Đồng bộ Jira
 
-Payload cụ thể và bản trước khi sửa được lưu local ở `jira-backlog-demo-2026-11-03.json`. Kế hoạch gồm 32 issue updates (8 task cha, 24 subtask) và 4 subtask mới; không đổi status, không xóa issue hoặc thay sprint/native issue links. Các phụ thuộc vận hành mới được ghi trong mô tả; quan hệ nghiên cứu cũ chưa tự xóa.
+Payload cụ thể và bản trước khi sửa từng được lưu local ở `jira-backlog-demo-2026-11-03.json` (đã dọn ngày 11/11/2026; trạng thái hiện hành xem trên Jira). Kế hoạch gồm 32 issue updates (8 task cha, 24 subtask) và 4 subtask mới; không đổi status, không xóa issue hoặc thay sprint/native issue links. Các phụ thuộc vận hành mới được ghi trong mô tả; quan hệ nghiên cứu cũ chưa tự xóa.
 
 Toàn bộ nhóm demo được giao Vũ; task nghiên cứu khác vẫn giữ phân công cũ. Các artifact local chưa push không được mô tả như code đã có trên GitHub. Lỗi/timeout khi ghi Jira phải đọc lại trước khi retry để tránh báo thành công sai hoặc tạo issue trùng.

@@ -267,6 +267,16 @@ class GoldSaveBody(Body):
     norms: list[dict] = Field(max_length=8)
 
 
+class GoldSampleBody(Body):
+    set_id: str
+    share: str | float = "0.3"
+    seed: str = Field(default="lexora-gold-agreement-v1", max_length=80)
+
+
+class GoldSetBody(Body):
+    set_id: str
+
+
 class ControlBody(Body):
     feature: Literal["chat", "extraction", "proposal", "embedding"]
     enabled: bool
@@ -774,9 +784,8 @@ def create_app(store, port, *, provider=None, source_catalog=None, extractor=Non
 
     @app.get("/api/question-set/units")
     def question_units(set_id: str = Query(), ids: str = Query(), _=Depends(reviewer)):
-        _, units, _ = corpora.bundle(questions.summary(set_id)["corpus_version_id"])
-        wanted = set(ids.split(","))
-        return {"units": [{"unit_id": u["unit_id"], "unit_type": u["unit_type"], "text": u["text"]} for u in units if u["unit_id"] in wanted]}
+        """Chosen units with their document, path and text, for labels saved earlier."""
+        return {"units": question_proposals.unit_refs(corpora, questions.summary(set_id)["corpus_version_id"], ids.split(","))}
 
     @app.post("/api/question-set/propose")
     def question_propose(body: QuestionProposeBody, _=Depends(reviewer)):
@@ -1021,6 +1030,14 @@ def create_app(store, port, *, provider=None, source_catalog=None, extractor=Non
     @app.post("/api/gold/adjudicate")
     def gold_adjudicate(body: GoldSaveBody, account=Depends(reviewer)):
         return golds.adjudicate(body.set_id, body.key, body.norms, account["username"])
+
+    @app.post("/api/gold/sample")
+    def gold_sample(body: GoldSampleBody, account=Depends(reviewer)):
+        return golds.declare_sample(body.set_id, account["username"], body.share, body.seed)
+
+    @app.post("/api/gold/finalise")
+    def gold_finalise(body: GoldSetBody, _=Depends(reviewer)):
+        return golds.finalise(body.set_id)
 
     @app.get("/api/gold/file")
     def gold_file(id: str = Query(), _=Depends(reviewer)):

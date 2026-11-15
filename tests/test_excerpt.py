@@ -36,6 +36,22 @@ class ExcerptTests(unittest.TestCase):
             self.assertIn(line, source, "every line is copied from the source")
         self.assertEqual([a["id"] for a in outline(text)], [ids["Điều 2."], ids["Điều 3."]], "the excerpt keeps the same article IDs")
 
+    def test_a_repeated_chapter_heading_blocks_the_article_before_it_unless_stray_headings_are_cut(self):
+        law = ("Chương I\nQUY ĐỊNH CHUNG\nĐiều 1. Phạm vi\n1. Khoản một.\n2. Khoản hai.\n"
+               "Chương I\nĐIỀU KHOẢN THI HÀNH\nĐiều 2. Hiệu lực\nVăn bản có hiệu lực từ ngày ký.\n")
+        default = {a["id"]: a for a in outline(law)}
+        self.assertEqual((default["chapter-i/article-1"]["blocked"], default["chapter-i/article-1"]["reason"]), (True, "duplicate_heading"),
+                         "the default stays as frozen corpus versions were built")
+        relaxed = {a["id"]: a for a in outline(law, cut_stray_headings=True)}
+        self.assertFalse(relaxed["chapter-i/article-1"]["blocked"])
+        text = excerpt(law, ["chapter-i/article-1"], cut_stray_headings=True)
+        self.assertTrue(text.endswith("2. Khoản hai.\n"), "the excerpt stops before the stray heading")
+        self.assertNotIn("ĐIỀU KHOẢN THI HÀNH", text)
+        with self.assertRaisesRegex(ValueError, "lồng nhau"):
+            excerpt(law, ["chapter-i/article-1"])
+        points = "Chương I\nA\nĐiều 1. Trách nhiệm\n1. Bộ:\nd) Việc một;\nd) Việc hai.\n"
+        self.assertTrue(outline(points, cut_stray_headings=True)[0]["blocked"], "a repeated point label still blocks: which unit is meant would be a guess")
+
     def test_excerpt_refuses_empty_unknown_and_blocked_choices(self):
         ids = {a["heading"][:7]: a["id"] for a in outline(LAW)}
         for chosen, reason in (([], "ít nhất một"), (["chapter-ix/article-9"], "Không có Điều"), ([ids["Điều 4."]], "lồng nhau")):

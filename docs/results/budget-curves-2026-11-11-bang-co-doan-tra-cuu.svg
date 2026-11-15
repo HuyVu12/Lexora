@@ -1,0 +1,81 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="640" height="360" viewBox="0 0 640 360" font-family="Segoe UI, Arial, sans-serif" font-size="12">
+<rect width="640" height="360" fill="#ffffff"/>
+<text x="56" y="22" font-size="14" font-weight="600" fill="#222">Cỡ đoạn ĐK1, bộ tra cứu</text>
+<line x1="56" x2="490" y1="316.0" y2="316.0" stroke="#e3e3e3"/>
+<text x="48" y="320.0" text-anchor="end" fill="#555">0,0</text>
+<line x1="56" x2="490" y1="260.0" y2="260.0" stroke="#e3e3e3"/>
+<text x="48" y="264.0" text-anchor="end" fill="#555">0,2</text>
+<line x1="56" x2="490" y1="204.0" y2="204.0" stroke="#e3e3e3"/>
+<text x="48" y="208.0" text-anchor="end" fill="#555">0,4</text>
+<line x1="56" x2="490" y1="148.0" y2="148.0" stroke="#e3e3e3"/>
+<text x="48" y="152.0" text-anchor="end" fill="#555">0,6</text>
+<line x1="56" x2="490" y1="92.0" y2="92.0" stroke="#e3e3e3"/>
+<text x="48" y="96.0" text-anchor="end" fill="#555">0,8</text>
+<line x1="56" x2="490" y1="36.0" y2="36.0" stroke="#e3e3e3"/>
+<text x="48" y="40.0" text-anchor="end" fill="#555">1,0</text>
+<text x="56.0" y="334" text-anchor="middle" fill="#555">250</text>
+<text x="118.0" y="334" text-anchor="middle" fill="#555">500</text>
+<text x="180.0" y="334" text-anchor="middle" fill="#555">1.000</text>
+<text x="242.0" y="334" text-anchor="middle" fill="#555">1.500</text>
+<text x="304.0" y="334" text-anchor="middle" fill="#555">2.000</text>
+<text x="366.0" y="334" text-anchor="middle" fill="#555">3.000</text>
+<text x="428.0" y="334" text-anchor="middle" fill="#555">4.000</text>
+<text x="490.0" y="334" text-anchor="middle" fill="#555">6.000</text>
+<text x="273.0" y="352" text-anchor="middle" fill="#333">Ngân sách ngữ cảnh (token âm tiết)</text>
+<text x="14" y="176.0" transform="rotate(-90 14 176.0)" text-anchor="middle" fill="#333">Recall trung bình</text>
+<polyline fill="none" stroke="#1f5fa8" stroke-width="2" points="56.0,158.7 118.0,103.1 180.0,78.8 242.0,67.6 304.0,54.8 366.0,50.9 428.0,46.9 490.0,43.7"/>
+<circle cx="56.0" cy="158.7" r="3" fill="#1f5fa8"/>
+<circle cx="118.0" cy="103.1" r="3" fill="#1f5fa8"/>
+<circle cx="180.0" cy="78.8" r="3" fill="#1f5fa8"/>
+<circle cx="242.0" cy="67.6" r="3" fill="#1f5fa8"/>
+<circle cx="304.0" cy="54.8" r="3" fill="#1f5fa8"/>
+<circle cx="366.0" cy="50.9" r="3" fill="#1f5fa8"/>
+<circle cx="428.0" cy="46.9" r="3" fill="#1f5fa8"/>
+<circle cx="490.0" cy="43.7" r="3" fill="#1f5fa8"/>
+<line x1="506" x2="526" y1="50" y2="50" stroke="#1f5fa8" stroke-width="2"/>
+<text x="532" y="54" fill="#222">ĐK1-128</text>
+<polyline fill="none" stroke="#c4572a" stroke-width="2" points="56.0,177.1 118.0,175.0 180.0,94.7 242.0,78.6 304.0,64.8 366.0,56.6 428.0,51.2 490.0,48.4"/>
+<circle cx="56.0" cy="177.1" r="3" fill="#c4572a"/>
+<circle cx="118.0" cy="175.0" r="3" fill="#c4572a"/>
+<circle cx="180.0" cy="94.7" r="3" fill="#c4572a"/>
+<circle cx="242.0" cy="78.6" r="3" fill="#c4572a"/>
+<circle cx="304.0" cy="64.8" r="3" fill="#c4572a"/>
+<circle cx="366.0" cy="56.6" r="3" fill="#c4572a"/>
+<circle cx="428.0" cy="51.2" r="3" fill="#c4572a"/>
+<circle cx="490.0" cy="48.4" r="3" fill="#c4572a"/>
+<line x1="506" x2="526" y1="68" y2="68" stroke="#c4572a" stroke-width="2"/>
+<text x="532" y="72" fill="#222">ĐK1-256</text>
+<polyline fill="none" stroke="#2f8a4f" stroke-width="2" points="56.0,159.0 118.0,159.0 180.0,108.1 242.0,88.5 304.0,78.8 366.0,57.4 428.0,52.5 490.0,41.3"/>
+<circle cx="56.0" cy="159.0" r="3" fill="#2f8a4f"/>
+<circle cx="118.0" cy="159.0" r="3" fill="#2f8a4f"/>
+<circle cx="180.0" cy="108.1" r="3" fill="#2f8a4f"/>
+<circle cx="242.0" cy="88.5" r="3" fill="#2f8a4f"/>
+<circle cx="304.0" cy="78.8" r="3" fill="#2f8a4f"/>
+<circle cx="366.0" cy="57.4" r="3" fill="#2f8a4f"/>
+<circle cx="428.0" cy="52.5" r="3" fill="#2f8a4f"/>
+<circle cx="490.0" cy="41.3" r="3" fill="#2f8a4f"/>
+<line x1="506" x2="526" y1="86" y2="86" stroke="#2f8a4f" stroke-width="2"/>
+<text x="532" y="90" fill="#222">ĐK1-384</text>
+<polyline fill="none" stroke="#7b4fa0" stroke-width="2" points="56.0,171.0 118.0,171.0 180.0,168.9 242.0,113.7 304.0,83.1 366.0,65.3 428.0,57.0 490.0,48.5"/>
+<circle cx="56.0" cy="171.0" r="3" fill="#7b4fa0"/>
+<circle cx="118.0" cy="171.0" r="3" fill="#7b4fa0"/>
+<circle cx="180.0" cy="168.9" r="3" fill="#7b4fa0"/>
+<circle cx="242.0" cy="113.7" r="3" fill="#7b4fa0"/>
+<circle cx="304.0" cy="83.1" r="3" fill="#7b4fa0"/>
+<circle cx="366.0" cy="65.3" r="3" fill="#7b4fa0"/>
+<circle cx="428.0" cy="57.0" r="3" fill="#7b4fa0"/>
+<circle cx="490.0" cy="48.5" r="3" fill="#7b4fa0"/>
+<line x1="506" x2="526" y1="104" y2="104" stroke="#7b4fa0" stroke-width="2"/>
+<text x="532" y="108" fill="#222">ĐK1-512</text>
+<polyline fill="none" stroke="#9a7b1c" stroke-width="2" points="56.0,115.8 118.0,86.6 180.0,70.7 242.0,61.5 304.0,59.4 366.0,51.2 428.0,48.0 490.0,45.6"/>
+<circle cx="56.0" cy="115.8" r="3" fill="#9a7b1c"/>
+<circle cx="118.0" cy="86.6" r="3" fill="#9a7b1c"/>
+<circle cx="180.0" cy="70.7" r="3" fill="#9a7b1c"/>
+<circle cx="242.0" cy="61.5" r="3" fill="#9a7b1c"/>
+<circle cx="304.0" cy="59.4" r="3" fill="#9a7b1c"/>
+<circle cx="366.0" cy="51.2" r="3" fill="#9a7b1c"/>
+<circle cx="428.0" cy="48.0" r="3" fill="#9a7b1c"/>
+<circle cx="490.0" cy="45.6" r="3" fill="#9a7b1c"/>
+<line x1="506" x2="526" y1="122" y2="122" stroke="#9a7b1c" stroke-width="2"/>
+<text x="532" y="126" fill="#222">ĐK2</text>
+</svg>

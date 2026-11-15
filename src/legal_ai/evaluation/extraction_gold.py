@@ -14,8 +14,15 @@ Matching rules, fixed before any run:
   actors match (both empty, or matching); pairs are taken greedily by similarity, each norm used once.
 Predictions come from the rule baseline (`norm-rules-v2`, structured sentences only; cue-only review flags carry
 no slots and are left out) or from a knowledge-base run (DK3 or DK4 claims), on exactly the gold sentences.
+
+Partial double annotation: when a gold set declares an agreement sample (`agreement_sample`), only the sample is
+labelled by both annotators; each exported row then carries `annotation` = {"mode": "double" | "single",
+"annotators", "decided_by", "in_sample"}, and `score` adds the same P/R/F1 on the double-annotated rows alone.
+Rows without `annotation` (older gold files) are scored as before.
 """
 
+from fractions import Fraction
+import math
 import random
 import re
 
@@ -25,6 +32,9 @@ from legal_ai.extraction.norms import leaf_units, match_sentence, sentences
 from legal_ai.research.questions import kappa
 
 GOLD_VERSION = "extraction-gold-v1"
+SAMPLE_METHOD = "document-largest-remainder-v1"
+SAMPLE_SEED = "lexora-gold-agreement-v1"
+SAMPLE_SHARE = "0.3"
 QUALIFIERS = ("conditions", "exceptions", "deadlines", "quantities")
 _TOKEN = re.compile(r"[^\W_]+|%", re.UNICODE)
 
@@ -32,6 +42,11 @@ _TOKEN = re.compile(r"[^\W_]+|%", re.UNICODE)
 def _article(unit_id):
     match = re.match(r"(.*?/article-[^/]+)", unit_id)
     return match.group(1) if match else unit_id
+
+
+def article_id(unit_id):
+    """The article unit ID a unit belongs to (the unit ID itself when it is not under an article)."""
+    return _article(unit_id)
 
 
 def sample_articles(units, count, seed="lexora-gold-v1"):
@@ -47,6 +62,49 @@ def sample_articles(units, count, seed="lexora-gold-v1"):
     rng = random.Random(seed)
     while len(chosen) > count:
         chosen.remove(rng.choice(sorted(chosen)))
+    return sorted(chosen)
+
+
+def sample_share(share):
+    """The share as an exact fraction in (0, 1]; decimals are read from their text so 0.3 is exactly 3/10."""
+    try:
+        value = Fraction(str(share).strip())
+    except (ValueError, ZeroDivisionError):
+        raise ValueError("share must be a number between 0 and 1") from None
+    if not 0 < value <= 1:
+        raise ValueError("share must be greater than 0 and at most 1")
+    return value
+
+
+def sample_allocation(article_ids, share=SAMPLE_SHARE, seed=SAMPLE_SEED):
+    """{document: number of sample articles}: `round(share * articles)` seats (half up, at least one), shared over
+    documents by the largest-remainder (Hamilton) method on exact fractions, so a document gets its proportional
+    quota rounded down plus at most one more seat; equal remainders are ordered by a seeded hash of the document ID.
+    A document with one article out of forty therefore gets a seat only when its remainder wins, never by a floor."""
+    articles = sorted(set(article_ids))
+    if not articles:
+        raise ValueError("no articles to sample")
+    by_doc = {}
+    for article in articles:
+        by_doc.setdefault(article.split("/", 1)[0], []).append(article)
+    count = min(len(articles), max(1, math.floor(sample_share(share) * len(articles) + Fraction(1, 2))))
+    quotas = {document: Fraction(count * len(items), len(articles)) for document, items in by_doc.items()}
+    seats = {document: math.floor(quota) for document, quota in quotas.items()}
+    order = sorted(by_doc, key=lambda d: (-(quotas[d] - seats[d]), digest(f"{seed}:{d}")))
+    for document in order[:count - sum(seats.values())]:
+        seats[document] += 1
+    return dict(sorted(seats.items()))
+
+
+def agreement_sample(article_ids, share=SAMPLE_SHARE, seed=SAMPLE_SEED):
+    """The article IDs both annotators label (`document-largest-remainder-v1`): a pure function of the set's
+    articles, the share and the seed, so every machine computes the same list. Seats per document come from
+    `sample_allocation`; inside a document the articles are taken in the order of a seeded hash of their IDs."""
+    articles = sorted(set(article_ids))
+    chosen = []
+    for document, seats in sample_allocation(articles, share, seed).items():
+        items = [a for a in articles if a.split("/", 1)[0] == document]
+        chosen += sorted(items, key=lambda a: digest(f"{seed}:{a}"))[:seats]
     return sorted(chosen)
 
 
@@ -189,9 +247,20 @@ def _prf(tp, gold, predicted):
 
 
 def score(gold_rows, predicted_rows):
-    """Micro P/R/F1 of slots (overall, per slot, qualifiers) and norms, strict and lenient."""
+    """Micro P/R/F1 of slots (overall, per slot, qualifiers) and norms, strict and lenient. When the gold rows
+    carry `annotation` (a set with an agreement sample), `double_annotated` repeats the report on the rows two
+    people labelled, and `annotation` counts the double and single rows."""
+    report = {"gold_version": GOLD_VERSION} | _score(gold_rows, predicted_rows)
+    if any("annotation" in row for row in gold_rows):
+        double = [row for row in gold_rows if (row.get("annotation") or {}).get("mode") == "double"]
+        report["annotation"] = {"double": len(double), "single": len(gold_rows) - len(double)}
+        report["double_annotated"] = _score(double, predicted_rows)
+    return report
+
+
+def _score(gold_rows, predicted_rows):
     predicted = {_key(r): r for r in predicted_rows}
-    report = {"gold_version": GOLD_VERSION, "sentences": len(gold_rows)}
+    report = {"sentences": len(gold_rows)}
     for mode, strict in (("strict", True), ("lenient", False)):
         slot_counts = {name: [0, 0, 0] for name in LLM_SLOTS}
         norm_counts = [0, 0, 0]

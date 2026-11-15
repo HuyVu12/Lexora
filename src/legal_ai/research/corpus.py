@@ -28,6 +28,7 @@ from legal_ai.schemas.contract import VERSION, validate_document, validate_unit
 from legal_ai.validation.bundle import validate_bundle
 
 STORE_VERSION = "corpus-store-v1"
+VERSION_FILE_FORMAT = "lexora-corpus-version-v1"
 MAX_DOCUMENTS = 200
 _SLUG = re.compile(r"[a-z0-9][a-z0-9-]{0,79}")
 SCHEMA = """
@@ -139,11 +140,18 @@ class CorpusStore:
         with self._lock, closing(self._connect()) as db, db:
             if db.execute("SELECT 1 FROM corpora WHERE id = ?", (corpus_id,)).fetchone() is None:
                 raise ValueError("Không tìm thấy corpus")
-            live = db.execute("SELECT document_id, source_sha256 FROM corpus_documents WHERE corpus_id = ? AND removed_at IS NULL", (corpus_id,)).fetchall()
+            live = db.execute("SELECT document_id, source_sha256, metadata FROM corpus_documents WHERE corpus_id = ? AND removed_at IS NULL", (corpus_id,)).fetchall()
             if any(r["document_id"] == document_id for r in live):
                 raise ValueError(f"Mã văn bản {document_id} đã có trong corpus; hãy chọn mã khác")
-            if any(r["source_sha256"] == digest(raw) for r in live):
-                raise ValueError("Nguồn này (cùng nội dung) đã có trong corpus")
+            # One snapshot may appear twice only as excerpts with no article in common (scope v3 keeps the articles that
+            # amend other documents as a separate entry, so the first excerpt stays identical to earlier versions).
+            mine = set((metadata.get("excerpt") or {}).get("article_ids") or [])
+            for row in live:
+                if row["source_sha256"] != digest(raw):
+                    continue
+                theirs = set((json.loads(row["metadata"]).get("excerpt") or {}).get("article_ids") or [])
+                if not mine or not theirs or mine & theirs:
+                    raise ValueError("Nguồn này (cùng nội dung) đã có trong corpus")
             if len(live) >= MAX_DOCUMENTS:
                 raise ValueError(f"Một corpus chứa tối đa {MAX_DOCUMENTS} văn bản")
             db.execute("INSERT INTO corpus_documents VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)", (
@@ -151,7 +159,7 @@ class CorpusStore:
                 canonical(normalized), canonical(parsed["units"]), canonical(report), _now(), actor, None))
         return self.document(row_id)
 
-    def add_vbpl(self, corpus_id, manifest, raw, actor, document_id=None, article_ids=None):
+    def add_vbpl(self, corpus_id, manifest, raw, actor, document_id=None, article_ids=None, include_amending=False):
         """Add a vbpl.vn snapshot fetched by `vbpl_api.fetch_document` (its manifest and stored bytes).
         With `article_ids` (outline IDs) only those articles and their chapter/section headings are kept, verbatim;
         the row still stores the whole snapshot, and the metadata records the chosen articles."""
@@ -165,8 +173,8 @@ class CorpusStore:
         if article_ids is not None:
             chosen = set(article_ids)
             order = [a["id"] for a in outline(text) if a["id"] in chosen]
-            text = excerpt(text, article_ids, limit=None)
-            meta = meta | {"excerpt": {"article_ids": order, "count": len(order)}}
+            text = excerpt(text, article_ids, limit=None, include_amending=include_amending)
+            meta = meta | {"excerpt": {"article_ids": order, "count": len(order), **({"include_amending": True} if include_amending else {})}}
         kind = (meta.get("doc_type") or "văn bản").lower()
         no_articles = (f"Văn bản này ({kind} {meta.get('doc_num') or ''}) không chia thành Điều nên không đưa vào corpus được. "
                        "Lệnh công bố, chỉ thị và công văn thường như vậy; hãy chọn chính văn bản luật, nghị định hoặc thông tư.")
@@ -357,3 +365,34 @@ class CorpusStore:
                 version["id"], corpus["id"], version["number"], version["note"], version["frozen_at"], version["frozen_by"],
                 json.dumps(version["document_rows"]), canonical(version["manifest"])))
         return self.version(version["id"])
+
+    def version_file(self, version_id):
+        """A frozen version as one self-checking file, for a server reached only by a shell (`cli corpus-version-export`):
+        the `version_payload` of a question pack, with its version ID, bundle hash and a hash of the payload itself."""
+        payload = self.version_payload(version_id)
+        return {"format": VERSION_FILE_FORMAT, "version_id": payload["version"]["id"], "bundle_sha256": payload["version"]["manifest"]["bundle_sha256"],
+                "payload_sha256": digest(canonical(payload)), "exported_at": _now(), "payload": payload}
+
+    def import_version_file(self, body, actor, expected_version=None):
+        """Import a `version_file` (`cli corpus-version-import`): the file must be intact, name the expected version if one
+        is given, and the stored version must come out with the same ID and bundle hash, re-read from the stored rows."""
+        if not isinstance(body, dict) or body.get("format") != VERSION_FILE_FORMAT:
+            raise ValueError("Tệp không phải phiên bản corpus Lexora")
+        payload = body.get("payload") or {}
+        if digest(canonical(payload)) != body.get("payload_sha256"):
+            raise ValueError("Nội dung tệp phiên bản corpus không khớp mã băm")
+        if payload["version"]["id"] != body.get("version_id") or payload["version"]["manifest"]["bundle_sha256"] != body.get("bundle_sha256"):
+            raise ValueError("Mã phiên bản hoặc mã băm bundle trong tệp không khớp nhau")
+        if expected_version and expected_version != body["version_id"]:
+            raise ValueError(f"Tệp chứa phiên bản {body['version_id']}, không phải {expected_version}")
+        try:
+            self.version(body["version_id"])
+            created = False
+        except ValueError:
+            created = True
+        version = self.import_version(payload, actor)
+        documents, units, _ = self.bundle(version["id"])  # re-reads the stored rows and checks them against the bundle hash
+        if version["id"] != body["version_id"] or version["bundle_sha256"] != body["bundle_sha256"]:
+            raise ValueError("Phiên bản corpus sau khi nhập không khớp tệp")
+        return {"version_id": version["id"], "corpus_id": version["corpus_id"], "number": version["number"], "bundle_sha256": version["bundle_sha256"],
+                "documents": len(documents), "units": len(units), "created": created}

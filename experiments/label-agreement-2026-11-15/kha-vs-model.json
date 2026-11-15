@@ -1,0 +1,307 @@
+{
+ "store": "vm-lexora-20261115.sqlite",
+ "set_id": "qe1ae05433e9f",
+ "annotator": "kha",
+ "annotator_proposals_shown": {
+  "false": 152
+ },
+ "model": {
+  "claude-opus-5-5 (agent session, 08/11/2026)": 152
+ },
+ "all": {
+  "questions": 152,
+  "question_type": {
+   "kappa": 0.95,
+   "raw": 0.974,
+   "confusion_annotator_to_model": {
+    "lookup -> synthesis": 1,
+    "out_of_scope -> temporal": 3
+   }
+  },
+  "expected_status": {
+   "kappa": 0.922,
+   "raw": 0.98,
+   "confusion_annotator_to_model": {
+    "refuse -> answer": 3
+   }
+  },
+  "unit_dice_mean": 0.953,
+  "unit_exact": 0.928,
+  "both_answer": 128,
+  "article_exact_both_answer": 1.0,
+  "full_agreement": 0.928
+ },
+ "without_label_form_bug": {
+  "questions": 146,
+  "question_type": {
+   "kappa": 0.948,
+   "raw": 0.973,
+   "confusion_annotator_to_model": {
+    "lookup -> synthesis": 1,
+    "out_of_scope -> temporal": 3
+   }
+  },
+  "expected_status": {
+   "kappa": 0.921,
+   "raw": 0.979,
+   "confusion_annotator_to_model": {
+    "refuse -> answer": 3
+   }
+  },
+  "unit_dice_mean": 0.976,
+  "unit_exact": 0.966,
+  "both_answer": 122,
+  "article_exact_both_answer": 1.0,
+  "full_agreement": 0.966
+ },
+ "label_form_bug_questions": 6,
+ "disagreements": [
+  {
+   "position": 5,
+   "question": "Nếu ký riêng hợp đồng thử việc thì trong đó bắt buộc phải ghi những nội dung gì?",
+   "annotator": {
+    "expected_status": "answer",
+    "question_type": "synthesis",
+    "relevant_unit_ids": [
+     "45-2019-qh14/chapter-iii/section-1/article-24/clause-2",
+     "45-2019-qh14/chapter-iii/section-1/article-21/clause-1/point-d",
+     "45-2019-qh14/chapter-iii/section-1/article-21/clause-1/point-g",
+     "45-2019-qh14/chapter-iii/section-1/article-21/clause-1/point-a",
+     "45-2019-qh14/chapter-iii/section-1/article-21/clause-1/point-b",
+     "45-2019-qh14/chapter-iii/section-1/article-21/clause-1/point-c",
+     "45-2019-qh14/chapter-iii/section-1/article-21/clause-1/point-h"
+    ]
+   },
+   "model": {
+    "expected_status": "answer",
+    "question_type": "synthesis",
+    "relevant_unit_ids": [
+     "45-2019-qh14/chapter-iii/section-1/article-24/clause-2",
+     "45-2019-qh14/chapter-iii/section-1/article-21/clause-1/point-a",
+     "45-2019-qh14/chapter-iii/section-1/article-21/clause-1/point-b",
+     "45-2019-qh14/chapter-iii/section-1/article-21/clause-1/point-c",
+     "45-2019-qh14/chapter-iii/section-1/article-21/clause-1/point-đ",
+     "45-2019-qh14/chapter-iii/section-1/article-21/clause-1/point-g",
+     "45-2019-qh14/chapter-iii/section-1/article-21/clause-1/point-h"
+    ]
+   },
+   "model_rationale": "Khoản 2 Điều 24 dẫn chiếu thời gian thử việc và các điểm a, b, c, đ, g, h khoản 1 Điều 21.",
+   "note": "S",
+   "label_form_bug": false
+  },
+  {
+   "position": 47,
+   "question": "Sau khi chấm dứt hợp đồng, công ty có tối đa bao lâu để thanh toán hết các khoản tiền cho người lao động?",
+   "annotator": {
+    "expected_status": "answer",
+    "question_type": "lookup",
+    "relevant_unit_ids": [
+     "45-2019-qh14/chapter-iii/section-3/article-48/clause-1/point-a"
+    ]
+   },
+   "model": {
+    "expected_status": "answer",
+    "question_type": "lookup",
+    "relevant_unit_ids": [
+     "45-2019-qh14/chapter-iii/section-3/article-48/clause-1"
+    ]
+   },
+   "model_rationale": "Khoản 1 Điều 48 quy định thanh toán trong 14 ngày làm việc, một số trường hợp được kéo dài nhưng không quá 30 ngày.",
+   "note": "BUG HỆ THỐNG: Mất đoạn root Khoản 1 Điều 48 chứa quy định 14-30 ngày. Phải chọn tạm Điểm a để qua bài.",
+   "label_form_bug": true
+  },
+  {
+   "position": 56,
+   "question": "Người lao động được tạm hoãn thực hiện hợp đồng lao động trong những trường hợp nào?",
+   "annotator": {
+    "expected_status": "answer",
+    "question_type": "lookup",
+    "relevant_unit_ids": [
+     "45-2019-qh14/chapter-iii/section-2/article-30/clause-1/point-h"
+    ]
+   },
+   "model": {
+    "expected_status": "answer",
+    "question_type": "lookup",
+    "relevant_unit_ids": [
+     "45-2019-qh14/chapter-iii/section-2/article-30/clause-1"
+    ]
+   },
+   "model_rationale": "Đoạn trích chỉ có Điều 31 về nhận lại người lao động sau tạm hoãn, không có điều liệt kê các trường hợp tạm hoãn. (Rà lại: corpus có căn cứ ở chapter-iii/section-2/article-30/clause-1.)",
+   "note": "BUG BM25/CHUNKING: Câu hỏi cần root Khoản 1 Điều 30 bao trùm tất cả trường hợp, nhưng hệ thống ẩn root, chỉ hiện các Điểm con rời rạc. Chọn tạm 1 Điểm để qua câu.",
+   "label_form_bug": true
+  },
+  {
+   "position": 75,
+   "question": "Nhà máy mất điện kéo dài, không phải lỗi của công ty, phải cho công nhân nghỉ khoảng 20 ngày làm việc. Lương những ngày nghỉ đó được tính thế nào?",
+   "annotator": {
+    "expected_status": "answer",
+    "question_type": "synthesis",
+    "relevant_unit_ids": [
+     "45-2019-qh14/chapter-vi/article-99/clause-3/point-b",
+     "45-2019-qh14/chapter-vi/article-99/clause-3/point-a"
+    ]
+   },
+   "model": {
+    "expected_status": "answer",
+    "question_type": "synthesis",
+    "relevant_unit_ids": [
+     "45-2019-qh14/chapter-vi/article-99/clause-3",
+     "45-2019-qh14/chapter-vi/article-99/clause-3/point-b"
+    ]
+   },
+   "model_rationale": "Khoản 3 Điều 99 áp dụng cho sự cố điện không do lỗi người sử dụng lao động, điểm b quy định ngừng việc trên 14 ngày thì hai bên thỏa thuận nhưng 14 ngày đầu không thấp hơn mức lương tối thiểu.",
+   "note": "BUG BM25/CHUNKING: Câu hỏi cần root Khoản 3 Điều 99 bao trùm tất cả trường hợp, nhưng hệ thống ẩn root, chỉ hiện các Điểm con rời rạc. Chọn tạm 1 Điểm a để qua câu",
+   "label_form_bug": true
+  },
+  {
+   "position": 82,
+   "question": "Xưởng may gia công hàng xuất khẩu có được tăng ca vượt 200 giờ một năm không, trần là bao nhiêu?",
+   "annotator": {
+    "expected_status": "answer",
+    "question_type": "lookup",
+    "relevant_unit_ids": [
+     "45-2019-qh14/chapter-vii/section-1/article-107/clause-3/point-a",
+     "45-2019-qh14/chapter-vii/section-1/article-107/clause-3/point-b"
+    ]
+   },
+   "model": {
+    "expected_status": "answer",
+    "question_type": "lookup",
+    "relevant_unit_ids": [
+     "45-2019-qh14/chapter-vii/section-1/article-107/clause-3",
+     "45-2019-qh14/chapter-vii/section-1/article-107/clause-3/point-a"
+    ]
+   },
+   "model_rationale": "Khoản 3 và điểm a khoản 3 Điều 107 cho phép làm thêm không quá 300 giờ/năm với sản xuất, gia công xuất khẩu hàng dệt, may.",
+   "note": "BUG BM25/CHUNKING: Câu hỏi cần root Khoản 3 Điều 107 bao trùm tất cả trường hợp, nhưng hệ thống ẩn root, chỉ hiện các Điểm con rời rạc. Chọn tạm 1 Điểm b để qua câu",
+   "label_form_bug": true
+  },
+  {
+   "position": 85,
+   "question": "Làm đủ một năm ở công ty, công việc bình thường thì được bao nhiêu ngày phép năm?",
+   "annotator": {
+    "expected_status": "answer",
+    "question_type": "lookup",
+    "relevant_unit_ids": [
+     "45-2019-qh14/chapter-vii/section-2/article-113/clause-1/point-a",
+     "45-2019-qh14/chapter-vii/section-2/article-113/clause-1/point-b"
+    ]
+   },
+   "model": {
+    "expected_status": "answer",
+    "question_type": "lookup",
+    "relevant_unit_ids": [
+     "45-2019-qh14/chapter-vii/section-2/article-113/clause-1",
+     "45-2019-qh14/chapter-vii/section-2/article-113/clause-1/point-a"
+    ]
+   },
+   "model_rationale": "Khoản 1 và điểm a khoản 1 Điều 113 quy định 12 ngày làm việc nghỉ hằng năm cho người làm việc đủ 12 tháng trong điều kiện bình thường.",
+   "note": "BUG BM25/CHUNKING: Câu hỏi cần root Khoản 1 Điều 113 bao trùm tất cả trường hợp, nhưng hệ thống ẩn root, chỉ hiện các Điểm con rời rạc. Chọn tạm 1 Điểm b để qua câu",
+   "label_form_bug": true
+  },
+  {
+   "position": 100,
+   "question": "Nhân viên mới làm được 7 tháng thì xin nghỉ việc, chưa dùng ngày phép nào. Công ty có phải trả tiền phép không và tính bao nhiêu ngày?",
+   "annotator": {
+    "expected_status": "answer",
+    "question_type": "lookup",
+    "relevant_unit_ids": [
+     "45-2019-qh14/chapter-vii/section-2/article-113/clause-2"
+    ]
+   },
+   "model": {
+    "expected_status": "answer",
+    "question_type": "synthesis",
+    "relevant_unit_ids": [
+     "45-2019-qh14/chapter-vii/section-2/article-113/clause-2",
+     "45-2019-qh14/chapter-vii/section-2/article-113/clause-3"
+    ]
+   },
+   "model_rationale": "Khoản 2 Điều 113 tính phép theo tỷ lệ số tháng làm việc, khoản 3 Điều 113 buộc thanh toán tiền lương cho ngày chưa nghỉ khi thôi việc.",
+   "note": "S",
+   "label_form_bug": false
+  },
+  {
+   "position": 104,
+   "question": "Bộ luật Lao động 2019 bắt đầu có hiệu lực từ ngày nào?",
+   "annotator": {
+    "expected_status": "refuse",
+    "question_type": "out_of_scope",
+    "relevant_unit_ids": []
+   },
+   "model": {
+    "expected_status": "answer",
+    "question_type": "temporal",
+    "relevant_unit_ids": [
+     "45-2019-qh14/chapter-xvii/article-220/clause-1"
+    ]
+   },
+   "model_rationale": "Khoản 1 Điều 220 quy định Bộ luật có hiệu lực từ ngày 01/01/2021.",
+   "note": "",
+   "label_form_bug": false
+  },
+  {
+   "position": 105,
+   "question": "Từ khi Bộ luật Lao động 45/2019 có hiệu lực thì bộ luật lao động cũ nào hết hiệu lực?",
+   "annotator": {
+    "expected_status": "refuse",
+    "question_type": "out_of_scope",
+    "relevant_unit_ids": []
+   },
+   "model": {
+    "expected_status": "answer",
+    "question_type": "temporal",
+    "relevant_unit_ids": [
+     "45-2019-qh14/chapter-xvii/article-220/clause-1"
+    ]
+   },
+   "model_rationale": "Khoản 1 Điều 220 quy định Bộ luật Lao động số 10/2012/QH13 hết hiệu lực kể từ ngày Bộ luật này có hiệu lực.",
+   "note": "",
+   "label_form_bug": false
+  },
+  {
+   "position": 126,
+   "question": "Công ty không trả tiền lương làm thêm giờ cho 20 công nhân thì bị phạt mức nào và phải trả lại những gì?",
+   "annotator": {
+    "expected_status": "answer",
+    "question_type": "synthesis",
+    "relevant_unit_ids": [
+     "12-2022-nd-cp/chapter-ii/article-17/clause-2/point-b",
+     "12-2022-nd-cp/chapter-ii/article-17/clause-5/point-a"
+    ]
+   },
+   "model": {
+    "expected_status": "answer",
+    "question_type": "synthesis",
+    "relevant_unit_ids": [
+     "12-2022-nd-cp/chapter-ii/article-17/clause-2",
+     "12-2022-nd-cp/chapter-ii/article-17/clause-2/point-b",
+     "12-2022-nd-cp/chapter-ii/article-17/clause-5/point-a"
+    ]
+   },
+   "model_rationale": "Khoản 2 Điều 17 Nghị định 12/2022/NĐ-CP nêu hành vi không trả lương làm thêm giờ, điểm b phạt 10.000.000 đến 20.000.000 đồng cho 11 đến 50 người, điểm a khoản 5 buộc trả đủ lương cộng tiền lãi.",
+   "note": "Xót. BUG BM25/CHUNKING: Câu hỏi cần root Khoản 2 Điều 17 bao trùm tất cả trường hợp, nhưng hệ thống ẩn root, chỉ hiện các Điểm con rời rạc.",
+   "label_form_bug": true
+  },
+  {
+   "position": 130,
+   "question": "Sau khi điều chỉnh địa bàn, nơi công ty hoạt động bị xếp xuống vùng có lương tối thiểu thấp hơn trước. Với nhân viên tuyển trước ngày 31/12/2025 thì công ty áp dụng mức nào?",
+   "annotator": {
+    "expected_status": "refuse",
+    "question_type": "out_of_scope",
+    "relevant_unit_ids": []
+   },
+   "model": {
+    "expected_status": "answer",
+    "question_type": "temporal",
+    "relevant_unit_ids": [
+     "293-2025-nd-cp/article-5/clause-5"
+    ]
+   },
+   "model_rationale": "Khoản 5 Điều 5 Nghị định 293/2025/NĐ-CP: tiếp tục thực hiện mức lương tối thiểu tại thời điểm 31/12/2025 cho người được tuyển từ ngày đó trở về trước.",
+   "note": "",
+   "label_form_bug": false
+  }
+ ]
+}
