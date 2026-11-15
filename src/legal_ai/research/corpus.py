@@ -28,6 +28,7 @@ from legal_ai.schemas.contract import VERSION, validate_document, validate_unit
 from legal_ai.validation.bundle import validate_bundle
 
 STORE_VERSION = "corpus-store-v1"
+VERSION_FILE_FORMAT = "lexora-corpus-version-v1"
 MAX_DOCUMENTS = 200
 _SLUG = re.compile(r"[a-z0-9][a-z0-9-]{0,79}")
 SCHEMA = """
@@ -364,3 +365,34 @@ class CorpusStore:
                 version["id"], corpus["id"], version["number"], version["note"], version["frozen_at"], version["frozen_by"],
                 json.dumps(version["document_rows"]), canonical(version["manifest"])))
         return self.version(version["id"])
+
+    def version_file(self, version_id):
+        """A frozen version as one self-checking file, for a server reached only by a shell (`cli corpus-version-export`):
+        the `version_payload` of a question pack, with its version ID, bundle hash and a hash of the payload itself."""
+        payload = self.version_payload(version_id)
+        return {"format": VERSION_FILE_FORMAT, "version_id": payload["version"]["id"], "bundle_sha256": payload["version"]["manifest"]["bundle_sha256"],
+                "payload_sha256": digest(canonical(payload)), "exported_at": _now(), "payload": payload}
+
+    def import_version_file(self, body, actor, expected_version=None):
+        """Import a `version_file` (`cli corpus-version-import`): the file must be intact, name the expected version if one
+        is given, and the stored version must come out with the same ID and bundle hash, re-read from the stored rows."""
+        if not isinstance(body, dict) or body.get("format") != VERSION_FILE_FORMAT:
+            raise ValueError("Tệp không phải phiên bản corpus Lexora")
+        payload = body.get("payload") or {}
+        if digest(canonical(payload)) != body.get("payload_sha256"):
+            raise ValueError("Nội dung tệp phiên bản corpus không khớp mã băm")
+        if payload["version"]["id"] != body.get("version_id") or payload["version"]["manifest"]["bundle_sha256"] != body.get("bundle_sha256"):
+            raise ValueError("Mã phiên bản hoặc mã băm bundle trong tệp không khớp nhau")
+        if expected_version and expected_version != body["version_id"]:
+            raise ValueError(f"Tệp chứa phiên bản {body['version_id']}, không phải {expected_version}")
+        try:
+            self.version(body["version_id"])
+            created = False
+        except ValueError:
+            created = True
+        version = self.import_version(payload, actor)
+        documents, units, _ = self.bundle(version["id"])  # re-reads the stored rows and checks them against the bundle hash
+        if version["id"] != body["version_id"] or version["bundle_sha256"] != body["bundle_sha256"]:
+            raise ValueError("Phiên bản corpus sau khi nhập không khớp tệp")
+        return {"version_id": version["id"], "corpus_id": version["corpus_id"], "number": version["number"], "bundle_sha256": version["bundle_sha256"],
+                "documents": len(documents), "units": len(units), "created": created}

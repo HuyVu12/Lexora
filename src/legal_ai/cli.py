@@ -52,6 +52,15 @@ def main():
     command.add_argument("--store", required=True, help="workspace SQLite store of the web app")
     command.add_argument("--version", required=True, help="corpus version ID (shown in the app)")
     command.add_argument("--output", required=True, help="new, empty directory")
+    command = commands.add_parser("corpus-version-export", help="write one frozen research corpus version (rows, source bytes, hashes) to a JSON file for another store; offline")
+    command.add_argument("--store", required=True, help="workspace SQLite store holding the version")
+    command.add_argument("--version", required=True, help="corpus version ID (shown in the app)")
+    command.add_argument("--output", required=True, help="new JSON file")
+    command = commands.add_parser("corpus-version-import", help="add a frozen corpus version from a corpus-version-export file to a store, same ID and bundle hash; offline")
+    command.add_argument("file", help="file written by corpus-version-export")
+    command.add_argument("--store", required=True, help="workspace SQLite store to add the version to")
+    command.add_argument("--actor", required=True, help="account recorded as the importer")
+    command.add_argument("--expect-version", help="refuse the file unless it holds this version ID")
     command = commands.add_parser("corpus-scope", help="create a research corpus from the chosen articles of pinned local vbpl.vn snapshots; no network")
     command.add_argument("--store", required=True, help="workspace SQLite store of the web app")
     command.add_argument("--config", default="configs/experiment-scope-v1.json")
@@ -300,6 +309,21 @@ def main():
         elif args.command == "corpus-export":
             from legal_ai.research.corpus import CorpusStore
             print(json.dumps(CorpusStore(args.store).export_version(args.version, args.output), ensure_ascii=False, indent=2))
+        elif args.command == "corpus-version-export":
+            from legal_ai.research.corpus import CorpusStore
+            output = Path(args.output)
+            if output.exists():
+                raise ValueError("output file exists: use a new file name")
+            body = CorpusStore(args.store).version_file(args.version)
+            output.parent.mkdir(parents=True, exist_ok=True)
+            output.write_text(json.dumps(body, ensure_ascii=False), encoding="utf-8")
+            manifest = body["payload"]["version"]["manifest"]
+            print(json.dumps({"output": output.as_posix(), "version_id": body["version_id"], "bundle_sha256": body["bundle_sha256"],
+                              "documents": len(manifest["documents"]), "units": manifest["unit_count"]}, ensure_ascii=False, indent=2))
+        elif args.command == "corpus-version-import":
+            from legal_ai.research.corpus import CorpusStore
+            body = json.loads(Path(args.file).read_text(encoding="utf-8"))
+            print(json.dumps(CorpusStore(args.store).import_version_file(body, args.actor, args.expect_version), ensure_ascii=False, indent=2))
         elif args.command == "corpus-scope":
             from legal_ai.research.corpus import CorpusStore
             from legal_ai.research.scope import build_scope

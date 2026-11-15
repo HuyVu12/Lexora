@@ -100,6 +100,53 @@ class CorpusTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "trống"):
             self.store.export_version(version["id"], out)
 
+    def test_version_file_moves_a_frozen_version_to_another_store_by_command_line(self):
+        import io
+        from contextlib import redirect_stderr, redirect_stdout
+        from unittest.mock import patch
+        from legal_ai import cli
+
+        def run(*argv):
+            out = io.StringIO()
+            with patch.object(sys, "argv", ["cli", *argv]), redirect_stdout(out):
+                cli.main()
+            return json.loads(out.getvalue())
+
+        def refused(message, *argv):
+            err = io.StringIO()
+            with patch.object(sys, "argv", ["cli", *argv]), redirect_stdout(io.StringIO()), redirect_stderr(err), self.assertRaises(SystemExit) as stop:
+                cli.main()
+            self.assertEqual(stop.exception.code, 2)
+            self.assertIn(message, err.getvalue())
+
+        cid = self.corpus["id"]
+        self.store.add_file(cid, "a.txt", LAW.encode("utf-8"), "phapche")
+        manifest, raw = vbpl_snapshot()
+        self.store.add_vbpl(cid, manifest, raw, "phapche")
+        version = self.store.freeze(cid, "Bản đầu", "phapche")
+        source, target = Path(self.temp.name) / "workspace.sqlite", Path(self.temp.name) / "server.sqlite"
+        CorpusStore(target).create("Lao động", "Corpus đã có trên máy chủ, cùng tên", "admin")
+        path = Path(self.temp.name) / "out" / "corpus-version.json"
+        exported = run("corpus-version-export", "--store", str(source), "--version", version["id"], "--output", str(path))
+        self.assertEqual((exported["version_id"], exported["bundle_sha256"], exported["documents"], exported["units"]),
+                         (version["id"], version["bundle_sha256"], 2, version["unit_count"]))
+        refused("exists", "corpus-version-export", "--store", str(source), "--version", version["id"], "--output", str(path))
+        refused("không phải v000000000000", "corpus-version-import", str(path), "--store", str(target), "--actor", "admin", "--expect-version", "v000000000000")
+        self.assertEqual(CorpusStore(target).corpora()[0]["latest_version"], None, "a refused import writes nothing")
+        imported = run("corpus-version-import", str(path), "--store", str(target), "--actor", "admin", "--expect-version", version["id"])
+        self.assertEqual((imported["version_id"], imported["bundle_sha256"], imported["documents"], imported["created"]),
+                         (version["id"], version["bundle_sha256"], 2, True))
+        server = CorpusStore(target)
+        self.assertEqual(server.bundle(version["id"])[2]["a"], LAW)
+        self.assertEqual(len(server.corpora()), 2, "a name clash keeps the existing corpus and imports under a new name")
+        self.assertFalse(run("corpus-version-import", str(path), "--store", str(target), "--actor", "admin")["created"], "a second import changes nothing")
+        body = json.loads(path.read_text(encoding="utf-8"))
+        body["payload"]["documents"][0]["normalized"] = body["payload"]["documents"][0]["normalized"].replace("30 ngày", "45 ngày")
+        with self.assertRaisesRegex(ValueError, "không khớp mã băm"):
+            server.import_version_file(body, "admin")
+        with self.assertRaisesRegex(ValueError, "không phải phiên bản corpus"):
+            server.import_version_file({"format": "other"}, "admin")
+
 
 if __name__ == "__main__":
     unittest.main()

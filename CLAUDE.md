@@ -33,6 +33,7 @@ python -m legal_ai.cli catalog-search data/catalog/catalog-v1.sqlite 'bo luat la
 python -m legal_ai.cli vbpl-fetch <vbpl.vn link or ID>      # ONE approved vbpl.vn document -> data/raw/vbpl/<id>/<sha>/
 python -m legal_ai.cli run-retrieval data/normalized/full-v1 --condition configs/experiments/dk2.json --output experiments/runs/<new>   # DK1-DK4 Recall@K; --shared configs/experiments/shared.json for hybrid (needs .venv embeddings extra)
 python -m legal_ai.cli corpus-scope --store <store.sqlite> --actor <user>            # experiment-scope corpus from pinned local snapshots
+python -m legal_ai.cli corpus-version-export --store <store> --version <id> --output <file.json>   # one frozen corpus version to a file; corpus-version-import <file> --store <other> --actor <user> --expect-version <id> adds it, same ID and bundle hash
 python -m legal_ai.cli kb-extract <bundle> --output experiments/runs/<new> --dry-run   # DK3/DK4 extraction plan; real run adds --max-calls N --approve-claude
 python -m legal_ai.cli kb-materialize <kb run>                                       # rebuild dk3/dk4/validation offline; kb-inject <kb run> --output <new> for RQ2
 python -m legal_ai.cli gold-score <gold.jsonl> --bundle <bundle> --predictions rules   # RQ1 P/R/F1 (or a dk3.jsonl/dk4.jsonl)
