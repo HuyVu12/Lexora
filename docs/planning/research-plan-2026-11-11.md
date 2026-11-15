@@ -5,6 +5,8 @@ Ngày lập: 11/11/2026.
 Khi viết, tài liệu này chỉ là kế hoạch; không có mã, lượt chạy hay lượt gọi model nào được thực hiện lúc đó.
 Cập nhật 11/11/2026: người dùng trả lời câu 12.1-12.4 (ghi ở `docs/decisions.md`); phần code offline của WP2-WP5 đã cài và WP2, WP3 đã chạy trên bộ chạy thử, xem `docs/results/budget-curves-2026-11-11.md`.
 Chưa có lượt gọi model hay tải mạng nào cho kế hoạch này.
+Cập nhật 16/11/2026: giảng viên đã đồng ý bản tóm tắt 12/11; WP7 bị cắt; cổng WP5 dời sang sau khi gold được đối soát; người gán thứ hai duyệt đề xuất của model và gold chỉ gán đôi trên mẫu 12 Điều; bộ tra cứu chạy trên corpus v1, bộ khó và bộ hiệu lực trên corpus v3.
+Lịch và hiện trạng mới nhất ở `progress-2026-11-16.md`; các mục 7, 8, 9 dưới đây đọc cùng tài liệu đó.
 Nếu được duyệt, nó thay cho mục 11 "Hướng tiếp theo" của `docs/planning/graph-legal-reasoning-2026-11-10.md`.
 
 Căn cứ:
