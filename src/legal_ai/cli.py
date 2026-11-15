@@ -75,6 +75,13 @@ def main():
     command.add_argument("bundle", help="contract bundle whose units are the targets")
     command.add_argument("--config", default="configs/amendments-v1.json", help="amending sources (pinned snapshots)")
     command.add_argument("--output", required=True, help="new directory for edges.jsonl and manifest.json")
+    command = commands.add_parser("amendment-sheet", help="CSV check sheet with one row per amendment edge (resolved or not) for two people to compare with the source text; offline")
+    command.add_argument("edges", help="amendment-build output directory (edges.jsonl, manifest.json)")
+    command.add_argument("--sheet", required=True, help="new CSV file to write")
+    command.add_argument("--bundle", help="contract bundle (default: the one recorded in the edge manifest)")
+    command = commands.add_parser("amendment-score", help="verdict counts of a filled amendment check sheet; with --compare, agreement of two checkers; offline")
+    command.add_argument("sheet")
+    command.add_argument("--compare", help="the second checker's sheet of the same edges: raw agreement and Cohen's kappa")
     command = commands.add_parser("budget-report", help="recall-by-token-budget tables and SVG curves from retrieval runs; offline")
     command.add_argument("--runs", nargs="+", required=True, help="LABEL=RUN_DIR pairs; the label groups runs into one figure (SET:CONDITION)")
     command.add_argument("--output", required=True, help="Markdown file; one SVG per question set is written next to it")
@@ -289,6 +296,15 @@ def main():
         elif args.command == "amendment-build":
             from legal_ai.kb.amendments import build
             print(json.dumps(build(args.bundle, args.config, args.output), ensure_ascii=False, indent=2))
+        elif args.command in ("amendment-sheet", "amendment-score"):
+            from legal_ai.kb import amendment_check
+            if args.command == "amendment-sheet":
+                report = amendment_check.make_sheet(args.edges, args.sheet, args.bundle)
+            else:
+                report = amendment_check.score_sheet(args.sheet)
+                if args.compare:
+                    report["agreement"] = amendment_check.agreement(args.sheet, args.compare)
+            print(json.dumps(report, ensure_ascii=False, indent=2))
         elif args.command == "budget-report":
             from legal_ai.evaluation.budget_report import write_report
             print(json.dumps(write_report(args.runs, args.output, args.title, args.set_title), ensure_ascii=False, indent=2))
