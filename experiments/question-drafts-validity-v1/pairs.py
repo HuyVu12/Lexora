@@ -7,7 +7,7 @@ Two files, both re-creatable at any time (no network, no model):
   heading (difflib ratio of the heading text without "Điều N.", best match, at least 0.8), then every leaf clause or
   point of the old article is matched to the most similar leaf of the new article (ratio at least 0.85). A pair is
   a candidate only: the question drafts quote the shared wording of both units, and the validator checks the quotes.
-- `pairs-amended.jsonl`: one row per resolved `modify` or `replace_phrase` edge of `amendment-rules-v1` whose new
+- `pairs-amended.jsonl`: one row per resolved `modify` or `replace_phrase` edge of `amendment-rules-v2` whose new
   wording is a corpus unit (`amending_unit_id`): the amended unit, the amending unit, the edge date and both
   documents' dates as vbpl.vn reported them. Rows on the foreign-worker part of NĐ 152/2020 (chapters I and II) carry
   a caveat: NĐ 219/2025 says that part stopped applying when it took effect, which the unit-status model does not see.
@@ -24,7 +24,7 @@ import sys
 HERE = Path(__file__).resolve().parent
 ROOT = HERE.parents[1]
 BUNDLE = ROOT / "data/normalized/experiment-scope-v3-v48feefc6d53b"
-EDGES = ROOT / "data/kb/amendments-scope-v3-v48feefc6d53b/edges.jsonl"
+EDGES = ROOT / "data/kb/amendments-scope-v3-v48feefc6d53b-v2/edges.jsonl"
 OLD, NEW = "12-2022-nd-cp", "283-2026-nd-cp"
 SANCTION_CHAPTERS = re.compile(r"/chapter-(ii|iii|iv)/")
 HEADING = re.compile(r"^Điều\s+\d+[a-zđ]?\.\s*")

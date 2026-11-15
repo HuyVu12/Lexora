@@ -71,7 +71,7 @@ def main():
     command = commands.add_parser("kb-materialize", help="rebuild dk3/dk4 and the validation report of a knowledge-base run from raw.jsonl; offline")
     command.add_argument("run", help="knowledge-base run directory")
     command.add_argument("--bundle", help="contract bundle (default: the one recorded in the run manifest)")
-    command = commands.add_parser("amendment-build", help="amendment edges (amendment-rules-v1) of pinned vbpl.vn snapshots against a corpus bundle; offline, no model")
+    command = commands.add_parser("amendment-build", help="amendment edges (amendment-rules-v2) of pinned vbpl.vn snapshots against a corpus bundle; offline, no model")
     command.add_argument("bundle", help="contract bundle whose units are the targets")
     command.add_argument("--config", default="configs/amendments-v1.json", help="amending sources (pinned snapshots)")
     command.add_argument("--output", required=True, help="new directory for edges.jsonl and manifest.json")

@@ -15,7 +15,10 @@ The budget counts every token the generator reads (headers once, bodies, claim l
 until the next one does not fit; the first is always kept so a long record cannot leave the generator with nothing.
 Packing never re-ranks and never changes a record's text: a body is the record's own text minus the shared header.
 A record may carry a `status_note` (validity filtering, `kb.validity`); it is printed on its own line after the body
-and counted in the budget.
+and counted in the budget. A condition with a validity block passes `admit` (`kb.validity.RecordFilter.admit_record`
+at the question's date): a P2 sibling is then dropped, annotated or replaced by the records of its amending units
+exactly as a ranked record would be, so siblings never bring back a unit the validity filter removed. Without
+`admit` packing is unchanged.
 """
 
 from functools import lru_cache
@@ -92,8 +95,15 @@ class Packer:
         group = (record["document_id"], (article or leaf)["unit_id"])
         return {"group": group, "header": header, "body": body, "header_tokens": _cost(header), "body_tokens": _cost(body)}
 
-    def pack(self, ranked, budget, top_k=None):
-        """Blocks for the first `top_k` ranked records (all when None) within `budget` tokens.
+    def bind(self, admit):
+        """This packer with a fixed sibling `admit` function (one question's validity date), for callers that take a
+        packer with `pack(ranked, budget, top_k)`."""
+        return _Bound(self, admit)
+
+    def pack(self, ranked, budget, top_k=None, admit=None):
+        """Blocks for the first `top_k` ranked records (all when None) within `budget` tokens. `admit(record)`, when
+        given, returns the records that take a P2 sibling's place (none to drop it, itself with a `status_note`, or the
+        records of its amending units); the sibling cap still counts the sibling's own body.
 
         Returns `{"groups": [...], "blocks": [...], "tokens": n}`. Each block has `id` (E01.. in reading order),
         `record`, `text` (what the generator reads for it), `token_count`, `group` (index into groups) and `sibling`
@@ -136,7 +146,8 @@ class Packer:
                         continue
                     if groups[key]["tokens"] + self.layouts[sibling["record_id"]]["body_tokens"] > SIBLING_GROUP_TOKENS:
                         break
-                    if not add(sibling, True):
+                    shown = [sibling] if admit is None else list({r["record_id"]: r for r in admit(sibling) if r["record_id"] not in seen}.values())
+                    if not all(add(record, True) for record in shown):
                         break
                 if blocked is not None:  # The budget is spent: nothing after this point is added.
                     break
@@ -167,6 +178,14 @@ class Packer:
             blocks.append({"id": f"E{len(blocks) + 1:02d}", "record": record, "text": text, "token_count": cost, "group": len(groups) - 1,
                            "sibling": False})
         return {"groups": groups, "blocks": blocks, "tokens": used, "next_budget": None}
+
+
+class _Bound:
+    def __init__(self, packer, admit):
+        self.packer, self.admit, self.mode = packer, admit, packer.mode
+
+    def pack(self, ranked, budget, top_k=None):
+        return self.packer.pack(ranked, budget, top_k, self.admit)
 
 
 def evidence_payload(packed):

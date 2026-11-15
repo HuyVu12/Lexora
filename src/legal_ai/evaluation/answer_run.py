@@ -58,7 +58,9 @@ def pack(ranked, records, top_k, budget, packer=None):
 
 
 def pack_with_groups(ranked, records, top_k, budget, packer=None):
-    packed = (packer or Packer("P0")).pack([records[item["record_id"]] for item in ranked], budget, top_k)
+    # A ranked item keeps the status note the validity filter gave it, as in the retrieval run's own packing.
+    shown = [records[item["record_id"]] | ({"status_note": item["status_note"]} if item.get("status_note") else {}) for item in ranked]
+    packed = (packer or Packer("P0")).pack(shown, budget, top_k)
     blocks = [{"id": b["id"], "record_id": b["record"]["record_id"], "unit_ids": b["record"]["unit_ids"], "token_count": b["token_count"],
                "text": b["text"], "group": b["group"], **({"sibling": True} if b["sibling"] else {})} for b in packed["blocks"]]
     return blocks, packed
@@ -132,6 +134,9 @@ def run(retrieval_dir, questions_path, config_path, provider, output, *, split=N
     edges = chain_edges(retrieval) if config.get("relations_in_context") else None
     record_list = list(records.values())
     packer = packer_for(retrieval, record_list)
+    # P2 siblings pass the validity rule of the retrieval run at each question's date (`kb.validity.RecordFilter`).
+    from legal_ai.evaluation.retrieval_run import validity_of_run
+    rfilter = validity_of_run(retrieval, record_list) if packer.mode == "P2" else None
     issues = {}
     if retrieval.get("subqueries"):
         from legal_ai.evaluation.decompose import load
@@ -168,7 +173,10 @@ def run(retrieval_dir, questions_path, config_path, provider, output, *, split=N
             budget = config["context_token_budget"]
             if isinstance(budget, dict):  # Adaptive: grows with the shared decomposition's issue count, as in run-retrieval.
                 budget = adaptive_budget(check_adaptive(budget), len(issues.get(question["question_id"], [])))
-            blocks, packed = pack_with_groups(prediction["ranked"], records, config["top_k"], budget, packer)
+            question_packer = packer
+            if rfilter is not None and rfilter.level == "unit":
+                question_packer = packer.bind(lambda record, day=prediction["validity"]["as_of"]: rfilter.admit_record(record, day))
+            blocks, packed = pack_with_groups(prediction["ranked"], records, config["top_k"], budget, question_packer)
             request = {"question": question["question"]}
             if issues.get(question["question_id"]):
                 request["issues"] = [i["issue"] for i in issues[question["question_id"]]]
@@ -304,7 +312,10 @@ def _question_metrics(q, a, records, units):
            "uncited_statements_removed": a["gate"]["uncited_removed"], "downgraded_to_insufficient": float(a["gate"]["downgraded_to_insufficient"]),
            "cost_usd": a.get("cost_usd") or 0,
            # Validity questions: does an answer cite a unit that is outdated at the question's date (H3)?
-           "stale_citation": float(cites_stale(a, q["stale_unit_ids"])) if q.get("stale_unit_ids") else None}
+           "stale_citation": float(cites_stale(a, q["stale_unit_ids"])) if q.get("stale_unit_ids") else None,
+           # Supplementary: a cited unit of the wrong version, stale or not yet in force at the date (a past event).
+           "wrong_version_citation": (float(cites_stale(a, (q.get("stale_unit_ids") or []) + (q.get("not_yet_effective_unit_ids") or [])))
+                                      if q.get("stale_unit_ids") or q.get("not_yet_effective_unit_ids") else None)}
     gold = q.get("relevant_unit_ids") or []
     cited = [s["unit_ids"] for s in a["statements"]]
     if q.get("expected_status") == "answer" and a["status"] in ANSWERED and gold and cited:
@@ -318,7 +329,8 @@ def _question_metrics(q, a, records, units):
 
 ANSWER_METRICS = ("answered", "refused", "refusal_when_expected", "false_refusal", "citation_gold_precision", "citation_gold_recall",
                   "citation_gold_char_precision", "statements", "context_tokens", "uncited_statements_removed",
-                  "downgraded_to_insufficient", "cost_usd", "stale_citation", "cited_tokens_per_statement", "single_leaf_citation_rate")
+                  "downgraded_to_insufficient", "cost_usd", "stale_citation", "wrong_version_citation", "cited_tokens_per_statement",
+                  "single_leaf_citation_rate")
 
 
 def question_scores(answer_dir, questions_path):
@@ -359,6 +371,9 @@ def score(answer_dir, questions_path):
     load = verification_load([a for _, a in ok], records, units)
     if values("stale_citation"):
         load |= {"stale_citation_rate": mean(values("stale_citation")), "questions_with_stale_units": len(values("stale_citation"))}
+    if values("wrong_version_citation"):
+        load |= {"wrong_version_citation_rate": mean(values("wrong_version_citation")),
+                 "questions_with_wrong_version_units": len(values("wrong_version_citation"))}
     metrics = {
         "run_version": RUN_VERSION, "questions": len(rows), "errors": len(rows) - len(ok),
         "answers_not_in_questions": len(outside), "answers_not_in_questions_ids": outside,

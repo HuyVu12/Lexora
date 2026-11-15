@@ -57,6 +57,25 @@ class PackerTests(unittest.TestCase):
         self.assertEqual([[p["id"] for p in g["passages"]] for g in payload], [["E01", "E02"], ["E03", "E04"]])
         self.assertEqual(evidence_payload(flat)[0], {"id": "E01", "text": ranked[0]["index_text"]})
 
+    def test_p2_siblings_pass_the_admit_function_and_nothing_changes_without_it(self):
+        packer = Packer("P2", self.records, self.units, self.documents)
+        ranked = self.ranked("article-2/clause-2/point-b")
+        dropped = self.by_unit["syn-a/chapter-i/article-2/clause-2/point-a"]["record_id"]
+        noted = self.by_unit["syn-a/chapter-i/article-2/clause-1"]["record_id"]
+
+        def admit(record):
+            if record["record_id"] == dropped:
+                return []
+            return [record | {"status_note": "[ghi chú hiệu lực]"}] if record["record_id"] == noted else [record]
+        plain = packer.pack(ranked, 10 ** 6)
+        self.assertEqual(packer.pack(ranked, 10 ** 6, admit=lambda r: [r]), plain, "admitting every sibling unchanged changes nothing")
+        filtered = packer.pack(ranked, 10 ** 6, admit=admit)
+        ids = [b["record"]["record_id"] for b in filtered["blocks"]]
+        self.assertIn(dropped, [b["record"]["record_id"] for b in plain["blocks"]])
+        self.assertNotIn(dropped, ids, "a sibling the filter drops is not added")
+        self.assertIn("[ghi chú hiệu lực]", next(b["text"] for b in filtered["blocks"] if b["record"]["record_id"] == noted))
+        self.assertEqual(packer.bind(admit).pack(ranked, 10 ** 6), filtered, "a bound packer applies the same function")
+
     def test_budget_is_never_exceeded_and_units_are_not_repeated(self):
         ranked = self.ranked("article-2/clause-2/point-b", "article-1/clause-2", "article-2/clause-1", "article-1/clause-1", "article-3")
         for mode in ("P0", "P1", "P2"):

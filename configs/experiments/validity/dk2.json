@@ -5,7 +5,7 @@
   "status": "draft",
   "validity": {
     "level": "unit",
-    "amendments": "data/kb/amendments-scope-v3-v48feefc6d53b"
+    "amendments": "data/kb/amendments-scope-v3-v48feefc6d53b-v2"
   },
-  "note": "Research plan 11/11, WP4.4: unit status at the question's date (as_of, else shared.validity_as_of); amendment edges from cli amendment-build (rules, need human review). Units expired, repealed or not yet in force are dropped; amended units carry a status note."
+  "note": "Research plan 11/11, WP4.4: unit status at the question's date (as_of, else shared.validity_as_of); amendment edges from cli amendment-build (amendment-rules-v2 since 15/11/2026: heading-only changes keep the points, phrase replacements per unit, expiry statements; rules, need human review), unit status unit-status-v2 (status per unit). Units expired, repealed or not yet in force are dropped; amended units carry a status note."
 }

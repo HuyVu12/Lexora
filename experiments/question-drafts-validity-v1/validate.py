@@ -8,7 +8,7 @@ Checks:
 3. every quote and context quote is an exact substring of its unit; the `shared` wording of a pair is a substring of
    both units (compared case-insensitively, so a phrase may start a sentence in one decree and not in the other); a
    context unit is an ancestor of its pair unit;
-4. unit status (`kb/validity.py`, `unit-status-v1`) at `as_of`: the stale set equals the listed units (answer + stale)
+4. unit status (`kb/validity.py`, `unit-status-v2`, edges of `amendment-rules-v2`) at `as_of`: the stale set equals the listed units (answer + stale)
    that are expired, repealed or amended; every answer unit is in force; every `not_yet_effective_unit_ids` unit is
    not yet effective;
 5. pairs NĐ 12/2022 -> NĐ 283/2026: not marked `manual`, the pair is in `pairs-expired.jsonl`; an old unit in the stale
@@ -31,11 +31,11 @@ import sys
 HERE = Path(__file__).resolve().parent
 ROOT = HERE.parents[1]
 sys.path.insert(0, str(ROOT / "src"))
-from legal_ai.kb.validity import STALE, Validity  # noqa: E402
+from legal_ai.kb.validity import STALE, STATUS_VERSION, Validity  # noqa: E402
 from legal_ai.research.questions import QUESTION_TYPES  # noqa: E402
 
 BUNDLE = ROOT / "data/normalized/experiment-scope-v3-v48feefc6d53b"
-EDGES = ROOT / "data/kb/amendments-scope-v3-v48feefc6d53b/edges.jsonl"
+EDGES = ROOT / "data/kb/amendments-scope-v3-v48feefc6d53b-v2/edges.jsonl"
 GROUPS = ("expired_document", "unit_amendment", "past_date", "control")
 
 
@@ -124,7 +124,7 @@ def check(questions, units, documents, edges, validity):
         status = {u: validity.status(u, as_of) for u in listed}
         expected_stale = [u for u in relevant + stale if status[u] in STALE]
         if sorted(stale) != sorted(expected_stale):
-            fail(f"stale set {sorted(stale)} differs from unit-status-v1 at {as_of}: {sorted(expected_stale)}")
+            fail(f"stale set {sorted(stale)} differs from unit-status-v2 at {as_of}: {sorted(expected_stale)}")
         for unit in relevant:
             if status[unit] != "in_force":
                 fail(f"answer unit {unit} is {status[unit]} at {as_of}")

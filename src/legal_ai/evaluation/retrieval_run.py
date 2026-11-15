@@ -36,7 +36,7 @@ import subprocess
 
 from legal_ai.common.io import canonical, digest, read_jsonl, write_json, write_jsonl
 from legal_ai.indexing.packing import PACKING_VERSION, Packer, condition_mode
-from legal_ai.kb.validity import STATUS_VERSION
+from legal_ai.kb.validity import DROP, STATUS_VERSION, VERSIONS as STATUS_VERSIONS, RecordFilter
 from legal_ai.indexing.records import RECORD_VERSION, TOKENIZER, check_records, claim_records, fixed_chunks, kb_unit_records, structural_records, token_spans
 from legal_ai.evaluation import decompose
 from legal_ai.retrieval import graph as kb_graph
@@ -179,14 +179,21 @@ def adaptive_budget(rule, issue_count):
     return min(rule["max"], rule["base"] + rule["per_issue"] * max(1, issue_count))
 
 
-def score_top(top, gold, ks, budgets, adaptive=None, packer=FLAT, stale=None):
+def _overlaps(record_units, targets):
+    return any(u == s or u.startswith(s + "/") or s.startswith(u + "/") for u in record_units for s in targets)
+
+
+def score_top(top, gold, ks, budgets, adaptive=None, packer=FLAT, stale=None, later=None):
     """Recall at every K and token budget, and context tokens at every K, of one question's ranked records; with
     `adaptive` (this question's adaptive budget) also the recall within it. Budgets pack records with `packer`.
-    With `stale` (units outdated at the question's date) also whether the packed context holds one of them."""
+    With `stale` (units outdated at the question's date) also whether the packed context holds one of them; with
+    `later` (units not yet in force at that date) whether it holds a unit of the wrong version, stale or later."""
     row = {"recall": {}, "context_tokens": {}, "recall_at_tokens": {}}
     if stale:
-        row["stale_at_tokens"] = {str(b): any(_covers(r["unit_ids"], s) or any(u.startswith(s + "/") or s.startswith(u + "/") for u in r["unit_ids"])
-                                              for r in within_budget(top, b, packer) for s in stale) for b in budgets}
+        row["stale_at_tokens"] = {str(b): any(_overlaps(r["unit_ids"], stale) for r in within_budget(top, b, packer)) for b in budgets}
+    if stale or later:
+        wrong = list(stale or []) + list(later or [])
+        row["wrong_version_at_tokens"] = {str(b): any(_overlaps(r["unit_ids"], wrong) for r in within_budget(top, b, packer)) for b in budgets}
     for k in ks:
         covered = [g for g in gold if any(_covers(r["unit_ids"], g) for r in top[:k])]
         row["recall"][str(k)] = len(covered) / len(gold) if gold else None
@@ -216,6 +223,9 @@ def summarize(predictions, ks, budgets, records, condition, headline_k, steps=No
         **({"tokens_to_reach": {str(t): tokens_to_reach([s for s in steps if s], t) for t in targets}} if steps is not None else {}),
         **({"stale_context_rate_at_tokens": {str(b): sum(r["stale_at_tokens"][str(b)] for r in with_stale) / len(with_stale) for b in budgets},
             "questions_with_stale_units": len(with_stale)} if (with_stale := [r for r in predictions if "stale_at_tokens" in r]) else {}),
+        # Supplementary to the stale rate: stale units or units not yet in force at the question's date (a past event).
+        **({"wrong_version_context_rate_at_tokens": {str(b): sum(r["wrong_version_at_tokens"][str(b)] for r in with_wrong) / len(with_wrong) for b in budgets},
+            "questions_with_wrong_version_units": len(with_wrong)} if (with_wrong := [r for r in predictions if "wrong_version_at_tokens" in r]) else {}),
         "mean_context_tokens": {str(k): (sum(r["context_tokens"][str(k)] for r in predictions) / len(predictions) if predictions else None) for k in ks},
         "record_count": len(records),
         "mean_record_tokens": sum(r["token_count"] for r in records) / len(records) if records else None,
@@ -232,7 +242,6 @@ def _git_state(root):
 
 
 METHODS = ("bm25", "dense", "hybrid")
-DROP = ("expired", "repealed", "not_yet_effective")
 
 
 def load_validity(condition, shared, documents, units, bundle):
@@ -242,8 +251,10 @@ def load_validity(condition, shared, documents, units, bundle):
     spec = condition.get("validity")
     if not spec:
         return None
-    if spec.get("level") not in ("unit", "document") or set(spec) - {"level", "amendments"}:
-        raise ValueError("validity must be {level: unit|document, amendments?: edge run directory}")
+    if spec.get("level") not in ("unit", "document") or set(spec) - {"level", "amendments", "status_version"}:
+        raise ValueError("validity must be {level: unit|document, amendments?: edge run directory, status_version?}")
+    if spec.get("status_version", STATUS_VERSION) not in STATUS_VERSIONS:
+        raise ValueError(f"validity.status_version must be one of {STATUS_VERSIONS}")
     if spec["level"] == "unit" and condition["representation"] == "fixed_chunks":
         raise ValueError("a fixed chunk has no unit to filter: use validity level document (DK1-hl)")
     if not shared.get("validity_as_of"):
@@ -256,9 +267,30 @@ def load_validity(condition, shared, documents, units, bundle):
         if manifest["units_sha256"] != digest((bundle / "units.jsonl").read_bytes()):
             raise ValueError("the amendment edges were resolved against another corpus bundle")
         edges, edges_sha = read_jsonl(folder / "edges.jsonl"), digest((folder / "edges.jsonl").read_bytes())
-    validity = Validity(documents, units, edges if spec["level"] == "unit" else ())
+    validity = Validity(documents, units, edges if spec["level"] == "unit" else (), version=spec.get("status_version", STATUS_VERSION))
     validity.edges_sha256 = edges_sha
     return validity
+
+
+def validity_of_run(manifest, records):
+    """The `RecordFilter` a retrieval run used (None without a validity block), rebuilt from its manifest so the answer
+    run packs P2 siblings exactly as the retrieval run scored them; the bundle and the edges must hash as recorded."""
+    spec = manifest["condition"].get("validity")
+    if not spec:
+        return None
+    from legal_ai.kb.validity import Validity
+    paths = {name: Path(manifest["inputs"][name]["path"]) for name in ("units", "documents")}
+    for name, path in paths.items():
+        if digest(path.read_bytes()) != manifest["inputs"][name]["sha256"]:
+            raise ValueError(f"the bundle {name} changed since the retrieval run")
+    edges = []
+    if spec.get("amendments") and spec["level"] == "unit":
+        path = Path(spec["amendments"]) / "edges.jsonl"
+        if digest(path.read_bytes()) != manifest["validity"]["edges_sha256"]:
+            raise ValueError("the amendment edges changed since the retrieval run")
+        edges = read_jsonl(path)
+    validity = Validity(read_jsonl(paths["documents"]), read_jsonl(paths["units"]), edges, version=manifest["validity"]["version"])
+    return RecordFilter(validity, spec["level"], records)
 
 
 def filter_valid(ranked, records, validity, level, as_of):
@@ -266,52 +298,26 @@ def filter_valid(ranked, records, validity, level, as_of):
 
     Unit level: a unit whose whole new wording is a unit of the corpus (an amending unit of scope v3, linked by
     `amending_unit_id`) is replaced at its rank by that unit's records; other amended units keep their record with a
-    status note, and their amending units follow right after. Amending units obey their own document dates."""
-    if level == "unit" and getattr(validity, "records_of", None) is None:
-        validity.records_of = {}
-        for n, record in enumerate(records):
-            for unit in record["unit_ids"]:
-                validity.records_of.setdefault(unit, []).append(n)
+    status note, and their amending units follow right after. Amending units obey their own document dates. The rule
+    itself is `kb.validity.RecordFilter.admit`, which the packer also applies to P2 siblings."""
+    rfilter = getattr(validity, "record_filter", None)
+    if rfilter is None or rfilter.level != level or getattr(rfilter, "source", None) is not records:
+        rfilter = validity.record_filter = RecordFilter(validity, level, records)
+        rfilter.source = records
     kept, notes, dropped, seen = [], {}, 0, set()
-
-    def keep(i, score):
-        if i not in seen:
-            seen.add(i)
-            kept.append((i, score))
     for i, score in ranked:
         if i in seen:
             continue
-        record = records[i]
-        if level == "document":
-            document = validity.documents[record["document_id"]]
-            start, end = document.get("effective_from"), document.get("effective_to")
-            if (start and as_of < start) or (end and as_of >= end):
-                dropped += 1
+        admitted = rfilter.admit(i, as_of)
+        if not admitted or admitted[0][0] != i:
+            dropped += 1
+        for n, note in admitted:
+            if n in seen:
                 continue
-            keep(i, score)
-            continue
-        statuses = {u: validity.status(u, as_of) for u in record["unit_ids"]}
-        if all(s in DROP for s in statuses.values()):
-            dropped += 1
-            continue
-        amended = [u for u, s in statuses.items() if s == "amended"]
-        swaps = {u: validity.replacements(u, as_of) for u in amended}
-        replaced = bool(amended) and all(any(full for _, full in swaps[u]) for u in amended)
-        if not replaced:
-            lines = [validity.note(u, as_of) for u in amended]
-            if lines:
-                notes[i] = "\n".join(lines)
-            keep(i, score)
-        else:
-            dropped += 1
-        for unit in amended:
-            for target, _ in swaps[unit]:
-                if validity.status(target, as_of) in DROP:
-                    continue
-                for n in validity.records_of.get(target, []):
-                    if n not in seen:
-                        notes.setdefault(n, f"[Lời văn sửa đổi, có hiệu lực tại {as_of}, của {validity.describe(unit)}]")
-                    keep(n, score)
+            if note:
+                notes[n] = note
+            seen.add(n)
+            kept.append((n, score))
     return kept, notes, dropped
 
 
@@ -432,9 +438,11 @@ def run(bundle, questions_path, condition_path, shared_path, output, embedder=No
             via = {i: v for i, _, v in expanded if v is not None}
             ranked = extend_tail([(i, s) for i, s, _ in expanded], ranked, depth)
         as_of = question.get("as_of") or shared.get("validity_as_of")
-        dropped = 0
+        dropped, question_packer = 0, packer
         if validity is not None:
             ranked, notes, dropped = filter_valid(ranked, records, validity, condition["validity"]["level"], as_of)
+            if packing == "P2":  # Siblings pass the same validity rule as ranked records.
+                question_packer = packer.bind(lambda record, day=as_of: validity.record_filter.admit_record(record, day))
         top = [records[i] if i not in (notes if validity is not None else {}) else records[i] | {"status_note": notes[i]} for i, _ in ranked]
         gold = question["relevant_unit_ids"]
         row = {"question_id": question["question_id"], "family_id": question.get("family_id"), "split": question.get("split"),
@@ -444,10 +452,12 @@ def run(bundle, questions_path, condition_path, shared_path, output, embedder=No
                            **({"via_reference_from": records[via[i]]["record_id"]} if i in via else {}),
                            **({"via_role": roles[i]} if i in roles else {}),
                            **({"status_note": notes[i]} if validity is not None and i in notes else {})} for n, (i, score) in enumerate(ranked, 1)],
-               **({"validity": {"as_of": as_of, "dropped": dropped}} if validity is not None else {}),
+               **({"validity": {"as_of": as_of, "as_of_source": "question" if question.get("as_of") else "default", "dropped": dropped}}
+                  if validity is not None else {}),
                "recall": {}, "context_tokens": {}, "recall_at_tokens": {}}
-        row.update(score_top(top, gold, ks, budgets, adaptive_budget(rule, len(issues or [])) if rule else None, packer, question.get("stale_unit_ids")))
-        steps.append(recall_steps(top, gold, packer))
+        row.update(score_top(top, gold, ks, budgets, adaptive_budget(rule, len(issues or [])) if rule else None, question_packer,
+                             question.get("stale_unit_ids"), question.get("not_yet_effective_unit_ids")))
+        steps.append(recall_steps(top, gold, question_packer))
         if not ranked:
             errors.append({"question_id": question["question_id"], "code": "no_match"})
         predictions.append(row)
@@ -461,7 +471,7 @@ def run(bundle, questions_path, condition_path, shared_path, output, embedder=No
         "run_version": RUN_VERSION, "record_version": RECORD_VERSION, "created_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
         "condition": condition, "shared": shared, "tokenizer": TOKENIZER, "retrieval": retrieval, "recall_k": ks,
         "token_budgets": budgets, "rank_depth": depth, "context_packing": {"version": PACKING_VERSION, "mode": packing},
-        "validity": ({"version": STATUS_VERSION, **condition["validity"], "default_as_of": shared.get("validity_as_of"),
+        "validity": ({"version": validity.version, **condition["validity"], "default_as_of": shared.get("validity_as_of"),
                       "edges_sha256": validity.edges_sha256, "undated_edges": validity.undated} if validity is not None else None),
         "inputs": {name: {"path": path.as_posix(), "sha256": digest(path.read_bytes())} for name, path in files.items()},
         "question_set": {"description": question_file.get("description"), "count": len(questions)},

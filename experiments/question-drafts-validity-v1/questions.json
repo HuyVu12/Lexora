@@ -1,5 +1,5 @@
 {
- "description": "Validity question set v1 (research plan WP4.5): 30 questions on corpus scope v3 in four groups (expired document NĐ 12/2022 -> NĐ 283/2026, unit-level amendments, explicit past date, controls). Unreviewed model draft by Claude Opus 5.5 (Claude Code agent session, 2026-11-15); answer and stale sets follow from vbpl.vn document dates and amendment-rules-v1 edges, checked by validate.py; every question has an explicit as_of. Not human labels.",
+ "description": "Validity question set v1 (research plan WP4.5): 30 questions on corpus scope v3 in four groups (expired document NĐ 12/2022 -> NĐ 283/2026, unit-level amendments, explicit past date, controls). Unreviewed model draft by Claude Opus 5.5 (Claude Code agent session, 2026-11-15); answer and stale sets follow from vbpl.vn document dates and amendment-rules-v2 edges, checked by validate.py; every question has an explicit as_of. Not human labels.",
  "set_version": "validity-v1-draft",
  "drafted_by": {
   "model": "Claude Opus 5.5",
@@ -12,9 +12,9 @@
   "units_sha256": "7a9666ac14aacdb9856f7effab4ea7d2f8188d69a637e36487495f3ea731b6bd"
  },
  "amendments": {
-  "edges": "data/kb/amendments-scope-v3-v48feefc6d53b/edges.jsonl",
-  "edges_sha256": "4f43a84d558d63212b9c8f53a9442bd349fac6f62ae7988e05e4031cb3e5f66f",
-  "status_version": "unit-status-v1"
+  "edges": "data/kb/amendments-scope-v3-v48feefc6d53b-v2/edges.jsonl",
+  "edges_sha256": "519ca2f378ba02eb14588424d62df7eb1763614b95ef2fba0390ac77488276e3",
+  "status_version": "unit-status-v2"
  },
  "questions": [
   {

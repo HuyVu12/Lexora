@@ -3,7 +3,7 @@
 of `validate.py`; nothing is written when a check fails.
 
 The drafts were written by Claude Opus 5.5 in a Claude Code agent session on 2026-11-15 (unreviewed model draft); the
-answer and stale sets follow from vbpl.vn document dates and the `amendment-rules-v1` edges, never from a legal
+answer and stale sets follow from vbpl.vn document dates and the `amendment-rules-v2` edges, never from a legal
 judgment, and the check sheet asks people only to compare texts and dates.
 
 Usage: python build.py  (from the repository root or this folder; run pairs.py first on a fresh clone)
@@ -88,11 +88,11 @@ def main():
     document = {
         "description": ("Validity question set v1 (research plan WP4.5): 30 questions on corpus scope v3 in four groups (expired document "
                         "NĐ 12/2022 -> NĐ 283/2026, unit-level amendments, explicit past date, controls). Unreviewed model draft by Claude Opus 5.5 "
-                        "(Claude Code agent session, 2026-11-15); answer and stale sets follow from vbpl.vn document dates and amendment-rules-v1 "
+                        "(Claude Code agent session, 2026-11-15); answer and stale sets follow from vbpl.vn document dates and amendment-rules-v2 "
                         "edges, checked by validate.py; every question has an explicit as_of. Not human labels."),
         "set_version": "validity-v1-draft", "drafted_by": DRAFTED_BY,
         "corpus": {"bundle": validate.BUNDLE.relative_to(validate.ROOT).as_posix(), "units_sha256": sha256(validate.BUNDLE / "units.jsonl")},
-        "amendments": {"edges": validate.EDGES.relative_to(validate.ROOT).as_posix(), "edges_sha256": sha256(validate.EDGES), "status_version": "unit-status-v1"},
+        "amendments": {"edges": validate.EDGES.relative_to(validate.ROOT).as_posix(), "edges_sha256": sha256(validate.EDGES), "status_version": validate.STATUS_VERSION},
         "questions": questions}
     (HERE / "questions.json").write_text(json.dumps(document, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
     rows = []

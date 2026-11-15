@@ -9,7 +9,8 @@ judging an edge needs the whole edge. The CSV is UTF-8 with a BOM so spreadsheet
 
 Verdicts, one per row:
 - `dung`: the instruction really amends what the row says (for an unresolved or external row: the named target is
-  indeed not a unit of the corpus);
+  indeed not a unit of the corpus; for `expire_document`: the statement ends the whole named document; for
+  `expire_subject`: the statement scopes by subject matter, not by named units);
 - `sai_dich`: wrong target (another unit, another document, or a target that does exist in the corpus);
 - `sai_loai`: right target, wrong kind (for example a repeal recorded as a modification);
 - `khac`: anything else (not an amending instruction at all, a wrong date, cannot decide), explained in `note`.
@@ -32,7 +33,10 @@ VERDICTS = ("dung", "sai_dich", "sai_loai", "khac")
 COLUMNS = ["edge_key", "status", "kind", "effective_from", "amending_unit", "instruction", "target_named", "target_unit",
            "target_text", "new_wording_unit", "new_wording_text", "reason", "verdict", "note"]
 KIND_NAMES = {"modify": "modify (sửa đổi, bổ sung)", "add": "add (bổ sung)", "repeal": "repeal (bãi bỏ)",
-              "replace_phrase": "replace_phrase (thay thế cụm từ)"}
+              "replace_phrase": "replace_phrase (thay thế cụm từ)", "expire": "expire (hết hiệu lực: Điều, khoản được nêu)",
+              "expire_document": "expire_document (hết hiệu lực: cả văn bản)",
+              "expire_subject": "expire_subject (hết hiệu lực: theo nội dung, không nêu Điều, khoản)"}
+SCOPE_NAMES = {"own_text": "; chỉ tên hoặc câu dẫn, không thay các điểm, khoản bên dưới", "phrase": "; chỉ đơn vị chứa cụm từ cũ"}
 _LABELS = {"article": "Điều", "clause": "khoản", "point": "điểm"}
 _NUMBER = re.compile(r"^.*?số\s+\d+/\d{4}/\S+")
 
@@ -81,14 +85,19 @@ def rows(edges, units, documents):
     for edge in edges:
         amending = _instruction_unit(edge, units)
         target = edge.get("target_unit_id") or edge.get("anchor_unit_id")
-        if edge.get("target_unit_id") in units:
+        if edge["kind"] in ("expire_document", "expire_subject"):
+            target_unit = "(cả văn bản)" if edge["kind"] == "expire_document" else "(không xác định được Điều, khoản bằng quy tắc)"
+        elif edge.get("target_unit_id") in units:
             target_unit = unit_path(target, units, documents)
         elif target in units:
             target_unit = f"(đơn vị cha gần nhất; đích chưa có trong văn bản) {unit_path(target, units, documents)}"
         else:
             target_unit = "(không có trong corpus)"
         wording = edge.get("amending_unit_id")
-        out.append({"edge_key": edge["edge_id"], "status": edge["status"], "kind": KIND_NAMES.get(edge["kind"], edge["kind"]),
+        kind = KIND_NAMES.get(edge["kind"], edge["kind"])
+        if SCOPE_NAMES.get(edge.get("scope")) and kind.endswith(")"):
+            kind = kind[:-1] + SCOPE_NAMES[edge["scope"]] + ")"
+        out.append({"edge_key": edge["edge_id"], "status": edge["status"], "kind": kind,
                     "effective_from": edge.get("effective_from") or "",
                     "amending_unit": unit_path(amending, units, documents) if amending else
                     f"(Điều sửa đổi không có trong corpus), {_short_title(edge['amending_document_id'], documents)}",

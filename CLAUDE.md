@@ -39,7 +39,8 @@ python -m legal_ai.cli gold-score <gold.jsonl> --bundle <bundle> --predictions r
 python -m legal_ai.cli answer-run <retrieval run> --questions <q.json> --output <new> --max-calls N --approve-claude   # then answer-score, answer-sheet, answer-grades, answer-judge
 python -m legal_ai.cli answer-run <retrieval run> --questions <q.json> --output <new> --max-calls N --router-model MODEL_OSS_120B --approve-router   # same with a 9Router model (ChatStructured: schema in the prompt, JSON parsed, raw text kept)
 python -m legal_ai.cli budget-report --runs SET:DK1=<run> SET:DK2=<run> --output docs/results/<new>.md   # recall-by-token-budget tables + SVG (shared token_budgets, context_packing P0/P1/P2)
-python -m legal_ai.cli amendment-build <bundle> --output data/kb/<new>                # amendment-rules-v1 edges from pinned snapshots (configs/amendments-v1.json); feeds configs/experiments/validity/
+python -m legal_ai.cli amendment-build <bundle> --output data/kb/<new>                # amendment-rules-v2 edges from pinned snapshots (configs/amendments-v1.json); feeds configs/experiments/validity/
+python -m legal_ai.cli amendment-sheet <edges dir> --sheet <new csv>                 # one check row per edge for two people; amendment-score <csv> [--compare <csv>] for verdict counts and kappa
 python -m legal_ai.cli enum-drafts <gold.jsonl> --bundle <bundle> --output <q.json>    # enumeration drafts + check sheet from the adjudicated gold; enum-gate <q.json> --kb-run <kb run> for extraction coverage
 python -m legal_ai.cli query-slots <q.json> --output <new> --max-calls N --router-model MODEL_OSS_120B --approve-router   # norm-query-v1 analysis shared by every condition (shared.query_slots)
 python -m legal_ai.cli preflight --retrieval <DK1..DK4 runs> --answers <answer runs>   # fairness checks before reporting RQ3; exits 1 on failure

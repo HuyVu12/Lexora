@@ -1,5 +1,5 @@
-"""Amendment edges by rule (`amendment-rules-v1`): which unit of which document an amending text modifies, adds to,
-repeals or rewords, each edge anchored to the exact instruction it comes from. No model.
+"""Amendment edges by rule (`amendment-rules-v2`): which unit of which document an amending text modifies, adds to,
+repeals, rewords or declares expired, each edge anchored to the exact instruction it comes from. No model.
 
 Input is the normalized full text of an amending document (offsets and SHA-256 refer to that text) and the units of
 the corpus the targets must be found in. The rules read the text line by line:
@@ -19,6 +19,20 @@ the corpus the targets must be found in. The rules read the text line by line:
 A target that is not in the corpus (another document, an annex form, a unit the corpus lacks) is kept with a status
 and a reason, never guessed. The effective date of an edge is the amending document's `effective_from`; an
 instruction with its own date is not detected (a stated limitation).
+
+Version 2 (15/11/2026) keeps every edge v1 found, with the same target and status, and adds:
+
+- `scope` on every edge: `unit` (the unit and everything below it), `own_text` for an instruction that rewrites only
+  the heading or lead sentence of a unit ("Sửa đổi, bổ sung tên khoản 8 Điều 9 như sau:"; its points stay as they
+  were), `phrase` for a phrase replacement, with the quoted `phrases` [[old, new], ...] so the status of each unit can
+  follow from whether its own text holds an old phrase;
+- expiry statements in an Article whose heading starts with "Hiệu lực" ("... hết hiệu lực thi hành kể từ ..."), on
+  their own line or as the lettered items of a line announcing them ("các Nghị định sau đây hết hiệu lực thi hành:"):
+  `expire` when units are named (resolved like any target), `expire_document` for a whole document (status
+  `document`, or `external` outside the corpus; unit status keeps following the vbpl.vn dates of the document), and
+  `expire_subject` when the statement scopes by subject matter ("Nội dung về lao động nước ngoài ... quy định tại
+  Nghị định số 152/2020/NĐ-CP ... hết hiệu lực"): mapping that to units needs legal judgment, so the edge stays
+  `unresolved` and is only reported.
 """
 
 import re
@@ -26,8 +40,9 @@ import re
 from legal_ai.common.io import canonical, digest
 from legal_ai.schemas.contract import text_hash
 
-AMENDMENT_VERSION = "amendment-rules-v1"
-KINDS = ("modify", "add", "repeal", "replace_phrase")
+AMENDMENT_VERSION = "amendment-rules-v2"
+KINDS = ("modify", "add", "repeal", "replace_phrase", "expire", "expire_document", "expire_subject")
+SCOPES = ("unit", "own_text", "phrase")
 _MARKER = re.compile(r"\s*(?:\d+[a-zđ]?\.|[a-zđ]\))\s+")
 _VERB = re.compile(r"(Sửa đổi, bổ sung|Sửa đổi|Bổ sung|Bãi bỏ|Thay thế(?:, bổ sung)?)\s+(?=(?:một số\s+|các\s+|tên\s+)?"
                    r"(?:điểm|khoản|Điều|điều|cụm từ|từ|đoạn|Mẫu|Phụ lục|Chương|Mục|số thứ tự|quy định)\b)")
@@ -40,6 +55,15 @@ _GROUP = re.compile(r"một số|các\s+(?:điểm|khoản|điều)\b", re.IGNOR
 _ANNEX = re.compile(r"Mẫu số|Phụ lục", re.IGNORECASE)
 _QUOTE = re.compile(r"[\"“][^\"“”]*[\"”]")
 _OPEN = ("\"", "“")
+_OWN_TEXT = re.compile(r"(?:Sửa đổi, bổ sung|Sửa đổi)\s+(?:tên|câu dẫn|đoạn dẫn|phần mở đầu|đoạn mở đầu)\s")
+_PHRASE = re.compile(r"(?:cụm\s+)?từ\s*[\"“]([^\"“”]*)[\"”]")
+_NEW_WORDING = re.compile(r"\b(?:bằng|thành)\b")
+_EFFECT_HEADING = re.compile(r"Điều\s+\d+[a-zđ]?\.\s+Hiệu lực")
+_EXPIRES = "hết hiệu lực"
+_STRUCTURE = re.compile(r"\b(?:Mục|Chương|Phụ lục|Mẫu)\b")
+_SUBJECT = re.compile(r"\s*(?:Nội dung|Các quy định|Những quy định|Quy định)\b")
+_NUMBERED = re.compile(r"\s*\d+[a-zđ]?\.\s")
+_LETTERED = re.compile(r"\s*[a-zđ]\)\s")
 
 
 def document_id_of(number):
@@ -79,6 +103,64 @@ def parse_targets(line):
     return list(dict.fromkeys(targets))
 
 
+def phrases(instruction):
+    """[[old, new], ...] of a phrase replacement, read from the quoted text: a quote after "bằng" or "thành" is the new
+    wording of the quote before it; an old phrase without one keeps None."""
+    pairs, previous = [], 0
+    for match in _PHRASE.finditer(instruction):
+        between = instruction[previous:match.start()]
+        previous = match.end()
+        if pairs and pairs[-1][1] is None and _NEW_WORDING.search(between):
+            pairs[-1][1] = match.group(1)
+        else:
+            pairs.append([match.group(1), None])
+    return pairs
+
+
+def edge_scope(edge):
+    """The scope of an edge; `amendment-rules-v1` edges carry none, so it is read from their instruction the same way."""
+    if edge.get("scope"):
+        return edge["scope"]
+    if edge["kind"] == "replace_phrase":
+        return "phrase"
+    if edge["kind"] == "modify" and _OWN_TEXT.match(edge["instruction"]["text"]):
+        return "own_text"
+    return "unit"
+
+
+def edge_phrases(edge):
+    return edge["phrases"] if "phrases" in edge else phrases(edge["instruction"]["text"])
+
+
+def _expiry(document, body, quote, units_by_doc, effective_from, sha, announced_doc=None):
+    """Edges of one expiry statement (a line, or an item of an announced list) of an effect Article."""
+    clean = _QUOTE.sub(lambda m: " " * len(m.group()), body)
+    named = _DOC.search(clean)
+    target_doc = document_id_of(named.group(1)) if named else announced_doc
+    base = {"edge_version": AMENDMENT_VERSION, "amending_document_id": document["document_id"], "amending_text_sha256": sha,
+            "instruction": quote, "effective_from": effective_from, "scope": "unit", "target_document_id": target_doc,
+            "target": None, "target_unit_id": None, "anchor_unit_id": None}
+    if target_doc is None:
+        return [base | {"kind": "expire_document", "status": "unresolved", "reason": "no_target_named"}]
+    segment = clean[:named.start()] if named else clean
+    targets = parse_targets(segment)
+    if targets:
+        out = []
+        for target in targets:
+            unit, anchor, status, reason = _resolve(units_by_doc, target_doc, target)
+            out.append(base | {"kind": "expire", "target": {"article": target[0], "clause": target[1], "point": target[2]},
+                               "target_unit_id": unit["unit_id"] if unit else None, "anchor_unit_id": anchor["unit_id"] if anchor else None,
+                               "status": status, "reason": reason})
+        return out
+    if _STRUCTURE.search(segment):
+        return [base | {"kind": "expire", "status": "unresolved" if target_doc in units_by_doc else "external", "reason": "structure_target"}]
+    if segment.strip() and _SUBJECT.match(segment):
+        return [base | {"kind": "expire_subject", "status": "unresolved", "reason": "subject_scope_needs_legal_judgment"}]
+    if target_doc not in units_by_doc:
+        return [base | {"kind": "expire_document", "status": "external", "reason": "target_document_not_in_corpus"}]
+    return [base | {"kind": "expire_document", "status": "document", "reason": None}]
+
+
 def _kind(verb):
     return {"Sửa đổi, bổ sung": "modify", "Sửa đổi": "modify", "Bổ sung": "add", "Bãi bỏ": "repeal"}.get(verb, "replace_phrase")
 
@@ -110,6 +192,7 @@ def detect(document, text, units, effective_from=None):
         units_by_doc.setdefault(unit["document_id"], []).append(unit)
     sha = text_hash(text)
     edges, context_doc, inside, position = [], None, False, 0
+    effect, announced = False, None  # Inside an Article headed "Hiệu lực ..."; the open list of an announcing line.
     lines = text.split("\n")
     starts = []
     for line in lines:
@@ -135,7 +218,25 @@ def detect(document, text, units, effective_from=None):
             doc = _DOC.search(stripped)
             heading_verb = _VERB.search(stripped[:120])
             context_doc = document_id_of(doc.group(1)) if doc and heading_verb else None
+            effect, announced = bool(_EFFECT_HEADING.match(stripped)), None
             continue
+        if effect:
+            lead = _MARKER.match(line)
+            body_at = lead.end() if lead else len(line) - len(line.lstrip())
+            body = line[body_at:].rstrip()
+            if _NUMBERED.match(line) or not _LETTERED.match(line):
+                announced = None  # A new clause or a plain line closes an announced list.
+            quote = {"start": start + body_at, "end": start + len(line.rstrip()), "text": body}
+            if _EXPIRES in body and body.endswith(":"):
+                named = _DOC.search(_QUOTE.sub(lambda m: " " * len(m.group()), body))
+                announced = (document_id_of(named.group(1)) if named else None,)
+                continue
+            if _EXPIRES in body:
+                edges += _expiry(document, body, quote, units_by_doc, effective_from, sha)
+                continue
+            if announced is not None and _LETTERED.match(line):
+                edges += _expiry(document, body, quote, units_by_doc, effective_from, sha, announced[0])
+                continue
         marker = _MARKER.match(line)
         body_at = marker.end() if marker else len(line) - len(line.lstrip())
         verb = _VERB.match(line, body_at)
@@ -148,8 +249,10 @@ def detect(document, text, units, effective_from=None):
         context_doc = target_doc  # "1. Sửa đổi ... của Luật X như sau:" binds the items that follow, until the next Article.
         targets = parse_targets(instruction)
         quote = {"start": start + body_at, "end": start + len(line.rstrip()), "text": instruction.rstrip()}
+        scope = "phrase" if kind == "replace_phrase" else "own_text" if kind == "modify" and _OWN_TEXT.match(instruction) else "unit"
         base = {"edge_version": AMENDMENT_VERSION, "kind": kind, "amending_document_id": document["document_id"],
-                "amending_text_sha256": sha, "instruction": quote, "effective_from": effective_from}
+                "amending_text_sha256": sha, "instruction": quote, "effective_from": effective_from, "scope": scope,
+                **({"phrases": phrases(instruction)} if kind == "replace_phrase" else {})}
         if not targets:
             reason = "annex_target" if _ANNEX.search(instruction) else "no_target_named"
             if _GROUP.search(instruction) and not _ANNEX.search(instruction):
@@ -174,7 +277,7 @@ def detect(document, text, units, effective_from=None):
             if kind in ("modify", "add") and instruction.rstrip().endswith(("như sau:", "như sau")):
                 pending.append(edge)
     for edge in edges:
-        edge["edge_id"] = digest(canonical([AMENDMENT_VERSION, edge["amending_text_sha256"], edge["instruction"]["start"], edge["target"]]))[:24]
+        edge["edge_id"] = digest(canonical([AMENDMENT_VERSION, edge["amending_text_sha256"], edge["instruction"]["start"], edge["kind"], edge["target"]]))[:24]
     return edges
 
 
@@ -232,6 +335,7 @@ def build(bundle, config_path, output, raw_dir="data/raw/vbpl"):
                 "bundle": bundle.as_posix(), "units_sha256": digest(units_path.read_bytes()), "config_sha256": digest(Path(config_path).read_bytes()),
                 "sources": sources, "summary": summary(edges), "network": False, "model_calls": 0,
                 "limitations": ["Rules only: every edge needs human review against the source text before it is reported",
+                                "Expiry by subject matter (expire_subject) stays unresolved: mapping it to units needs legal judgment",
                                 "The effective date of an edge is the amending document's effective_from; dates inside an instruction are not read",
                                 "Targets outside the corpus (other documents, annex forms) are kept as external or unresolved, never guessed",
                                 "Effect dates and statuses are what vbpl.vn reported at access time"]}
