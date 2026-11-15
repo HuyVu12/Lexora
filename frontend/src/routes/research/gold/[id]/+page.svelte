@@ -3,30 +3,55 @@
 	import StepTag from '#lib/components/StepTag.svelte';
 	import GoldNormEditor from '#lib/components/GoldNormEditor.svelte';
 	import { page } from '$app/state';
+	import ConfirmDialog from '#lib/components/ConfirmDialog.svelte';
 	import Icon from '#lib/components/Icon.svelte';
 	import { api } from '#lib/api.js';
-	import { t } from '#lib/i18n/index.svelte.js';
+	import { t, formatDay } from '#lib/i18n/index.svelte.js';
 	import { session, canReview } from '#lib/session.svelte.js';
 	import { act, notify } from '#lib/toast.svelte.js';
-	import type { GoldItem, GoldNorm, GoldWorkspace } from '#lib/types.js';
+	import type { GoldItem, GoldNorm, GoldSample, GoldWorkspace } from '#lib/types.js';
 
+	type Scope = 'all' | 'sample';
 	const id = $derived(page.params.id ?? '');
 	let ws = $state<GoldWorkspace | null>(null);
 	let error = $state('');
 	let tab = $state<'label' | 'exchange'>('label');
+	// Which sentences the list shows; chosen on the first load (the sample for someone who labels only the sample).
+	let scope = $state<Scope | null>(null);
 	let selected = $state('');
 	let norms = $state<GoldNorm[]>([]);
 	let selection = $state('');
 	let busy = $state(false);
+	let confirmSample = $state(false);
 	let sentenceEl = $state<HTMLElement | null>(null);
+
+	const inScope = (v: GoldWorkspace, s: Scope | null) => (s === 'sample' && v.sample ? v.items.filter((i) => i.in_sample) : v.items);
+	const share = (value: string) => `${Math.round(Number(value) * 100)}%`;
 
 	const load = () =>
 		api<GoldWorkspace>(`/api/gold/set?id=${encodeURIComponent(id)}`)
 			.then((v) => {
 				ws = v;
-				if (!selected || !v.items.some((i) => i.key === selected)) pick(v.items.find((i) => i.norms === null) ?? v.items[0]);
+				if (scope === null || (scope === 'sample' && !v.sample))
+					scope = v.sample && !v.items.some((i) => !i.in_sample && i.norms !== null) ? 'sample' : 'all';
+				const list = inScope(v, scope);
+				if (!selected || !list.some((i) => i.key === selected)) pick(list.find((i) => i.norms === null) ?? list[0]);
 			})
 			.catch((e) => (error = e.message));
+
+	function setScope(next: Scope) {
+		scope = next;
+		const list = ws ? inScope(ws, next) : [];
+		if (!list.some((i) => i.key === selected)) pick(list.find((i) => i.norms === null) ?? list[0]);
+	}
+
+	async function declareSample() {
+		await act(async () => {
+			const made = await api<GoldSample>('/api/gold/sample', { set_id: id });
+			notify({ key: 'gold.sample.declared', params: { n: made.article_count } });
+			await load();
+		});
+	}
 
 	$effect(() => {
 		void id;
@@ -54,6 +79,24 @@
 	const index = $derived(ws ? ws.items.findIndex((i) => i.key === selected) : -1);
 	const current = $derived(index >= 0 ? ws?.items[index] : undefined);
 	const done = $derived(ws?.items.filter((i) => i.norms !== null).length ?? 0);
+	// The listed sentences keep their number in the whole set, so "Câu 12" means the same in both scopes.
+	const shown = $derived(ws ? ws.items.map((item, i) => ({ item, n: i + 1 })).filter((x) => scope !== 'sample' || !ws?.sample || x.item.in_sample) : []);
+	const shownDone = $derived(shown.filter((x) => x.item.norms !== null).length);
+	const sampleOnly = $derived(scope === 'sample' && !!ws?.sample);
+	const sampleArticles = $derived.by(() => {
+		const found = new Map<string, { id: string; where: string; document: string; n: number }>();
+		for (const item of ws?.sample ? ws.items : []) {
+			if (!item.in_sample) continue;
+			const article = /^(.*?\/article-[^/]+)/.exec(item.unit_id)?.[1] ?? item.unit_id;
+			// The path reads "Chương III > Mục 1 > Điều 24 > Khoản 1"; the article is its "Điều" part.
+			const parts = item.path.split(' > ');
+			const where = parts.find((p) => /^(Điều|Article)\b/.test(p)) ?? parts[parts.length - 1];
+			const entry = found.get(article) ?? { id: article, where, document: item.document_title, n: 0 };
+			entry.n += 1;
+			found.set(article, entry);
+		}
+		return [...found.values()];
+	});
 	const others = $derived(ws?.annotators.filter((a) => a.annotator !== ws?.annotator) ?? []);
 	const status = (item: GoldItem) =>
 		item.norms === null ? t('gold.status.todo') : item.norms.length ? t('gold.status.norms', { n: item.norms.length }) : t('gold.status.none');
@@ -72,7 +115,9 @@
 			notify({ key: clean.length ? 'gold.saved' : 'gold.savedNone', params: { n: position } });
 		});
 		if (ok) {
-			const after = ws.items.slice(index + 1).find((i) => i.norms === null) ?? ws.items[index + 1];
+			const list = inScope(ws, scope);
+			const at = list.findIndex((i) => i.key === current.key);
+			const after = list.slice(at + 1).find((i) => i.norms === null) ?? list[at + 1];
 			const stay = current.key;
 			await load();
 			pick(ws?.items.find((i) => i.key === (next && after ? after.key : stay)));
@@ -110,21 +155,31 @@
 				<p class="facts">
 					<span>{t('gold.counts', { articles: ws.articles, sentences: ws.sentences })}</span>
 					<span>{t('gold.progress', { done, n: ws.items.length })}</span>
+					{#if ws.sample}<span>{t('gold.sampleFacts', { articles: ws.sample.article_count, sentences: ws.sample.sentences })}</span>{/if}
 					<span>{t('qs.onVersion', { n: ws.corpus_version })}</span>
 				</p>
 			</div>
 		</header>
 		<PageGuide name="gold" steps={4} />
+		{#if ws.sample}<p class="notice info small sample-note">{t('gold.sample.note', { articles: ws.sample.article_count })}</p>{/if}
 
 		<div class="cols">
 			<section class="panel list" aria-labelledby="list-heading">
 				<h2 class="heading" id="list-heading">{t('gold.sentences')}</h2>
-				<progress class="bar" max={ws.items.length} value={done} aria-label={t('gold.progress', { done, n: ws.items.length })}></progress>
+				{#if ws.sample}
+					<div class="segmented scope" role="group" aria-label={t('gold.scope.label')}>
+						<button type="button" aria-pressed={!sampleOnly} onclick={() => setScope('all')}>{t('gold.scope.all', { n: ws.items.length })}</button>
+						<button type="button" aria-pressed={sampleOnly} onclick={() => setScope('sample')}>{t('gold.scope.sample', { n: ws.sample.sentences })}</button>
+					</div>
+				{/if}
+				<progress class="bar" max={shown.length} value={shownDone}
+					aria-label={sampleOnly ? t('gold.progressSample', { done: shownDone, n: shown.length }) : t('gold.progress', { done, n: ws.items.length })}></progress>
+				{#if sampleOnly}<p class="small muted scope-progress">{t('gold.progressSample', { done: shownDone, n: shown.length })}</p>{/if}
 				<ol class="items">
-					{#each ws.items as item, i (item.key)}
+					{#each shown as { item, n } (item.key)}
 						<li>
 							<button type="button" class="item" aria-current={item.key === selected ? 'true' : undefined} onclick={() => pick(item)}>
-								<span class="num">{i + 1}</span>
+								<span class="num">{n}{#if item.in_sample && !sampleOnly}<span class="dot" aria-hidden="true"></span><span class="visually-hidden">{t('gold.sample.inSample')}</span>{/if}</span>
 								<span class="text">{item.text}</span>
 								<span class="mark">
 									{#if item.norms !== null}<Icon name="check" size={16} />{/if}<span class="visually-hidden">{status(item)}</span>
@@ -146,7 +201,9 @@
 						<p class="muted">{t('gold.pickOne')}</p>
 					{:else}
 						<div class="sentence-box">
-							<p class="small muted">{t('gold.sentenceN', { n: index + 1 })} · {current.path} · {status(current)}</p>
+							<p class="small muted">
+								{t('gold.sentenceN', { n: index + 1 })} · {current.path} · {status(current)}{#if current.in_sample}{' · '}<span class="in-sample">{t('gold.sample.inSample')}</span>{/if}
+							</p>
 							<p class="small muted doc" title={current.document_title}>{current.document_title}</p>
 							{#if current.context}<p class="context small"><span class="label">{t('gold.context')}</span> {current.context}</p>{/if}
 							<p class="serif sentence" bind:this={sentenceEl}>{current.text}</p>
@@ -165,6 +222,23 @@
 					{/if}
 				{:else}
 					<div class="fields">
+						<h3 class="label">{t('gold.sample.heading')}</h3>
+						{#if ws.sample}
+							<p class="small">
+								{t('gold.sample.info', { articles: ws.sample.article_count, sentences: ws.sample.sentences, share: share(ws.sample.share), seed: ws.sample.seed, who: ws.sample.declared_by, date: formatDay(ws.sample.declared_at) })}
+							</p>
+							<details class="sample-list">
+								<summary>{t('gold.sample.articles', { n: ws.sample.article_count })}</summary>
+								<ul>
+									{#each sampleArticles as a (a.id)}<li><span><strong>{a.where}</strong> <span class="muted">· {a.document}</span></span><span class="small muted">{t('gold.sentencesN', { n: a.n })}</span></li>{/each}
+								</ul>
+							</details>
+						{:else if ws.sample_declarable}
+							<p class="small muted">{t('gold.sample.lead', { articles: ws.sample_defaults.articles, share: share(ws.sample_defaults.share) })}</p>
+							<div><button type="button" class="btn" onclick={() => (confirmSample = true)}>{t('gold.sample.declare')}</button></div>
+						{:else}
+							<p class="small muted">{t('gold.sample.blocked')}</p>
+						{/if}
 						<h3 class="label">{t('gold.exchange.send')}</h3>
 						<p class="small muted">{t('gold.exchange.sendLead')}</p>
 						<div class="row gap">
@@ -189,11 +263,14 @@
 						{#each others as o (o.annotator)}
 							<a class="btn primary compare" href="/research/gold/{id}/compare?other={encodeURIComponent(o.annotator)}">{t('gold.exchange.compare', { name: o.annotator_name })}<Icon name="arrow" /></a>
 						{/each}
-						{#if ws.adjudicated === ws.sentences}<a class="btn compare" href="/api/gold/file?id={id}" download><Icon name="download" />{t('gold.exchange.file')}</a>{/if}
+						{#if !ws.blockers.length}<a class="btn compare" href="/api/gold/file?id={id}" download><Icon name="download" />{t('gold.exchange.file')}</a>{/if}
 					</div>
 				{/if}
 			</section>
 		</div>
+		<ConfirmDialog bind:open={confirmSample} title={t('gold.sample.confirmTitle')} confirmLabel={t('gold.sample.confirmGo')} onconfirm={declareSample}>
+			<p>{t('gold.sample.confirmBody', { articles: ws.sample_defaults.articles, total: ws.articles, share: share(ws.sample_defaults.share), seed: ws.sample_defaults.seed })}</p>
+		</ConfirmDialog>
 	{/if}
 </div>
 
@@ -223,26 +300,44 @@
 		display: grid;
 		gap: 12px;
 	}
+	.sample-note {
+		margin: 0 0 16px;
+	}
 	.list {
 		position: sticky;
 		top: calc(var(--topbar) + 16px);
 		max-height: calc(100vh - var(--topbar) - 32px);
-		grid-template-rows: auto auto 1fr;
+		display: flex;
+		flex-direction: column;
 		overflow: hidden;
+	}
+	.scope {
+		align-self: flex-start;
+		max-width: 100%;
+	}
+	.scope button {
+		padding: 5px 11px;
+		white-space: nowrap;
 	}
 	.bar {
 		width: 100%;
+		flex: none;
+	}
+	.scope-progress {
+		margin: -6px 0 0;
 	}
 	.items {
 		list-style: none;
 		margin: 0 -8px;
 		padding: 0;
 		overflow: auto;
+		flex: 1;
+		min-height: 0;
 	}
 	.item {
 		width: 100%;
 		display: grid;
-		grid-template-columns: 2.2rem minmax(0, 1fr) 18px;
+		grid-template-columns: 2.6rem minmax(0, 1fr) 18px;
 		gap: 8px;
 		align-items: start;
 		text-align: left;
@@ -262,8 +357,42 @@
 		box-shadow: inset 3px 0 0 var(--graphite);
 	}
 	.num {
+		display: inline-flex;
+		align-items: center;
+		gap: 4px;
+		height: 1.5em;
 		color: var(--muted);
 		font-variant-numeric: tabular-nums;
+	}
+	.dot {
+		width: 7px;
+		height: 7px;
+		border-radius: 50%;
+		background: var(--approve);
+		flex: none;
+	}
+	.in-sample {
+		color: var(--approve);
+		font-weight: 500;
+	}
+	.sample-list summary {
+		cursor: pointer;
+		color: var(--ink-2);
+	}
+	.sample-list ul {
+		list-style: none;
+		margin: 8px 0 0;
+		padding: 0;
+	}
+	.sample-list li {
+		display: flex;
+		justify-content: space-between;
+		gap: 12px;
+		padding: 6px 0;
+		border-top: 1px solid var(--rule);
+	}
+	.sample-list li .small {
+		white-space: nowrap;
 	}
 	.text {
 		display: -webkit-box;
@@ -352,7 +481,7 @@
 		}
 		.list {
 			position: static;
-			max-height: 360px;
+			max-height: 440px;
 		}
 	}
 </style>

@@ -3,13 +3,13 @@ title: Hướng dẫn gán nhãn gold trích xuất
 summary: Quy ước chi tiết để gán quy phạm cho 290 câu luật của gold v1: từng ô, tính quy phạm, các trường hợp khó và ví dụ từ chính corpus.
 category: Gán nhãn
 order: 20
-updated: 2026-11-08
+updated: 2026-11-16
 ---
 
 ## Gold dùng để làm gì
 
 Gold trích xuất là đáp án chuẩn do người gán, dùng để chấm phần trích xuất quy phạm (RQ1).
-Sau khi hai người gán và chốt, lệnh `gold-score` so ba nguồn với gold trên đúng 290 câu này:
+Sau khi gán và chốt, lệnh `gold-score` so ba nguồn với gold trên đúng 290 câu này:
 
 - bộ quy tắc (`norm-rules-v2`);
 - ĐK3: quy phạm do model gpt-oss-120b trích xuất, chưa kiểm chứng;
@@ -26,7 +26,8 @@ Khái niệm chung (corpus, đơn vị, quy phạm, thuật ngữ) xem ở [Hư�
 | Tên trong app | Gold trích xuất v1 (40 Điều) |
 | Phạm vi | 40 Điều lấy ngẫu nhiên có hạt giống cố định từ 94 Điều của corpus, chia theo tỉ lệ số Điều của từng văn bản |
 | Số câu cần gán | 290 |
-| Thời gian ước tính | 5-7 giờ mỗi người, khoảng 1-2 phút một câu |
+| Ai gán gì | Kha gán đủ 40 Điều; Vũ gán độc lập mẫu đồng thuận 12 Điều (101 câu) |
+| Thời gian ước tính | Khoảng 1-2 phút một câu: 5-7 giờ cho cả bộ, 2-3 giờ cho mẫu |
 | Ở đâu | https://vlexora.duckdns.org > Nghiên cứu > Gold |
 
 Mỗi dòng cần gán là **một câu** của một đơn vị lá (điểm, khoản không chia điểm, hoặc Điều không chia khoản).
@@ -192,13 +193,60 @@ Quy tắc chấm được cố định trước khi chạy thực nghiệm.
 
 Vì vậy ba thứ quan trọng nhất là **Tính quy phạm, Chủ thể và Hành vi**; ranh giới cụm từ lệch một chút vẫn được tính ở mức khớp lỏng.
 
+## Mẫu đồng thuận và người gán thứ hai
+
+Theo quyết định ngày 15/11/2026, gold v1 không được hai người gán toàn bộ.
+Người gán thứ nhất (Kha) gán đủ 40 Điều.
+Người gán thứ hai (Vũ) gán độc lập **mẫu đồng thuận**: khoảng 30% số Điều, chọn một lần bằng hạt giống cố định.
+Đồng thuận (kappa, F1) được đo trên phần hai người cùng gán; các câu còn lại dùng nhãn của người thứ nhất và được đánh dấu là một người gán.
+Gold không dùng đề xuất của model, vì gold dùng để chấm chính model trích xuất.
+
+Cách Lexora chọn mẫu (`document-largest-remainder-v1`):
+
+- Số Điều của mẫu bằng 30% số Điều của bộ, làm tròn (40 Điều thì 12 Điều).
+- Số ghế được chia cho từng văn bản theo tỉ lệ số Điều của văn bản đó, theo phương pháp phần dư lớn nhất: mỗi văn bản nhận phần nguyên của hạn ngạch, ghế còn lại đi tới các văn bản có phần dư lớn nhất, phần dư bằng nhau thì xếp theo mã băm có hạt giống.
+- Vì vậy văn bản chỉ có một Điều không được làm tròn lên một cách mặc nhiên; với gold v1 (31/6/1/1/1 Điều) mẫu là 9 Điều của Bộ luật Lao động, 2 Điều của Nghị định 145/2020 và 1 Điều của Thông tư 10/2020.
+- Trong mỗi văn bản, các Điều được lấy theo thứ tự mã băm có hạt giống của mã Điều.
+- Hạt giống mặc định là `lexora-gold-agreement-v1`, nên mọi máy tính ra cùng một danh sách.
+
+Mẫu được chọn **trước khi người thứ hai gán câu đầu tiên**, để không ai chọn mẫu sau khi đã thấy nhãn.
+App từ chối chọn mẫu khi bộ gold đã có nhãn của hai người, và mẫu đã chọn thì không đổi được.
+
+### Chọn mẫu (một lần cho cả bộ)
+
+1. Mở bộ gold, thẻ **Trao đổi**, mục **Mẫu đồng thuận**.
+2. Bấm **Chọn mẫu đồng thuận**, đọc hộp xác nhận (số Điều, tỉ lệ, hạt giống), rồi bấm **Chọn mẫu**.
+3. App ghi lại người chọn và thời điểm; bấm **Xem 12 Điều trong mẫu** để xem danh sách và số câu của từng Điều.
+
+### Người gán thứ hai làm gì
+
+1. Mở bộ gold bằng tài khoản của mình, thẻ **Gán nhãn**.
+2. Ở danh sách câu, chọn **Mẫu đồng thuận**; người chưa gán câu nào ngoài mẫu sẽ thấy chế độ này được chọn sẵn.
+3. Thanh tiến độ và dòng "Bạn đã gán x/101 câu trong mẫu" chỉ đếm câu trong mẫu; **Lưu và sang câu tiếp** cũng chỉ đi qua câu trong mẫu.
+4. Gán từng câu theo đúng quy ước ở các mục trên, không xem nhãn của người kia và không xem kết quả của máy.
+5. Ở chế độ **Tất cả**, câu thuộc mẫu có chấm xanh cạnh số thứ tự; khung câu đang gán ghi "Thuộc mẫu đồng thuận".
+
 ## Đối soát và chốt
 
-1. Khi cả hai đã gán đủ 290 câu, mở thẻ **Trao đổi**, bấm **Đối soát với** tên người còn lại.
-2. Trang hiện **Kappa có/không có quy phạm** và **Kappa tính quy phạm** trên các cặp khớp.
-3. Lọc **Bất đồng hoặc chưa chốt**; với từng câu chọn **Chốt bản của** một người, hoặc **Sửa rồi chốt**.
-4. Câu bất đồng do thiếu quy ước: thống nhất quy ước mới, ghi vào ghi chú, áp dụng cho các câu tương tự.
-5. Chốt hết thì bấm **Tải gold cuối (JSONL)** và gửi cho người chạy thực nghiệm.
+1. Mở thẻ **Trao đổi**, bấm **Đối soát với** tên người còn lại.
+2. Khung **Mức đồng thuận** cho biết mẫu có bao nhiêu Điều và câu, mỗi người đã gán bao nhiêu câu trong mẫu, cùng **Kappa có/không có quy phạm**, **Kappa tính quy phạm** và F1 trên các câu cả hai đã gán.
+3. Bộ lọc **Cần đối soát** liệt kê câu hai người gán khác nhau; với từng câu chọn **Chốt bản của** một người, hoặc **Sửa rồi chốt**.
+4. Câu thuộc mẫu chỉ chốt được khi đã có nhãn của cả hai người.
+5. Câu bất đồng do thiếu quy ước: thống nhất quy ước mới, ghi vào ghi chú, áp dụng cho các câu tương tự.
+6. Bấm **Chốt hàng loạt** và xác nhận: app chốt một lần các câu hai người gán giống nhau và các câu ngoài mẫu chỉ có nhãn của một người.
+7. Khung **Chốt nhãn cuối** liệt kê điều còn chặn việc xuất gold (ví dụ câu trong mẫu chưa đủ nhãn của hai người, câu ngoài mẫu chưa ai gán); khi không còn gì chặn, bấm **Tải gold cuối (JSONL)** và gửi cho người chạy thực nghiệm.
+
+App ghi nguồn của mỗi nhãn cuối:
+
+| Nguồn | Nghĩa |
+|---|---|
+| `agreed:<a>+<b>` | Hai người gán giống nhau, chốt hàng loạt |
+| `single:<a>` | Câu ngoài mẫu, chỉ có nhãn của một người, chốt hàng loạt |
+| `adjudicated:<người chốt>` | Người đối soát chọn hoặc sửa nhãn; bộ cũ ghi tên người chốt không có tiền tố |
+
+Nếu có người sửa nhãn của một câu đã chốt hàng loạt, câu đó tự bỏ chốt để chốt lại; nhãn do người đối soát chốt thì giữ nguyên.
+Mỗi dòng của gold cuối có thêm trường `annotation` với `mode` là `double` (hai người gán) hoặc `single` (một người gán), danh sách người gán, nguồn của nhãn cuối và `in_sample`.
+`gold-score` khi đó báo P/R/F1 trên toàn bộ gold và thêm khối `double_annotated` trên riêng các câu hai người gán, để bảng kết quả của luận văn có cả hai số.
 
 Ghi lại kappa trước khi chốt: đó là số liệu độ tin cậy của gold trong báo cáo.
 
