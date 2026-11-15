@@ -185,6 +185,8 @@ Ví dụ: "Lương tối thiểu vùng I năm 2018 là bao nhiêu?" là Từ ch�
 
 - Bắt buộc khi Trả lời; để trống khi Từ chối.
 - Chọn **đơn vị nhỏ nhất** chứa căn cứ: điểm hoặc khoản, không chọn cả Điều nếu Điều có chia khoản.
+- Nếu căn cứ nằm ở câu dẫn của khoản có chia điểm (ví dụ "Trong thời hạn 14 ngày làm việc ... không được quá 30 ngày:" ở khoản 1 Điều 48), chọn chính khoản đó.
+  Trong kết quả tìm, khoản cha hiện ngay trên các điểm của nó, nền xám nhạt.
 - Câu tổng hợp chọn đủ mọi đơn vị cần thiết.
 - Tìm đơn vị bằng ô **Tìm đơn vị trong corpus** (gõ từ khóa trong điều luật), bấm **Chọn**.
 - Nếu đã xem đề xuất, có thể bấm **Điền theo đề xuất** rồi sửa.

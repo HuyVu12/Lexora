@@ -383,10 +383,20 @@ export interface FrozenVersionOption {
 	frozen_at: string;
 }
 
-export interface UnitCandidate {
+// A unit as the labelling form shows it: `document` is the short title a reader cites ("Nghị định số 145/2020/NĐ-CP"),
+// `document_title` the full one, `order` its start in the document (statute order among siblings).
+export interface UnitRef {
 	unit_id: string;
+	document: string;
+	document_title: string;
 	path: string;
 	text: string;
+	order: number;
+}
+
+// A leaf unit found by search, with the Clauses (or Points) it hangs under, outermost first.
+export interface UnitCandidate extends UnitRef {
+	parents: UnitRef[];
 }
 
 export interface QuestionDraft {

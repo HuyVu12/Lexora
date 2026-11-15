@@ -774,9 +774,8 @@ def create_app(store, port, *, provider=None, source_catalog=None, extractor=Non
 
     @app.get("/api/question-set/units")
     def question_units(set_id: str = Query(), ids: str = Query(), _=Depends(reviewer)):
-        _, units, _ = corpora.bundle(questions.summary(set_id)["corpus_version_id"])
-        wanted = set(ids.split(","))
-        return {"units": [{"unit_id": u["unit_id"], "unit_type": u["unit_type"], "text": u["text"]} for u in units if u["unit_id"] in wanted]}
+        """Chosen units with their document, path and text, for labels saved earlier."""
+        return {"units": question_proposals.unit_refs(corpora, questions.summary(set_id)["corpus_version_id"], ids.split(","))}
 
     @app.post("/api/question-set/propose")
     def question_propose(body: QuestionProposeBody, _=Depends(reviewer)):
