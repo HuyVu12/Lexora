@@ -75,6 +75,9 @@ export interface TourStep {
 	fill?: MessageKey;
 }
 
+/** The group a tour is listed under in the user menu's picker. */
+export type TourArea = 'start' | 'kb' | 'research' | 'admin';
+
 export interface Tour {
 	id: string;
 	/** Bump when the steps change enough that a finished tour should be offered again. */
@@ -82,6 +85,10 @@ export interface Tour {
 	title: MessageKey;
 	summary: MessageKey;
 	roles?: Role[];
+	/** The picker group in the user menu. */
+	area: TourArea;
+	/** Pages besides its steps' own where the picker offers it as "For this page" (the listing that leads there). */
+	alsoOn?: RegExp;
 	/** PageGuide names whose "?" offers this tour. */
 	guides: string[];
 	/** Where the tour starts when it is opened from elsewhere (the first step's route also works). */

@@ -10,7 +10,7 @@
 import { session } from '#lib/session.svelte.js';
 import type { Role } from '#lib/types.js';
 import { TOURS } from './tours/index.js';
-import type { Tour, TourStep } from './types.js';
+import type { Tour, TourArea, TourStep } from './types.js';
 
 export type TourStatus = 'new' | 'progress' | 'done' | 'dismissed';
 
@@ -69,6 +69,14 @@ const allowed = (roles: Role[] | undefined, role: Role | null) => !roles || (!!r
 /** Tours the signed-in role can take, in menu order. */
 export function toursFor(role: Role | null): Tour[] {
 	return TOURS.filter((t) => allowed(t.roles, role));
+}
+
+/** Picker groups of the user menu, in order. */
+export const TOUR_AREAS: TourArea[] = ['start', 'kb', 'research', 'admin'];
+
+/** Tours about the page at `path` (one of their steps lives there, or it leads there), for the top of the picker. */
+export function toursHere(role: Role | null, path: string): Tour[] {
+	return toursFor(role).filter((t) => t.alsoOn?.test(path) || t.steps.some((s) => s.page?.test(path)));
 }
 
 /** The tour offered by a page guide's "?" (by PageGuide name), if the role may take it. */

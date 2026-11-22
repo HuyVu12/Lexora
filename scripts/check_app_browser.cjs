@@ -158,8 +158,10 @@ async function main() {
       assert(rx <= ex + 1 && ry <= ey + 1 && rx + rw >= ex + ew - 1 && ry + rh >= ey + eh - 1 && rw - ew <= 24 && rh - eh <= 24, `tour step ${card.step}: spotlight ${card.ring} around target ${card.el}`);
     };
     await evaluate('__click("#user-button"); true');
-    await waitFor('!!__q(".menu-tours button", "Làm quen")', 'tour list in the user menu');
-    await evaluate('__click(".menu-tours button", "Làm quen"); true');
+    await waitFor('!!document.querySelector("#user-menu .tour-open")', 'one step-by-step item in the user menu');
+    await evaluate('document.querySelector("#user-menu .tour-open").click(); true');
+    await waitFor('!!__q(".tour-picker .here button", "Làm quen")', 'tour picker offering the tour for this page');
+    await evaluate('__click(".tour-picker button", "Làm quen"); true');
     await waitFor('!!document.querySelector(".tour .card[data-step=welcome]")', 'orientation tour');
     await capture('tour-welcome');
     const seen = [];
@@ -185,7 +187,9 @@ async function main() {
     for (const step of ['welcome', 'home', 'drafts', 'kbs', 'chat', 'import', 'research', 'lang', 'account', 'guide', 'doneResearch']) assert(seen.includes(step), `orientation tour shows ${step}: ${seen}`);
     assert(await evaluate('JSON.parse(localStorage.getItem("lexora-tour-overview")).done === true'), 'finished tour remembered');
     await evaluate('__click("#user-button"); true');
-    await waitFor('!!document.querySelector(".menu-tours .mark-done")', 'finished tour marked in the user menu');
+    await waitFor('!!__q("#user-menu .tour-open", "1/")', 'finished tour counted in the user menu');
+    await evaluate('document.querySelector("#user-menu .tour-open").click(); true');
+    await waitFor('!!document.querySelector(".tour-picker .mark-done")', 'finished tour marked in the tour picker');
     await evaluate('__click("#user-button"); true');
 
     await open('/import');
@@ -342,8 +346,10 @@ async function main() {
     await evaluate(helpers);
     // Chat tour from the user menu: the scope step waits for a click on the bases pill, then Escape closes the tour.
     await evaluate('__click("#user-button"); true');
-    await waitFor('!!__q(".menu-tours button", "Hỏi đáp")', 'chat tour in the user menu');
-    await evaluate('__click(".menu-tours button", "Hỏi đáp"); true');
+    await waitFor('!!document.querySelector("#user-menu .tour-open")', 'step-by-step item in the user menu');
+    await evaluate('document.querySelector("#user-menu .tour-open").click(); true');
+    await waitFor('!!__q(".tour-picker .here button", "Hỏi đáp")', 'chat tour offered for the chat page');
+    await evaluate('__click(".tour-picker .here button", "Hỏi đáp"); true');
     for (let i = 0; i < 6; i++) {
       await settled('chat tour step');
       await sleep(300);

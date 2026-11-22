@@ -13,6 +13,8 @@ export const auditTour: Tour = {
 	version: 1,
 	title: 'tour.audit.name',
 	summary: 'tour.audit.summary',
+	area: 'research',
+	alsoOn: /^\/research\/audit(\/[^/]+\/score)?$/,
 	roles: ['admin', 'reviewer'],
 	guides: [],
 	steps: [

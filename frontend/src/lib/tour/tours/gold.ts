@@ -14,6 +14,8 @@ export const goldTour: Tour = {
 	version: 1,
 	title: 'tour.gold.name',
 	summary: 'tour.gold.summary',
+	area: 'research',
+	alsoOn: /^\/research\/gold$/,
 	roles: ['admin', 'reviewer'],
 	guides: ['gold'],
 	steps: [

@@ -7,6 +7,7 @@
 	import { api } from '#lib/api.js';
 	import { clearAppState } from '#lib/app-state.svelte.js';
 	import { pop, popOut } from '#lib/motion.js';
+	import TourPicker from './TourPicker.svelte';
 	import { tourStatus, startTour, toursFor } from '#lib/tour/tour.svelte.js';
 	import type { MessageKey } from '#lib/i18n/vi.js';
 
@@ -33,19 +34,32 @@
 	const links = $derived(canReview(account) ? [home, chat, importing] : account?.role === 'dev' ? [home, chat, monitor, results] : [home, chat]);
 	const after = $derived(account ? [docs] : []);
 	const manage = $derived([...(account?.role === 'admin' ? [users] : []), ...(account?.role === 'admin' && canMonitor(account) ? [monitor] : [])]);
+	// On phones the bar keeps only Overview and Ask; a dev account's two work pages move into the avatar menu.
+	const phoneMenu = $derived(account?.role === 'dev' ? [monitor, results] : []);
 	const inResearch = $derived(research.some((item) => item.match(page.url.pathname)));
+	// The avatar menu shows one "step-by-step guides" item; it swaps the menu's content for the tour picker.
 	const tours = $derived(toursFor(account?.role ?? null));
+	const toursSeen = $derived(tours.filter((x) => tourStatus(x.id) === 'done').length);
+	let userView = $state<'main' | 'tours'>('main');
 	function beginTour(id: string) {
 		open = '';
 		startTour(id);
 	}
+	function closePicker() {
+		userView = 'main';
+		requestAnimationFrame(() => document.querySelector<HTMLElement>('#user-menu .tour-open')?.focus());
+	}
 
 	let open = $state<'' | 'research' | 'user'>('');
 	afterNavigate(() => (open = ''));
-	const toggle = (menu: 'research' | 'user') => (open = open === menu ? '' : menu);
+	const toggle = (menu: 'research' | 'user') => {
+		userView = 'main';
+		open = open === menu ? '' : menu;
+	};
 
 	function outside(event: MouseEvent) {
-		if (open && !(event.target as Element).closest('.has-menu')) open = '';
+		// The path as dispatched: a click that swaps the menu's view removes its own button before this runs.
+		if (open && !event.composedPath().some((node) => node instanceof Element && node.classList.contains('has-menu'))) open = '';
 	}
 	function escape(event: KeyboardEvent) {
 		if (event.key === 'Escape' && open) {
@@ -156,7 +170,10 @@
 					<Icon name="chevron" size={16} />
 				</button>
 				{#if open === 'user'}
-					<div class="menu" id="user-menu" data-tour-part="user-menu" in:pop={{ origin: 'top right' }} out:popOut>
+					<div class="menu" class:picking={userView === 'tours'} id="user-menu" data-tour-part="user-menu" in:pop={{ origin: 'top right' }} out:popOut>
+						{#if userView === 'tours'}
+							<TourPicker {tours} role={account.role} path={page.url.pathname} onpick={beginTour} onback={closePicker} />
+						{:else}
 						<div class="who-card">
 							<strong>{account.display_name}</strong>
 							<span class="small muted">@{account.username} · {t(`role.${account.role}`)}</span>
@@ -165,23 +182,24 @@
 							{#each manage as item (item.href)}
 								<a href={item.href} aria-current={item.match(page.url.pathname) ? 'page' : undefined}>{t(item.key)}</a>
 							{/each}
-							<!-- On phones the bar hides Documents, so the avatar menu carries it. -->
+							<!-- On phones the bar hides these, so the avatar menu carries them. -->
+							{#each phoneMenu as item (item.href)}
+								<a class="phone-only" href={item.href} aria-current={item.match(page.url.pathname) ? 'page' : undefined}>{t(item.key)}</a>
+							{/each}
 							<a class="phone-only" href={docs.href} aria-current={docs.match(page.url.pathname) ? 'page' : undefined}>{t(docs.key)}</a>
 						</div>
 						{#if tours.length}
 							<div class="menu-tours">
-								<p class="label">{t('tour.menu.title')}</p>
-								{#each tours as item (item.id)}
-									{@const mark = tourStatus(item.id)}
-									<button type="button" onclick={() => beginTour(item.id)}>
-										<Icon name="route" size={16} />
-										<span>{t(item.title)}</span>
-										{#if mark === 'done'}<span class="mark-done" title={t('tour.menu.done')}><Icon name="check" size={14} /><span class="visually-hidden">{t('tour.menu.done')}</span></span>{/if}
-									</button>
-								{/each}
+								<button type="button" class="tour-open" onclick={() => (userView = 'tours')}>
+									<Icon name="route" size={16} />
+									<span>{t('tour.menu.title')}</span>
+									<span class="seen">{t('tour.menu.seen', { done: toursSeen, n: tours.length })}</span>
+									<Icon name="chevron" size={16} />
+								</button>
 							</div>
 						{/if}
 						<button type="button" class="btn quiet small" onclick={logout}><Icon name="logout" size={16} />{t('user.logout')}</button>
+						{/if}
 					</div>
 				{/if}
 			</div>
@@ -368,16 +386,12 @@
 		margin-bottom: 4px;
 		border-bottom: 1px solid var(--rule);
 	}
-	.menu-tours .label {
-		padding: 4px 10px 2px;
-		font-size: 12px;
-	}
-	.menu-tours button {
+	.tour-open {
 		display: flex;
 		align-items: center;
 		gap: 10px;
 		min-height: 36px;
-		padding: 0 10px;
+		padding: 0 6px 0 10px;
 		border: 0;
 		border-radius: var(--r-control);
 		background: none;
@@ -385,22 +399,34 @@
 		font: inherit;
 		font-weight: 500;
 		text-align: left;
+		white-space: nowrap;
 		cursor: pointer;
 		transition: background-color var(--dur-fast) ease;
 	}
-	.menu-tours button > span:not(.mark-done) {
+	.tour-open > span:first-of-type {
 		flex: 1;
 	}
-	.menu-tours button :global(svg) {
+	.tour-open :global(svg) {
 		flex: none;
 		color: var(--flag);
 	}
-	.menu-tours button:hover {
+	.tour-open :global(svg:last-child) {
+		color: var(--muted);
+		transform: rotate(-90deg);
+	}
+	.tour-open .seen {
+		font-size: 12.5px;
+		font-weight: 400;
+		color: var(--muted);
+		font-variant-numeric: tabular-nums;
+	}
+	.tour-open:hover {
 		background: var(--desk);
 		color: var(--ink);
 	}
-	.menu-tours .mark-done :global(svg) {
-		color: var(--approve);
+	/* The picker needs a little more width than the menu so every tour name fits on one line. */
+	.menu.picking {
+		width: min(320px, calc(100vw - 24px));
 	}
 	.end {
 		margin-left: auto;
@@ -528,6 +554,7 @@
 		nav > a[href='/import'],
 		nav > a[href='/research/results'],
 		nav > a[href='/docs'],
+		nav > a[href='/dev'],
 		.research {
 			display: none;
 		}

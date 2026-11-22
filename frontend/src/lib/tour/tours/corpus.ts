@@ -30,6 +30,7 @@ export const corpusTour: Tour = {
 	version: 1,
 	title: 'tour.corpus.name',
 	summary: 'tour.corpus.summary',
+	area: 'research',
 	roles: ['admin', 'reviewer'],
 	guides: ['corpora', 'corpus', 'document'],
 	steps: [

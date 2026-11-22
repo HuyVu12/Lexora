@@ -23,6 +23,7 @@ export const reviewTour: Tour = {
 	version: 1,
 	title: 'tour.review.name',
 	summary: 'tour.review.summary',
+	area: 'kb',
 	roles: ['admin', 'reviewer'],
 	guides: ['review'],
 	steps: [

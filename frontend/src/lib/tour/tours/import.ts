@@ -9,6 +9,7 @@ export const importTour: Tour = {
 	version: 1,
 	title: 'tour.import.name',
 	summary: 'tour.import.summary',
+	area: 'kb',
 	roles: ['admin', 'reviewer'],
 	guides: ['import'],
 	start: route,

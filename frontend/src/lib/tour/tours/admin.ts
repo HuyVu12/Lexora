@@ -8,6 +8,7 @@ export const usersTour: Tour = {
 	version: 1,
 	title: 'tour.users.name',
 	summary: 'tour.users.summary',
+	area: 'admin',
 	roles: ['admin'],
 	guides: ['users'],
 	steps: [
@@ -26,6 +27,7 @@ export const monitorTour: Tour = {
 	version: 1,
 	title: 'tour.monitor.name',
 	summary: 'tour.monitor.summary',
+	area: 'admin',
 	roles: ['admin', 'dev'],
 	guides: ['dev'],
 	steps: [

@@ -8,6 +8,7 @@ export const overview: Tour = {
 	version: 2,
 	title: 'tour.overview.name',
 	summary: 'tour.overview.summary',
+	area: 'start',
 	guides: ['homeReviewer', 'homeReader'],
 	start: '/',
 	next: 'import',

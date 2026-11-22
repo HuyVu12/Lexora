@@ -12,6 +12,7 @@ export const chatTour: Tour = {
 	version: 1,
 	title: 'tour.chat.name',
 	summary: 'tour.chat.summary',
+	area: 'start',
 	guides: [],
 	start: '/chat',
 	steps: [

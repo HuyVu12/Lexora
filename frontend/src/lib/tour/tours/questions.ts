@@ -14,6 +14,8 @@ export const questionsTour: Tour = {
 	version: 1,
 	title: 'tour.questions.name',
 	summary: 'tour.questions.summary',
+	area: 'research',
+	alsoOn: /^\/research\/questions$/,
 	roles: ['admin', 'reviewer'],
 	guides: ['qset'],
 	next: 'compare',
@@ -62,6 +64,7 @@ export const compareTour: Tour = {
 	version: 1,
 	title: 'tour.compare.name',
 	summary: 'tour.compare.summary',
+	area: 'research',
 	roles: ['admin', 'reviewer'],
 	guides: ['compare'],
 	steps: [

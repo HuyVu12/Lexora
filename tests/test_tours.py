@@ -49,7 +49,7 @@ class TourTests(unittest.TestCase):
 
     def test_tour_strings_exist_in_both_languages(self):
         vi, en = keys("vi.ts"), keys("en.ts")
-        engine = [FRONTEND / "lib" / "components" / name for name in ("TourOverlay.svelte", "GuideButton.svelte", "PageGuide.svelte", "TopBar.svelte", "TourHelp.svelte")]
+        engine = [FRONTEND / "lib" / "components" / name for name in ("TourOverlay.svelte", "GuideButton.svelte", "PageGuide.svelte", "TopBar.svelte", "TourHelp.svelte", "TourPicker.svelte")]
         sources = list(self.files.items()) + [(path, path.read_text(encoding="utf-8")) for path in engine]
         used = {(path, key) for path, text in sources for key in KEY.findall(text)}
         self.assertGreater(len(used), 100)
