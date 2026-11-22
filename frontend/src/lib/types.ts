@@ -17,6 +17,7 @@ export interface KbSummary {
 	created_at: string;
 	updated_at: string;
 	current_revision: string;
+	archived_at?: string | null;
 	approved_claims: number;
 	documents: number;
 	revisions: number;
@@ -45,8 +46,13 @@ export interface DraftSummary {
 export interface ChatSessionSummary {
 	id: string;
 	created_at: string;
+	/** Last question, or creation when there is none: the sidebar groups by it. */
+	updated_at: string;
 	turns: number;
-	bindings: { kb_id: string; kb_name: string | null; revision: string }[];
+	/** The owner's title, else the first question cut short; null before the first question. */
+	title: string | null;
+	custom_title: boolean;
+	bindings: { kb_id: string; kb_name: string | null; revision_id: string }[];
 }
 
 export interface AppState {
@@ -195,6 +201,8 @@ export interface Citation {
 }
 
 export interface Turn {
+	id?: string;
+	created_at?: string;
 	question: string;
 	mode?: string;
 	retrieval?: { mode: string };
@@ -207,8 +215,33 @@ export interface Turn {
 
 export interface ChatSession {
 	id: string;
-	bindings: { kb_id: string; kb_name: string; revision: string }[];
+	created_at: string;
+	updated_at: string;
+	title: string | null;
+	custom_title: boolean;
+	bindings: { kb_id: string; kb_name: string | null; revision_id: string }[];
 	turns: Turn[];
+}
+
+/** One cited passage inside its source unit of the conversation's pinned revision (`GET /api/chat/source`). */
+export interface ChatSource {
+	citation_id: string;
+	title: string;
+	source_url: string | null;
+	synthetic: boolean;
+	edited: boolean;
+	kb_id: string;
+	revision_id: string;
+	sources: { kb_id: string | null; kb_name: string | null; revision: string | null }[];
+	unit_id: string;
+	unit_type: string;
+	/** The unit's exact source text; only text[start:end] is approved evidence. */
+	text: string;
+	start: number;
+	end: number;
+	quote: string;
+	scope: string[];
+	path: { unit_id: string; unit_type: string; label: string | null; heading: string | null }[];
 }
 
 export interface SourceEntry {
@@ -645,6 +678,18 @@ export interface DevOverview {
 	running: { id: string; title: string; kb_name: string }[];
 	changes: DevChange[];
 	started_at: string;
+	/** The last 14 calendar days, oldest first, today last. */
+	trend: DevDay[];
+}
+export interface DevDay {
+	day: string;
+	calls: number;
+	errors: number;
+	blocked: number;
+	tokens: number;
+	cost_usd: number;
+	questions: number;
+	logins: number;
 }
 export interface DevCallModel {
 	feature: Feature;

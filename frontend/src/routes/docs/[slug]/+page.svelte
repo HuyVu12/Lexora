@@ -1,5 +1,6 @@
 <script lang="ts">
 	import Icon from '#lib/components/Icon.svelte';
+	import Skeleton from '#lib/components/Skeleton.svelte';
 	import { page } from '$app/state';
 	import { api } from '#lib/api.js';
 	import { t } from '#lib/i18n/index.svelte.js';
@@ -43,12 +44,21 @@
 
 <svelte:head><title>{doc?.title ?? t('docs.title')} · Lexora</title></svelte:head>
 
-<div class="page">
-	<a class="back" href="/docs"><Icon name="back" size={16} />{t('docs.back')}</a>
+<div class="page reader">
+	<p class="crumb"><a href="/docs"><Icon name="back" size={16} />{t('docs.back')}</a></p>
 	{#if error}
 		<p class="notice error" role="alert">{error}</p>
 	{:else if !doc || !rendered}
-		<p class="muted">{t('common.loading')}</p>
+		<div class="layout" aria-busy="true">
+			<span class="visually-hidden" role="status">{t('common.loading')}</span>
+			<div class="sheet doc ghost" aria-hidden="true">
+				<div class="ghost-head"><Skeleton width="110px" height="11px" /><Skeleton width="70%" height="30px" /><Skeleton width="90%" height="14px" /></div>
+				{#each [5, 4, 6] as n, i (i)}
+					<Skeleton width="40%" height="20px" />
+					<Skeleton lines={n} height="13px" gap="13px" last="55%" />
+				{/each}
+			</div>
+		</div>
 	{:else}
 		<div class="layout">
 			<article class="sheet doc">
@@ -76,27 +86,29 @@
 </div>
 
 <style>
-	.back {
-		display: inline-flex;
-		align-items: center;
-		gap: 6px;
-		margin-bottom: 16px;
-		color: var(--ink-2);
-		text-decoration: none;
-		font-weight: 500;
-	}
-	.back:hover {
-		color: var(--ink);
+	/* The sheet is as wide as a comfortable line of prose plus its margins; the contents sit beside it. */
+	.reader {
+		max-width: calc(840px + 240px + var(--space-10) + 64px);
 	}
 	.layout {
 		display: grid;
-		grid-template-columns: minmax(0, 1fr) 260px;
-		gap: 28px;
+		grid-template-columns: minmax(0, 1fr) 240px;
+		gap: var(--space-10);
 		align-items: start;
 	}
 	.doc {
-		padding: 40px 48px 56px;
+		padding: 44px 56px 60px;
 		min-width: 0;
+	}
+	.ghost {
+		display: grid;
+		gap: 18px;
+	}
+	.ghost-head {
+		display: grid;
+		gap: 12px;
+		padding-bottom: 20px;
+		border-bottom: 1px solid var(--rule);
 	}
 	.doc header {
 		display: grid;
@@ -143,7 +155,7 @@
 		border-left-color: var(--graphite);
 	}
 	.prose {
-		max-width: 76ch;
+		max-width: 72ch;
 		font-size: 15.5px;
 		line-height: 1.7;
 	}
@@ -249,7 +261,10 @@
 		border-top: 1px solid var(--rule);
 		margin: 28px 0;
 	}
-	@media (max-width: 1080px) {
+	@media (max-width: 1140px) {
+		.reader {
+			max-width: calc(840px + 64px);
+		}
 		.layout {
 			grid-template-columns: minmax(0, 1fr);
 		}

@@ -3,6 +3,7 @@
 	import GraphCanvas from '#lib/components/GraphCanvas.svelte';
 	import Icon from '#lib/components/Icon.svelte';
 	import Term from '#lib/components/Term.svelte';
+	import Skeleton from '#lib/components/Skeleton.svelte';
 	import { api } from '#lib/api.js';
 	import { t, unitLabel } from '#lib/i18n/index.svelte.js';
 	import { GraphIndex, allNormsElements, normElements, roleClass, structureElements, type GEdge, type GNode, type Graph } from '#lib/graph.js';
@@ -137,14 +138,18 @@
 	{#if error}
 		<p class="page notice error" role="alert">{error}</p>
 	{:else if !kb || !index || !data}
-		<p class="page muted">{t('common.loading')}</p>
+		<div class="graph-loading" aria-busy="true">
+			<span class="visually-hidden" role="status">{t('common.loading')}</span>
+			<div class="ghost-head"><Skeleton width="120px" height="12px" /><Skeleton width="min(520px, 70vw)" height="28px" /><Skeleton width="300px" height="12px" /></div>
+			<div class="sheet ghost-stage"><Skeleton height="100%" radius="2px" /></div>
+		</div>
 	{:else}
 		<header class="head">
 			<div>
-				<a class="back" href="/kb/{kb.id}"><Icon name="back" size={16} />{t('graph.back')}</a>
+				<p class="crumb"><a href="/kb/{kb.id}"><Icon name="back" size={16} />{t('graph.back')}</a></p>
 				<h1 class="title">{t('graph.title')} · {kb.name}</h1>
-				<p class="small muted">
-					{t('graph.stats', { norms: index.norms.length, units: index.units.size, revision: data.revision.slice(0, 8) })}
+				<p class="small muted" title="{t('kb.revisionId')}: {data.revision}">
+					{t('graph.stats', { norms: index.norms.length, units: index.units.size })}
 					{#if data.graph.summary?.synthetic}<span class="chip synthetic">{t('common.synthetic')}</span>{/if}
 				</p>
 			</div>
@@ -293,6 +298,25 @@
 	.graph-page {
 		padding: 20px 24px 24px;
 	}
+	.graph-loading {
+		max-width: 1640px;
+		margin: 0 auto;
+		display: grid;
+		gap: 16px;
+	}
+	.ghost-head {
+		display: grid;
+		gap: 10px;
+	}
+	.ghost-stage {
+		height: calc(100vh - var(--topbar) - 150px);
+		min-height: 360px;
+		padding: 0;
+		overflow: hidden;
+	}
+	.ghost-stage :global(.skel) {
+		background: #f1f2f2;
+	}
 	.head {
 		max-width: 1640px;
 		margin: 0 auto 16px;
@@ -301,13 +325,6 @@
 		align-items: flex-end;
 		gap: 16px;
 		flex-wrap: wrap;
-	}
-	.back {
-		display: inline-flex;
-		align-items: center;
-		gap: 6px;
-		font-size: 14px;
-		margin-bottom: 6px;
 	}
 	.toolbar {
 		display: flex;

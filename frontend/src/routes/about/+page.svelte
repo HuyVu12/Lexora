@@ -3,6 +3,7 @@
 	import Term from '#lib/components/Term.svelte';
 	import { i18n } from '#lib/i18n/index.svelte.js';
 	import { session } from '#lib/session.svelte.js';
+	import { reveal, revealItems, highlighterSweep } from '#lib/motion.js';
 
 	// Written for the thesis committee: what the project asks, contributes and has built so far.
 	// Dataset sizes are targets from the proposal, never results.
@@ -81,15 +82,15 @@
 
 <div class="page about">
 	<section class="hero">
-		<div>
+		<div {@attach revealItems({ step: 70, y: 12 })}>
 			<h1 class="title big">{c.title}</h1>
 			<p class="lead">{c.pitch}</p>
 			<div class="row">
 				{#if session.account}<a class="btn primary" href="/">{c.open}<Icon name="arrow" /></a>{:else}<a class="btn primary" href="/login">{c.signin}<Icon name="arrow" /></a>{/if}
 			</div>
 		</div>
-		<figure class="sheet specimen">
-			<p class="serif sentence" lang="vi">
+		<figure class="sheet specimen" {@attach reveal({ y: 16, delay: 120 })}>
+			<p class="serif sentence" lang="vi" {@attach highlighterSweep({ delay: 480, step: 130 })}>
 				<mark class="hl-condition" data-term="conditions">Khi kết thúc thời gian thử việc</mark>,
 				<mark class="hl-actor" data-term="actor">người sử dụng lao động</mark>
 				<b data-term="obligation">phải</b>
@@ -168,7 +169,7 @@
 <style>
 	.about {
 		display: grid;
-		gap: 56px;
+		gap: var(--space-10);
 	}
 	.hero {
 		display: grid;
@@ -199,8 +200,9 @@
 		font-size: 19px;
 		line-height: 2;
 	}
+	/* The colour is a background image so it can be drawn left to right like a highlighter stroke. */
 	.sentence mark {
-		background: var(--hl);
+		background: linear-gradient(var(--hl), var(--hl)) left center / 100% 100% no-repeat;
 		color: var(--ink);
 		padding: 1px 3px;
 		border-radius: 2px;

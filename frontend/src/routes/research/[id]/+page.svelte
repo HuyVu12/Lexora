@@ -2,9 +2,12 @@
 	import PageGuide from '#lib/components/PageGuide.svelte';
 	import StepTag from '#lib/components/StepTag.svelte';
 	import { page } from '$app/state';
+	import Skeleton from '#lib/components/Skeleton.svelte';
 	import Icon from '#lib/components/Icon.svelte';
+	import PageSkeleton from '#lib/components/PageSkeleton.svelte';
 	import Term from '#lib/components/Term.svelte';
 	import CatalogSearch from '#lib/components/CatalogSearch.svelte';
+	import ConfirmDialog from '#lib/components/ConfirmDialog.svelte';
 	import { api } from '#lib/api.js';
 	import { t, formatDate, formatDay } from '#lib/i18n/index.svelte.js';
 	import { session, canReview } from '#lib/session.svelte.js';
@@ -26,7 +29,7 @@
 	let note = $state('');
 	let busy = $state(false);
 	let pending = $state<{ reference: string; label: string } | null>(null);
-	let dialog = $state<HTMLDialogElement | null>(null);
+	let confirmOpen = $state(false);
 
 	const load = () =>
 		api<CorpusDetail>(`/api/corpus?id=${encodeURIComponent(id)}`)
@@ -49,13 +52,12 @@
 
 	function askFetch(ref: string, label: string) {
 		pending = { reference: ref, label };
-		dialog?.showModal();
+		confirmOpen = true;
 	}
 
 	async function confirmFetch() {
 		if (!pending) return;
 		const ref = pending.reference;
-		dialog?.close();
 		busy = true;
 		const ok = await act(async () => {
 			const added = await api<CorpusDocument>('/api/corpus/vbpl', { corpus_id: id, reference: ref, document_id: documentId.trim() || null, confirm: true });
@@ -102,10 +104,16 @@
 		busy = false;
 	}
 
-	const remove = (d: CorpusDocument) =>
+	let removing = $state<CorpusDocument | null>(null);
+	let removeOpen = $state(false);
+	const remove = (d: CorpusDocument) => {
+		removing = d;
+		removeOpen = true;
+	};
+	const confirmRemove = () =>
 		act(async () => {
-			if (!confirm(t('corpus.removeConfirm', { title: d.title }))) return;
-			corpus = await api<CorpusDetail>('/api/corpus/remove', { corpus_id: id, document_row: d.id });
+			if (!removing) return;
+			corpus = await api<CorpusDetail>('/api/corpus/remove', { corpus_id: id, document_row: removing.id });
 		});
 
 	async function freeze(event: SubmitEvent) {
@@ -132,26 +140,28 @@
 		<p class="lead">{t('common.forbidden.body')}</p>
 	{:else if error}
 		<p class="notice error" role="alert">{error}</p>
-	{:else if !corpus}
-		<p class="muted">{t('common.loading')}</p>
 	{:else}
 		<p class="crumb"><a href="/research"><Icon name="back" size={16} />{t('research.title')}</a></p>
 		<header class="page-head">
 			<div>
-				<h1 class="title">{corpus.name}</h1>
-				{#if corpus.description}<p class="lead">{corpus.description}</p>{/if}
+				<h1 class="title">{#if corpus}{corpus.name}{:else}<span class="title-ghost" style:width="min(420px, 70vw)"><Skeleton height="30px" /></span>{/if}</h1>
+				{#if corpus?.description}<p class="lead">{corpus.description}</p>{/if}
 				<p class="facts">
-					<span>{t('research.docs', { n: corpus.documents.length })}</span>
-					<span>{t('corpus.articles', { n: articles })}</span>
-					<span><Term key="frozen_version">{corpus.versions.length ? t('research.latest', { n: corpus.versions[0].number }) : t('research.notFrozen')}</Term></span>
+					{#if corpus}
+						<span>{t('research.docs', { n: corpus.documents.length })}</span>
+						<span>{t('corpus.articles', { n: articles })}</span>
+						<span><Term key="frozen_version">{corpus.versions.length ? t('research.latest', { n: corpus.versions[0].number }) : t('research.notFrozen')}</Term></span>
+					{:else}<span><Skeleton width="110px" height="12px" /></span><span><Skeleton width="90px" height="12px" /></span><span><Skeleton width="120px" height="12px" /></span>{/if}
 				</p>
 			</div>
 		</header>
 		<PageGuide name="corpus" steps={3} />
-
+		{#if !corpus}
+			<PageSkeleton head={false} blocks={2} cols />
+		{:else}
 		<div class="cols">
 			<div class="stack">
-				<section class="panel" aria-labelledby="add-heading">
+				<section class="panel" data-tour="corpus-add" aria-labelledby="add-heading">
 					<h2 class="heading" id="add-heading"><StepTag n={1} />{t('corpus.add')}</h2>
 					<div class="segmented" role="group" aria-label={t('corpus.add')}>
 						<button type="button" aria-pressed={mode === 'search'} onclick={() => (mode = 'search')}><Icon name="search" size={16} />{t('corpus.add.search')}</button>
@@ -185,15 +195,15 @@
 					{/if}
 				</section>
 
-				<section class="panel" aria-labelledby="docs-heading">
+				<section class="panel" data-tour="corpus-docs" aria-labelledby="docs-heading">
 					<h2 class="heading" id="docs-heading"><StepTag n={2} />{t('corpus.documents')}</h2>
 					{#if corpus.documents.length}
 						<ul class="docs">
 							{#each corpus.documents as d (d.id)}
 								<li>
 									<div class="doc-main">
-										<a class="serif" href="/research/{corpus.id}/document/{d.id}">{d.title}</a>
-										<span class="small muted"><code>{d.document_id}</code> · <Term key="leaf_unit">{t('corpus.doc.counts', { articles: d.article_count, leaves: d.leaf_count })}</Term></span>
+										<a class="serif" href="/research/{corpus.id}/document/{d.id}" title={d.document_id}>{d.title}</a>
+										<span class="small muted"><Term key="leaf_unit">{t('corpus.doc.counts', { articles: d.article_count, leaves: d.leaf_count })}</Term></span>
 										<span class="small muted">
 											{#if d.source_kind === 'vbpl'}
 												<a href={d.source_url} target="_blank" rel="noopener noreferrer">vbpl.vn</a> · {t('corpus.doc.accessed', { date: formatDay(d.accessed_at) })}
@@ -217,7 +227,7 @@
 				</section>
 			</div>
 
-			<section class="panel versions" aria-labelledby="versions-heading">
+			<section class="panel versions" data-tour="corpus-versions" aria-labelledby="versions-heading">
 				<h2 class="heading" id="versions-heading"><StepTag n={3} /><Term key="frozen_version">{t('corpus.versions')}</Term></h2>
 				<p class="small muted">{t('corpus.versions.lead')}</p>
 				{#if corpus.changed_since_version && corpus.documents.length}
@@ -235,43 +245,26 @@
 								<p><strong>{t('corpus.version', { n: v.number })}</strong> · <span class="small">{formatDate(v.frozen_at)}</span></p>
 								{#if v.note}<p class="small">{v.note}</p>{/if}
 								<p class="small muted">{t('corpus.version.facts', { docs: v.document_count, units: v.unit_count, who: v.frozen_by })}</p>
-								<p class="small muted">{t('corpus.version.id')}: <code>{v.id}</code> · SHA-256 <code title={v.bundle_sha256}>{v.bundle_sha256.slice(0, 12)}</code></p>
+								<details class="tech"><summary>{t('common.technical')}</summary><p>{t('corpus.version.id')}: <code>{v.id}</code> · SHA-256 <code title={v.bundle_sha256}>{v.bundle_sha256.slice(0, 12)}</code></p></details>
 							</li>
 						{/each}
 					</ol>
 				{/if}
 			</section>
 		</div>
+		{/if}
 	{/if}
 </div>
 
-<dialog bind:this={dialog} aria-labelledby="fetch-title" onclose={() => (pending = null)}>
-	<h2 class="heading" id="fetch-title">{t('corpus.confirm.title')}</h2>
+<ConfirmDialog bind:open={removeOpen} title={t('corpus.removeConfirm', { title: removing?.title ?? '' })} confirmLabel={t('corpus.removeGo')} tone="danger" onconfirm={confirmRemove} />
+
+<ConfirmDialog bind:open={confirmOpen} title={t('corpus.confirm.title')} confirmLabel={t('corpus.confirm.go')} onconfirm={confirmFetch}>
 	<p>{t('corpus.confirm.body')}</p>
 	{#if pending}<p class="serif target">{pending.label}</p>{/if}
 	<p class="small muted">{t('corpus.confirm.note')}</p>
-	<div class="row actions">
-		<button type="button" class="btn quiet" onclick={() => dialog?.close()}>{t('common.cancel')}</button>
-		<button type="button" class="btn primary" onclick={confirmFetch}><Icon name="globe" />{t('corpus.confirm.go')}</button>
-	</div>
-</dialog>
+</ConfirmDialog>
 
 <style>
-	.crumb {
-		margin: 0 0 8px;
-	}
-	.crumb a {
-		display: inline-flex;
-		align-items: center;
-		gap: 6px;
-	}
-	.facts {
-		display: flex;
-		flex-wrap: wrap;
-		gap: 6px 18px;
-		margin-top: 10px;
-		color: var(--ink-2);
-	}
 	.cols {
 		display: grid;
 		grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr);
@@ -282,7 +275,13 @@
 		display: grid;
 		gap: 12px;
 	}
+	.segmented {
+		justify-self: start;
+		max-width: 100%;
+		overflow-x: auto;
+	}
 	.segmented button {
+		white-space: nowrap;
 		display: inline-flex;
 		align-items: center;
 		gap: 6px;
@@ -365,28 +364,12 @@
 	.timeline p {
 		margin: 0;
 	}
-	dialog {
-		max-width: 520px;
-		width: calc(100% - 32px);
-		border: 1px solid var(--rule);
-		border-radius: var(--r-panel);
-		padding: 22px 24px;
-		box-shadow: var(--shadow-pop);
-		color: var(--ink);
-	}
-	dialog::backdrop {
-		background: rgb(20 22 24 / 0.35);
-	}
-	dialog .target {
+	.target {
+		margin: 10px 0;
 		font-size: 1.05rem;
 		padding: 10px 12px;
 		background: var(--desk);
 		border-radius: var(--r-control);
-	}
-	.actions {
-		justify-content: flex-end;
-		gap: 10px;
-		margin-top: 8px;
 	}
 	@media (max-width: 1000px) {
 		.cols {

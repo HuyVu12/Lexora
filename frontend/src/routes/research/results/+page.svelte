@@ -1,20 +1,27 @@
+<script module lang="ts">
+	import type { KbRunSummary } from '#lib/types.js';
+	type Results = { runs: KbRunSummary[]; validator_version: string; folder: string };
+	// Reading the run folders takes a few seconds on a cold server: coming back shows the last copy at once.
+	let last: Results | null = null;
+</script>
+
 <script lang="ts">
+	import Skeleton from '#lib/components/Skeleton.svelte';
 	import PageGuide from '#lib/components/PageGuide.svelte';
 	import Icon from '#lib/components/Icon.svelte';
 	import Term from '#lib/components/Term.svelte';
 	import { api } from '#lib/api.js';
 	import { t, formatDate } from '#lib/i18n/index.svelte.js';
 	import { session, canSeeResults } from '#lib/session.svelte.js';
-	import type { KbRunSummary } from '#lib/types.js';
 	import type { MessageKey } from '#lib/i18n/vi.js';
 
-	let data = $state<{ runs: KbRunSummary[]; validator_version: string; folder: string } | null>(null);
+	let data = $state<Results | null>(last);
 	let error = $state('');
 
 	$effect(() => {
 		if (canSeeResults(session.account))
-			api<{ runs: KbRunSummary[]; validator_version: string; folder: string }>('/api/experiments/kb')
-				.then((v) => (data = v))
+			api<Results>('/api/experiments/kb')
+				.then((v) => (data = last = v))
 				.catch((e) => (error = e.message));
 	});
 
@@ -33,6 +40,10 @@
 	function failure(code: string) {
 		return t(`results.error.${code}` as MessageKey) ?? code;
 	}
+	const settings = (r: KbRunSummary) =>
+		t('results.settings', { provider: r.provider, effort: r.effort ?? '-', tokens: r.max_tokens ? t('results.maxTokens', { n: num(r.max_tokens) }) : '' });
+	// A model run twice (two scopes) is told apart by its run name; every other row shows the model alone.
+	const repeated = $derived(new Set((data?.runs ?? []).map((r) => r.model).filter((m, i, all) => all.indexOf(m) !== i)));
 	const sorted = (map: Record<string, number>) => Object.entries(map).sort((a, b) => b[1] - a[1]);
 </script>
 
@@ -46,7 +57,13 @@
 		<header class="page-head">
 			<div>
 				<h1 class="title">{t('results.title')}</h1>
-				<p class="lead">{t('results.lead')}</p>
+				<p class="facts">
+					{#if data}
+						<span><strong>{data.runs.length}</strong> {t('results.facts.runs', { n: data.runs.length })}</span>
+					{:else}
+						<span><Skeleton width="90px" height="12px" /></span>
+					{/if}
+				</p>
 			</div>
 		</header>
 		<PageGuide name="results" steps={2} />
@@ -54,7 +71,23 @@
 		{#if error}
 			<p class="notice error" role="alert">{error}</p>
 		{:else if !data}
-			<p class="muted">{t('common.loading')}</p>
+			<section class="panel" aria-busy="true">
+				<span class="visually-hidden" role="status">{t('common.loading')}</span>
+				<div class="ghost" aria-hidden="true">
+					<span class="ghost-line h"><Skeleton width="260px" height="16px" /></span>
+					<span class="ghost-line"><Skeleton width="min(640px, 90%)" height="11px" /></span>
+					{#each [0, 1] as table (table)}
+						<div class="ghost-table">
+							<span class="ghost-row head">{#each { length: 9 } as _, i (i)}<Skeleton width={i ? '64%' : '42%'} height="11px" />{/each}</span>
+							{#each [0, 1, 2, 3, 4, 5] as row (row)}
+								<span class="ghost-row">{#each { length: 9 } as _, i (i)}<Skeleton width={i ? '52%' : '72%'} height="12px" />{/each}</span>
+							{/each}
+						</div>
+						{#if !table}<Skeleton width="200px" height="13px" />{/if}
+					{/each}
+					{#each [0, 1, 2, 3] as row (row)}<Skeleton width="300px" height="13px" />{/each}
+				</div>
+			</section>
 		{:else}
 			<section class="panel" aria-labelledby="kb-heading">
 				<h2 class="heading" id="kb-heading">{t('results.kb.title')}</h2>
@@ -84,8 +117,8 @@
 								{#each data.runs as r (r.run)}
 									<tr>
 										<th scope="row">
-											<code>{r.model}</code>
-											<span class="small muted">{t('results.settings', { provider: r.provider, effort: r.effort ?? '-', tokens: r.max_tokens ? t('results.maxTokens', { n: num(r.max_tokens) }) : '' })}</span>
+											<code title={settings(r)}>{r.model}</code>
+											{#if repeated.has(r.model)}<span class="small muted run">{r.run}</span>{/if}
 											{#if r.report_stale}<span class="chip warn stale-chip"><Icon name="warn" size={14} />{t('results.reportStale')}</span>{/if}
 										</th>
 										<td class="n">{r.batches_ok}/{r.batches_attempted}{#if r.batches_planned && r.batches_attempted < r.batches_planned}<span class="small muted sample">{t('results.sample', { n: r.batches_planned })}</span>{/if}</td>
@@ -102,51 +135,52 @@
 						</table>
 					</div>
 
-					<h3 class="label sub">{t('results.usage.title')}</h3>
-					<p class="small muted">{t('results.usage.lead')}</p>
-					<div class="table-wrap">
-						<table>
-							<thead>
-								<tr>
-									<th scope="col">{t('results.col.model')}</th>
-									<th scope="col" class="n">{t('results.col.callsMade')}</th>
-									<th scope="col" class="n">{t('results.col.callErrors')}</th>
-									<th scope="col" class="n">{t('results.col.answered')}</th>
-									<th scope="col" class="n">{t('results.col.perSentence')}</th>
-									<th scope="col" class="n">{t('results.col.tokensIn')}</th>
-									<th scope="col" class="n">{t('results.col.tokensOut')}</th>
-									<th scope="col" class="n">{t('results.col.reasoning')}</th>
-									<th scope="col" class="n">{t('results.col.perClaim')}</th>
-									<th scope="col" class="n">{t('results.col.median')}</th>
-									<th scope="col" class="n">{t('results.col.total')}</th>
-								</tr>
-							</thead>
-							<tbody>
-								{#each data.runs as r (r.run)}
-									<tr>
-										<th scope="row"><code>{r.model}</code></th>
-										<td class="n">{r.calls_made}</td>
-										<td class="n">{pct(r.call_error_rate)}</td>
-										<td class="n">{pct(r.sentence_answer_rate)}</td>
-										<td class="n">{r.claims_per_sentence === null ? '-' : r.claims_per_sentence.toFixed(2)}</td>
-										<td class="n">{num(r.prompt_tokens)}</td>
-										<td class="n">{num(r.completion_tokens)}</td>
-										<td class="n">{r.reasoning_tokens ? num(r.reasoning_tokens) : '-'}</td>
-										<td class="n">{r.completion_tokens_per_claim === null ? '-' : num(Math.round(r.completion_tokens_per_claim))}</td>
-										<td class="n">{r.median_call_seconds === null ? '-' : t('results.seconds', { n: r.median_call_seconds })}</td>
-										<td class="n">{r.calling_minutes === null ? '-' : t('results.minutes', { n: r.calling_minutes })}</td>
-									</tr>
-								{/each}
-							</tbody>
-						</table>
-					</div>
-
 					<div class="details">
+						<details class="usage">
+							<summary><Icon name="arrow" size={16} />{t('results.usage.title')}</summary>
+							<p class="small muted">{t('results.usage.lead')}</p>
+							<div class="table-wrap">
+								<table>
+									<thead>
+										<tr>
+											<th scope="col">{t('results.col.model')}</th>
+											<th scope="col" class="n">{t('results.col.callsMade')}</th>
+											<th scope="col" class="n">{t('results.col.callErrors')}</th>
+											<th scope="col" class="n">{t('results.col.answered')}</th>
+											<th scope="col" class="n">{t('results.col.perSentence')}</th>
+											<th scope="col" class="n">{t('results.col.tokensIn')}</th>
+											<th scope="col" class="n">{t('results.col.tokensOut')}</th>
+											<th scope="col" class="n">{t('results.col.reasoning')}</th>
+											<th scope="col" class="n">{t('results.col.perClaim')}</th>
+											<th scope="col" class="n">{t('results.col.median')}</th>
+											<th scope="col" class="n">{t('results.col.total')}</th>
+										</tr>
+									</thead>
+									<tbody>
+										{#each data.runs as r (r.run)}
+											<tr>
+												<th scope="row"><code>{r.model}</code></th>
+												<td class="n">{r.calls_made}</td>
+												<td class="n">{pct(r.call_error_rate)}</td>
+												<td class="n">{pct(r.sentence_answer_rate)}</td>
+												<td class="n">{r.claims_per_sentence === null ? '-' : r.claims_per_sentence.toFixed(2)}</td>
+												<td class="n">{num(r.prompt_tokens)}</td>
+												<td class="n">{num(r.completion_tokens)}</td>
+												<td class="n">{r.reasoning_tokens ? num(r.reasoning_tokens) : '-'}</td>
+												<td class="n">{r.completion_tokens_per_claim === null ? '-' : num(Math.round(r.completion_tokens_per_claim))}</td>
+												<td class="n">{r.median_call_seconds === null ? '-' : t('results.seconds', { n: r.median_call_seconds })}</td>
+												<td class="n">{r.calling_minutes === null ? '-' : t('results.minutes', { n: r.calling_minutes })}</td>
+											</tr>
+										{/each}
+									</tbody>
+								</table>
+							</div>
+						</details>
 						{#each data.runs as r (r.run)}
 							<details>
 								<summary><Icon name="arrow" size={16} />{t('results.details', { model: r.model })}</summary>
 								<div class="detail-body">
-									<p class="small muted">{r.run} · {formatDate(r.created_at)} · {t('results.tokens', { prompt: num(r.prompt_tokens), completion: num(r.completion_tokens), calls: r.calls_made })}</p>
+									<p class="small muted">{settings(r)} · {r.run} · {formatDate(r.created_at)} · {t('results.tokens', { prompt: num(r.prompt_tokens), completion: num(r.completion_tokens), calls: r.calls_made })}</p>
 									<div class="cols">
 										<div>
 											<h3 class="label">{t('results.reasons')}</h3>
@@ -190,13 +224,45 @@
 						{/each}
 					</div>
 				{/if}
-				<p class="small muted">{t('results.refresh')} <code>python -m legal_ai.cli kb-compare</code></p>
+				<p class="small muted">{t('results.source', { v: data.validator_version })} <code>{data.folder}</code>. {t('results.refresh')} <code>python -m legal_ai.cli kb-compare</code></p>
 			</section>
 		{/if}
 	{/if}
 </div>
 
 <style>
+	.ghost {
+		display: grid;
+		gap: 12px;
+	}
+	/* Each placeholder line is as tall as the text line it stands for, so the table starts where it will. */
+	.ghost-line {
+		display: flex;
+		align-items: center;
+		height: 20px;
+	}
+	.ghost-line.h {
+		height: 22px;
+	}
+	.ghost-table {
+		display: grid;
+	}
+	.ghost-row {
+		display: grid;
+		grid-template-columns: 1.6fr repeat(8, minmax(0, 1fr));
+		gap: 12px;
+		align-items: center;
+		justify-items: end;
+		height: 46px;
+		border-bottom: 1px solid var(--rule);
+	}
+	.ghost-row > :global(:first-child) {
+		justify-self: start;
+	}
+	.ghost-row.head {
+		height: 40px;
+		border-bottom-color: var(--rule-strong);
+	}
 	.panel {
 		display: grid;
 		gap: 12px;
@@ -225,9 +291,16 @@
 		border-bottom: 1px solid var(--rule-strong);
 	}
 	tbody th {
-		display: grid;
-		gap: 2px;
 		font-weight: 500;
+	}
+	/* The cell stays a table cell (so its rule lines up with the row); a stale chip stacks under the name. */
+	tbody th > code,
+	tbody th > .run {
+		display: block;
+	}
+	tbody th > .run {
+		margin-top: 2px;
+		font-weight: 400;
 	}
 	tbody th code {
 		white-space: nowrap;
@@ -244,9 +317,7 @@
 	}
 	.sample {
 		display: block;
-		max-width: 9rem;
-		margin-left: auto;
-		white-space: normal;
+		white-space: nowrap;
 	}
 	.stale-chip {
 		justify-self: start;
@@ -257,8 +328,12 @@
 		white-space: normal;
 		font-weight: 400;
 	}
-	.sub {
-		margin: 12px 0 0;
+	.usage {
+		display: grid;
+		gap: 10px;
+	}
+	.usage > p {
+		margin: 0;
 	}
 	.details {
 		display: grid;

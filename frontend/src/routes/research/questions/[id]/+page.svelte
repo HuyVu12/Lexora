@@ -1,7 +1,13 @@
 <script lang="ts">
 	import PageGuide from '#lib/components/PageGuide.svelte';
 	import StepTag from '#lib/components/StepTag.svelte';
+	import ItemRail from '#lib/components/ItemRail.svelte';
+	import Tabs from '#lib/components/Tabs.svelte';
+	import WorkspaceSkeleton from '#lib/components/WorkspaceSkeleton.svelte';
+	import { rise, DUR } from '#lib/motion.js';
+	import '#lib/components/workspace.css';
 	import { page } from '$app/state';
+	import Skeleton from '#lib/components/Skeleton.svelte';
 	import Icon from '#lib/components/Icon.svelte';
 	import Term from '#lib/components/Term.svelte';
 	import LabelForm from '#lib/components/LabelForm.svelte';
@@ -48,6 +54,16 @@
 	const frozen = $derived(!!ws?.frozen);
 	const canPropose = $derived(!!ws?.proposal_model && ws?.show_proposals === true && !frozen);
 	const waiting = $derived(ws?.items.filter((i) => !i.proposal) ?? []);
+	const railItems = $derived(
+		(ws?.items ?? []).map((i) => ({
+			key: i.id,
+			n: i.position,
+			text: i.text,
+			done: !!i.label,
+			status: i.label ? t('qs.labelled') : t('gold.status.todo'),
+			ai: i.origin === 'model'
+		}))
+	);
 
 	const chooseMode = () =>
 		act(async () => {
@@ -117,10 +133,16 @@
 			await load();
 		});
 	};
-	const removeQuestion = (item: QuestionItem) =>
+	let removing = $state<QuestionItem | null>(null);
+	let removeOpen = $state(false);
+	const removeQuestion = (item: QuestionItem) => {
+		removing = item;
+		removeOpen = true;
+	};
+	const confirmRemove = () =>
 		act(async () => {
-			if (!confirm(t('qs.removeConfirm', { n: item.position }))) return;
-			await api('/api/question-set/question/remove', { set_id: id, question_id: item.id });
+			if (!removing) return;
+			await api('/api/question-set/question/remove', { set_id: id, question_id: removing.id });
 			await load();
 		});
 
@@ -186,27 +208,29 @@
 		<h1 class="title">{t('common.forbidden.title')}</h1>
 	{:else if error}
 		<p class="notice error" role="alert">{error}</p>
-	{:else if !ws}
-		<p class="muted">{t('common.loading')}</p>
 	{:else}
 		<p class="crumb"><a href="/research/questions"><Icon name="back" size={16} />{t('qs.title')}</a></p>
 		<header class="page-head">
 			<div>
-				<h1 class="title">{ws.name}</h1>
+				<h1 class="title serif">{#if ws}{ws.name}{:else}<span class="title-ghost" style:width="min(420px, 70vw)"><Skeleton height="30px" /></span>{/if}</h1>
 				<p class="facts">
-					<span>{t('qs.count', { n: ws.items.length })}</span>
-					<span>{t('qs.labelledOf', { done: ws.labelled, n: ws.items.length })}</span>
-					<a href="/research/{ws.corpus_id}">{t('qs.onVersion', { n: ws.corpus_version })}</a>
-					{#if ws.show_proposals !== null}<span class="chip"><Term key="proposal_mode">{ws.show_proposals ? t('qs.mode.shownChip') : t('qs.mode.hiddenChip')}</Term></span>{/if}
+					{#if ws}
+						<span>{t('qs.count', { n: ws.items.length })}</span>
+						<a href="/research/{ws.corpus_id}">{t('qs.onVersion', { n: ws.corpus_version })}</a>
+						{#if ws.show_proposals !== null}<span class="chip"><Term key="proposal_mode">{ws.show_proposals ? t('qs.mode.shownChip') : t('qs.mode.hiddenChip')}</Term></span>{/if}
+					{:else}<span><Skeleton width="120px" height="12px" /></span><span><Skeleton width="150px" height="12px" /></span><span><Skeleton width="110px" height="12px" /></span>{/if}
 				</p>
-				{#if ws.guideline}<details class="guideline"><summary>{t('qs.guideline')}</summary><p class="small">{ws.guideline}</p></details>{/if}
+				{#if ws?.guideline}<details class="guideline"><summary>{t('qs.guideline')}</summary><p class="small">{ws.guideline}</p></details>{/if}
 			</div>
 		</header>
 		<PageGuide name="qset" steps={5} />
+		{#if !ws}
+			<WorkspaceSkeleton tabs={4} />
+		{:else}
 		{#if frozen}<p class="notice info">{t('qs.frozenNote')}</p>{/if}
 
 		{#if ws.show_proposals === null && !frozen}
-			<section class="panel mode">
+			<section class="panel mode" data-tour="qs-mode">
 				<h2 class="heading"><StepTag n={1} />{t('qs.mode.title')}</h2>
 				<p class="small">{t('qs.mode.lead')}</p>
 				<div class="choices">
@@ -217,58 +241,66 @@
 			</section>
 		{/if}
 
-		<div class="cols">
-			<section class="panel list" aria-labelledby="list-heading">
-				<div class="row between">
-					<h2 class="heading" id="list-heading">{t('qs.questions')}</h2>
-					{#if canPropose && waiting.length}
-						<button type="button" class="btn small" disabled={!!progress || !ws.proposal_calls_left} onclick={() => askPropose(waiting.map((i) => i.id))}>{t('qs.proposeAll', { n: Math.min(waiting.length, ws.proposal_calls_left) })}</button>
+		<div class="ws-cols">
+			<ItemRail
+				heading={t('qs.questions')}
+				items={railItems}
+				{selected}
+				onpick={(key) => pick(ws?.items.find((i) => i.id === key))}
+				done={ws.labelled}
+				total={ws.items.length}
+				progress={t('qs.labelledOf', { done: ws.labelled, n: ws.items.length })}
+				empty={t('qs.noQuestions')}>
+				{#snippet head()}
+					{#if canPropose && waiting.length && ws}
+						<button type="button" class="btn small propose" disabled={!!progress || !ws.proposal_calls_left} onclick={() => askPropose(waiting.map((i) => i.id))}>{t('qs.proposeAll', { n: Math.min(waiting.length, ws.proposal_calls_left) })}</button>
 					{/if}
-				</div>
-				{#if progress}
-					<div class="progress" role="status">
-						<span>{t('qs.progress', { done: progress.done, n: progress.total })}</span>
-						<progress max={progress.total} value={progress.done}></progress>
-						{#if progress.total > 1}<button type="button" class="btn quiet small" onclick={() => (stop = true)}>{t('qs.stop')}</button>{/if}
-					</div>
-				{/if}
-				{#if ws.items.length}
-					<ol class="questions">
-						{#each ws.items as item (item.id)}
-							<li>
-								<button type="button" class="q" aria-current={item.id === selected ? 'true' : undefined} onclick={() => pick(item)}>
-									<span class="num">{item.position}</span>
-									<span class="qtext">{item.text}</span>
-									<span class="marks">
-										{#if item.label}<Icon name="check" size={16} /><span class="visually-hidden">{t('qs.labelled')}</span>{/if}
-										{#if item.origin === 'model'}<span class="tag"><Term key="ai" focusable={false}>AI</Term></span>{/if}
-									</span>
-								</button>
-							</li>
-						{/each}
-					</ol>
-				{:else}
-					<p class="muted small">{t('qs.noQuestions')}</p>
-				{/if}
-			</section>
+					{#if progress}
+						<div class="calls" role="status">
+							<span>{t('qs.progress', { done: progress.done, n: progress.total })}</span>
+							<span class="meter"><i style:transform="scaleX({progress.total ? progress.done / progress.total : 0})"></i></span>
+							{#if progress.total > 1}<button type="button" class="btn quiet small" onclick={() => (stop = true)}>{t('qs.stop')}</button>{/if}
+						</div>
+					{/if}
+				{/snippet}
+				{#snippet marker(item)}
+					<span class="marks">
+						{#if item.ai}<span class="tag"><Term key="ai" focusable={false}>AI</Term></span>{/if}
+						<span class="tick" class:on={item.done} aria-hidden="true">{#if item.done}<Icon name="check" size={12} />{/if}</span>
+					</span>
+				{/snippet}
+			</ItemRail>
 
-			<section class="panel work">
-				<div class="segmented tabs" role="group" aria-label={t('qs.tools')}>
-					<button type="button" aria-pressed={tab === 'add'} disabled={frozen} onclick={() => (tab = 'add')}><StepTag n={2} compact />{t('qs.tab.add')}</button>
-					<button type="button" aria-pressed={tab === 'draft'} disabled={frozen || !ws.proposal_model} title={ws.proposal_model ? '' : t('qs.model.off')} onclick={() => (tab = 'draft')}><StepTag n={2} compact />{t('qs.tab.draft')}</button>
-					<button type="button" aria-pressed={tab === 'label'} onclick={() => (tab = 'label')}><StepTag n={3} compact />{t('qs.tab.label')}</button>
-					<button type="button" aria-pressed={tab === 'exchange'} onclick={() => (tab = 'exchange')}><StepTag n={4} compact />{t('qs.tab.exchange')}</button>
-				</div>
+			<section class="panel ws-work" aria-label={t('qs.tools')}>
+				<Tabs
+					bind:value={tab}
+					label={t('qs.tools')}
+					idPrefix="qs-tab"
+					tabs={[
+						{ id: 'add', label: t('qs.tab.add'), step: 2, disabled: frozen },
+						{ id: 'draft', label: t('qs.tab.draft'), step: 2, disabled: frozen || !ws.proposal_model, title: ws.proposal_model ? '' : t('qs.model.off') },
+						{ id: 'label', label: t('qs.tab.label'), step: 3 },
+						{ id: 'exchange', label: t('qs.tab.exchange'), step: 4 }
+					]} />
 
 				{#if tab === 'label'}
 					{#if !current}
 						<p class="muted">{t('qs.pickOne')}</p>
 					{:else}
-						<div class="question">
-							<p class="small muted">{t('qs.questionN', { n: current.position })} · {current.origin === 'model' ? t('qs.origin.model') : t('qs.origin.human', { who: current.created_by })}{#if family.length > 1} · <Term key="paraphrase_family">{t('qs.family', { n: family.length })}</Term>{/if}</p>
-							<p class="serif qbig">{current.text}</p>
-							{#if !frozen}<button type="button" class="btn quiet small remove" onclick={() => removeQuestion(current!)}><Icon name="x" size={16} />{t('qs.remove')}</button>{/if}
-						</div>
+						{#key current.id}
+							<div class="ws-item" in:rise={{ y: 0, duration: DUR.press }}>
+								<div class="ws-where">
+									<p>
+										<strong>{t('qs.questionN', { n: current.position })}</strong>
+										<span>{current.origin === 'model' ? t('qs.origin.model') : t('qs.origin.human', { who: current.created_by })}</span>
+										{#if family.length > 1}<span><Term key="paraphrase_family">{t('qs.family', { n: family.length })}</Term></span>{/if}
+									</p>
+									<span class="ws-state" class:done={!!current.label}>{current.label ? t('qs.labelled') : t('gold.status.todo')}</span>
+								</div>
+								<p class="serif ws-text">{current.text}</p>
+								{#if !frozen}<div><button type="button" class="btn quiet small remove" onclick={() => removeQuestion(current!)}><Icon name="x" size={16} />{t('qs.remove')}</button></div>{/if}
+							</div>
+						{/key}
 
 						{#if ws.show_proposals}
 							<div class="proposal">
@@ -296,7 +328,7 @@
 							{#if current.label}<p class="small">{t('qs.savedAt', { date: formatDate(current.label.updated_at) })}</p>{/if}
 						{:else}
 							<LabelForm setId={id} bind:fields bind:note seed={current.text} />
-							<div class="row actions">
+							<div class="row ws-actions" data-tour="qs-save">
 								<button type="button" class="btn" disabled={busy} onclick={() => save(false)}>{t('qs.save')}</button>
 								<button type="button" class="btn primary" disabled={busy} onclick={() => save(true)}>{t('qs.saveNext')}<Icon name="arrow" /></button>
 								{#if current.label}<span class="small muted">{t('qs.savedAt', { date: formatDate(current.label.updated_at) })}</span>{/if}
@@ -304,7 +336,7 @@
 						{/if}
 					{/if}
 				{:else if tab === 'add'}
-					<form class="fields" onsubmit={addQuestion}>
+					<form class="fields ws-form" onsubmit={addQuestion}>
 						<p class="small muted">{t('qs.add.lead')}</p>
 						<label class="field"><span>{t('qs.add.text')}</span><textarea rows="3" maxlength="1000" required bind:value={newText} placeholder={t('qs.add.ph')}></textarea></label>
 						<label class="field"><span>{t('qs.add.family')}</span>
@@ -350,38 +382,51 @@
 						{/if}
 					</div>
 				{:else}
-					<div class="fields wide">
-						<h3 class="label">{t('qs.exchange.send')}</h3>
-						<p class="small muted">{t('qs.exchange.sendLead')}</p>
-						<div class="row gap">
-							<a class="btn" href="/api/question-set/pack?id={id}" download><Icon name="download" />{t('qs.exchange.pack')}</a>
-							<a class="btn" href="/api/question-set/labels?id={id}" download aria-disabled={!ws.labelled}><Icon name="download" />{t('qs.exchange.labels')}</a>
-						</div>
-						<h3 class="label">{t('qs.exchange.receive')}</h3>
-						<label class="field"><span>{t('qs.exchange.importLabels')}</span><input type="file" accept=".json,application/json" onchange={importLabels} disabled={frozen} /></label>
-						<h3 class="label">{t('qs.exchange.annotators')}</h3>
-						{#if ws.annotators.length}
-							<ul class="annotators">
-								{#each ws.annotators as a (a.annotator)}
-									<li>
-										<span>{a.annotator_name} <span class="small muted">@{a.annotator}{a.imported ? ` · ${t('qs.exchange.importedTag')}` : ''}</span></span>
-										<span class="small">{t('qs.labelledOf', { done: a.labels, n: ws.items.length })}</span>
-									</li>
-								{/each}
-							</ul>
-						{:else}
-							<p class="small muted">{t('qs.exchange.noAnnotators')}</p>
-						{/if}
-						{#each others as o (o.annotator)}
-							<a class="btn primary compare" href="/research/questions/{id}/compare?other={encodeURIComponent(o.annotator)}"><StepTag n={5} compact />{t('qs.exchange.compare', { name: o.annotator_name })}<Icon name="arrow" /></a>
-						{/each}
-						{#if ws.frozen}<a class="btn" href="/api/question-set/frozen?id={id}" download><Icon name="lock" />{t('qs.exchange.frozen')}</a>{/if}
+					<div class="ws-groups">
+						<section>
+							<h3 class="label">{t('qs.exchange.send')}</h3>
+							<p class="small muted">{t('qs.exchange.sendLead')}</p>
+							<div class="row">
+								<a class="btn" href="/api/question-set/pack?id={id}" download><Icon name="download" />{t('qs.exchange.pack')}</a>
+								<a class="btn" href="/api/question-set/labels?id={id}" download aria-disabled={!ws.labelled}><Icon name="download" />{t('qs.exchange.labels')}</a>
+							</div>
+						</section>
+						<section>
+							<h3 class="label">{t('qs.exchange.receive')}</h3>
+							<label class="field"><span>{t('qs.exchange.importLabels')}</span><input type="file" accept=".json,application/json" onchange={importLabels} disabled={frozen} /></label>
+						</section>
+						<section>
+							<h3 class="label">{t('qs.exchange.annotators')}</h3>
+							{#if ws.annotators.length}
+								<ul class="ws-people">
+									{#each ws.annotators as a (a.annotator)}
+										<li>
+											<span>{a.annotator_name} <span class="small muted">@{a.annotator}{a.imported ? ` · ${t('qs.exchange.importedTag')}` : ''}</span></span>
+											<span class="small">{t('qs.labelledOf', { done: a.labels, n: ws.items.length })}</span>
+										</li>
+									{/each}
+								</ul>
+							{:else}
+								<p class="small muted">{t('qs.exchange.noAnnotators')}</p>
+							{/if}
+							{#if others.length || ws.frozen}
+								<div class="row">
+									{#each others as o (o.annotator)}
+										<a class="btn primary" href="/research/questions/{id}/compare?other={encodeURIComponent(o.annotator)}"><StepTag n={5} compact />{t('qs.exchange.compare', { name: o.annotator_name })}<Icon name="arrow" /></a>
+									{/each}
+									{#if ws.frozen}<a class="btn" href="/api/question-set/frozen?id={id}" download><Icon name="lock" />{t('qs.exchange.frozen')}</a>{/if}
+								</div>
+							{/if}
+						</section>
 					</div>
 				{/if}
 			</section>
 		</div>
+		{/if}
 	{/if}
 </div>
+
+<ConfirmDialog bind:open={removeOpen} title={t('qs.removeConfirm', { n: removing?.position ?? '' })} confirmLabel={t('qs.remove')} tone="danger" onconfirm={confirmRemove} />
 
 <ConfirmDialog bind:open={confirmOpen} title={t('qs.confirm.title')} confirmLabel={t('qs.confirm.go')} onconfirm={runConfirmed}>
 	{#if pending?.kind === 'propose'}
@@ -395,109 +440,41 @@
 </ConfirmDialog>
 
 <style>
-	.crumb {
-		margin: 0 0 8px;
-	}
-	.crumb a {
-		display: inline-flex;
-		align-items: center;
-		gap: 6px;
-	}
-	.facts {
-		display: flex;
-		flex-wrap: wrap;
-		gap: 6px 18px;
-		align-items: center;
-		margin-top: 10px;
-		color: var(--ink-2);
+	.facts a {
+		color: inherit;
 	}
 	.guideline {
 		margin-top: 10px;
 		max-width: 70ch;
 	}
+	.guideline summary {
+		cursor: pointer;
+		color: var(--ink-2);
+		font-size: 14px;
+	}
 	.guideline p {
 		white-space: pre-line;
+		margin-top: 6px;
 	}
 	.mode {
-		margin-bottom: 20px;
+		margin-bottom: var(--space-5);
 		display: grid;
 		gap: 12px;
 	}
-	.cols {
-		display: grid;
-		grid-template-columns: minmax(280px, 0.9fr) minmax(0, 1.6fr);
-		gap: 20px;
-		align-items: start;
-	}
-	.panel {
-		display: grid;
-		gap: 12px;
-	}
-	.tabs {
-		flex-wrap: wrap;
+	.propose {
 		justify-self: start;
 	}
-	.tabs button {
-		display: inline-flex;
-		align-items: center;
-		white-space: nowrap;
-	}
-	.list {
-		position: sticky;
-		top: calc(var(--topbar) + 16px);
-		max-height: calc(100vh - var(--topbar) - 32px);
-		grid-template-rows: auto auto 1fr;
-		overflow: hidden;
-	}
-	.between {
-		justify-content: space-between;
-		gap: 8px;
-		flex-wrap: wrap;
-	}
-	.questions {
-		list-style: none;
-		margin: 0 -8px;
-		padding: 0;
-		overflow: auto;
-	}
-	.q {
-		width: 100%;
+	.calls {
 		display: grid;
-		grid-template-columns: 2rem minmax(0, 1fr) auto;
-		gap: 8px;
-		align-items: start;
-		text-align: left;
-		padding: 8px;
-		border: 0;
-		border-radius: var(--r-control);
-		background: none;
-		font: inherit;
-		color: inherit;
-		cursor: pointer;
-	}
-	.q:hover {
-		background: var(--desk);
-	}
-	.q[aria-current='true'] {
-		background: var(--desk);
-		box-shadow: inset 3px 0 0 var(--graphite);
-	}
-	.num {
-		color: var(--muted);
-		font-variant-numeric: tabular-nums;
-	}
-	.qtext {
-		display: -webkit-box;
-		-webkit-line-clamp: 2;
-		line-clamp: 2;
-		-webkit-box-orient: vertical;
-		overflow: hidden;
+		grid-template-columns: auto minmax(0, 1fr) auto;
+		gap: 10px;
+		align-items: center;
+		font-size: 13.5px;
 	}
 	.marks {
 		display: inline-flex;
 		align-items: center;
-		gap: 4px;
-		color: var(--approve);
+		gap: 6px;
 	}
 	.tag {
 		font-size: 11px;
@@ -507,31 +484,25 @@
 		background: var(--hl-object);
 		color: var(--ink);
 	}
-	.progress {
+	.tick {
 		display: grid;
-		grid-template-columns: auto 1fr auto;
-		gap: 10px;
-		align-items: center;
-		font-size: 14px;
+		place-items: center;
+		width: 18px;
+		height: 18px;
+		border-radius: 50%;
+		border: 1.5px solid var(--rule-strong);
+		color: var(--paper);
 	}
-	.progress progress {
-		width: 100%;
+	.tick.on {
+		border-color: var(--approve);
+		background: var(--approve);
 	}
-	.question {
-		position: relative;
-		padding-bottom: 4px;
-		border-bottom: 1px solid var(--rule);
-	}
-	.qbig {
-		font-size: 1.25rem;
-		line-height: 1.5;
-		margin: 6px 0 10px;
-		padding-right: 90px;
+	.tick :global(svg) {
+		stroke-width: 3;
 	}
 	.remove {
-		position: absolute;
-		top: 0;
-		right: 0;
+		margin-left: -10px;
+		color: var(--muted);
 	}
 	.proposal {
 		display: grid;
@@ -541,13 +512,6 @@
 		border: 1px dashed var(--rule-strong);
 		border-radius: var(--r-panel);
 		background: #f7f8fb;
-	}
-	.proposal p {
-		margin: 0;
-	}
-	.actions {
-		gap: 10px;
-		align-items: center;
 	}
 	.fields {
 		display: grid;
@@ -615,33 +579,5 @@
 		align-items: center;
 		gap: 4px;
 		color: var(--approve);
-	}
-	.gap {
-		gap: 10px;
-		flex-wrap: wrap;
-	}
-	.annotators {
-		list-style: none;
-		margin: 0;
-		padding: 0;
-	}
-	.annotators li {
-		display: flex;
-		justify-content: space-between;
-		gap: 12px;
-		padding: 8px 0;
-		border-top: 1px solid var(--rule);
-	}
-	.compare {
-		justify-self: start;
-	}
-	@media (max-width: 1000px) {
-		.cols {
-			grid-template-columns: 1fr;
-		}
-		.list {
-			position: static;
-			max-height: 360px;
-		}
 	}
 </style>

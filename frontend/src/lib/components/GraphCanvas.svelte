@@ -33,8 +33,9 @@
 		'hl-condition': '#ffd8a3', 'hl-measure': '#c2efe8', 'hl-other': '#e4e6e6'
 	};
 	const sans = 'Be Vietnam Pro, system-ui, sans-serif';
-	// Canvas font shorthand: a family name with a digit must be quoted or the whole font is ignored.
-	const serif = "'Source Serif 4 Variable', Georgia, serif";
+	// Canvas font shorthand: a family name with a digit must be quoted or the whole font is ignored. Cytoscape's
+	// font-family validator accepts double quotes only (single quotes make it drop the value with a warning).
+	const serif = '"Source Serif 4 Variable", Georgia, serif';
 
 	const style: StylesheetJson = [
 		{
@@ -107,7 +108,7 @@
 		let observer: ResizeObserver | null = null;
 		document.fonts.ready.then(() => {
 			if (disposed || !host) return;
-			cy = cytoscape({ container: host, style, elements: [], layout: { name: 'preset' }, minZoom: 0.25, maxZoom: 2.5, wheelSensitivity: 0.25, boxSelectionEnabled: false, autoungrabify: false });
+			cy = cytoscape({ container: host, style, elements: [], layout: { name: 'preset' }, minZoom: 0.25, maxZoom: 2.5, boxSelectionEnabled: false, autoungrabify: false });
 			cy.on('tap', 'node', (e) => onselect({ group: 'nodes', id: e.target.id() }));
 			cy.on('tap', 'edge', (e) => onselect({ group: 'edges', id: e.target.id() }));
 			cy.on('viewport', record);

@@ -1,0 +1,181 @@
+/* Shared layout of the annotation workspaces (questions, gold, audit): the item rail on the left, the item
+ * being worked on at the right. Imported by those pages; every class starts with ws- so nothing else matches.
+ *
+ * The two columns form one split view as tall as the window under the top bar (--ws-h). The rail (ItemRail)
+ * sticks under the top bar and a long list fills that height, scrolling inside. The work panel is at least that
+ * tall, so both end on the same line; its action row sits at the bottom of the panel and sticks to the bottom of
+ * the window while a long item scrolls past. Scrolled to the end, the split fills the window. */
+.ws-cols {
+	--ws-h: calc(100vh - var(--topbar) - 2 * var(--space-4));
+	--ws-h: calc(100dvh - var(--topbar) - 2 * var(--space-4));
+	display: grid;
+	grid-template-columns: minmax(300px, 380px) minmax(0, 1fr);
+	gap: var(--space-5);
+	align-items: start;
+}
+/* The split ends the page: the same small gap under it as above it once it sticks. */
+.page:has(> .ws-cols) {
+	padding-bottom: var(--space-4);
+}
+.ws-cols > * {
+	min-width: 0;
+}
+.ws-work {
+	display: flex;
+	flex-direction: column;
+	gap: var(--space-4);
+	min-height: var(--ws-h);
+}
+.ws-work:has(> .tabs:first-child) {
+	padding-top: 6px;
+}
+/* The tab bar runs edge to edge across the top of the work panel. */
+.ws-work > .tabs:first-child {
+	margin: 0 -24px 4px;
+	padding: 0 14px;
+}
+.ws-item {
+	display: grid;
+	gap: 10px;
+	padding-bottom: var(--space-4);
+	border-bottom: 1px solid var(--rule);
+}
+.ws-where {
+	display: flex;
+	justify-content: space-between;
+	align-items: flex-start;
+	gap: 12px;
+}
+.ws-where p {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: baseline;
+	gap: 2px 10px;
+	min-width: 0;
+	font-size: 14px;
+	color: var(--muted);
+}
+.ws-where strong {
+	font-size: 15px;
+	font-weight: 600;
+	color: var(--ink);
+}
+/* Done or to do, said in words beside the item number. */
+.ws-state {
+	flex: none;
+	padding: 1px 9px;
+	border-radius: 999px;
+	font-size: 12.5px;
+	font-weight: 500;
+	white-space: nowrap;
+	color: var(--ink-2);
+	background: var(--desk);
+}
+.ws-state.done {
+	color: var(--approve);
+	background: var(--approve-soft);
+}
+.ws-doc {
+	overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+	margin-top: -4px;
+}
+.ws-context {
+	font-size: 14px;
+	color: var(--ink-2);
+	white-space: pre-line;
+}
+.ws-context .label {
+	margin-right: 4px;
+}
+/* The law itself: serif, generous size, the full width of the panel (about 80 characters a line). */
+.ws-text {
+	font-size: 1.25rem;
+	line-height: 1.65;
+	color: var(--ink);
+	text-wrap: pretty;
+}
+.ws-text::selection {
+	background: var(--hl-action);
+}
+.ws-selection mark {
+	background: var(--hl-object);
+	color: var(--ink);
+	padding: 0 3px;
+	border-radius: 3px;
+}
+/* The save row: pushed to the bottom of the panel and kept on screen while a long item scrolls (the panel's own
+ * padding is cancelled so the bar runs edge to edge, like the draft review's publish bar). */
+.ws-actions {
+	position: sticky;
+	bottom: 0;
+	z-index: 2;
+	gap: 10px;
+	margin: auto -24px -24px;
+	padding: 12px 24px;
+	background: var(--paper);
+	border-top: 1px solid var(--rule);
+	border-radius: 0 0 var(--r-panel) var(--r-panel);
+	box-shadow: 0 -4px 16px rgb(20 22 24 / 0.06);
+}
+.ws-actions .spacer {
+	flex: 1;
+}
+/* Exchange and setup tabs: groups of controls separated by hairlines. */
+.ws-groups {
+	display: grid;
+	max-width: 720px;
+}
+.ws-groups > section {
+	display: grid;
+	gap: 10px;
+	justify-items: start;
+	padding: var(--space-4) 0;
+	border-top: 1px solid var(--rule);
+}
+.ws-groups > section:first-child {
+	border-top: 0;
+	padding-top: 0;
+}
+.ws-groups > section > * {
+	max-width: 100%;
+}
+.ws-groups .field {
+	width: 100%;
+}
+.ws-people {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	width: 100%;
+}
+.ws-people li {
+	display: flex;
+	justify-content: space-between;
+	gap: 12px;
+	padding: 8px 0;
+	border-top: 1px solid var(--rule);
+}
+.ws-people li:first-child {
+	border-top: 0;
+}
+@media (max-width: 1000px) {
+	.ws-cols {
+		grid-template-columns: minmax(0, 1fr);
+	}
+	/* Stacked: the rail is a short list above the panel, and the panel is as tall as its content. */
+	.ws-work {
+		min-height: 0;
+	}
+}
+@media (max-width: 640px) {
+	.ws-text {
+		font-size: 1.125rem;
+	}
+	/* On a phone the buttons wrap onto two rows; a bar that tall would cover the item, so it stays in place. */
+	.ws-actions {
+		position: static;
+		box-shadow: none;
+	}
+}

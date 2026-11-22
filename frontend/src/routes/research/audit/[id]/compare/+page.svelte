@@ -1,6 +1,9 @@
 <script lang="ts">
+	import Skeleton from '#lib/components/Skeleton.svelte';
 	import Icon from '#lib/components/Icon.svelte';
+	import PageSkeleton from '#lib/components/PageSkeleton.svelte';
 	import { page } from '$app/state';
+	import { goto } from '$app/navigation';
 	import { api } from '#lib/api.js';
 	import { t } from '#lib/i18n/index.svelte.js';
 	import { session, canReview } from '#lib/session.svelte.js';
@@ -11,6 +14,10 @@
 	const LABELS: AuditLabel[] = ['sai', 'dien_dat', 'dung_ngu_canh', 'dung', 'khong_ro'];
 	const id = $derived(page.params.id ?? '');
 	const other = $derived(page.url.searchParams.get('other') ?? '');
+	// The comparison needs the other annotator; a link without one goes back to the set instead of waiting forever.
+	$effect(() => {
+		if (id && !other) goto(`/research/audit/${id}`, { replaceState: true });
+	});
 	let data = $state<AuditCompare | null>(null);
 	let error = $state('');
 	let filter = $state<'disagree' | 'open' | 'all'>('disagree');
@@ -68,16 +75,17 @@
 		<h1 class="title">{t('common.forbidden.title')}</h1>
 	{:else if error}
 		<p class="notice error" role="alert">{error}</p>
-	{:else if !data}
-		<p class="muted">{t('common.loading')}</p>
 	{:else}
-		<p class="crumb"><a href="/research/audit/{id}"><Icon name="back" size={16} />{data.set.name}</a></p>
+		<p class="crumb"><a href="/research/audit/{id}"><Icon name="back" size={16} />{data?.set.name ?? t('audit.title')}</a></p>
 		<header class="page-head">
 			<div>
 				<h1 class="title">{t('audit.cmp.title')}</h1>
-				<p class="lead">{t('audit.cmp.lead', { a: data.first.name, b: data.second.name })}</p>
+				<p class="lead">{#if data}{t('audit.cmp.lead', { a: data.first.name, b: data.second.name })}{:else}<Skeleton width="min(460px, 80vw)" height="14px" />{/if}</p>
 			</div>
 		</header>
+		{#if !data}
+			<PageSkeleton head={false} blocks={3} />
+		{:else}
 
 		<section class="panel metrics" aria-label={t('audit.cmp.metrics')}>
 			<div><span class="label">{t('audit.cmp.kappaLabels')}</span><strong>{kappa(data.agreement.labels.kappa)}</strong><span class="small muted">n = {data.agreement.labels.n}</span></div>
@@ -128,18 +136,11 @@
 				{/each}
 			</ol>
 		{/if}
+		{/if}
 	{/if}
 </div>
 
 <style>
-	.crumb {
-		margin: 0 0 8px;
-	}
-	.crumb a {
-		display: inline-flex;
-		align-items: center;
-		gap: 6px;
-	}
 	.metrics {
 		display: grid;
 		grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));

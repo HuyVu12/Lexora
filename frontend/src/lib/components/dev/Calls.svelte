@@ -23,8 +23,14 @@
 	const byFeature = $derived(FEATURES.map((f) => ({ key: f, label: t(`dev.feature.${f}` as MessageKey), color: featureColors[f],
 		values: data.daily.map((d) => d.features[f].ok + d.features[f].error) })));
 	const error = (code: string) => t(`results.error.${code}` as MessageKey) ?? t(`dev.code.${code}` as MessageKey) ?? code;
+	// Charts only when the range has a call to show; an empty range is one quiet line.
+	const any = $derived(data.daily.some((d) => FEATURES.some((f) => d.features[f].ok + d.features[f].error + d.features[f].blocked > 0)));
+	const RECENT = 10;
+	let allRecent = $state(false);
+	const recent = $derived(allRecent ? data.recent : data.recent.slice(0, RECENT));
 </script>
 
+{#if any}
 <div class="dev-two">
 	<section class="panel" aria-labelledby="status-chart">
 		<h2 class="heading" id="status-chart">{t('dev.calls.byStatus')}</h2>
@@ -35,10 +41,11 @@
 		<DailyBars {days} series={byFeature} label={t('dev.calls.byFeature')} />
 	</section>
 </div>
+{/if}
 
+{#if data.models.length}
 <section class="panel" aria-labelledby="models-heading">
 	<h2 class="heading" id="models-heading">{t('dev.calls.models')}</h2>
-	{#if data.models.length}
 		<div class="table-scroll">
 			<table class="table wide">
 				<thead>
@@ -73,28 +80,20 @@
 				</tbody>
 			</table>
 		</div>
-	{:else}
-		<p class="small muted">{t('dev.calls.none', { days: data.days })}</p>
-	{/if}
 </section>
+{/if}
 
-<div class="dev-two">
+{#if Object.keys(data.codes).length}
 	<section class="panel" aria-labelledby="codes-heading">
 		<h2 class="heading" id="codes-heading">{t('dev.calls.codes')}</h2>
-		{#if Object.keys(data.codes).length}
-			<ul class="dev-list">{#each Object.entries(data.codes) as [code, n] (code)}<li><span>{error(code)} <code class="small">{code}</code></span><strong>{n}</strong></li>{/each}</ul>
-		{:else}
-			<p class="small muted">{t('dev.calls.noErrors')}</p>
-		{/if}
+		<ul class="dev-list codes">{#each Object.entries(data.codes) as [code, n] (code)}<li><span>{error(code)}{#if error(code) !== code} <code class="small">{code}</code>{/if}</span><strong>{n}</strong></li>{/each}</ul>
 	</section>
-	<section class="panel" aria-labelledby="privacy-heading">
-		<h2 class="heading" id="privacy-heading">{t('dev.calls.privacyTitle')}</h2>
-		<p class="small">{t('dev.calls.privacy')}</p>
-	</section>
-</div>
+{/if}
 
 <section class="panel" aria-labelledby="recent-heading">
 	<h2 class="heading" id="recent-heading">{t('dev.calls.recent')}</h2>
+	<p class="small muted">{t('dev.calls.privacy')}</p>
+	{#if !any}<p class="dev-empty">{t('dev.calls.none', { days: data.days })}</p>{/if}
 	{#if data.recent.length}
 		<div class="table-scroll">
 			<table class="table wide">
@@ -110,7 +109,7 @@
 					</tr>
 				</thead>
 				<tbody>
-					{#each data.recent as c, i (i)}
+					{#each recent as c, i (i)}
 						<tr>
 							<td class="nowrap">{formatDate(c.at)}</td>
 							<td>{t(`dev.feature.${c.feature}` as MessageKey)}{#if c.purpose}<span class="small muted block">{c.purpose}</span>{/if}</td>
@@ -124,8 +123,11 @@
 				</tbody>
 			</table>
 		</div>
-	{:else}
-		<p class="small muted">{t('dev.calls.noneYet')}</p>
+		{#if data.recent.length > RECENT}
+			<div><button type="button" class="btn quiet small" aria-expanded={allRecent} onclick={() => (allRecent = !allRecent)}>{allRecent ? t('dev.calls.recentFewer', { n: RECENT }) : t('dev.calls.recentMore', { n: data.recent.length })}</button></div>
+		{/if}
+	{:else if any}
+		<p class="dev-empty">{t('dev.calls.noneYet')}</p>
 	{/if}
 </section>
 
@@ -135,5 +137,12 @@
 	}
 	.nowrap {
 		white-space: nowrap;
+	}
+	.codes {
+		grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+		gap: 8px 32px;
+	}
+	p {
+		margin: 0;
 	}
 </style>

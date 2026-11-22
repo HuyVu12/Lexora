@@ -31,6 +31,7 @@ from pydantic import BaseModel, ConfigDict, Field
 from starlette.exceptions import HTTPException as StarletteHTTPException
 
 from legal_ai.auth import SESSION_HOURS, AccountStore, AuthError
+from legal_ai.common.cache import BoundedCache
 from legal_ai.common.io import canonical
 from legal_ai.glossary import bilingual, embed_terms
 from legal_ai.guides import Guides
@@ -66,6 +67,7 @@ UPLOAD_PATH, UPLOAD_LIMIT = "/api/corpus/file", MAX_FILE_BYTES * 4 // 3 + 100_00
 # Question packs carry a corpus version; they get the same large limit as file uploads.
 LARGE_PATHS = {UPLOAD_PATH, "/api/prepare-file", "/api/question-sets/import-pack", "/api/question-set/import-labels",
                "/api/gold/import-pack", "/api/gold/import-labels"}
+GRAPH_CACHE_SIZE = 4  # Serialized graphs of published revisions, ~6 MB each on the VM store.
 NO_PROPOSER = "Chưa bật đề xuất bằng model cho phiên chạy này (khởi động với --proposal-model và --approve-claude)"
 
 
@@ -123,6 +125,15 @@ class ChatAskBody(Body):
     mode: Literal["extractive", "llm"] = "extractive"
     allow_public_transfer: bool = False
     semantic: bool = False
+
+
+class ChatRenameBody(Body):
+    session_id: str
+    title: str
+
+
+class ChatHideBody(Body):
+    session_id: str
 
 
 class AccountCreateBody(Body):
@@ -309,6 +320,17 @@ def error(message, status, **extra):
     return JSONResponse({"error": message, **extra}, status_code=status)
 
 
+def json_bytes(value):
+    """The bytes FastAPI's JSONResponse would send for a JSON-native value, for bodies worth caching."""
+    return json.dumps(value, ensure_ascii=False, allow_nan=False, indent=None, separators=(",", ":")).encode("utf-8")
+
+
+def json_response(value):
+    """The same response as returning `value`, without FastAPI's generic encoder pass over every nested value:
+    for large bodies built only of JSON types (a draft review view is 1-2 MB), that pass costs more than the dump."""
+    return Response(json_bytes(value), media_type="application/json")
+
+
 def create_app(store, port, *, provider=None, source_catalog=None, extractor=None, embedder=None, token=None, frontend_dir=None,
                catalog_path=None, vbpl_dir=None, proposer=None, experiments_dir="experiments/runs", public_hosts=(), guides_dir="docs/guides"):
     """Build the app for one loopback port and one workspace store; `frontend_dir` is the SvelteKit static build.
@@ -340,6 +362,7 @@ def create_app(store, port, *, provider=None, source_catalog=None, extractor=Non
     audits = AuditStore(store.path)
     store.interrupt_extractions()
     frontend = Path(frontend_dir).resolve() if frontend_dir else None
+    graph_bodies = BoundedCache(GRAPH_CACHE_SIZE)
     app = FastAPI(title="Lexora", docs_url=None, redoc_url=None, openapi_url="/api/openapi.json")
     app.state.token, app.state.accounts = token, accounts
 
@@ -386,7 +409,8 @@ def create_app(store, port, *, provider=None, source_catalog=None, extractor=Non
         return account
 
     def own_chat(session_id, account):
-        if session_id not in accounts.chats_of(account["id"]):
+        # A conversation its owner removed from view answers like one that never existed.
+        if session_id not in accounts.chats_of(account["id"]) or chat.hidden(session_id):
             raise Denied(404, "Không tìm thấy cuộc trò chuyện")
 
     @app.middleware("http")
@@ -492,8 +516,8 @@ def create_app(store, port, *, provider=None, source_catalog=None, extractor=Non
     # Workspace -------------------------------------------------------------------------
     @app.get("/api/state")
     def state(account=Depends(current)):
-        mine = accounts.chats_of(account["id"])
-        value = {**store.state(), "chat_sessions": [s for s in chat.sessions() if s["id"] in mine],
+        # Only the account's own chats are read at all, before their knowledge bases are named.
+        value = {**store.state(), "chat_sessions": chat.sessions(accounts.chats_of(account["id"])),
                  "router_enabled": provider is not None, "account": account,
                  "extraction_model": extractor.model if extractor else None,
                  "extraction_via": ("claude" if hasattr(extractor, "structured") else "9router") if extractor else None,
@@ -539,24 +563,28 @@ def create_app(store, port, *, provider=None, source_catalog=None, extractor=Non
     def knowledge_base_graph(id: str = Query(), _=Depends(current)):
         """The evidence graph of a base's current published revision (what readers may see)."""
         kb = store.knowledge_base(id)
-        revision = store.revision(kb["current_revision"], kb["id"])
-        return {"kb_id": kb["id"], "revision": revision["id"], "graph": revision["graph"]}
+
+        def render():
+            revision = store.revision(kb["current_revision"], kb["id"])
+            return json_bytes({"kb_id": kb["id"], "revision": revision["id"], "graph": revision["graph"]})
+        # A revision never changes, so its multi-MB body is serialized once; a new publish has a new ID.
+        return Response(graph_bodies.get(kb["current_revision"], render), media_type="application/json")
 
     @app.get("/api/draft")
     def draft(id: str = Query(), _=Depends(reviewer)):
-        return store.draft_view(id)
+        return json_response(store.draft_view(id))
 
     @app.post("/api/prepare")
     def prepare(body: PrepareBody, _=Depends(reviewer)):
         made = store.prepare(body.title, body.text, body.synthetic, target=body.target, **options(body))
         launch(made)
-        return store.draft_view(made["id"])
+        return json_response(store.draft_view(made["id"]))
 
     @app.post("/api/prepare-source")
     def prepare_source(body: PrepareSourceBody, _=Depends(reviewer)):
         made = library.prepare(store, body.source_id, body.target, **options(body))
         launch(made)
-        return store.draft_view(made["id"])
+        return json_response(store.draft_view(made["id"]))
 
     # Importing official documents and files into a knowledge base ------------------------
     def vbpl_text(manifest, raw):
@@ -597,7 +625,7 @@ def create_app(store, port, *, provider=None, source_catalog=None, extractor=Non
         title = f"{meta.get('title') or meta.get('doc_num')} ({span})"[:200]
         made = store.prepare(title, text, False, manifest["site_url"], target=body.target, **options(body))
         launch(made)
-        return store.draft_view(made["id"])
+        return json_response(store.draft_view(made["id"]))
 
     @app.post("/api/prepare-file")
     def prepare_file(body: PrepareFileBody, _=Depends(reviewer)):
@@ -608,18 +636,18 @@ def create_app(store, port, *, provider=None, source_catalog=None, extractor=Non
         text = extract_text(body.filename, data)["text"]
         made = store.prepare(body.title, text, body.synthetic, target=body.target, **options(body))
         launch(made)
-        return store.draft_view(made["id"])
+        return json_response(store.draft_view(made["id"]))
 
     @app.post("/api/draft/extract")
     def extract(body: DraftBody, _=Depends(reviewer)):
         if extractor is None:
             raise ValueError(NO_EXTRACTOR)
         launch(store.draft(body.draft_id))
-        return store.draft_view(body.draft_id)
+        return json_response(store.draft_view(body.draft_id))
 
     @app.post("/api/draft/review")
     def review(body: ReviewBody, _=Depends(reviewer)):
-        return store.review(body.draft_id, body.item_id, body.decision, body.payload)
+        return json_response(store.review(body.draft_id, body.item_id, body.decision, body.payload))
 
     @app.post("/api/draft/discard")
     def discard(body: DraftBody, _=Depends(reviewer)):
@@ -651,6 +679,27 @@ def create_app(store, port, *, provider=None, source_catalog=None, extractor=Non
         ops.record_event("chat_ask", mode=body.mode, semantic=body.semantic, status=answer.get("status"), citations=len(answer.get("citations") or []),
                          kbs=len(answer.get("bindings") or []), ms=round((time.monotonic() - began) * 1000))  # Counts only, never the question.
         return answer
+
+    @app.post("/api/chat/rename")
+    def chat_rename(body: ChatRenameBody, account=Depends(current)):
+        own_chat(body.session_id, account)
+        renamed = chat.rename(body.session_id, body.title)
+        return {k: renamed[k] for k in ("id", "title", "custom_title")}
+
+    @app.post("/api/chat/hide")
+    def chat_hide(body: ChatHideBody, account=Depends(current)):
+        own_chat(body.session_id, account)
+        return chat.hide(body.session_id)
+
+    @app.get("/api/chat/source")
+    def chat_source(session_id: str = Query(), turn: int = Query(), citation: str = Query(), account=Depends(current)):
+        own_chat(session_id, account)
+        return chat.source(session_id, turn, citation)
+
+    @app.get("/api/chat/suggestions")
+    def chat_suggestions(kb: list[str] = Query(default=[]), _=Depends(current)):
+        # Readers only ever see published bases; the service skips any base without a published revision.
+        return chat.suggestions(kb)
 
     # Research corpora (reviewers) -------------------------------------------------------
     @app.get("/api/corpora")
@@ -716,14 +765,6 @@ def create_app(store, port, *, provider=None, source_catalog=None, extractor=Non
         return document | {"relationships": catalog.relationships(id)}
 
     # Question sets (reviewers; the signed-in account is the annotator) ------------------
-    def frozen_versions():
-        listing = []
-        for c in corpora.corpora():
-            for v in corpora.corpus(c["id"])["versions"]:
-                listing.append({"id": v["id"], "corpus_id": c["id"], "corpus_name": c["name"], "number": v["number"],
-                                "document_count": v["document_count"], "unit_count": v["unit_count"], "frozen_at": v["frozen_at"]})
-        return listing
-
     def model_call(fn):
         if proposer is None:
             raise ValueError(NO_PROPOSER)
@@ -737,7 +778,7 @@ def create_app(store, port, *, provider=None, source_catalog=None, extractor=Non
 
     @app.get("/api/question-sets")
     def question_sets(_=Depends(reviewer)):
-        return {"sets": questions.sets(), "versions": frozen_versions(), "proposal_model": proposer.model if proposer else None,
+        return {"sets": questions.sets(), "versions": corpora.frozen_versions(), "proposal_model": proposer.model if proposer else None,
                 "proposal_effort": proposer.effort if proposer else None}
 
     @app.post("/api/question-sets")
@@ -838,11 +879,8 @@ def create_app(store, port, *, provider=None, source_catalog=None, extractor=Non
     # Experiment results (read-only view of run directories) -----------------------------------
     @app.get("/api/experiments/kb")
     def experiment_kb_runs(_=Depends(researcher)):
-        from legal_ai.evaluation.kb_compare import kb_runs, summarize
         from legal_ai.validation.claims import VALIDATOR_VERSION
-        folder = Path(experiments_dir)
-        runs = [summarize(path) for path in kb_runs(folder)] if folder.exists() else []
-        return {"runs": runs, "validator_version": VALIDATOR_VERSION, "folder": folder.as_posix()}
+        return {"runs": kb_summaries(), "validator_version": VALIDATOR_VERSION, "folder": Path(experiments_dir).as_posix()}
 
     # Rejection audit (reviewers label; the key and the score only for admin and dev) -------------
     @app.get("/api/audit")
@@ -884,9 +922,8 @@ def create_app(store, port, *, provider=None, source_catalog=None, extractor=Non
 
     # Monitoring (admin and dev; changes by dev only) -------------------------------------------
     def kb_summaries():
-        from legal_ai.evaluation.kb_compare import kb_runs, summarize
-        folder = Path(experiments_dir)
-        return [summarize(path) for path in kb_runs(folder)] if folder.exists() else []
+        from legal_ai.evaluation.kb_compare import summaries
+        return summaries(experiments_dir)
 
     def models_in_use():
         return {feature: ({"model": inner.model, "provider": inner._kind, "calls": getattr(inner, "calls", None),
@@ -914,7 +951,7 @@ def create_app(store, port, *, provider=None, source_catalog=None, extractor=Non
             alerts.append({"level": "warning", "code": "blocked", "value": today["blocked"]})
         return {"today": today, "controls": controls, "models": models, "alerts": alerts, "can_change": account["role"] == "dev",
                 "running": [{"id": d["id"], "title": d["title"], "kb_name": d["kb_name"]} for d in drafts if d["extraction_state"] == "running"],
-                "changes": ops.changes(10), "started_at": started_at}
+                "changes": ops.changes(10), "started_at": started_at, "trend": ops.daily(14)}
 
     @app.get("/api/dev/calls")
     def dev_calls(days: int = Query(14), _=Depends(monitor)):
@@ -993,7 +1030,7 @@ def create_app(store, port, *, provider=None, source_catalog=None, extractor=Non
     # Extraction gold sets (RQ1) --------------------------------------------------------------
     @app.get("/api/gold")
     def gold_sets(_=Depends(reviewer)):
-        return {"sets": golds.sets(), "versions": frozen_versions()}
+        return {"sets": golds.sets(), "versions": corpora.frozen_versions()}
 
     @app.post("/api/gold")
     def gold_create(body: GoldCreateBody, account=Depends(reviewer)):

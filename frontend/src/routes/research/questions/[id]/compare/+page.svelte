@@ -2,7 +2,10 @@
 	import PageGuide from '#lib/components/PageGuide.svelte';
 	import StepTag from '#lib/components/StepTag.svelte';
 	import { page } from '$app/state';
+	import { goto } from '$app/navigation';
+	import Skeleton from '#lib/components/Skeleton.svelte';
 	import Icon from '#lib/components/Icon.svelte';
+	import PageSkeleton from '#lib/components/PageSkeleton.svelte';
 	import Term from '#lib/components/Term.svelte';
 	import LabelForm from '#lib/components/LabelForm.svelte';
 	import { api } from '#lib/api.js';
@@ -14,6 +17,10 @@
 
 	const id = $derived(page.params.id ?? '');
 	const other = $derived(page.url.searchParams.get('other') ?? '');
+	// The comparison needs the other annotator; a link without one goes back to the set instead of waiting forever.
+	$effect(() => {
+		if (id && !other) goto(`/research/questions/${id}`, { replaceState: true });
+	});
 	let report = $state<Comparison | null>(null);
 	let summary = $state<QuestionSetSummary | null>(null);
 	let error = $state('');
@@ -104,20 +111,20 @@
 		<h1 class="title">{t('common.forbidden.title')}</h1>
 	{:else if error}
 		<p class="notice error" role="alert">{error}</p>
-	{:else if !report || !summary}
-		<p class="muted">{t('common.loading')}</p>
 	{:else}
-		<p class="crumb"><a href="/research/questions/{id}"><Icon name="back" size={16} />{summary.name}</a></p>
+		<p class="crumb"><a href="/research/questions/{id}"><Icon name="back" size={16} />{summary?.name ?? t('qs.title')}</a></p>
 		<header class="page-head">
 			<div>
 				<h1 class="title">{t('cmp.title')}</h1>
-				<p class="lead">{t('cmp.lead', { a: report.first.name ?? report.first.annotator, b: report.second.name ?? report.second.annotator })}</p>
+				<p class="lead">{#if report}{t('cmp.lead', { a: report.first.name ?? report.first.annotator, b: report.second.name ?? report.second.annotator })}{:else}<Skeleton width="min(520px, 80vw)" height="14px" />{/if}</p>
 			</div>
 		</header>
 		<PageGuide name="compare" steps={3} />
-
+		{#if !report || !summary}
+			<PageSkeleton head={false} blocks={3} />
+		{:else}
 		<h2 class="heading section-title"><StepTag n={1} />{t('cmp.metrics')}</h2>
-		<section class="metrics" aria-label={t('cmp.metrics')}>
+		<section class="metrics" data-tour="cmp-metrics" aria-label={t('cmp.metrics')}>
 			<div><span class="value">{report.labelled_by_both}/{report.questions}</span><span class="small muted">{t('cmp.both')}</span></div>
 			<div><span class="value">{fmt(report.kappa_question_type)}</span><span class="small muted"><Term key="kappa">{t('cmp.kappaType')}</Term></span></div>
 			<div><span class="value">{fmt(report.kappa_expected_status)}</span><span class="small muted"><Term key="kappa">{t('cmp.kappaStatus')}</Term></span></div>
@@ -140,7 +147,7 @@
 		{/if}
 
 		<h2 class="heading section-title"><StepTag n={2} />{t('cmp.final')}</h2>
-		<div class="row between toolbar">
+		<div class="row between toolbar" data-tour="cmp-final">
 			<div class="segmented" role="group" aria-label={t('cmp.filter')}>
 				<button type="button" aria-pressed={filter === 'disagree'} onclick={() => (filter = 'disagree')}>{t('cmp.filter.disagree')}</button>
 				<button type="button" aria-pressed={filter === 'open'} onclick={() => (filter = 'open')}>{t('cmp.filter.open')}</button>
@@ -182,7 +189,7 @@
 		</ol>
 
 		{#if !frozen}
-			<section class="panel freeze">
+			<section class="panel freeze" data-tour="cmp-freeze">
 				<h2 class="heading"><StepTag n={3} />{t('cmp.freeze')}</h2>
 				<p class="small muted">{t('cmp.freezeLead')}</p>
 				<label class="field inline"><span><Term key="held_out">{t('cmp.heldOut')}</Term></span><input type="number" min="10" max="50" step="5" bind:value={heldOut} />%</label>
@@ -190,20 +197,13 @@
 				{#if report.adjudicated < report.questions}<p class="small muted">{t('cmp.freezeNeed', { n: report.questions - report.adjudicated })}</p>{/if}
 			</section>
 		{/if}
+		{/if}
 	{/if}
 </div>
 
 <style>
 	.section-title {
 		margin: 0 0 10px;
-	}
-	.crumb {
-		margin: 0 0 8px;
-	}
-	.crumb a {
-		display: inline-flex;
-		align-items: center;
-		gap: 6px;
 	}
 	.metrics {
 		display: grid;

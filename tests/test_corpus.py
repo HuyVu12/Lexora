@@ -84,6 +84,15 @@ class CorpusTests(unittest.TestCase):
         self.assertEqual([d["document_id"] for d in documents], ["a"], "version 1 still holds the removed document")
         self.assertEqual(texts["a"], LAW)
         self.assertEqual(self.store.document(first["id"])["removed_at"] is not None, True)
+        self.assertEqual([d["document_id"] for d in self.store.corpus(cid)["documents"]], ["b"], "a removed document leaves the listing")
+        other = self.store.create("Khác", "", "phapche")
+        self.store.add_file(other["id"], "c.txt", OTHER.encode("utf-8"), "phapche")
+        v3 = self.store.freeze(other["id"], "", "phapche")
+        listing = [(v["id"], v["corpus_name"], v["number"], v["document_count"], v["unit_count"]) for v in self.store.frozen_versions()]
+        expected = [(v["id"], c["name"], v["number"], v["document_count"], v["unit_count"])
+                    for c in self.store.corpora() for v in self.store.corpus(c["id"])["versions"]]
+        self.assertEqual(listing, expected)
+        self.assertEqual({row[0] for row in listing}, {v1["id"], v2["id"], v3["id"]})
 
     def test_export_writes_a_bundle_that_retrieval_runs_read(self):
         cid = self.corpus["id"]

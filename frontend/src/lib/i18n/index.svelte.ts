@@ -1,9 +1,19 @@
 import vi, { type MessageKey } from './vi';
-import en from './en';
 
 export type Locale = 'vi' | 'en';
 const STORAGE_KEY = 'lexora-locale';
-const dictionaries: Record<Locale, Record<MessageKey, string>> = { vi, en };
+// Vietnamese ships with the app; English (as large again) loads only when someone switches to it.
+const dictionaries: Partial<Record<Locale, Record<MessageKey, string>>> = { vi };
+let loadingEn: Promise<void> | null = null;
+
+/** Fetch the English dictionary once. Hovering the language button calls it early, so the switch is instant. */
+export function preloadLocale(locale: Locale): Promise<void> {
+	if (dictionaries[locale]) return Promise.resolve();
+	loadingEn ??= import('./en').then((m) => {
+		dictionaries.en = m.default;
+	});
+	return loadingEn;
+}
 
 function initial(): Locale {
 	const saved = typeof localStorage !== 'undefined' ? localStorage.getItem(STORAGE_KEY) : null;
@@ -11,24 +21,40 @@ function initial(): Locale {
 	return typeof navigator !== 'undefined' && navigator.language.toLowerCase().startsWith('en') ? 'en' : 'vi';
 }
 
-const state = $state({ locale: initial() });
-if (typeof document !== 'undefined') document.documentElement.lang = state.locale;
+const wanted = initial();
+// Until a saved English dictionary has arrived the interface reads Vietnamese; +layout.ts waits for `ready`.
+const state = $state({ locale: 'vi' as Locale });
+if (typeof document !== 'undefined') document.documentElement.lang = 'vi';
+const ready: Promise<void> =
+	wanted === 'vi'
+		? Promise.resolve()
+		: preloadLocale(wanted)
+				.then(() => apply(wanted))
+				.catch(() => undefined);
+
+function apply(locale: Locale) {
+	state.locale = locale;
+	document.documentElement.lang = locale;
+}
 
 export const i18n = {
 	get locale(): Locale {
 		return state.locale;
 	},
-	set(locale: Locale) {
-		state.locale = locale;
+	/** Resolves once the saved locale's dictionary is in place (the first render waits for it). */
+	ready,
+	async set(locale: Locale) {
 		localStorage.setItem(STORAGE_KEY, locale);
-		document.documentElement.lang = locale;
+		await preloadLocale(locale);
+		apply(locale);
 	}
 };
 
 /** Translate a key; `{name}` placeholders are filled from params. Reactive: it reads the current locale. */
 export function t(key: MessageKey, params?: Record<string, string | number>): string {
 	const one = `${key}.one` as MessageKey;
-	let text = params?.n === 1 && one in dictionaries[state.locale] ? dictionaries[state.locale][one] : dictionaries[state.locale][key];
+	const dict = dictionaries[state.locale] ?? vi;
+	let text = params?.n === 1 && one in dict ? dict[one] : dict[key];
 	if (params) for (const [name, value] of Object.entries(params)) text = text.replaceAll(`{${name}}`, String(value));
 	return text;
 }

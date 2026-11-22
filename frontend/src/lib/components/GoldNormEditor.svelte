@@ -33,11 +33,11 @@
 
 <div class="norms">
 	{#each norms as norm, i (i)}
-		<fieldset class="norm" {disabled}>
+		<fieldset class="norm" {disabled} data-tour="gold-norm">
 			<legend>{t('gold.norm', { n: i + 1 })}</legend>
 			<button type="button" class="btn quiet small remove" onclick={() => remove(i)}><Icon name="x" size={16} />{t('gold.removeNorm')}</button>
 			<div class="head">
-				<label class="field"
+				<label class="field" data-tour="gold-modality"
 					><span><Term key="modality" /></span>
 					<select bind:value={norm.modality}>
 						{#each modalities as m (m)}<option value={m}>{t(modalityKey(m))}</option>{/each}
@@ -47,7 +47,7 @@
 					<label for="cue-{i}"><Term key="cue">{t('gold.cue')}</Term></label>
 					<div class="fill-row">
 						<input id="cue-{i}" value={norm.modality_cue ?? ''} oninput={(e) => (norm.modality_cue = e.currentTarget.value || null)} />
-						<button type="button" class="btn small" disabled={!selection} aria-label={t('gold.fillLabel', { slot: t('gold.cue') })} onclick={() => fillCue(i)}>{t('gold.fill')}</button>
+						<button type="button" class="btn small" data-tour="gold-fill" disabled={!selection} aria-label={t('gold.fillLabel', { slot: t('gold.cue') })} onclick={() => fillCue(i)}>{t('gold.fill')}</button>
 					</div>
 					<span class="hint">{t('gold.cueHint')}</span>
 				</div>
@@ -62,7 +62,7 @@
 								value={norm.slots[slot] ?? ''}
 								oninput={(e) => (norm.slots = { ...norm.slots, [slot]: e.currentTarget.value })}
 							/>
-							<button type="button" class="btn small" disabled={!selection} aria-label={t('gold.fillLabel', { slot: t(`slot.${slot}` as MessageKey) })} onclick={() => fill(i, slot)}
+							<button type="button" class="btn small" data-tour="gold-fill" disabled={!selection} aria-label={t('gold.fillLabel', { slot: t(`slot.${slot}` as MessageKey) })} onclick={() => fill(i, slot)}
 								>{t('gold.fill')}</button
 							>
 						</div>
@@ -71,7 +71,7 @@
 			</div>
 		</fieldset>
 	{/each}
-	<div><button type="button" class="btn" {disabled} onclick={add}><Icon name="plus" />{t('gold.addNorm')}</button></div>
+	<div><button type="button" class="btn" {disabled} onclick={add} data-tour="gold-add-norm"><Icon name="plus" />{t('gold.addNorm')}</button></div>
 </div>
 
 <style>

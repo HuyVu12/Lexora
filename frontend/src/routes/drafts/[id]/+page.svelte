@@ -8,7 +8,10 @@
 	import NormCard from '#lib/components/NormCard.svelte';
 	import Term from '#lib/components/Term.svelte';
 	import Icon from '#lib/components/Icon.svelte';
+	import Skeleton from '#lib/components/Skeleton.svelte';
+	import ConfirmDialog from '#lib/components/ConfirmDialog.svelte';
 	import { api } from '#lib/api.js';
+	import { rise } from '#lib/motion.js';
 	import { t, unitLabel } from '#lib/i18n/index.svelte.js';
 	import { session, canReview } from '#lib/session.svelte.js';
 	import { notify } from '#lib/toast.svelte.js';
@@ -57,6 +60,8 @@
 	const focusedClaim = $derived(focus?.kind === 'claim' ? draft?.claims.find((c) => c.id === focus!.id) ?? null : null);
 	const focusedGap = $derived(focus?.kind === 'gap' ? draft?.gaps.find((g) => g.id === focus!.id) ?? null : null);
 	const decided = $derived(draft ? draft.progress.total - draft.progress.undecided : 0);
+	const pa = $derived(draft?.progress.total ? draft.progress.approved / draft.progress.total : 0);
+	const pr = $derived(draft?.progress.total ? draft.progress.rejected / draft.progress.total : 0);
 	const target = $derived(
 		draft ? (draft.target.mode === 'new' ? t('review.target.new', { name: draft.target.name ?? '' }) : t('review.target.merge', { name: draft.kb?.name ?? '' })) : ''
 	);
@@ -98,8 +103,9 @@
 		getSelection()?.removeAllRanges();
 	}
 
+	// Discarding asks first in the app's own dialog (red, like every removal), never the browser's confirm().
+	let discardOpen = $state(false);
 	async function discard() {
-		if (!confirm(t('review.discardConfirm'))) return;
 		await guarded(async () => {
 			await api('/api/draft/discard', { draft_id: id });
 			notify({ key: 'review.discarded' });
@@ -128,9 +134,13 @@
 			window.removeEventListener('scroll', update, true);
 		};
 	});
+	// The title is the page heading already; the line under the first article only says where the text comes from.
 	const provenance = $derived(
-		draft ? `${draft.title} · ${/^https:\/\//.test(draft.document.source_url ?? '') ? t('review.provenance.library') : t('review.provenance.upload')}` : ''
+		draft ? capital(/^https:\/\//.test(draft.document.source_url ?? '') ? t('review.provenance.library') : t('review.provenance.upload')) : ''
 	);
+	function capital(text: string) {
+		return text.charAt(0).toLocaleUpperCase('vi') + text.slice(1);
+	}
 
 	function jump(articleId: string) {
 		document.getElementById(`article-${articleId.split('/').pop()}`)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -144,7 +154,24 @@
 {:else if loadError}
 	<div class="page"><p class="notice error" role="alert">{loadError}</p></div>
 {:else if !draft}
-	<p class="page muted">{t('common.loading')}</p>
+	<div class="review" aria-busy="true">
+		<span class="visually-hidden" role="status">{t('common.loading')}</span>
+		<header class="head">
+			<Steps current={2} />
+			<div class="titlebar">
+				<div class="ghost-title"><Skeleton width="min(460px, 70vw)" height="30px" /><Skeleton width="220px" height="13px" /></div>
+				<div class="progress"><Skeleton width="180px" height="15px" /><Skeleton height="8px" radius="4px" /><Skeleton width="300px" height="12px" /></div>
+			</div>
+		</header>
+		<div class="grid">
+			<aside class="index ghost-index">{#each [0, 1, 2, 3, 4] as i (i)}<Skeleton width="{88 - i * 6}%" height="14px" />{/each}</aside>
+			<div class="paper sheet ghost-paper">
+				<Skeleton width="38%" height="20px" />
+				{#each [0, 1, 2] as i (i)}<Skeleton lines={3} height="15px" gap="14px" last="54%" />{/each}
+			</div>
+			<aside class="side"><div class="sheet hint ghost-card"><Skeleton width="50%" height="16px" /><Skeleton lines={4} height="12px" gap="10px" /></div></aside>
+		</div>
+	</div>
 {:else if draft.status !== 'draft'}
 	<div class="page"><h1 class="title">{draft.title}</h1><p class="lead">{t('review.cancelled')}</p><a class="btn" href="/import">{t('nav.import')}</a></div>
 {:else if ['queued', 'running'].includes(draft.extraction.state)}
@@ -156,7 +183,7 @@
 		<section class="sheet extracting" aria-live="polite">
 			<h2 class="subtitle">{t('review.extracting.title')}</h2>
 			<p>{t('review.extracting.body', { model: x.model })}</p>
-			<div class="track big" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow={pct}><i style:width="{Math.max(4, pct)}%"></i></div>
+			<div class="track big" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow={pct}><i style:transform="scaleX({Math.max(4, pct) / 100})"></i></div>
 			<p class="small muted">{x.total ? t('review.extracting.progress', { done: x.done, total: x.total }) : t('review.extracting.preparing')}</p>
 			<p class="small muted">{t('review.extracting.leave')}</p>
 		</section>
@@ -170,19 +197,15 @@
 					<h1 class="title">{draft.title}</h1>
 					<p class="muted">{target}{#if draft.document.synthetic}<span class="chip synthetic">{t('common.synthetic')}</span>{/if}</p>
 				</div>
-				<div class="progress">
+				<div class="progress" data-tour="review-progress">
 					<p><strong>{t('review.progress', { done: decided, total: draft.progress.total })}</strong></p>
 					<div class="track" role="img" aria-label="{t('review.legend.approved', { n: draft.progress.approved })}, {t('review.legend.rejected', { n: draft.progress.rejected })}">
-						<i class="a" style:width="{draft.progress.total ? (100 * draft.progress.approved) / draft.progress.total : 0}%"></i><i
-							class="r"
-							style:width="{draft.progress.total ? (100 * draft.progress.rejected) / draft.progress.total : 0}%"
-						></i>
+						<i class="a" style:transform="scaleX({pa})"></i><i class="r" style:transform="translateX({pa * 100}%) scaleX({pr})"></i>
 					</div>
 					<p class="legend small">
 						<span><i class="a"></i>{t('review.legend.approved', { n: draft.progress.approved })}</span>
 						<span><i class="r"></i>{t('review.legend.rejected', { n: draft.progress.rejected })}</span>
-						<span><i></i>{t('review.legend.undecided', { n: draft.progress.undecided })}</span>
-						{#if draft.progress.gaps}<span><i class="g"></i><Term key="gap">{t('review.legend.gaps', { n: draft.progress.gaps_open })}</Term></span>{/if}
+						<!-- What is still open (norms and sentences without one) is counted once, in the bar at the bottom. -->
 					</p>
 				</div>
 			</div>
@@ -212,7 +235,7 @@
 								<span class="count" class:done={!s.open && !s.openGaps}>{s.claims.length - s.open}/{s.claims.length}</span>
 							</button>
 							{#if s.open || s.openGaps}
-								<div class="batch">
+								<div class="batch" data-tour="review-batch">
 									{#if s.open}<button type="button" class="btn small" disabled={busy} onclick={() => guarded(() => review(null, 'approve_article', { article_id: s.article.id }))}><Icon name="check" size={14} />{t('review.article.batch', { n: s.open })}</button>{/if}
 									{#if s.openGaps}<button type="button" class="btn small" disabled={busy} onclick={() => guarded(() => review(null, 'no_norm_article', { article_id: s.article.id }))}><Icon name="x" size={14} />{t('review.article.noNorm', { n: s.openGaps })}</button>{/if}
 								</div>
@@ -220,7 +243,7 @@
 						</li>
 					{/each}
 				</ol>
-				<div class="key">
+				<div class="key" data-tour="review-key">
 					<p class="label">{t('review.key')}</p>
 					{#each KEY_GROUPS as g (g.cls)}
 						<p class="keyrow"><span class="swatch {g.cls}" aria-hidden="true"></span><span
@@ -248,10 +271,10 @@
 
 			<aside class="side">
 				{#if focusedClaim}
-					<NormCard claim={focusedClaim} number={numbers.get(focusedClaim.id) ?? 0} {units} {review} />
+					{#key focusedClaim.id}<div class="swap" in:rise={{ y: 4, duration: 160 }}><NormCard claim={focusedClaim} number={numbers.get(focusedClaim.id) ?? 0} {units} {review} /></div>{/key}
 				{:else if focusedGap}
 					{@const g = focusedGap}
-					<article class="sheet gapcard">
+					<article data-tour="gap-card" class="sheet gapcard" in:rise={{ y: 4, duration: 160 }}>
 						<h2 class="heading"><Term key="gap">{g.decision ? t('review.gap.dismissed') : t('review.gap.title')}</Term></h2>
 						<blockquote class="serif">{g.text}</blockquote>
 						{#if g.ai_note}<p class="pencil">{g.ai_note}</p>{/if}
@@ -308,12 +331,16 @@
 					.join(' · ') || t('review.allDone')}
 			</p>
 			<div class="row">
-				<button type="button" class="btn quiet" disabled={busy} onclick={discard}>{t('review.discard')}</button>
-				<a class="btn primary" href="/drafts/{id}/preview">{t('review.preview')}<Icon name="arrow" /></a>
+				<button type="button" class="btn quiet" disabled={busy} onclick={() => (discardOpen = true)}>{t('review.discard')}</button>
+				<a class="btn primary" href="/drafts/{id}/preview" data-tour="review-preview">{t('review.preview')}<Icon name="arrow" /></a>
 			</div>
 		</footer>
 	</div>
 {/if}
+
+<ConfirmDialog bind:open={discardOpen} title={t('review.discardConfirm')} confirmLabel={t('review.discard')} cancelLabel={t('review.keepDraft')} tone="danger" onconfirm={discard}>
+	<p>{t('review.discardBody', { title: draft?.title ?? '' })}</p>
+</ConfirmDialog>
 
 <style>
 	.narrow {
@@ -349,16 +376,20 @@
 		display: grid;
 		gap: 6px;
 	}
+	/* Progress segments scale instead of resizing, so each decision animates on the compositor. */
 	.track {
+		position: relative;
 		height: 8px;
 		border-radius: 4px;
 		background: #cdd0d0;
-		display: flex;
 		overflow: hidden;
 	}
 	.track i {
+		position: absolute;
+		inset: 0;
 		display: block;
-		height: 100%;
+		transform-origin: 0 50%;
+		transition: transform var(--dur-slow) var(--ease-out);
 	}
 	.track .a,
 	.legend .a {
@@ -374,7 +405,6 @@
 	}
 	.track.big i {
 		background: var(--graphite);
-		transition: width 0.4s var(--ease-out);
 	}
 	.legend {
 		display: flex;
@@ -393,8 +423,19 @@
 		border-radius: 2px;
 		background: var(--rule-strong);
 	}
-	.legend .g {
-		background: var(--attention);
+	.ghost-title,
+	.ghost-index,
+	.ghost-card {
+		display: grid;
+		gap: 12px;
+	}
+	.ghost-paper {
+		display: grid;
+		gap: 26px;
+		align-content: start;
+	}
+	.swap {
+		display: grid;
 	}
 	.grid {
 		max-width: 1560px;
@@ -585,8 +626,11 @@
 			position: static;
 			max-height: none;
 		}
+		/* The flags (40px) sit at the sheet's right padding plus 14px: 28px keeps them clear of the text and
+		 * their overhang inside the page gutter. */
 		.paper {
-			padding: 24px 20px;
+			--sheet-pad-right: 28px;
+			padding: 24px var(--sheet-pad-right) 24px 20px;
 		}
 		.progress {
 			min-width: 0;

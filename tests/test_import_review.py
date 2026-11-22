@@ -263,5 +263,53 @@ class ImportReviewTests(unittest.TestCase):
         self.assertEqual(len(ReviewStore(path).knowledge_bases()), 1)
 
 
+    # Listings come from summary rows and cached revisions; they must follow every write at once.
+
+    def test_listings_follow_every_review_and_publish_at_once(self):
+        draft = self.prepare()
+        claims = self.decisions(draft)
+        [row] = self.store.state()["drafts"]
+        self.assertEqual((row["status"], row["claims"], row["decided"], row["kb_name"]), ("draft", len(claims), 0, "Kho thử"))
+        self.store.review(draft["id"], next(iter(claims)), "approve")
+        self.assertEqual(self.store.state()["drafts"][0]["decided"], 1)
+        quote = self.store.draft_view(draft["id"])["claims"][0]["quote"]
+        self.store.review(draft["id"], None, "add_claim", {k: quote[k] for k in ("unit_version_id", "start", "end")})
+        self.assertEqual(self.store.state()["drafts"][0]["claims"], len(claims) + 1, "a rewritten body rewrites its summary")
+        draft = self.store.draft(draft["id"])
+        first = self.publish(draft)
+        [row] = self.store.state()["drafts"]
+        self.assertEqual(row["status"], "merged")
+        kb = self.kb()
+        self.assertEqual((kb["current_revision"], kb["revisions"], kb["documents"]), (first["id"], 1, 1))
+        self.assertEqual(kb["approved_claims"], len(claims) + 1)
+        second = self.publish(self.prepare(OTHER, {"mode": "merge", "kb_id": kb["id"]}))
+        kb = self.kb()
+        self.assertEqual((kb["current_revision"], kb["revisions"], kb["documents"]), (second["id"], 2, 2))
+        self.assertEqual(self.store.current(kb["id"])["id"], second["id"])
+        detail = self.store.knowledge_base(kb["id"])
+        self.assertEqual([r["id"] for r in detail["revisions"]], [second["id"], first["id"]])
+        self.assertEqual([d["title"] for d in detail["documents"]], ["SYNTHETIC - NOT REAL LAW"] * 2)
+        self.assertEqual(detail["approved_claims"], sum(1 for n in second["graph"]["nodes"] if n["kind"] == "NormClaim"))
+        self.assertIs(self.store.revision(first["id"]), self.store.revision(first["id"]), "immutable revisions are parsed once")
+        reopened = ReviewStore(self.path)
+        self.assertEqual(reopened.state(), self.store.state())
+        self.assertEqual(reopened.knowledge_base(kb["id"]), detail)
+
+    def test_rows_written_without_summaries_are_listed_from_their_bodies(self):
+        draft = self.prepare()
+        revision = self.publish(self.prepare(OTHER, {"mode": "new", "name": "Kho khác", "data_class": "private"}))
+        body = self.store.draft(draft["id"]) | {"title": "Sửa ngoài ReviewStore"}
+        with closing(sqlite3.connect(self.path)) as db, db:
+            # As an older build would write: only the body. The trigger drops the summary it made stale.
+            db.execute("UPDATE drafts SET body=? WHERE id=?", (canonical(body), draft["id"]))
+            self.assertIsNone(db.execute("SELECT 1 FROM draft_summaries WHERE id=?", (draft["id"],)).fetchone())
+            db.execute("DELETE FROM revision_summaries")
+        self.assertEqual(next(d for d in self.store.state()["drafts"] if d["id"] == draft["id"])["title"], "Sửa ngoài ReviewStore")
+        self.assertEqual(self.kb("Kho khác")["current_revision"], revision["id"])
+        with closing(sqlite3.connect(self.path)) as db:
+            self.assertEqual(db.execute("SELECT COUNT(*) FROM revision_summaries").fetchone()[0], 1, "missing summaries are stored again")
+            self.assertEqual(db.execute("SELECT COUNT(*) FROM draft_summaries").fetchone()[0], 2)
+
+
 if __name__ == "__main__":
     unittest.main()

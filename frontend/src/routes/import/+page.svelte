@@ -10,6 +10,7 @@
 	import ArticlePicker from '#lib/components/ArticlePicker.svelte';
 	import ConfirmDialog from '#lib/components/ConfirmDialog.svelte';
 	import { api } from '#lib/api.js';
+	import { loadAppState } from '#lib/app-state.svelte.js';
 	import { t, formatDay } from '#lib/i18n/index.svelte.js';
 	import { session, canReview } from '#lib/session.svelte.js';
 	import { notify, act } from '#lib/toast.svelte.js';
@@ -43,7 +44,7 @@
 
 	$effect(() => {
 		if (!canReview(session.account)) return;
-		Promise.all([api<AppState>('/api/state'), api<{ entries: SourceEntry[] }>('/api/sources'), api<CorpusListing>('/api/corpora')])
+		Promise.all([loadAppState(), api<{ entries: SourceEntry[] }>('/api/sources'), api<CorpusListing>('/api/corpora')])
 			.then(([s, lib, corpora]) => {
 				app = s;
 				sources = lib.entries;
@@ -149,15 +150,13 @@
 		<header class="page-head">
 			<div>
 				<h1 class="title">{t('import.title')}</h1>
-				<p class="lead">{t('import.lead')}</p>
 			</div>
 		</header>
 		<PageGuide name="import" steps={4} />
 
 		<form class="stack" id="import-form" onsubmit={submit}>
-			<fieldset class="panel">
+			<fieldset class="panel" data-tour="import-source">
 				<legend class="heading"><StepTag n={1} />{t('import.source.title')}</legend>
-				<p class="small muted">{t('import.source.lead')}</p>
 				<div class="choices">
 					{#if listing?.catalog}
 						<label class="choice"><input type="radio" name="source" value="catalog" bind:group={source} /><strong>{t('import.source.catalog')}</strong><span>{t('import.source.catalogHint')}</span></label>
@@ -185,9 +184,9 @@
 							<button type="button" class="btn quiet small" onclick={() => { fetched = null; chosen = []; }}>{t('import.pick.other')}</button>
 						</div>
 						<p class="small">{t('import.pick.lead')}</p>
-						<ArticlePicker articles={fetched.articles} bind:selected={chosen} max={MAX_ARTICLES} />
+						<div data-tour="import-articles"><ArticlePicker articles={fetched.articles} bind:selected={chosen} max={MAX_ARTICLES} /></div>
 					{:else if source === 'catalog'}
-						<CatalogSearch canFetch={!!listing?.vbpl_enabled} {busy} onpick={(r: CatalogEntry) => askFetch(r.vbpl_id, r.title)} />
+						<div data-tour="import-catalog"><CatalogSearch canFetch={!!listing?.vbpl_enabled} {busy} onpick={(r: CatalogEntry) => askFetch(r.vbpl_id, r.title)} /></div>
 					{:else}
 						<div class="fields">
 							<label class="field"><span>{t('corpus.link.label')}</span><input bind:value={reference} placeholder="https://vbpl.vn/van-ban/chi-tiet/…" /><span class="hint">{t('corpus.link.hint')}</span></label>
@@ -205,27 +204,26 @@
 						{#if source === 'file'}
 							<label class="field"><span>{t('import.file')}</span><input type="file" accept={ACCEPT} onchange={pickFile} /><span class="hint">{t('import.fileHelp')}</span></label>
 						{/if}
-						<label class="field"><span>{t('import.docTitle')}</span><input maxlength="200" required bind:value={title} /></label>
+						<label class="field" data-tour="import-doc-title"><span>{t('import.docTitle')}</span><input maxlength="200" required bind:value={title} /></label>
 						{#if source === 'paste'}
-							<label class="field"><span>{t('import.content')}</span><textarea required placeholder={t('import.contentPh')} bind:value={text}></textarea></label>
+							<label class="field" data-tour="import-paste"><span>{t('import.content')}</span><textarea required placeholder={t('import.contentPh')} bind:value={text}></textarea></label>
 						{/if}
 						<label class="check"><input type="checkbox" bind:checked={synthetic} />{t('import.synthetic')}</label>
 					</div>
 				{/if}
 			</fieldset>
 
-			<fieldset class="panel">
+			<fieldset class="panel" data-tour="import-target">
 				<legend class="heading"><StepTag n={2} />{t('import.target.title')}</legend>
-				<p class="small muted">{t('import.target.lead')}</p>
 				<div class="choices">
 					<label class="choice"><input type="radio" name="target" value="new" bind:group={mode} /><strong>{t('import.target.new')}</strong><span>{t('import.target.newHint')}</span></label>
 					<label class="choice"><input type="radio" name="target" value="merge" bind:group={mode} disabled={!kbs.length} /><strong>{t('import.target.merge')}</strong><span>{kbs.length ? t('import.target.mergeHint') : t('import.target.mergeNone')}</span></label>
 				</div>
 				<div class="fields">
 					{#if mode === 'new'}
-						<label class="field"><span>{t('import.kbName')}</span><input maxlength="100" required placeholder={t('import.kbNamePh')} bind:value={name} /></label>
+						<label class="field" data-tour="import-kb-name"><span>{t('import.kbName')}</span><input maxlength="100" required placeholder={t('import.kbNamePh')} bind:value={name} /></label>
 						<label class="field"><span>{t('import.kbDesc')} <span class="hint">({t('common.optional')})</span></span><input maxlength="500" bind:value={description} /></label>
-						<div class="choices">
+						<div class="choices" data-tour="import-dataclass">
 							<label class="choice"><input type="radio" name="dataclass" value="private" bind:group={dataClass} /><strong><Term key="private" focusable={false}>{t('import.private')}</Term></strong><span>{t('import.privateHint')}</span></label>
 							<label class="choice"><input type="radio" name="dataclass" value="public" bind:group={dataClass} /><strong><Term key="public" focusable={false}>{t('import.public')}</Term></strong><span>{t('import.publicHint')}</span></label>
 						</div>
@@ -238,7 +236,7 @@
 				</div>
 			</fieldset>
 
-			<fieldset class="panel">
+			<fieldset class="panel" data-tour="import-method">
 				<legend class="heading"><StepTag n={3} />{t('import.method.title')}</legend>
 				<p class="small muted">{t('import.method.lead')}</p>
 				<div class="choices">
@@ -249,7 +247,7 @@
 				</div>
 			</fieldset>
 
-			<div class="row submit">
+			<div class="row submit" data-tour="import-submit">
 				<button class="btn primary" type="submit" disabled={busy || !ready}><StepTag n={4} compact />{t('import.submit')}</button>
 				<span class="small muted">{extraction === 'llm' ? t('import.method.aiNote') : t('import.method.rulesNote')}</span>
 			</div>

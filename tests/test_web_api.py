@@ -191,6 +191,46 @@ class WebApiTests(unittest.TestCase):
         self.assertEqual(self.client().get("/api/kb/graph", params={"id": published["kb_id"]}).status_code, 401)
         self.assertEqual(reader.get("/api/kb/graph", params={"id": "missing"}).status_code, 400)
 
+    def test_cached_views_follow_reviews_publishes_and_new_run_folders(self):
+        runs = Path(self.temp.name) / "runs"
+        self.app = create_app(self.store, PORT, token="t0ken", frontend_dir=self.build, experiments_dir=runs)
+        vu, reader = self.client("phapche", "review password 1"), self.client("nhansu", "reader password 1")
+        self.assertEqual(vu.get("/api/experiments/kb").json()["runs"], [])
+        draft = self.prepare(vu).json()
+        shown = vu.get("/api/draft", params={"id": draft["id"]})
+        self.assertEqual(shown.headers["content-type"], "application/json")
+        self.assertEqual(shown.json(), json.loads(json.dumps(self.store.draft_view(draft["id"]))))
+        self.post(vu, "/api/draft/review", {"draft_id": draft["id"], "item_id": draft["claims"][0]["id"], "decision": "approve"})
+        [row] = vu.get("/api/state").json()["drafts"]
+        self.assertEqual((row["decided"], row["claims"]), (1, len(draft["claims"])))
+        self.approve_all(vu, draft)
+        first = self.post(vu, "/api/publish", {"draft_id": draft["id"], "reason": "Đối chiếu"}).json()
+        self.assertEqual(vu.get("/api/state").json()["drafts"][0]["status"], "merged")
+        self.assertEqual(reader.get("/api/kb/graph", params={"id": first["kb_id"]}).json()["revision"], first["revision"])
+        merge = {"mode": "merge", "kb_id": first["kb_id"]}
+        second_draft = self.prepare(vu, SOURCE.replace("Điều 1.", "Điều 2."), merge, "y").json()
+        self.approve_all(vu, second_draft)
+        second = self.post(vu, "/api/publish", {"draft_id": second_draft["id"], "reason": "Đối chiếu"}).json()
+        [kb] = reader.get("/api/state").json()["knowledge_bases"]
+        self.assertEqual((kb["current_revision"], kb["revisions"], kb["documents"]), (second["revision"], 2, 2))
+        self.assertEqual(kb["approved_claims"], second["summary"]["approved_claims"])
+        graph = reader.get("/api/kb/graph", params={"id": first["kb_id"]}).json()
+        self.assertEqual(graph["revision"], second["revision"], "a new publish is served at once")
+        self.assertEqual(len([n for n in graph["graph"]["nodes"] if n["kind"] == "Document"]), 2)
+
+        sys.path.insert(0, str(ROOT / "tests"))
+        from test_kb_run import LAW, StandIn
+        from test_retrieval_run import bundle
+        from legal_ai.evaluation import kb_run
+        _, units, _ = bundle(Path(self.temp.name) / "bundle", {"syn": LAW})
+        kb_run.start(Path(self.temp.name) / "bundle", runs / "kb-a", "stand-in", "medium")
+        kb_run.extract(units, StandIn(), runs / "kb-a")
+        kb_run.materialize(units, runs / "kb-a")
+        [run] = vu.get("/api/experiments/kb").json()["runs"]
+        self.assertEqual((run["run"], run["dk3_claims"]), ("kb-a", 6))
+        (runs / "kb-a" / "report.json").write_text(json.dumps({"dk3_claims": 7, "dk4_claims": 3}), encoding="utf-8")
+        self.assertEqual(vu.get("/api/experiments/kb").json()["runs"][0]["dk3_claims"], 7, "a changed run file is read again")
+
     def test_chats_are_private_to_their_account(self):
         published = self.publish(self.client("phapche", "review password 1"))
         reader = self.client("nhansu", "reader password 1")
@@ -202,6 +242,41 @@ class WebApiTests(unittest.TestCase):
         self.assertEqual(other.get("/api/state").json()["chat_sessions"], [])
         self.assertEqual(other.get("/api/chat/session", params={"id": session["id"]}).status_code, 404)
         self.assertEqual(self.post(other, "/api/chat/ask", {"session_id": session["id"], "question": "x"}).status_code, 404)
+
+    def test_chat_rename_hide_source_and_suggestions_follow_ownership(self):
+        published = self.publish(self.client("phapche", "review password 1"))
+        reader, other = self.client("nhansu", "reader password 1"), self.client("admin", "admin password 1")
+        kept = self.post(reader, "/api/chat/start", {"kb_ids": [published["kb_id"]]}).json()
+        session = self.post(reader, "/api/chat/start", {"kb_ids": [published["kb_id"]]}).json()
+        answer = self.post(reader, "/api/chat/ask", {"session_id": session["id"], "question": "thông báo kết quả thử việc"}).json()
+        listed = {s["id"]: s for s in reader.get("/api/state").json()["chat_sessions"]}
+        self.assertEqual(listed[session["id"]]["title"], "thông báo kết quả thử việc")
+        self.assertIsNone(listed[kept["id"]]["title"])
+        # Other accounts can neither rename, hide, read sources of, nor see the conversation.
+        self.assertEqual(self.post(other, "/api/chat/rename", {"session_id": session["id"], "title": "x"}).status_code, 404)
+        self.assertEqual(self.post(other, "/api/chat/hide", {"session_id": session["id"]}).status_code, 404)
+        self.assertEqual(other.get("/api/chat/source", params={"session_id": session["id"], "turn": 0, "citation": "C1"}).status_code, 404)
+        self.assertEqual(self.post(reader, "/api/chat/rename", {"session_id": session["id"], "title": "x", "extra": 1}).status_code, 400)
+        renamed = self.post(reader, "/api/chat/rename", {"session_id": session["id"], "title": "Thử việc"})
+        self.assertEqual(renamed.json(), {"id": session["id"], "title": "Thử việc", "custom_title": True})
+        self.assertEqual(reader.get("/api/chat/session", params={"id": session["id"]}).json()["title"], "Thử việc")
+        source = reader.get("/api/chat/source", params={"session_id": session["id"], "turn": 0, "citation": answer["citations"][0]["id"]}).json()
+        self.assertEqual(source["text"][source["start"]:source["end"]], source["quote"])
+        self.assertEqual(reader.get("/api/chat/source", params={"session_id": session["id"], "turn": 5, "citation": "C1"}).status_code, 400)
+        suggestions = reader.get("/api/chat/suggestions", params={"kb": [published["kb_id"]]})
+        self.assertEqual(suggestions.status_code, 200)
+        self.assertIsInstance(suggestions.json()["suggestions"], list)
+        self.assertEqual(reader.get("/api/chat/suggestions").status_code, 400)
+        self.assertEqual(self.client().get("/api/chat/suggestions", params={"kb": [published["kb_id"]]}).status_code, 401)
+        # Hiding removes it from the owner's list and every chat route, but the record stays in the store.
+        self.assertEqual(self.post(reader, "/api/chat/hide", {"session_id": session["id"]}).json(), {"hidden": session["id"]})
+        self.assertEqual([s["id"] for s in reader.get("/api/state").json()["chat_sessions"]], [kept["id"]])
+        self.assertEqual(reader.get("/api/chat/session", params={"id": session["id"]}).status_code, 404)
+        self.assertEqual(self.post(reader, "/api/chat/ask", {"session_id": session["id"], "question": "thử việc"}).status_code, 404)
+        self.assertEqual(self.post(reader, "/api/chat/rename", {"session_id": session["id"], "title": "y"}).status_code, 404)
+        with self.store.connect() as db:
+            body = json.loads(db.execute("SELECT body FROM chat_sessions WHERE id=?", (session["id"],)).fetchone()[0])
+        self.assertEqual(len(body["turns"]), 1)
 
     def test_publish_records_the_signed_in_reviewer_and_detects_stale_drafts(self):
         reviewer = self.client("phapche", "review password 1")
@@ -441,6 +516,7 @@ class WebApiTests(unittest.TestCase):
         overview = dev.get("/api/dev/overview").json()
         self.assertEqual((overview["today"]["calls"], overview["today"]["by_feature"]["proposal"], overview["can_change"]), (1, 1, True))
         self.assertEqual(overview["models"]["proposal"]["model"], "stand-in")
+        self.assertEqual((len(overview["trend"]), overview["trend"][-1]["calls"], overview["trend"][-1]["questions"]), (14, 1, 1))
         calls = admin.get("/api/dev/calls").json()
         self.assertEqual((calls["recent"][0]["actor"], calls["models"][0]["prompt_tokens"]), ("phapche", 12))
         usage = dev.get("/api/dev/usage").json()

@@ -117,6 +117,7 @@
 			<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
 			<p
 				class="text"
+				data-tour="review-text"
 				data-uv={unit.unit_version_id}
 				onclick={(e) => {
 					const target = (e.target as HTMLElement).closest<HTMLElement>('[data-target]');
@@ -137,6 +138,7 @@
 					<button
 						type="button"
 						class="flag {c.decision ?? 'pending'}"
+						data-tour="review-flag"
 						aria-pressed={focus?.kind === 'claim' && focus.id === c.id}
 						aria-label={flagLabel(c)}
 						onclick={() => onfocus({ kind: 'claim', id: c.id })}>{numbers.get(c.id)}</button
@@ -146,6 +148,7 @@
 					<button
 						type="button"
 						class="flag gapflag"
+						data-tour="review-gap"
 						class:done={!!g.decision}
 						aria-pressed={focus?.kind === 'gap' && focus.id === g.id}
 						aria-label={t('review.flagGap')}
@@ -174,6 +177,16 @@
 	}
 	.unit:not(.has-notes) .margin {
 		display: none;
+	}
+	/* Phones: margin notes go under their sentence instead of squeezing it into a narrow column. */
+	@media (max-width: 640px) {
+		.unit.has-notes {
+			grid-template-columns: minmax(0, 1fr);
+			gap: 0;
+		}
+		.unit.has-notes .margin {
+			padding: 0 0 10px;
+		}
 	}
 	.margin {
 		display: grid;

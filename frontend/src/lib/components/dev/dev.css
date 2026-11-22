@@ -14,8 +14,9 @@
 }
 .dev-tile {
 	display: grid;
+	align-content: start;
 	gap: 2px;
-	padding: 14px 16px;
+	padding: 12px 14px;
 	background: var(--paper);
 	border: 1px solid var(--rule);
 	border-radius: var(--r-panel);
@@ -36,7 +37,7 @@
 	color: var(--attention);
 }
 .dev-tile strong {
-	font: 600 26px/1.15 var(--serif);
+	font: 600 24px/1.15 var(--serif);
 	font-variant-numeric: tabular-nums;
 }
 .dev-two {
@@ -78,6 +79,11 @@
 .dev-list li > :first-child {
 	overflow-wrap: anywhere;
 }
+/* The figure on the right stays on one line; the label beside it wraps instead. */
+.dev-list li > :last-child:not(:first-child) {
+	flex: none;
+	white-space: nowrap;
+}
 .status-ok {
 	color: var(--approve);
 }
@@ -87,9 +93,29 @@
 .status-blocked {
 	color: var(--attention);
 }
+/* A section with nothing to show yet says so in one quiet line, without a chart or table of zeros. */
+.dev-empty {
+	margin: 0;
+	font-size: 14px;
+	color: var(--muted);
+}
 @media (max-width: 860px) {
 	.dev-two {
 		grid-template-columns: 1fr;
+	}
+}
+@media (max-width: 560px) {
+	/* A long name takes its own line and the figure follows under it, instead of both squeezing side by side. */
+	.dev-list li {
+		flex-wrap: wrap;
+		gap: 0 12px;
+	}
+	.dev-tiles {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+		gap: 8px;
+	}
+	.dev-tile {
+		padding: 10px 12px;
 	}
 }
 /* Grid children shrink to the column so wide tables scroll inside their panel instead of widening the page. */

@@ -165,10 +165,6 @@ class KbRunTests(unittest.TestCase):
         self.assertEqual(counts, {"DK3": 6, "DK4": 3})
 
 
-if __name__ == "__main__":
-    unittest.main()
-
-
 class KbCompareTests(unittest.TestCase):
     def test_compare_revalidates_runs_and_links_their_planted_error_report(self):
         from legal_ai.evaluation import error_injection
@@ -196,3 +192,38 @@ class KbCompareTests(unittest.TestCase):
             self.assertIn("| `stand-in` | claude-code | 2/2 |", text)
             self.assertIn("chủ thể không nguyên văn: 1", text)
             self.assertNotIn("—", text)
+
+    def test_cached_summaries_follow_new_and_changed_run_folders(self):
+        from unittest import mock
+        import shutil
+        from legal_ai.evaluation import error_injection, kb_compare
+        with tempfile.TemporaryDirectory() as folder:
+            root = Path(folder)
+            _, units, _ = bundle(root / "bundle", {"syn": LAW})
+            runs = root / "runs"
+            self.assertEqual(kb_compare.summaries(runs), [])
+            kb_run.start(root / "bundle", runs / "kb-a", "stand-in", "medium")
+            kb_run.extract(units, StandIn(), runs / "kb-a")
+            kb_run.materialize(units, runs / "kb-a")
+            [first] = kb_compare.summaries(runs)
+            self.assertEqual(first, kb_compare.summarize(runs / "kb-a"))
+            self.assertEqual(first["batches_planned"], len(kb_run.batches(units)))
+            first["model"] = "changed by a caller"
+            with mock.patch.object(kb_compare, "summarize", side_effect=AssertionError("an unchanged run is summarized again")):
+                [again] = kb_compare.summaries(runs)
+            self.assertEqual(again["model"], "stand-in", "callers get copies; the cached summary stays as computed")
+            self.assertIsNone(again["injection"])
+            error_injection.run(runs / "kb-a", units, runs / "inject-a", per_type=2)
+            [linked] = kb_compare.summaries(runs)
+            self.assertIsNotNone(linked["injection"], "a planted-error report written next to the run is picked up")
+            raw = runs / "kb-a" / "raw.jsonl"
+            with raw.open("a", encoding="utf-8") as handle:
+                handle.write(raw.read_text(encoding="utf-8").splitlines()[-1] + "\n")
+            [resumed] = kb_compare.summaries(runs)
+            self.assertEqual(resumed["calls_made"], linked["calls_made"] + 1)
+            shutil.copytree(runs / "kb-a", runs / "kb-b")
+            self.assertEqual([s["run"] for s in kb_compare.summaries(runs)], ["kb-a", "kb-b"])
+
+
+if __name__ == "__main__":
+    unittest.main()

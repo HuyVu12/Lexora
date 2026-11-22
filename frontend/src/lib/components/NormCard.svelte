@@ -69,7 +69,7 @@
 		run(() => review(claim.id, 'edit', field === 'modality' ? { field: 'modality', modality: 'unknown' } : { field: 'slot', slot: field, state }));
 </script>
 
-<article class="card sheet" aria-labelledby="norm-title">
+<article class="card sheet" aria-labelledby="norm-title" data-tour="norm-card">
 	<header>
 		<span class="num {claim.decision ?? 'pending'}" aria-hidden="true">{number}</span>
 		<h2 id="norm-title" class="heading">{title}</h2>
@@ -101,21 +101,21 @@
 	{#if claim.ai_note}<p class="pencil">{claim.ai_note}</p>{/if}
 	{#if claim.reviewer_note && !editing}<p class="pencil">“{claim.reviewer_note}”</p>{/if}
 
-	<div class="actions">
+	<div class="actions" data-tour="norm-decide">
 		<button type="button" class="btn decide-approve {claim.decision === 'approve' ? 'decided' : 'primary'}" aria-pressed={claim.decision === 'approve'} disabled={busy} onclick={() => decide('approve')}>
 			<Icon name="check" />{claim.decision === 'approve' ? t('review.approved') : t('review.approve')}
 		</button>
 		<button type="button" class="btn decide-reject {claim.decision === 'reject' ? 'decided' : 'quiet'}" aria-pressed={claim.decision === 'reject'} disabled={busy} onclick={() => decide('reject')}>
 			<Icon name="x" />{claim.decision === 'reject' ? t('review.rejected') : t('review.reject')}
 		</button>
-		<button type="button" class="btn quiet" aria-expanded={editing} onclick={() => (editing = !editing)}>
+		<button type="button" class="btn quiet" data-tour="norm-edit" aria-expanded={editing} onclick={() => (editing = !editing)}>
 			<Icon name="edit" />{editing ? t('review.editing') : t('review.edit')}
 		</button>
 	</div>
 
 	{#if editing}
-		<div class="editor">
-			<label class="field">
+		<div class="editor" data-tour="norm-editor">
+			<label class="field" data-tour="norm-field">
 				<span>{t('review.editField')}</span>
 				<select bind:value={field}>
 					{#each SLOT_ORDER as name (name)}<option value={name}>{t(slotKey(name))}</option>{/each}
@@ -132,7 +132,7 @@
 			{/if}
 			<p class="small muted">{field === 'modality' ? t('review.selectModalityHint') : t('review.selectHint')}</p>
 			<div class="row">
-				<button type="button" class="btn primary small" disabled={busy} onmousedown={(e) => e.preventDefault()} onclick={useSelection}>{t('review.useSelection')}</button>
+				<button type="button" class="btn primary small" disabled={busy} onmousedown={(e) => e.preventDefault()} onclick={useSelection} data-tour="norm-use">{t('review.useSelection')}</button>
 				{#if field === 'modality'}
 					<button type="button" class="btn small" disabled={busy} onclick={() => setState('unknown')}>{t('modality.unknown')}</button>
 				{:else}

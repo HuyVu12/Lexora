@@ -178,6 +178,8 @@ Graph tiếp tục lưu dạng JSON canonical trong revision, kèm `graph_hash` 
 | `index_artifacts` | `revision_id, kind, model_id, manifest_sha256, status, body` | Vector lưu dạng BLOB float32 (module `array`) |
 | `embedding_cache` | `key, model_id, dim, vector` | `key = sha256(model_id + text)`, dùng lại giữa các kho cùng owner |
 | `chat_sessions` | `id, body` | `body.bindings = [{kb_id, revision_id}]` thay cho một `revision` |
+| `revision_summaries` | `id, kb_id, body` | Đã có: tóm tắt dẫn xuất của revision (số quy phạm đã duyệt, danh sách văn bản) để liệt kê kho mà không đọc lại graph; trigger xóa tóm tắt khi dòng revision đổi, thiếu thì tính lại từ `body` |
+| `draft_summaries` | `id, body` | Đã có: tóm tắt bản nháp (tiêu đề, trạng thái, đích, số quy phạm), ghi cùng transaction với `body`; trigger xóa tóm tắt khi `body` đổi |
 
 ### 5.3 Migration từ store hiện tại
 

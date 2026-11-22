@@ -3,7 +3,10 @@
 	import GoldNormEditor from '#lib/components/GoldNormEditor.svelte';
 	import ConfirmDialog from '#lib/components/ConfirmDialog.svelte';
 	import { page } from '$app/state';
+	import { goto } from '$app/navigation';
+	import Skeleton from '#lib/components/Skeleton.svelte';
 	import Icon from '#lib/components/Icon.svelte';
+	import PageSkeleton from '#lib/components/PageSkeleton.svelte';
 	import Term from '#lib/components/Term.svelte';
 	import { api } from '#lib/api.js';
 	import { t } from '#lib/i18n/index.svelte.js';
@@ -15,6 +18,10 @@
 	type Item = GoldComparison['items'][number];
 	const id = $derived(page.params.id ?? '');
 	const other = $derived(page.url.searchParams.get('other') ?? '');
+	// The comparison needs the other annotator; a link without one goes back to the set instead of waiting forever.
+	$effect(() => {
+		if (id && !other) goto(`/research/gold/${id}`, { replaceState: true });
+	});
 	let report = $state<GoldComparison | null>(null);
 	let meta = $state<Pick<GoldWorkspace, 'name' | 'slots' | 'modalities' | 'annotators'> | null>(null);
 	let error = $state('');
@@ -109,18 +116,18 @@
 		<h1 class="title">{t('common.forbidden.title')}</h1>
 	{:else if error}
 		<p class="notice error" role="alert">{error}</p>
-	{:else if !report || !meta}
-		<p class="muted">{t('common.loading')}</p>
 	{:else}
 		<p class="crumb"><a href="/research/gold/{id}"><Icon name="back" size={16} />{t('gold.cmp.back')}</a></p>
 		<header class="page-head">
 			<div>
-				<h1 class="title serif">{t('gold.cmp.title')} · {meta.name}</h1>
-				<p class="lead">{t('gold.cmp.lead')}</p>
+				<h1 class="title serif">{t('gold.cmp.title')}{#if meta}{` · ${meta.name}`}{/if}</h1>
+				<p class="lead">{#if report && meta}{t('cmp.lead', { a: nameOf(report.first), b: nameOf(report.second) })}{:else}<Skeleton width="min(520px, 80vw)" height="14px" />{/if}</p>
 			</div>
 		</header>
 		<PageGuide name="goldCompare" steps={3} />
-
+		{#if !report || !meta}
+			<PageSkeleton head={false} blocks={2} cols />
+		{:else}
 		<div class="summary">
 			<section class="panel stats" aria-labelledby="agree-heading">
 				<h2 class="heading" id="agree-heading">{t('gold.cmp.agreement')}</h2>
@@ -221,18 +228,11 @@
 		<ConfirmDialog bind:open={confirmBulk} title={t('gold.cmp.bulkTitle')} confirmLabel={t('gold.cmp.bulkGo', { n: bulkable })} onconfirm={finalise}>
 			<p>{t('gold.cmp.bulkBody', { agreed: report.plan.agreed, single: report.plan.single })}</p>
 		</ConfirmDialog>
+		{/if}
 	{/if}
 </div>
 
 <style>
-	.crumb {
-		margin: 0 0 8px;
-	}
-	.crumb a {
-		display: inline-flex;
-		align-items: center;
-		gap: 6px;
-	}
 	.panel {
 		display: grid;
 		gap: 10px;

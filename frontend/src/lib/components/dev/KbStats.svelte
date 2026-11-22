@@ -1,19 +1,23 @@
 <script lang="ts">
-	import { t, formatDate } from '#lib/i18n/index.svelte.js';
+	import { t, formatDate, formatDay } from '#lib/i18n/index.svelte.js';
 	import type { DevKb } from '#lib/types.js';
+	import { countUp } from '#lib/motion.js';
 
 	let { data }: { data: DevKb } = $props();
 
 	const undecided = $derived(data.drafts.reduce((sum, d) => sum + Math.max(0, d.claims - d.decided), 0));
 	const approved = $derived(data.knowledge_bases.reduce((sum, k) => sum + (k.approved_claims ?? 0), 0));
+	const DRAFTS = 4;
+	let allDrafts = $state(false);
+	const drafts = $derived(allDrafts ? data.drafts : data.drafts.slice(0, DRAFTS));
 	const labelled = (g: DevKb['gold_sets'][number]) => Object.entries(g.labelled).map(([who, n]) => `${who} ${n}`).join(', ') || '-';
 </script>
 
 <div class="dev-tiles">
-	<div class="dev-tile"><span class="label">{t('dev.kb.bases')}</span><strong>{data.knowledge_bases.length}</strong><span class="small muted">{t('dev.kb.approved', { n: approved.toLocaleString() })}</span></div>
-	<div class="dev-tile"><span class="label">{t('dev.kb.openDrafts')}</span><strong>{data.drafts.length}</strong></div>
-	<div class="dev-tile" class:warn={undecided > 0}><span class="label">{t('dev.kb.undecided')}</span><strong>{undecided.toLocaleString()}</strong></div>
-	<div class="dev-tile"><span class="label">{t('dev.kb.corpora')}</span><strong>{data.corpora.length}</strong></div>
+	<div class="dev-tile"><span class="label">{t('dev.kb.bases')}</span><strong {@attach countUp(data.knowledge_bases.length)}></strong><span class="small muted">{t('dev.kb.approved', { n: approved.toLocaleString() })}</span></div>
+	<div class="dev-tile"><span class="label">{t('dev.kb.openDrafts')}</span><strong {@attach countUp(data.drafts.length)}></strong></div>
+	<div class="dev-tile" class:warn={undecided > 0}><span class="label">{t('dev.kb.undecided')}</span><strong {@attach countUp(undecided, { format: (n) => n.toLocaleString() })}></strong></div>
+	<div class="dev-tile"><span class="label">{t('dev.kb.corpora')}</span><strong {@attach countUp(data.corpora.length)}></strong></div>
 </div>
 
 <section class="panel" aria-labelledby="bases-heading">
@@ -38,7 +42,7 @@
 			</table>
 		</div>
 	{:else}
-		<p class="small muted">{t('dev.kb.none')}</p>
+		<p class="dev-empty">{t('dev.kb.none')}</p>
 	{/if}
 </section>
 
@@ -47,13 +51,16 @@
 		<h2 class="heading" id="drafts-heading">{t('dev.kb.draftsTitle')}</h2>
 		{#if data.drafts.length}
 			<ul class="dev-list">
-				{#each data.drafts as d (d.id)}
-					<li><span>{d.title}<span class="small muted block">{d.kb_name} · {formatDate(d.created_at)}{d.extraction_state !== 'done' ? ` · ${d.extraction_state}` : ''}</span></span>
+				{#each drafts as d (d.id)}
+					<li><span class="draft"><a class="clip" href="/drafts/{d.id}" title={d.title}>{d.title}</a><span class="small muted clip">{formatDay(d.created_at)}{d.extraction_state !== 'done' ? ` · ${d.extraction_state}` : ''} · {d.kb_name}</span></span>
 						<strong class="num">{t('dev.kb.decided', { done: d.decided, total: d.claims })}</strong></li>
 				{/each}
 			</ul>
+			{#if data.drafts.length > DRAFTS}
+				<div><button type="button" class="btn quiet small" aria-expanded={allDrafts} onclick={() => (allDrafts = !allDrafts)}>{allDrafts ? t('dev.kb.fewer') : t('dev.kb.more', { n: data.drafts.length })}</button></div>
+			{/if}
 		{:else}
-			<p class="small muted">{t('dev.kb.noDrafts')}</p>
+			<p class="dev-empty">{t('dev.kb.noDrafts')}</p>
 		{/if}
 	</section>
 	<section class="panel" aria-labelledby="publish-heading">
@@ -61,7 +68,7 @@
 		{#if Object.keys(data.publishes_by_reviewer).length}
 			<ul class="dev-list">{#each Object.entries(data.publishes_by_reviewer) as [who, n] (who)}<li><span>{who}</span><strong>{n}</strong></li>{/each}</ul>
 		{:else}
-			<p class="small muted">{t('dev.kb.noPublishes')}</p>
+			<p class="dev-empty">{t('dev.kb.noPublishes')}</p>
 		{/if}
 	</section>
 </div>
@@ -72,7 +79,7 @@
 		{#if data.question_sets.length}
 			<ul class="dev-list">{#each data.question_sets as q (q.id)}<li><a href="/research/questions/{q.id}">{q.name}</a><span class="small muted">{t('dev.kb.questions', { n: q.questions })}{q.frozen ? ` · ${t('dev.kb.frozen')}` : ''}</span></li>{/each}</ul>
 		{:else}
-			<p class="small muted">{t('dev.kb.noQuestionSets')}</p>
+			<p class="dev-empty">{t('dev.kb.noQuestionSets')}</p>
 		{/if}
 	</section>
 	<section class="panel" aria-labelledby="gold-heading">
@@ -80,13 +87,21 @@
 		{#if data.gold_sets.length}
 			<ul class="dev-list">{#each data.gold_sets as g (g.id)}<li><a href="/research/gold/{g.id}">{g.name}</a><span class="small muted">{t('dev.kb.gold', { n: g.sentences, who: labelled(g), final: g.adjudicated })}</span></li>{/each}</ul>
 		{:else}
-			<p class="small muted">{t('dev.kb.noGold')}</p>
+			<p class="dev-empty">{t('dev.kb.noGold')}</p>
 		{/if}
 	</section>
 </div>
 
 <style>
-	.block {
-		display: block;
+	.draft {
+		display: grid;
+		gap: 1px;
+		flex: 1 1 auto;
+		min-width: 0;
+	}
+	.clip {
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
 	}
 </style>

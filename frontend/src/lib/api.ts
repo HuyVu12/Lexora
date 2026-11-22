@@ -1,5 +1,7 @@
 import { goto } from '$app/navigation';
+import { untrack } from 'svelte';
 import { session } from './session.svelte';
+import { activity } from './activity.svelte';
 
 const token = document.querySelector<HTMLMetaElement>('meta[name="lexora-token"]')?.content ?? '';
 
@@ -24,12 +26,19 @@ export async function api<T>(path: string, body?: unknown): Promise<T> {
 					headers: { 'Content-Type': 'application/json', 'X-Lexora-Token': token },
 					body: JSON.stringify(body)
 				};
-	const response = await fetch(path, init);
+	// Untracked: an effect that calls api() must not come to depend on the request counter.
+	untrack(() => (activity.requests += 1));
+	let response: Response;
 	let value: { error?: string; code?: string } = {};
 	try {
-		value = await response.json();
-	} catch {
-		// A non-JSON body leaves the status code as the only signal.
+		response = await fetch(path, init);
+		try {
+			value = await response.json();
+		} catch {
+			// A non-JSON body leaves the status code as the only signal.
+		}
+	} finally {
+		untrack(() => (activity.requests -= 1));
 	}
 	if (response.status === 401 && !path.startsWith('/api/auth/')) {
 		session.account = null;

@@ -17,6 +17,7 @@ import secrets
 import sqlite3
 import threading
 
+from legal_ai.common.cache import BoundedCache
 from legal_ai.common.io import canonical, digest, write_json, write_jsonl
 from legal_ai.ingestion.catalog import fold
 from legal_ai.ingestion.excerpt import excerpt, outline
@@ -44,6 +45,10 @@ CREATE TABLE IF NOT EXISTS corpus_versions (
   id TEXT PRIMARY KEY, corpus_id TEXT NOT NULL REFERENCES corpora(id), number INTEGER NOT NULL, note TEXT NOT NULL,
   frozen_at TEXT NOT NULL, frozen_by TEXT NOT NULL, document_rows TEXT NOT NULL, manifest TEXT NOT NULL, UNIQUE (corpus_id, number));
 """
+# The columns a document summary reads; never the source bytes or the normalized text (several MB per document).
+SUMMARY_COLUMNS = ("id, document_id, title, source_kind, source_ref, source_url, source_sha256, accessed_at, metadata, units, report, "
+                   "added_at, added_by")
+SUMMARY_CACHE_SIZE = 1024
 
 
 def _now():
@@ -60,6 +65,9 @@ class CorpusStore:
     def __init__(self, path):
         self.path = Path(path)
         self._lock = threading.Lock()
+        # Document summaries by row ID, as JSON text. A row never changes once added (removal only sets removed_at,
+        # which no summary contains), so an entry never goes stale.
+        self._summaries = BoundedCache(SUMMARY_CACHE_SIZE)
         with closing(self._connect()) as db, db:
             db.executescript(SCHEMA)
 
@@ -93,11 +101,27 @@ class CorpusStore:
             row = db.execute("SELECT * FROM corpora WHERE id = ?", (corpus_id,)).fetchone()
             if row is None:
                 raise ValueError("Không tìm thấy corpus")
-            documents = [self._summary(d) for d in db.execute(
-                "SELECT * FROM corpus_documents WHERE corpus_id = ? AND removed_at IS NULL ORDER BY added_at, id", (corpus_id,))]
+            # The ID comes from the partial index of live rows; a column stored after the source bytes would walk them.
+            ids = [r["id"] for r in db.execute("SELECT id FROM corpus_documents WHERE corpus_id = ? AND removed_at IS NULL", (corpus_id,))]
+            documents = sorted((self._document_summary(db, row_id) for row_id in ids), key=lambda d: (d["added_at"], d["id"]))
             versions = [self._version_summary(v) for v in db.execute(
                 "SELECT * FROM corpus_versions WHERE corpus_id = ? ORDER BY number DESC", (corpus_id,))]
         return dict(row) | {"documents": documents, "versions": versions, "changed_since_version": self._changed(documents, versions)}
+
+    def _document_summary(self, db, row_id):
+        def compute():
+            return json.dumps(self._summary(db.execute(f"SELECT {SUMMARY_COLUMNS} FROM corpus_documents WHERE id = ?", (row_id,)).fetchone()),
+                              ensure_ascii=False)
+        return json.loads(self._summaries.get(row_id, compute))  # A fresh copy for every caller.
+
+    def frozen_versions(self):
+        """Every frozen version with its corpus name: corpora newest first (as `corpora`), versions newest first."""
+        with closing(self._connect()) as db:
+            rows = db.execute("""SELECT v.*, c.name AS corpus_name FROM corpus_versions v JOIN corpora c ON c.id = v.corpus_id
+                                 ORDER BY c.created_at DESC, c.id, v.number DESC""").fetchall()
+        return [{"id": v["id"], "corpus_id": r["corpus_id"], "corpus_name": r["corpus_name"], "number": v["number"],
+                 "document_count": v["document_count"], "unit_count": v["unit_count"], "frozen_at": v["frozen_at"]}
+                for r in rows for v in (self._version_summary(r),)]
 
     @staticmethod
     def _changed(documents, versions):
@@ -192,7 +216,7 @@ class CorpusStore:
     def document(self, row_id):
         """A document with its parsed units and parser report, for review."""
         with closing(self._connect()) as db:
-            row = db.execute("SELECT * FROM corpus_documents WHERE id = ?", (row_id,)).fetchone()
+            row = db.execute(f"SELECT {SUMMARY_COLUMNS}, corpus_id, removed_at FROM corpus_documents WHERE id = ?", (row_id,)).fetchone()
         if row is None:
             raise ValueError("Không tìm thấy văn bản")
         report = json.loads(row["report"])

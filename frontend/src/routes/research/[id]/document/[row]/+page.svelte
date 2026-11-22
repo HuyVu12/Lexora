@@ -1,7 +1,9 @@
 <script lang="ts">
 	import PageGuide from '#lib/components/PageGuide.svelte';
 	import { page } from '$app/state';
+	import Skeleton from '#lib/components/Skeleton.svelte';
 	import Icon from '#lib/components/Icon.svelte';
+	import PageSkeleton from '#lib/components/PageSkeleton.svelte';
 	import Term from '#lib/components/Term.svelte';
 	import { api } from '#lib/api.js';
 	import { t, formatDay } from '#lib/i18n/index.svelte.js';
@@ -47,32 +49,36 @@
 		<h1 class="title">{t('common.forbidden.title')}</h1>
 	{:else if error}
 		<p class="notice error" role="alert">{error}</p>
-	{:else if !doc}
-		<p class="muted">{t('common.loading')}</p>
 	{:else}
 		<p class="crumb"><a href="/research/{corpusId}"><Icon name="back" size={16} />{t('corpus.backToCorpus')}</a></p>
 		<header class="page-head">
 			<div>
-				<h1 class="title serif">{doc.title}</h1>
-				<p class="facts">
-					<code>{doc.document_id}</code>
-					<span><Term key="leaf_unit">{t('corpus.doc.counts', { articles: doc.article_count, leaves: doc.leaf_count })}</Term></span>
-					{#if doc.metadata.effect_status?.name}<span><Term key="effect_status">{doc.metadata.effect_status.name}</Term></span>{/if}
-					{#if doc.source_kind === 'vbpl'}
-						<a href={doc.source_url} target="_blank" rel="noopener noreferrer">vbpl.vn · {t('corpus.doc.accessed', { date: formatDay(doc.accessed_at) })}</a>
-					{:else}
-						<span>{t('corpus.doc.file', { name: doc.source_ref })}</span>
-					{/if}
-				</p>
-				<p class="small muted">SHA-256 <code>{doc.source_sha256}</code></p>
+				<h1 class="title serif">{#if doc}{doc.title}{:else}<span class="title-ghost" style:width="min(520px, 70vw)"><Skeleton height="30px" /></span>{/if}</h1>
+				{#if doc}
+					<p class="facts">
+						<span><Term key="leaf_unit">{t('corpus.doc.counts', { articles: doc.article_count, leaves: doc.leaf_count })}</Term></span>
+						{#if doc.metadata.effect_status?.name}<span><Term key="effect_status">{doc.metadata.effect_status.name}</Term></span>{/if}
+						{#if doc.source_kind === 'vbpl'}
+							<a href={doc.source_url} target="_blank" rel="noopener noreferrer">vbpl.vn · {t('corpus.doc.accessed', { date: formatDay(doc.accessed_at) })}</a>
+						{:else}
+							<span>{t('corpus.doc.file', { name: doc.source_ref })}</span>
+						{/if}
+					</p>
+					<details class="tech"><summary>{t('common.technical')}</summary><p>{t('corpus.docId')}: <code>{doc.document_id}</code> · SHA-256 <code>{doc.source_sha256}</code></p></details>
+				{:else}
+					<p class="facts"><span><Skeleton width="100px" height="12px" /></span><span><Skeleton width="150px" height="12px" /></span><span><Skeleton width="130px" height="12px" /></span></p>
+				{/if}
 			</div>
 		</header>
 		<PageGuide name="document" steps={3} />
 
+		{#if !doc}
+			<PageSkeleton head={false} blocks={1} cols />
+		{:else}
 		{#if doc.removed_at}<p class="notice warn">{t('corpus.doc.removed')}</p>{/if}
 
 		<div class="cols">
-			<section class="panel" aria-labelledby="units-heading">
+			<section class="sheet source" aria-labelledby="units-heading">
 				<div class="row between">
 					<h2 class="heading" id="units-heading">{t('corpus.doc.units', { n: doc.unit_count })}</h2>
 					<div class="segmented" role="group" aria-label={t('corpus.doc.filter')}>
@@ -90,7 +96,7 @@
 				</ol>
 			</section>
 
-			<aside class="panel" id="audit" aria-labelledby="audit-heading">
+			<aside class="panel side" id="audit" data-tour="doc-warnings" aria-labelledby="audit-heading">
 				<h2 class="heading" id="audit-heading"><Term key="parser_warning">{t('corpus.doc.auditTitle')}</Term></h2>
 				<p class="small muted">{t('corpus.doc.auditLead')}</p>
 				{#if doc.audit.length}
@@ -120,34 +126,32 @@
 				{/if}
 			</aside>
 		</div>
+		{/if}
 	{/if}
 </div>
 
 <style>
-	.crumb {
-		margin: 0 0 8px;
-	}
-	.crumb a {
-		display: inline-flex;
-		align-items: center;
-		gap: 6px;
-	}
-	.facts {
-		display: flex;
-		flex-wrap: wrap;
-		gap: 6px 18px;
-		margin-top: 10px;
-		color: var(--ink-2);
-	}
 	.cols {
 		display: grid;
 		grid-template-columns: minmax(0, 1.7fr) minmax(0, 1fr);
 		gap: 20px;
 		align-items: start;
 	}
-	.panel {
+	.panel,
+	.source {
 		display: grid;
 		gap: 12px;
+	}
+	/* The parsed text is the source itself: paper, read with the page scroll rather than in a box of its own. */
+	.source {
+		padding: 24px 28px 28px;
+	}
+	.side {
+		position: sticky;
+		top: calc(var(--topbar) + var(--space-4));
+		max-height: calc(100vh - var(--topbar) - var(--space-8));
+		overflow-y: auto;
+		overscroll-behavior: contain;
 	}
 	.between {
 		justify-content: space-between;
@@ -158,8 +162,6 @@
 		list-style: none;
 		margin: 0;
 		padding: 0;
-		max-height: 75vh;
-		overflow: auto;
 	}
 	.units li {
 		display: grid;
@@ -223,6 +225,10 @@
 	@media (max-width: 1000px) {
 		.cols {
 			grid-template-columns: 1fr;
+		}
+		.side {
+			position: static;
+			max-height: none;
 		}
 	}
 </style>

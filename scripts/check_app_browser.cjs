@@ -1,6 +1,6 @@
 /* Real-browser E2E for the SvelteKit app served by `python -m legal_ai.web`: drives headless Chrome over
- * the DevTools protocol through sign-in, import, review, publish, chat, the English locale, reader
- * restrictions and account management, captures screenshots and fails on any console error.
+ * the DevTools protocol through sign-in, the step-by-step tours, import, review, publish, chat, the English
+ * locale, reader restrictions and account management, captures screenshots and fails on any console error.
  * Usage: node scripts/check_app_browser.cjs http://127.0.0.1:8790 <screenshot-dir> [chrome-path]
  * The store must be NEW and hold three accounts: admin/"admin password 1", phapche/"review password 1"
  * (reviewer, display name "Nguyễn Pháp Chế"), nhansu/"reader password 1" (reader). Only loopback URLs are allowed.
@@ -112,8 +112,8 @@ async function main() {
     };
     const logout = async () => {
       await evaluate('__click(".who"); true');
-      await waitFor('!!__q(".menu button")', 'user menu');
-      await evaluate('__click(".menu button"); true');
+      await waitFor('!!__q(".menu > button.btn")', 'user menu');
+      await evaluate('__click(".menu > button.btn"); true');
       await waitFor('location.pathname === "/login"', 'login after logout');
     };
 
@@ -135,6 +135,95 @@ async function main() {
     await login('phapche', 'review password 1');
     await waitFor('document.body.innerText.includes("Nguyễn Pháp Chế")', 'greeting with display name');
     await capture('home-empty');
+
+    // Step-by-step tours: the orientation tour from the user menu, with the spotlight checked against each
+    // target (also after scrolling), then one wait-for-action step of the import tour opened from the "?".
+    const tourCard = () => evaluate(`(() => { const c = document.querySelector('.tour .card'); if (!c) return null;
+      const box = el => { const r = el.getBoundingClientRect(); return [r.left, r.top, r.width, r.height]; };
+      const ring = document.querySelector('.tour .ring');
+      const target = c.dataset.target ? [...document.querySelectorAll('[data-tour="' + c.dataset.target + '"]')].find(e => e.getClientRects().length) : null;
+      return { step: c.dataset.step, phase: c.dataset.phase, target: c.dataset.target || null, ring: ring ? box(ring) : null, el: target ? box(target) : null,
+        waiting: !!c.querySelector('.hint:not(.ok)'), done: !!c.querySelector('.hint.ok'), next: !!c.querySelector('footer .right .btn.primary:not(:disabled)') }; })()`);
+    const settled = label => waitFor(`(() => { const c = document.querySelector('.tour .card'); return !c || (c.dataset.phase !== 'seeking' && !document.getAnimations().some(a => a.playState === 'running' && a.effect?.getTiming().iterations !== Infinity && c.contains(a.effect?.target))); })()`, label);
+    const advanceTour = () => evaluate(`(() => { const f = document.querySelector('.tour .card footer'); (f.querySelector('.right .btn.primary') || [...f.querySelectorAll('.btn')].find(b => b.textContent.includes('Bỏ qua'))).click(); return true; })()`);
+    const pressEscape = async () => {
+      await send('Input.dispatchKeyEvent', { type: 'keyDown', key: 'Escape', code: 'Escape', windowsVirtualKeyCode: 27 });
+      await send('Input.dispatchKeyEvent', { type: 'keyUp', key: 'Escape', code: 'Escape', windowsVirtualKeyCode: 27 });
+    };
+    const followsTarget = card => {
+      if (!card.target) return;
+      assert(card.ring && card.el, `tour step ${card.step}: spotlight and target present`);
+      // The window is the target plus its padding (6-10px), give or take a pixel.
+      const [rx, ry, rw, rh] = card.ring; const [ex, ey, ew, eh] = card.el;
+      assert(rx <= ex + 1 && ry <= ey + 1 && rx + rw >= ex + ew - 1 && ry + rh >= ey + eh - 1 && rw - ew <= 24 && rh - eh <= 24, `tour step ${card.step}: spotlight ${card.ring} around target ${card.el}`);
+    };
+    await evaluate('__click("#user-button"); true');
+    await waitFor('!!document.querySelector("#user-menu .tour-open")', 'one step-by-step item in the user menu');
+    await evaluate('document.querySelector("#user-menu .tour-open").click(); true');
+    await waitFor('!!__q(".tour-picker .here button", "Làm quen")', 'tour picker offering the tour for this page');
+    await evaluate('__click(".tour-picker button", "Làm quen"); true');
+    await waitFor('!!document.querySelector(".tour .card[data-step=welcome]")', 'orientation tour');
+    await capture('tour-welcome');
+    const seen = [];
+    for (let i = 0; i < 20; i++) {
+      await settled('tour step');
+      await sleep(450);
+      const card = await tourCard();
+      if (!card) break;
+      seen.push(card.step);
+      followsTarget(card);
+      if (card.step === 'account') {
+        assert(card.waiting && !card.next, 'the account step waits for a click on the user menu');
+        await capture('tour-account-waiting');
+        await evaluate('document.querySelector("#user-button").click(); true');
+        await waitFor('!!document.querySelector(".tour .hint.ok")', 'account step done after the click');
+        // The open menu belongs to the step: the window grows to include it.
+        await waitFor(`(() => { const r = document.querySelector('.tour .ring').getBoundingClientRect(), m = document.querySelector('#user-menu').getBoundingClientRect(); return r.bottom >= m.bottom - 1 && r.left <= m.left + 1; })()`, 'spotlight includes the open user menu');
+      }
+      if (card.step === 'kbs') await capture('tour-kbs');
+      await evaluate('document.querySelector(".tour .card footer .right .btn.primary").click(); true');
+    }
+    assert(!(await tourCard()), 'the orientation tour closes after its last step');
+    for (const step of ['welcome', 'home', 'drafts', 'kbs', 'chat', 'import', 'research', 'lang', 'account', 'guide', 'doneResearch']) assert(seen.includes(step), `orientation tour shows ${step}: ${seen}`);
+    assert(await evaluate('JSON.parse(localStorage.getItem("lexora-tour-overview")).done === true'), 'finished tour remembered');
+    await evaluate('__click("#user-button"); true');
+    await waitFor('!!__q("#user-menu .tour-open", "1/")', 'finished tour counted in the user menu');
+    await evaluate('document.querySelector("#user-menu .tour-open").click(); true');
+    await waitFor('!!document.querySelector(".tour-picker .mark-done")', 'finished tour marked in the tour picker');
+    await evaluate('__click("#user-button"); true');
+
+    await open('/import');
+    await waitFor('!!__q("label.choice", "Dán nội dung") && !!document.querySelector("h1 .guide-q")', 'import form with its guide button');
+    await evaluate('document.querySelector("h1 .guide-q").click(); true');
+    await waitFor('!!__q("#guide-menu [role=menuitem]", "Hướng dẫn từng bước")', 'guide menu offering the step-by-step tour');
+    await evaluate('__click("#guide-menu [role=menuitem]", "Hướng dẫn từng bước"); true');
+    await waitFor('!!document.querySelector(".tour .card[data-step=intro]")', 'import tour');
+    for (let i = 0; i < 12; i++) {
+      await settled('import tour step');
+      await sleep(300);
+      const card = await tourCard();
+      if (card.step === 'kbName') break;
+      if (card.step === 'target') {
+        // The spotlight follows its target when the page scrolls.
+        await evaluate('window.scrollBy(0, 90); true');
+        await sleep(300);
+        followsTarget(await tourCard());
+      }
+      await evaluate(`(() => { const f = document.querySelector('.tour .card footer'); (f.querySelector('.right .btn.primary') || [...f.querySelectorAll('.btn')].find(b => b.textContent.includes('Bỏ qua'))).click(); return true; })()`);
+    }
+    let kb = await tourCard();
+    assert.equal(kb.step, 'kbName', 'import tour reaches the base name step');
+    followsTarget(kb);
+    assert(kb.waiting && !kb.next, 'the base name step waits for input before Next');
+    assert(await evaluate('!!__q(".tour .card .example .btn", "Điền thử")'), 'example fill offered for the empty field');
+    await capture('tour-import-waiting');
+    await evaluate(`__fill(document.querySelector('[data-tour="import-kb-name"] input'), 'Hợp đồng lao động'); true`);
+    await waitFor('!!document.querySelector(".tour .hint.ok") && !!document.querySelector(".tour .card footer .right .btn.primary:not(:disabled)")', 'Next unlocked after typing');
+    await capture('tour-import-done');
+    await pressEscape();
+    await waitFor('!document.querySelector(".tour")', 'Escape closes the tour');
+    assert.equal(await evaluate('location.pathname'), '/import', 'the tour stayed on the import page and submitted nothing');
+    await evaluate(`__fill(document.querySelector('[data-tour="import-kb-name"] input'), ''); true`);
     await open('/import');
     await waitFor('!!__q("label.choice", "Dán nội dung")', 'import form');
     await evaluate('__q("label.choice", "Dán nội dung").querySelector("input").click(); true');
@@ -251,14 +340,42 @@ async function main() {
     await open(kbPath);
     await waitFor('!!document.querySelector(".page-head .facts")', 'knowledge base again');
 
-    // Ask the base; citations open as statute slips.
+    // Ask the base: the answer lists approved quotes; a citation opens its source beside the conversation.
     await evaluate('__click("button.btn.primary", "Hỏi đáp trên kho này")');
-    await waitFor('location.pathname.startsWith("/chat/") && !!document.querySelector(".ask textarea")', 'chat');
+    await waitFor('location.pathname.startsWith("/chat/") && !!document.querySelector("#chat-input")', 'chat');
     await evaluate(helpers);
-    await evaluate('__fill(document.querySelector(".ask textarea"), "Lương thử việc ít nhất bao nhiêu phần trăm?"); true');
-    await waitFor('!document.querySelector(".ask button[type=submit]").disabled', 'ask button enabled');
-    await evaluate('document.querySelector(".ask button[type=submit]").click(); true');
-    await waitFor('!!document.querySelector(".slip blockquote mark")', 'citation');
+    // Chat tour from the user menu: the scope step waits for a click on the bases pill, then Escape closes the tour.
+    await evaluate('__click("#user-button"); true');
+    await waitFor('!!document.querySelector("#user-menu .tour-open")', 'step-by-step item in the user menu');
+    await evaluate('document.querySelector("#user-menu .tour-open").click(); true');
+    await waitFor('!!__q(".tour-picker .here button", "Hỏi đáp")', 'chat tour offered for the chat page');
+    await evaluate('__click(".tour-picker .here button", "Hỏi đáp"); true');
+    for (let i = 0; i < 6; i++) {
+      await settled('chat tour step');
+      await sleep(300);
+      const card = await tourCard();
+      if (card.step === 'scope') break;
+      await advanceTour();
+    }
+    let scope = await tourCard();
+    assert.equal(scope.step, 'scope', 'chat tour reaches the scope step');
+    followsTarget(scope);
+    assert(scope.waiting && !scope.next, 'the scope step waits for a click on the bases pill');
+    await evaluate('document.querySelector("[data-tour=chat-scope]").click(); true');
+    await waitFor('!!document.querySelector(".tour .hint.ok") && !!document.querySelector("#chat-scope")', 'scope step done, bases open');
+    await capture('tour-chat-scope');
+    // Escape closes the open popover first, then the tour.
+    await pressEscape();
+    await waitFor('!document.querySelector("#chat-scope")', 'Escape closes the bases popover first');
+    assert(await evaluate('!!document.querySelector(".tour .card")'), 'the tour stays while the popover closes');
+    await pressEscape();
+    await waitFor('!document.querySelector(".tour")', 'second Escape closes the chat tour');
+    await evaluate('__fill(document.querySelector("#chat-input"), "Lương thử việc ít nhất bao nhiêu phần trăm?"); true');
+    await waitFor('!document.querySelector(".composer button[type=submit]").disabled', 'ask button enabled');
+    await evaluate('document.querySelector(".composer button[type=submit]").click(); true');
+    await waitFor('!!document.querySelector(".turn .quote .quote-text")', 'citation');
+    await evaluate('document.querySelector(".turn .quote .where").click(); true');
+    await waitFor('!!document.querySelector(".source .text mark") && !document.querySelector(".source .text-ghost")', 'source panel');
     await capture('chat');
 
     // English locale: interface strings switch, statute quotes stay Vietnamese.
@@ -315,23 +432,46 @@ async function main() {
     await evaluate(`__fill(document.querySelector('form input[maxlength="120"]'), 'Bộ câu hỏi minh họa'); document.querySelector('form button[type=submit]').click(); true`);
     await waitFor('location.pathname.startsWith("/research/questions/q") && !!document.querySelector(".mode")', 'question set workspace');
     await evaluate(helpers);
-    assert(await evaluate('__q(".segmented button", "Soạn nháp bằng model").disabled'), 'drafting stays off without --proposal-model');
+    assert(await evaluate('__q(".tabs [role=tab]", "Soạn nháp bằng model").disabled'), 'drafting stays off without --proposal-model');
     await capture('questions-mode');
     await evaluate('__q(".mode .choice input[value=hidden]").click(); __click(".mode .btn.primary"); true');
     await waitFor('!document.querySelector(".mode")', 'mode chosen');
-    await evaluate('__click(".segmented button", "Thêm câu hỏi"); true');
+    await evaluate('__click(".tabs [role=tab]", "Thêm câu hỏi"); true');
     await waitFor('!!document.querySelector(".fields textarea")', 'add question form');
     await evaluate(`__fill(document.querySelector('.fields textarea'), 'Công ty phải trả lương thử việc tối thiểu bao nhiêu?'); document.querySelector('.fields button[type=submit]').click(); true`);
-    await waitFor('document.querySelectorAll(".questions li").length === 1', 'question added');
-    await evaluate('__click(".questions .q"); true');
+    await waitFor('document.querySelectorAll(".rail-items li").length === 1', 'question added');
+    await evaluate('__click(".rail-item"); true');
     await waitFor('!!document.querySelector(".label-form") && document.querySelectorAll(".found li").length > 0', 'label form with unit candidates');
+    // Question-set tour from the "?" menu: the step that opens the Label tab waits for the click, then moves on by itself.
+    await evaluate('document.querySelector("h1 .guide-q").click(); true');
+    await waitFor('!!__q("#guide-menu [role=menuitem]", "Hướng dẫn từng bước")', 'question set guide menu');
+    await evaluate('__click("#guide-menu [role=menuitem]", "Hướng dẫn từng bước"); true');
+    for (let i = 0; i < 8; i++) {
+      await settled('question tour step');
+      await sleep(300);
+      const card = await tourCard();
+      if (card.step === 'open') break;
+      await advanceTour();
+    }
+    const opening = await tourCard();
+    assert.equal(opening.step, 'open', 'question tour reaches the Label tab step');
+    followsTarget(opening);
+    assert(opening.waiting && !opening.next, 'the Label tab step waits for the click');
+    await evaluate('document.querySelector("[data-tour=tab-label]").click(); true');
+    await waitFor('document.querySelector(".tour .card")?.dataset.step === "type" && document.querySelector(".tour .card").dataset.phase === "shown"', 'question tour moves on to the question type');
+    await settled('question type step');
+    await sleep(300);
+    followsTarget(await tourCard());
+    await capture('tour-questions-type');
+    await pressEscape();
+    await waitFor('!document.querySelector(".tour")', 'Escape closes the question tour');
     await evaluate(`(() => { __q('.label-form input[value=lookup]').click(); __q('.label-form input[value=answer]').click();
       __q('.found li', 'Tiền lương thử việc').querySelector('button').click(); return true; })()`);
     await waitFor('document.querySelectorAll(".chosen li").length === 1', 'unit chosen');
     await capture('questions-label', true);
-    await evaluate('__click(".actions .btn", "Lưu"); true');
-    await waitFor('document.body.innerText.includes("1/1 đã gán nhãn")', 'label saved');
-    await evaluate('__click(".segmented button", "Trao đổi"); true');
+    await evaluate('__click(".ws-actions .btn", "Lưu"); true');
+    await waitFor('document.querySelector(".rail .meter[role=progressbar]")?.getAttribute("aria-valuenow") === "1"', 'label saved');
+    await evaluate('__click(".tabs [role=tab]", "Trao đổi"); true');
     await waitFor('[...document.querySelectorAll("a")].some(a => (a.getAttribute("href") || "").startsWith("/api/question-set/pack"))', 'exchange tab');
     await capture('questions-exchange');
     await logout();

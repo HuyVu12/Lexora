@@ -8,10 +8,42 @@ Thiết kế vòng đời kho (tạo mới, gộp, chỉnh sửa, hỏi nhiều 
 - `legal_ai.ingestion.source_library.SourceLibrary`: đọc catalog `source-library-v1`, chặn path vượt thư mục catalog, kiểm tra bytes SHA-256 trước khi tạo draft. Không truy cập mạng khi người dùng chọn nguồn.
 - `legal_ai.kb.import_review.ReviewStore` (`kb-store-v1`): nhiều kho, mỗi kho một chuỗi revision bất biến. Draft nhắm tới kho mới hoặc ghim revision hiện tại của một kho; quyết định review được lưu dần (`review_decisions`), có duyệt cả Điều và chỉnh sửa claim bằng câu trích nguồn (lớp `curated`, bản máy giữ nguyên). Duyệt mọi claim trước khi publish; draft stale nhận `Conflict` (HTTP 409). Nối đề cập thực thể bằng cạnh `REVIEWED_ENTITY_LINK` trong phạm vi một kho; không canonicalize toàn bộ entity. Store `import-review-v1` cũ được chuyển thành "Kho mặc định" mà không sửa revision.
 - `legal_ai.rag.review_chat.ChatService`: session ghim revision của 1 đến 5 kho (`bindings`); chỉ lấy claim có `human_review.decision=approved`. Cùng một câu trích ở nhiều kho chỉ hiện một lần, ghi danh sách kho chứa. Chế độ LLM bị chặn nếu session có kho riêng tư. Lấy evidence của claim, không mở rộng thành toàn bộ source unit có thể chứa câu chưa được duyệt/bị loại. Quote/offset/hash được kiểm tra trước retrieval.
-- Tra cứu local dùng BM25 trên các đoạn được phép, hỗ trợ không dấu, trả `sources_found` cùng nguyên văn. Đây là tra cứu nguồn, không phải sinh câu trả lời.
+- Tra cứu local dùng BM25 trên các đoạn được phép, hỗ trợ không dấu, qua [cổng căn cứ](#cổng-căn-cứ), trả `sources_found` cùng nguyên văn. Đây là tra cứu nguồn, không phải sinh câu trả lời.
 - Tìm kết hợp tùy chọn (`legal_ai.rag.dense`): khi chạy với `--embedding-model` và người dùng bật "Tìm thêm theo ý nghĩa", đoạn đã duyệt và câu hỏi được nhúng qua 9Router, xếp hạng RRF cùng BM25. Chỉ áp dụng khi mọi kho là công khai; lỗi embedding quay về BM25. Vector được cache trong SQLite theo model và SHA-256 của đoạn.
 - Provider tùy chọn: `legal_ai.providers.router.RouterProvider` (chat) và `RouterEmbeddings`; mỗi instance một model đã duyệt và ngân sách gọi riêng, không fallback/retry, không redirect, `stream=false`, timeout 25 giây (tách quy phạm mặc định 90 giây), output có giới hạn. Endpoint/key chỉ đọc `9ROUTER_URL`/`9ROUTER_KEY` trong `.env` của Lexora; chỉ chấp nhận HTTPS hoặc loopback.
 - LLM trả JSON statements với citation IDs. Gate từ chối schema sai hoặc citation ngoài bundle; không chứng minh legal entailment. Câu trả lời vẫn cần người đọc đối chiếu evidence.
+
+## Cổng căn cứ
+
+Ngày 22/11/2026. Cổng này chỉ dùng cho chat (`legal_ai.rag.review_chat`); pipeline ĐK1–ĐK4 (`indexing/`, `evaluation/`, `retrieval/bm25.py`) không đổi.
+Một đoạn đã duyệt chỉ được dùng làm căn cứ khi chung với câu hỏi ít nhất hai từ nội dung (đã bỏ stopword) và tự nó đạt một trong ba điều kiện:
+
+- giữ ít nhất 50% khối lượng IDF của câu hỏi (`GATE_SHARE`); từ không có trong đoạn đã duyệt nào có IDF cao nhất, nên "bitcoin" hay "xăng" không bị các từ phổ biến như "hợp", "pháp", "giá" lấn át;
+- chứa ít nhất hai từ hai âm tiết của câu hỏi, tức hai cặp từ nội dung liền nhau như "thử việc", "kỷ luật" (`GATE_PHRASES`);
+- câu hỏi dài: khớp ít nhất 5 từ nội dung và giữ ít nhất 20% khối lượng IDF (`GATE_LONG_WORDS`, `GATE_LONG_SHARE`).
+
+So khớp phân biệt dấu với từ có dấu: "vé" không khớp "về", "đá" không khớp "đa"; vị trí dấu thanh không quan trọng ("hoà" = "hòa").
+Từ gõ không dấu vẫn so khớp sau khi bỏ dấu, nên câu hỏi không dấu vẫn tìm được.
+Tìm kết hợp (RRF) dùng cùng cổng cho nhánh từ khóa; nhánh ngữ nghĩa giữ ngưỡng riêng (độ tương đồng ít nhất 0,72), rồi cả hai qua biên tương đối như trước.
+Gợi ý câu hỏi ở màn hình trống dùng cùng cổng nhưng đòi đoạn tốt nhất giữ ít nhất 60% khối lượng IDF.
+
+Ngưỡng được chọn bằng kiểm tra offline trên kho "Kho mẫu thử hỏi đáp" (577 quy phạm, 5 văn bản), với 25 câu trong phạm vi và 20 câu ngoài phạm vi viết tay (có câu không dấu), cùng 152 câu của "Bộ câu hỏi thực nghiệm v1" có nhãn `answer`/`refuse` của một người gán nhãn.
+Lưới thử: ngưỡng tỷ lệ 0,4 đến 0,6, số cặp từ 1 đến 3, câu dài 5 đến 7 từ với tỷ lệ 0,1 đến 0,2.
+Điều kiện chọn: mọi câu viết tay trong phạm vi vẫn có căn cứ, các câu ngoài phạm vi điển hình (bitcoin, giá xăng, vé máy bay) bị từ chối, Hit@3 trên bộ có nhãn không giảm; chọn bộ ngưỡng tròn số, không lấy điểm tốt nhất của lưới.
+
+| Bộ câu hỏi | Chỉ số | Trước | Sau |
+|---|---|---|---|
+| Viết tay, trong phạm vi (25) | có căn cứ | 25/25 | 25/25 |
+| Viết tay, ngoài phạm vi (20) | từ chối | 1/20 | 13/20 |
+| Bộ có nhãn, `answer` (128) | có căn cứ | 128/128 | 126/128 |
+| Bộ có nhãn, `answer` (128) | Hit@3 đúng đơn vị gán nhãn | 90/128 | 90/128 |
+| Bộ có nhãn, `refuse` (24) | từ chối | 0/24 | 1/24 |
+| Bộ có nhãn (152) | đồng thuận answer/refuse | 84,2% | 83,6% |
+
+Giới hạn còn lại: câu `refuse` của bộ có nhãn phần lớn nằm trong lĩnh vực lao động nhưng corpus thiếu quy định cụ thể (bảo hiểm xã hội, thai sản, công đoàn); so khớp từ không phân biệt được, cần model hoặc nhãn phạm vi.
+Bảy câu ngoài phạm vi viết tay vẫn qua cổng vì dùng đúng từ có trong luật ("thuế thu nhập cá nhân", "lãi suất ngân hàng", "Hà Nội", "điện tử", "thủ tục đăng ký").
+Hai câu `answer` bị mất: "Em sắp cưới, em được nghỉ mấy ngày…" (luật dùng "kết hôn") và "Phiếu lương… phải có những thông tin gì?" (trước đó cũng không trúng đơn vị đúng).
+Số liệu là kiểm tra kỹ thuật trên nhãn của một người, không phải kết quả nghiên cứu.
 
 ## Chạy
 
@@ -50,7 +82,11 @@ Flag `--approve-router` là opt-in kỹ thuật, không khẳng định model mi
 - `POST /api/publish`: `{draft_id, reviewer, reason}` → `{revision, kb_id, summary}`; `409 base_changed` nếu kho đã có revision mới.
 - `POST /api/chat/start`: `{kb_ids}` → session; từ chối kho chưa có claim được human review.
 - `POST /api/chat/ask`: `{session_id, question, mode, allow_public_transfer, semantic}`; mode `extractive` mặc định, `llm` opt-in; `semantic: true` bật tìm kết hợp. Phản hồi có `retrieval: {mode: hybrid|lexical, reason}`.
-- `GET /api/chat/session?id=...`: lịch sử và bindings.
+- `GET /api/chat/session?id=...`: lịch sử, bindings, `title` (tên người dùng đặt, mặc định là câu hỏi đầu tiên rút gọn) và `updated_at`.
+- `POST /api/chat/rename`: `{session_id, title}`; tên rỗng trả về tên mặc định. Chỉ chủ cuộc trò chuyện; lượt hỏi đã lưu không bị sửa.
+- `POST /api/chat/hide`: `{session_id}`; ẩn khỏi danh sách của chủ (bảng `chat_session_meta.hidden_at`), không xóa bản ghi để giữ dữ liệu kiểm tra và thống kê. Cuộc đã ẩn trả 404 ở mọi route chat.
+- `GET /api/chat/source?session_id=...&turn=...&citation=...`: câu trích trong nguyên văn đơn vị của revision đã ghim, đường dẫn Chương/Điều/Khoản và các kho chứa; chỉ phần `text[start:end]` là evidence đã duyệt.
+- `GET /api/chat/suggestions?kb=...`: tối đa 4 câu hỏi gợi ý cho các kho đã chọn, tạo offline (câu hỏi thường gặp có đoạn đã duyệt khớp, rồi tiêu đề Điều có nhiều quy phạm nhất), không gọi model.
 
 Tài khoản cục bộ với ba vai trò (`legal_ai.auth`), không phải SSO. Kho công bố revision mới thì session hiện có vẫn dùng revision cũ; tạo session mới để dùng revision mới. Từng câu hỏi cần đủ ngữ cảnh, chưa rewrite follow-up bằng model.
 
