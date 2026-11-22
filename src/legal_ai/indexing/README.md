@@ -9,6 +9,7 @@ Bản ghi chỉ mục cho từng điều kiện thực nghiệm (`records.py`, `
 - Token đếm theo `lexora-syllable-v1` (âm tiết Unicode và `%`, giống tokenizer BM25); khi chốt model sinh câu trả lời sẽ đổi sang tokenizer của model và tạo phiên bản mới.
 
 - ĐK3/ĐK4 `kb_unit_records`: bản ghi ĐK2 kèm quy phạm của đơn vị (`claims_view` full hoặc compact).
+- `kb_keys.py` (`kb-keys-v1`, bật bằng `"index_keys": {"version": "kb-keys-v1", "aliases": "configs/experiments/actor-aliases.json"}` trong cấu hình điều kiện, mặc định tắt): khóa tìm kiếm tất định chỉ thêm vào `index_text` của bản ghi có quy phạm, không vào phần model đọc, không phải bằng chứng. Mỗi quy phạm: tên chủ thể chuẩn và mọi bí danh theo bảng bí danh, tính quy phạm bằng lời thường (nghĩa vụ -> "nghĩa vụ phải", điều cấm -> "bị cấm không được", quyền và được phép -> "được quyền"), "bị xử phạt" khi ô kết quả có chữ "phạt", và giá trị chủ thể, kết quả kế thừa từ câu dẫn (`claims-inherit-v1`); mỗi khóa một lần trong bản ghi. ĐK4 lấy khóa từ tập quy phạm đã kiểm chứng.
 - `packing.py` (`pack-article-v1`): đóng gói ngữ cảnh trong ngân sách token, dùng chung cho lượt sinh câu trả lời và recall theo ngân sách: P0 danh sách phẳng, P1 gom theo Điều và in tiêu đề một lần, P2 thêm Khoản, Điểm anh em chưa xếp hạng của 3 Điều đầu (mỗi khối tối đa 400 token).
 
-Test: `tests/test_retrieval_run.py`, `tests/test_packing.py`.
+Test: `tests/test_retrieval_run.py`, `tests/test_packing.py`, `tests/test_kb_keys.py`.

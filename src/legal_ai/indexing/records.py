@@ -218,7 +218,7 @@ def compact_claim(claim):
     return " · ".join(parts)
 
 
-def kb_unit_records(condition, documents, units, texts, claims, max_tokens=384, view="full"):
+def kb_unit_records(condition, documents, units, texts, claims, max_tokens=384, view="full", index_keys=None):
     """DK3/DK4 (`record: unit_with_claims`): the DK2 record of every leaf unit, its exact source text, path and lead
     text unchanged, followed by the serialized knowledge-base claims of that unit. A unit without a claim keeps its
     DK2 record, so the only difference to DK2 is the added norm structure (and between DK3 and DK4, which claims
@@ -226,7 +226,11 @@ def kb_unit_records(condition, documents, units, texts, claims, max_tokens=384, 
     the shared title and path.
 
     With `view="compact"` the generator reads `generator_text` instead: the DK2 text and one structure line per claim
-    (`compact_claim`), while `index_text` keeps the full claims for searching; budgets count `generator_text`."""
+    (`compact_claim`), while `index_text` keeps the full claims for searching; budgets count `generator_text`.
+
+    `index_keys` (a `kb_keys.KbKeys`, `kb-keys-v1`) appends the record's key phrases as one last line of `index_text`
+    only and lists them in `index_keys`; the generator reads the same text as without keys (in the full view it becomes
+    an explicit `generator_text`). Without `index_keys` the records are exactly those of earlier runs."""
     if view not in ("full", "compact"):
         raise ValueError("claims_view must be full or compact")
     by_id = {u["unit_id"]: u for u in units}
@@ -254,6 +258,12 @@ def kb_unit_records(condition, documents, units, texts, claims, max_tokens=384, 
             lines = [compact_claim(c) for c in mine]
             row["generator_text"] = base + "".join(f"\n[Quy phạm {n}] {line}" for n, line in enumerate(lines, 1))
             row["token_count"] = len(token_spans(row["text"])) + sum(len(token_spans(line)) for line in lines)
+        if index_keys is not None and mine:
+            keys = index_keys.record_keys(mine)
+            if keys:  # Search aid only: the generator keeps reading the text without the keys.
+                row.setdefault("generator_text", row["index_text"])
+                row["index_text"] += "\n" + " · ".join(keys)
+                row["index_keys"] = keys
         used.update(row["claim_ids"])
         records.append(row)
     missing = [c["claim_id"] for c in claims if c["claim_id"] not in used]

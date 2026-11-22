@@ -24,6 +24,9 @@ is expanded over the knowledge base's cross-reference edges (`retrieval.graph`),
 `graph.amendments` it is then expanded over amendment edges (`retrieval.amendment_graph`, validity option B of
 22/11/2026): DK3 follows them whatever the question's date, a condition with unit-level validity (DK4) only when the
 edge is effective by that date, before its unit status filter. Neighbours carry their relation note as `status_note`.
+With `index_keys` ({"version": "kb-keys-v1", "aliases": <alias table>}, `record: unit_with_claims` only) every unit
+record with claims also gets deterministic key phrases (`indexing.kb_keys`) in its index text, never in what the
+generator reads; the manifest records the alias table's hash. Without it the records are those of earlier runs.
 
 With `shared.subqueries` (a decomposition run, the same for every condition) each question is ranked once as
 written and once per issue query, and the rankings are merged round-robin, so every issue gets early records.
@@ -38,6 +41,7 @@ import platform
 import subprocess
 
 from legal_ai.common.io import canonical, digest, read_jsonl, write_json, write_jsonl
+from legal_ai.indexing import kb_keys
 from legal_ai.indexing.packing import PACKING_VERSION, Packer, condition_mode
 from legal_ai.kb.validity import DROP, STATUS_VERSION, VERSIONS as STATUS_VERSIONS, RecordFilter
 from legal_ai.indexing.records import RECORD_VERSION, TOKENIZER, check_records, claim_records, fixed_chunks, kb_unit_records, structural_records, token_spans
@@ -78,6 +82,14 @@ def kb_claims(condition, units_path):
     return read_jsonl(folder / KB_FILES[condition["representation"]])
 
 
+def index_keys(condition):
+    """The `kb_keys.KbKeys` of a condition with `index_keys` ({version: kb-keys-v1, aliases}), else None (the default)."""
+    spec = condition.get("index_keys")
+    if spec is None:
+        return None
+    return kb_keys.KbKeys(kb_keys.check_config(spec)["aliases"])
+
+
 def build_records(condition, documents, units, texts, units_path=None):
     representation = condition["representation"]
     if BUILDERS.get(representation) != condition["condition"]:
@@ -91,13 +103,18 @@ def build_records(condition, documents, units, texts, units_path=None):
         if mode not in RECORD_MODES:
             raise ValueError(f"record must be one of {RECORD_MODES}")
         claims = kb_claims(condition, units_path)
+        keys = index_keys(condition)
+        if keys is not None and mode != "unit_with_claims":
+            raise ValueError("index_keys needs record=unit_with_claims")
         if mode == "norm_lines":  # DK3-q/DK4-q: only units with claims, the generator reads one line per claim.
             from legal_ai.retrieval.norm_query import norm_records
             records = norm_records(condition["condition"], documents, units, texts, claims, condition.get("max_tokens", 384))
         else:
             records = (claim_records(condition["condition"], documents, units, texts, claims) if mode == "claims" else
                        kb_unit_records(condition["condition"], documents, units, texts, claims, condition.get("max_tokens", 384),
-                                       condition.get("claims_view", "full")))
+                                       condition.get("claims_view", "full"), keys))
+    if condition.get("index_keys") is not None and representation not in KB_FILES:
+        raise ValueError("index_keys come from the knowledge base and apply to DK3/DK4 only")
     if condition.get("graph") and representation not in KB_FILES:
         raise ValueError("graph expansion uses the knowledge base and applies to DK3/DK4 only")
     return check_records(records, texts)
@@ -513,6 +530,9 @@ def run(bundle, questions_path, condition_path, shared_path, output, embedder=No
                         "sha256": digest((Path(shared["subqueries"]) / "subqueries.jsonl").read_bytes())} if shared.get("subqueries") else None),
         **({"query_slots": {"version": norm_query.QUERY_VERSION, "path": Path(shared["query_slots"]).as_posix(),
                             "sha256": digest((Path(shared["query_slots"]) / "query_slots.jsonl").read_bytes())}} if shared.get("query_slots") else {}),
+        **({"index_keys": {"version": kb_keys.KEYS_VERSION, "aliases": Path(condition["index_keys"]["aliases"]).as_posix(),
+                           "aliases_sha256": digest(Path(condition["index_keys"]["aliases"]).read_bytes()),
+                           "records_with_keys": sum(1 for r in records if r.get("index_keys"))}} if condition.get("index_keys") else {}),
         **({"query_filter": {"aliases": Path(query_filter["aliases"]).as_posix(),
                              "aliases_sha256": digest(Path(query_filter["aliases"]).read_bytes())}} if query_filter else {}),
         "graph": ({"version": legal_chain.CHAIN_VERSION, **graph, "edge_count": sum(len(v) for v in edges.values()),

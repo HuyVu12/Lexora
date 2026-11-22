@@ -152,7 +152,7 @@ def check(retrieval_dirs, answer_dirs=()):
             extra = sorted(dk4 - dk3)
             add("DK4 is a subset of DK3", "fail" if extra else "pass", f"{len(extra)} DK4 claims not in DK3" if extra else f"{len(dk4)} of {len(dk3)} kept")
         # DK3 and DK4 may differ only in which claims survived validation (and, under option B, in the validity block).
-        shape = {c: {k: m["condition"].get(k) for k in ("record", "max_tokens", "graph", "claims_view", "query")} for (_, m), c in zip(runs, conditions) if c in ("DK3", "DK4")}
+        shape = {c: {k: m["condition"].get(k) for k in ("record", "max_tokens", "graph", "claims_view", "query", "index_keys")} for (_, m), c in zip(runs, conditions) if c in ("DK3", "DK4")}
         add("DK3 and DK4 use the same record shape and graph", "pass" if _same(list(shape.values())) else "fail", "" if _same(list(shape.values())) else shape)
         by = {c: m for (_, m), c in zip(runs, conditions)}
         if not _same([by["DK3"]["condition"].get("validity"), by["DK4"]["condition"].get("validity")]):
