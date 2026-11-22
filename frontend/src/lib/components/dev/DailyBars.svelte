@@ -3,7 +3,9 @@
 	type Series = { key: string; label: string; color: string; values: number[] };
 	let { days, series, label }: { days: string[]; series: Series[]; label: string } = $props();
 
-	const W = 640;
+	// The drawing is as wide as its box, so tick labels keep their real size on a phone instead of shrinking.
+	let box = $state(640);
+	const W = $derived(Math.max(300, Math.round(box)));
 	const H = 180;
 	const pad = { top: 10, right: 8, bottom: 24, left: 34 };
 	const totals = $derived(days.map((_, i) => series.reduce((sum, s) => sum + (s.values[i] ?? 0), 0)));
@@ -31,7 +33,7 @@
 	}
 </script>
 
-<figure class="chart">
+<figure class="chart" bind:clientWidth={box}>
 	<svg viewBox="0 0 {W} {H}" role="img" aria-label={label}>
 		{#each ticks as tick (tick)}
 			<line class="grid" x1={pad.left} x2={W - pad.right} y1={y(tick)} y2={y(tick)} />

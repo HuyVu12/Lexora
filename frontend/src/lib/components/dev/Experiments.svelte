@@ -2,7 +2,7 @@
 	import { t, formatDate } from '#lib/i18n/index.svelte.js';
 	import type { DevExperiments } from '#lib/types.js';
 	import type { MessageKey } from '#lib/i18n/vi.js';
-	import { countUp } from '#lib/motion.js';
+	import { countUp, revealItems } from '#lib/motion.js';
 
 	let { data }: { data: DevExperiments } = $props();
 
@@ -19,11 +19,12 @@
 	const runs = $derived(allRuns ? sorted : sorted.slice(0, RECENT));
 </script>
 
-<div class="dev-tiles">
+<!-- Run counts by kind: one compact strip; a kind without runs recedes instead of filling a large tile with 0. -->
+<dl class="counts" {@attach revealItems({ step: 35, y: 6 })}>
 	{#each KINDS as kind (kind)}
-		<div class="dev-tile"><span class="label">{t(`dev.run.${kind}` as MessageKey)}</span><strong {@attach countUp(count(kind))}></strong></div>
+		<div class:zero={!count(kind)}><dt class="label">{t(`dev.run.${kind}` as MessageKey)}</dt><dd {@attach countUp(count(kind))}></dd></div>
 	{/each}
-</div>
+</dl>
 
 <section class="panel" aria-labelledby="kb-heading">
 	<div class="split">
@@ -61,7 +62,7 @@
 			</table>
 		</div>
 	{:else}
-		<p class="small muted">{t('dev.exp.noKb')}</p>
+		<p class="dev-empty">{t('dev.exp.noKb')}</p>
 	{/if}
 </section>
 
@@ -82,7 +83,7 @@
 				</div>
 			{/each}
 		{:else}
-			<p class="small muted">{t('dev.exp.noAudits')}</p>
+			<p class="dev-empty">{t('dev.exp.noAudits')}</p>
 		{/if}
 	</section>
 	<section class="panel" aria-labelledby="runs-heading">
@@ -99,6 +100,51 @@
 </div>
 
 <style>
+	.counts {
+		display: grid;
+		grid-template-columns: repeat(5, minmax(0, 1fr));
+		margin: 0;
+		background: var(--paper);
+		border: 1px solid var(--rule);
+		border-radius: var(--r-panel);
+	}
+	.counts > div {
+		display: grid;
+		gap: 2px;
+		padding: 10px 16px;
+	}
+	.counts > div + div {
+		border-left: 1px solid var(--rule);
+	}
+	.counts dd {
+		margin: 0;
+		font: 600 22px/1.15 var(--serif);
+		font-variant-numeric: tabular-nums;
+	}
+	.counts .zero dd {
+		color: var(--muted);
+		font-weight: 500;
+	}
+	/* Narrow screens: one row per kind, the name on the left and the count on the right. */
+	@media (max-width: 700px) {
+		.counts {
+			grid-template-columns: minmax(0, 1fr);
+			padding: 4px 14px;
+		}
+		.counts > div {
+			display: flex;
+			justify-content: space-between;
+			align-items: baseline;
+			padding: 7px 0;
+		}
+		.counts > div + div {
+			border-left: 0;
+			border-top: 1px solid var(--rule);
+		}
+		.counts dd {
+			font-size: 18px;
+		}
+	}
 	.split {
 		display: flex;
 		justify-content: space-between;

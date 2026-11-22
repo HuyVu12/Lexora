@@ -18,6 +18,7 @@
 		{ key: 'locked', label: t('dev.usage.loginLocked'), color: 'var(--reject)', values: data.daily.map((d) => d.login_locked) }
 	]);
 	const questions = $derived([{ key: 'q', label: t('dev.usage.questions'), color: 'var(--flag)', values: data.daily.map((d) => d.questions) }]);
+	const anyLogin = $derived(data.daily.some((d) => d.login_ok + d.login_refused + d.login_locked > 0));
 	const statusLabel = (s: string) => t(`dev.chatStatus.${s}` as MessageKey) ?? s;
 </script>
 
@@ -34,28 +35,26 @@
 <div class="dev-two">
 	<section class="panel" aria-labelledby="questions-chart">
 		<h2 class="heading" id="questions-chart">{t('dev.usage.questionsChart')}</h2>
-		<DailyBars {days} series={questions} label={t('dev.usage.questionsChart')} />
+		{#if data.questions}<DailyBars {days} series={questions} label={t('dev.usage.questionsChart')} />{:else}<p class="dev-empty">{t('dev.usage.noQuestions')}</p>{/if}
 	</section>
 	<section class="panel" aria-labelledby="logins-chart">
 		<h2 class="heading" id="logins-chart">{t('dev.usage.loginsChart')}</h2>
-		<DailyBars {days} series={logins} label={t('dev.usage.loginsChart')} />
+		{#if anyLogin}<DailyBars {days} series={logins} label={t('dev.usage.loginsChart')} />{:else}<p class="dev-empty">{t('dev.usage.noLogins')}</p>{/if}
 	</section>
 </div>
 
 <div class="dev-two">
+	{#if data.questions}
 	<section class="panel" aria-labelledby="answers-heading">
 		<h2 class="heading" id="answers-heading">{t('dev.usage.answers')}</h2>
-		{#if data.questions}
 			<ul class="dev-list">
 				<li><span>{t('dev.usage.extractive')}</span><strong>{data.by_mode.extractive}</strong></li>
 				<li><span>{t('dev.usage.llm')}</span><strong>{data.by_mode.llm}</strong></li>
 				<li><span>{t('dev.usage.semantic')}</span><strong>{data.semantic}</strong></li>
 				{#each Object.entries(data.status) as [status, n] (status)}<li><span class="muted">{statusLabel(status)}</span><strong>{n}</strong></li>{/each}
 			</ul>
-		{:else}
-			<p class="small muted">{t('dev.usage.noQuestions')}</p>
-		{/if}
 	</section>
+	{/if}
 	<section class="panel" aria-labelledby="accounts-heading">
 		<h2 class="heading" id="accounts-heading">{t('dev.usage.accounts')}</h2>
 		<ul class="dev-list">

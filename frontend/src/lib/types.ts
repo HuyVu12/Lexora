@@ -678,6 +678,18 @@ export interface DevOverview {
 	running: { id: string; title: string; kb_name: string }[];
 	changes: DevChange[];
 	started_at: string;
+	/** The last 14 calendar days, oldest first, today last. */
+	trend: DevDay[];
+}
+export interface DevDay {
+	day: string;
+	calls: number;
+	errors: number;
+	blocked: number;
+	tokens: number;
+	cost_usd: number;
+	questions: number;
+	logins: number;
 }
 export interface DevCallModel {
 	feature: Feature;

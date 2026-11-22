@@ -951,7 +951,7 @@ def create_app(store, port, *, provider=None, source_catalog=None, extractor=Non
             alerts.append({"level": "warning", "code": "blocked", "value": today["blocked"]})
         return {"today": today, "controls": controls, "models": models, "alerts": alerts, "can_change": account["role"] == "dev",
                 "running": [{"id": d["id"], "title": d["title"], "kb_name": d["kb_name"]} for d in drafts if d["extraction_state"] == "running"],
-                "changes": ops.changes(10), "started_at": started_at}
+                "changes": ops.changes(10), "started_at": started_at, "trend": ops.daily(14)}
 
     @app.get("/api/dev/calls")
     def dev_calls(days: int = Query(14), _=Depends(monitor)):

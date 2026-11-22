@@ -196,6 +196,34 @@ class OpsStore:
                 "cost_usd": round(sum(r["cost_usd"] or 0 for r in made), 4),
                 "by_feature": {f: sum(1 for r in made if r["feature"] == f) for f in FEATURES}}
 
+    def daily(self, days=14):
+        """One row per calendar day (oldest first, today last) with the counts the overview trends need:
+        model calls made, errors, blocked attempts, tokens, listed cost, chat questions and successful logins."""
+        span = self._days(days)
+        rows = {d: {"day": d, "calls": 0, "errors": 0, "blocked": 0, "tokens": 0, "cost_usd": 0.0, "questions": 0, "logins": 0} for d in span}
+        with closing(self._connect()) as db:
+            for r in db.execute("SELECT day, status, COUNT(*) AS n, SUM(prompt_tokens + completion_tokens) AS tokens, SUM(COALESCE(cost_usd, 0)) AS cost "
+                                "FROM model_calls WHERE day >= ? GROUP BY day, status", (span[0],)):
+                row = rows.get(r["day"])
+                if row is None:
+                    continue
+                if r["status"] == "blocked":
+                    row["blocked"] += r["n"]
+                    continue
+                row["calls"] += r["n"]
+                row["errors"] += r["n"] if r["status"] != "ok" else 0
+                row["tokens"] += r["tokens"] or 0
+                row["cost_usd"] += r["cost"] or 0
+            for r in db.execute("SELECT day, event, detail FROM usage_events WHERE day >= ? AND event IN ('chat_ask', 'login')", (span[0],)):
+                row = rows.get(r["day"])
+                if row is None:
+                    continue
+                if r["event"] == "chat_ask":
+                    row["questions"] += 1
+                elif json.loads(r["detail"]).get("result") == "ok":
+                    row["logins"] += 1
+        return [row | {"cost_usd": round(row["cost_usd"], 4)} for row in rows.values()]
+
     def usage(self, days=14):
         span = self._days(days)
         with closing(self._connect()) as db:

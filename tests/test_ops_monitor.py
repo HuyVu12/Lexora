@@ -101,6 +101,30 @@ class OpsMonitorTests(unittest.TestCase):
         self.assertEqual((usage["by_mode"], usage["semantic"], usage["no_evidence_rate"], usage["citations_mean"]),
                          ({"extractive": 1, "llm": 1}, 1, 0.5, 1.5))
 
+    def test_daily_trend_counts_calls_questions_and_logins_per_day_with_today_last(self):
+        claude = MeteredProvider(ClaudeCodeProvider(), self.ops, "proposal")
+        claude.structured("s", "p", {})
+        with self.assertRaises(ProviderError):
+            MeteredProvider(ClaudeCodeProvider(fail="timeout"), self.ops, "proposal").structured("s", "p", {})
+        self.ops.set_control("proposal", enabled=False, daily_limit=None, by="dev")
+        with self.assertRaises(ProviderError):
+            claude.structured("s", "p", {})
+        self.ops.record_event("chat_ask", mode="extractive", status="sources_found", citations=1, ms=5)
+        self.ops.record_event("login", result="ok")
+        self.ops.record_event("login", result="refused")
+        week_ago = self.ops._days(8)[0]
+        with closing(sqlite3.connect(self.path)) as db, db:
+            db.execute("INSERT INTO model_calls (at, day, feature, status, prompt_tokens, completion_tokens) VALUES (?, ?, 'chat', 'ok', 4, 6)",
+                       (week_ago + "T09:00:00+00:00", week_ago))
+            db.execute("INSERT INTO model_calls (at, day, feature, status) VALUES ('2000-01-01T00:00:00+00:00', '2000-01-01', 'chat', 'ok')")
+        trend = self.ops.daily(14)
+        self.assertEqual((len(trend), trend[-1]["day"], trend[-8]["day"]), (14, self.ops._days(1)[0], week_ago))
+        today = trend[-1]
+        self.assertEqual({k: today[k] for k in ("calls", "errors", "blocked", "tokens", "cost_usd", "questions", "logins")},
+                         {"calls": 2, "errors": 1, "blocked": 1, "tokens": 22, "cost_usd": 0.02, "questions": 1, "logins": 1})
+        self.assertEqual((trend[-8]["calls"], trend[-8]["tokens"]), (1, 10))
+        self.assertEqual(sum(d["calls"] for d in trend), 3, "days outside the window are left out")
+
     def test_tokens_read_both_usage_shapes(self):
         self.assertEqual(tokens({"input_tokens": 1, "cache_creation_input_tokens": 2, "output_tokens": 3}), (3, 3, 0))
         self.assertEqual(tokens({"prompt_tokens": 4, "completion_tokens": 5, "completion_tokens_details": {"reasoning_tokens": 1}}), (4, 5, 1))

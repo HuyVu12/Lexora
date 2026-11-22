@@ -516,6 +516,7 @@ class WebApiTests(unittest.TestCase):
         overview = dev.get("/api/dev/overview").json()
         self.assertEqual((overview["today"]["calls"], overview["today"]["by_feature"]["proposal"], overview["can_change"]), (1, 1, True))
         self.assertEqual(overview["models"]["proposal"]["model"], "stand-in")
+        self.assertEqual((len(overview["trend"]), overview["trend"][-1]["calls"], overview["trend"][-1]["questions"]), (14, 1, 1))
         calls = admin.get("/api/dev/calls").json()
         self.assertEqual((calls["recent"][0]["actor"], calls["models"][0]["prompt_tokens"]), ("phapche", 12))
         usage = dev.get("/api/dev/usage").json()
