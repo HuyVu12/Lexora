@@ -9,6 +9,7 @@
 	import Term from '#lib/components/Term.svelte';
 	import Icon from '#lib/components/Icon.svelte';
 	import Skeleton from '#lib/components/Skeleton.svelte';
+	import ConfirmDialog from '#lib/components/ConfirmDialog.svelte';
 	import { api } from '#lib/api.js';
 	import { rise } from '#lib/motion.js';
 	import { t, unitLabel } from '#lib/i18n/index.svelte.js';
@@ -102,8 +103,9 @@
 		getSelection()?.removeAllRanges();
 	}
 
+	// Discarding asks first in the app's own dialog (red, like every removal), never the browser's confirm().
+	let discardOpen = $state(false);
 	async function discard() {
-		if (!confirm(t('review.discardConfirm'))) return;
 		await guarded(async () => {
 			await api('/api/draft/discard', { draft_id: id });
 			notify({ key: 'review.discarded' });
@@ -329,12 +331,16 @@
 					.join(' · ') || t('review.allDone')}
 			</p>
 			<div class="row">
-				<button type="button" class="btn quiet" disabled={busy} onclick={discard}>{t('review.discard')}</button>
+				<button type="button" class="btn quiet" disabled={busy} onclick={() => (discardOpen = true)}>{t('review.discard')}</button>
 				<a class="btn primary" href="/drafts/{id}/preview" data-tour="review-preview">{t('review.preview')}<Icon name="arrow" /></a>
 			</div>
 		</footer>
 	</div>
 {/if}
+
+<ConfirmDialog bind:open={discardOpen} title={t('review.discardConfirm')} confirmLabel={t('review.discard')} cancelLabel={t('review.keepDraft')} tone="danger" onconfirm={discard}>
+	<p>{t('review.discardBody', { title: draft?.title ?? '' })}</p>
+</ConfirmDialog>
 
 <style>
 	.narrow {

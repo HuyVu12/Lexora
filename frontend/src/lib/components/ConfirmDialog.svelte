@@ -12,8 +12,9 @@
 		confirmLabel,
 		onconfirm,
 		tone = 'default',
+		cancelLabel = '',
 		children
-	}: { open: boolean; title: string; confirmLabel: string; onconfirm: () => void; tone?: 'default' | 'danger'; children?: Snippet } = $props();
+	}: { open: boolean; title: string; confirmLabel: string; onconfirm: () => void; tone?: 'default' | 'danger'; cancelLabel?: string; children?: Snippet } = $props();
 	let dialog = $state<HTMLDialogElement | null>(null);
 	const titleId = $props.id();
 
@@ -28,7 +29,7 @@
 	<h2 class="heading" id={titleId}>{title}</h2>
 	{@render children?.()}
 	<div class="row actions">
-		<button type="button" class="btn quiet" onclick={() => (open = false)}>{t('common.cancel')}</button>
+		<button type="button" class="btn quiet" onclick={() => (open = false)}>{cancelLabel || t('common.cancel')}</button>
 		<button type="button" class="btn {tone === 'danger' ? 'danger' : 'primary'}" onclick={() => { open = false; onconfirm(); }}
 			><Icon name={tone === 'danger' ? 'trash' : 'check'} />{confirmLabel}</button
 		>
