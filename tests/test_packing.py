@@ -362,6 +362,16 @@ class RunIntegrationTests(unittest.TestCase):
         self.assertEqual(status(report, "DK2-DK4 use the same context packing"), "fail")
 
 
+class SharedConfigTests(unittest.TestCase):
+    def test_rrf100_config_differs_from_shared_only_in_fusion_depth_and_packing(self):
+        read = lambda name: json.loads((ROOT / "configs" / "experiments" / name).read_text(encoding="utf-8"))
+        base, candidate = read("shared.json"), read("shared-rrf100.json")
+        self.assertEqual(candidate["retrieval"], base["retrieval"] | {"rrf_candidates": 100})
+        self.assertEqual(condition_mode("DK2", candidate["context_packing"]), "P3")
+        self.assertEqual({k: v for k, v in candidate.items() if k not in {"retrieval", "context_packing", "note"}},
+                         {k: v for k, v in base.items() if k not in {"retrieval", "note"}})
+
+
 class VerificationLoadTests(unittest.TestCase):
     def test_cited_tokens_and_single_leaf_citations(self):
         units = {"a": {"unit_id": "a", "parent_id": None}, "a/1": {"unit_id": "a/1", "parent_id": "a"}, "a/2": {"unit_id": "a/2", "parent_id": "a"}}
