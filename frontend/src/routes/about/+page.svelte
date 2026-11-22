@@ -169,7 +169,7 @@
 <style>
 	.about {
 		display: grid;
-		gap: 56px;
+		gap: var(--space-10);
 	}
 	.hero {
 		display: grid;
