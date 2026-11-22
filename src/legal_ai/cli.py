@@ -80,6 +80,10 @@ def main():
     command = commands.add_parser("kb-materialize", help="rebuild dk3/dk4 and the validation report of a knowledge-base run from raw.jsonl; offline")
     command.add_argument("run", help="knowledge-base run directory")
     command.add_argument("--bundle", help="contract bundle (default: the one recorded in the run manifest)")
+    command.add_argument("--output", help="new directory for a derived knowledge base (the run itself is not touched); needed for a non-default --validator or --inherit")
+    command.add_argument("--validator", default="kb-validator-v3", choices=["kb-validator-v3", "kb-validator-v4"],
+                         help="kb-validator-v4 also accepts values quoted from the parent unit's lead-in")
+    command.add_argument("--inherit", choices=["claims-inherit-v1"], help="fill an empty actor, action or outcome from the parent's lead-in before validation (needs kb-validator-v4)")
     command = commands.add_parser("amendment-build", help="amendment edges (amendment-rules-v2) of pinned vbpl.vn snapshots against a corpus bundle; offline, no model")
     command.add_argument("bundle", help="contract bundle whose units are the targets")
     command.add_argument("--config", default="configs/amendments-v1.json", help="amending sources (pinned snapshots)")
@@ -350,7 +354,12 @@ def main():
             from legal_ai.evaluation import kb_run
             if args.command == "kb-materialize":
                 bundle = args.bundle or json.loads((Path(args.run) / "manifest.json").read_text(encoding="utf-8"))["bundle"]
-                print(json.dumps(kb_run.materialize(read_jsonl(Path(bundle) / "units.jsonl"), args.run), ensure_ascii=False, indent=2))
+                units = read_jsonl(Path(bundle) / "units.jsonl")
+                if args.output:
+                    report = kb_run.materialize(units, args.output, source=args.run, validator=args.validator, inheritance=args.inherit)
+                else:
+                    report = kb_run.materialize(units, args.run, validator=args.validator, inheritance=args.inherit)
+                print(json.dumps(report, ensure_ascii=False, indent=2))
             else:
                 units = read_jsonl(Path(args.bundle) / "units.jsonl")
                 if args.dry_run:
