@@ -235,11 +235,19 @@ def main():
     command.add_argument("--output", required=True, help="new, empty directory")
     command.add_argument("--per-type", type=int, default=30)
     command.add_argument("--seed", default="lexora-inject-v1")
+    command.add_argument("--validator", default="kb-validator-v3", choices=["kb-validator-v3", "kb-validator-v4"],
+                         help="validator applied to the corrupted and clean claims; kb-validator-v4 also accepts values quoted from the parent's lead-in")
+    command.add_argument("--inherit", choices=["claims-inherit-v1"],
+                         help="after putting the errors in, fill empty actor, action or outcome slots from the lead-in, then validate (needs kb-validator-v4)")
     command = commands.add_parser("kb-plant", help="stress test: a copy of a knowledge-base run with visible errors planted in the claims of the questions' gold units; DK4 re-validated; offline")
     command.add_argument("run", help="knowledge-base run directory")
     command.add_argument("--questions", required=True, help="question file; its relevant_unit_ids are the targets")
     command.add_argument("--output", required=True, help="new, empty directory")
     command.add_argument("--seed", default="lexora-plant-v1")
+    command.add_argument("--validator", default="kb-validator-v3", choices=["kb-validator-v3", "kb-validator-v4"],
+                         help="validator applied to the corrupted and clean claims; kb-validator-v4 also accepts values quoted from the parent's lead-in")
+    command.add_argument("--inherit", choices=["claims-inherit-v1"],
+                         help="after putting the errors in, fill empty actor, action or outcome slots from the lead-in, then validate (needs kb-validator-v4)")
     command = commands.add_parser("question-drafts", help="add model-drafted questions with proposed labels to a question set (new or existing); offline")
     command.add_argument("drafts", nargs="+", help="JSON files, each a list of drafted questions")
     command.add_argument("--store", required=True)
@@ -545,13 +553,15 @@ def main():
         elif args.command == "kb-inject":
             from legal_ai.evaluation.error_injection import run as inject_run
             bundle = json.loads((Path(args.run) / "manifest.json").read_text(encoding="utf-8"))["bundle"]
-            print(json.dumps(inject_run(args.run, read_jsonl(Path(bundle) / "units.jsonl"), args.output, args.per_type, args.seed), ensure_ascii=False, indent=2))
+            print(json.dumps(inject_run(args.run, read_jsonl(Path(bundle) / "units.jsonl"), args.output, args.per_type, args.seed,
+                                        validator=args.validator, inheritance=args.inherit), ensure_ascii=False, indent=2))
         elif args.command == "kb-plant":
             from legal_ai.evaluation.error_injection import plant
             bundle = json.loads((Path(args.run) / "manifest.json").read_text(encoding="utf-8"))["bundle"]
             questions = json.loads(Path(args.questions).read_text(encoding="utf-8"))["questions"]
             targets = {u for q in questions for u in q.get("relevant_unit_ids") or []}
-            print(json.dumps(plant(args.run, read_jsonl(Path(bundle) / "units.jsonl"), args.output, targets, args.seed), ensure_ascii=False, indent=2))
+            print(json.dumps(plant(args.run, read_jsonl(Path(bundle) / "units.jsonl"), args.output, targets, args.seed,
+                                   validator=args.validator, inheritance=args.inherit), ensure_ascii=False, indent=2))
         elif args.command == "question-drafts":
             from legal_ai.research.corpus import CorpusStore
             from legal_ai.research.questions import QuestionStore
