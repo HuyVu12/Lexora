@@ -284,6 +284,9 @@ def main():
     command.add_argument("gold")
     command.add_argument("--bundle", required=True)
     command.add_argument("--predictions", required=True, help="'rules', or a dk3.jsonl / dk4.jsonl of a knowledge-base run")
+    command.add_argument("--inherited", default="score", choices=["score", "ignore"],
+                         help="gold-inherited-v1: 'score' (default) scores slots inherited from the lead-in as they are, "
+                              "'ignore' leaves them out (the gold guideline leaves lead-in values empty)")
     command = commands.add_parser("run-retrieval", help="DK1/DK2 retrieval run with Recall@K into a new run directory; no network")
     command.add_argument("bundle")
     command.add_argument("--condition", required=True, help="configs/experiments/dk1.json or dk2.json")
@@ -597,8 +600,11 @@ def main():
                         if problems:
                             raise ValueError(f"{len(problems)} problems in the gold file")
                     else:
-                        predicted = gold.rule_predictions(units, rows) if args.predictions == "rules" else gold.claim_predictions(read_jsonl(args.predictions), rows)
-                        print(json.dumps(gold.score(rows, predicted), ensure_ascii=False, indent=2))
+                        if args.predictions == "rules":
+                            report = gold.score(rows, gold.rule_predictions(units, rows))
+                        else:
+                            report = gold.score_claims(rows, read_jsonl(args.predictions), units, args.inherited)
+                        print(json.dumps(report, ensure_ascii=False, indent=2))
         elif args.command == "run-retrieval":
             from legal_ai.evaluation.retrieval_run import run
             shared = json.loads(Path(args.shared).read_text(encoding="utf-8"))
