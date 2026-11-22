@@ -27,13 +27,29 @@ journalctl -u lexora -n 50          # nhật ký (không ghi URL hay nội dung 
 sudo systemctl restart lexora       # khởi động lại (đặt lại ngân sách lượt gọi)
 ```
 
-Cập nhật code từ máy cá nhân:
+Cập nhật code từ máy cá nhân (chạy từ thư mục gốc, sau khi `main` đã có bản cần cài và `frontend` đã build lại từ đúng bản đó):
 
-```powershell
-git archive --format=tar -o code.tar HEAD src prompts configs docs/guides pyproject.toml README.md   # rồi thêm frontend/build vào tar
+```sh
+git archive --format=tar -o code.tar origin/main src prompts configs docs/guides pyproject.toml README.md
+tar --force-local -rf code.tar frontend/build && gzip -f code.tar     # --force-local: tar trên Windows hiểu nhầm "C:" là máy từ xa
 scp code.tar.gz gcp:lexora/
-ssh gcp "cd ~/lexora/app && tar -xzf ../code.tar.gz && sudo systemctl restart lexora"
 ```
+
+Trên VM, sao lưu trước rồi mới thay code:
+
+```sh
+cd ~/lexora
+venv/bin/python -c "import sqlite3,sys; s=sqlite3.connect(sys.argv[1]); d=sqlite3.connect(sys.argv[2]); s.backup(d); d.close(); s.close()" data/kb/lexora.sqlite backups/truoc-<việc>-<ngày>.sqlite
+tar -czf backups/app-truoc-<việc>-<ngày>.tar.gz -C app src prompts configs docs/guides frontend/build pyproject.toml README.md
+mv app/frontend/build backups/frontend-build-truoc-<việc>-<ngày>   # giải nén chồng lên sẽ để lại tệp giao diện cũ
+cd app && tar -xzf ../code.tar.gz && sudo systemctl restart lexora
+```
+
+- Bản sao lưu đặt tên `truoc-...` để nằm ngoài vòng xoay 14 bản `lexora-*.sqlite` của `backup.sh`; xóa tay khi không cần nữa.
+- Trước khi khởi động lại, kiểm tra không có bản nháp đang tách quy phạm bằng AI (tab Giám sát hoặc trường `extraction` của bản nháp) vì khởi động lại đánh dấu việc tách là `interrupted`.
+- Một số bản cập nhật tự đổi cấu trúc store ở lần mở đầu (ví dụ 22/11 thêm `revision_summaries`, `draft_summaries`, `chat_session_meta`); vì vậy bước sao lưu là bắt buộc.
+- Sau khi khởi động: `systemctl is-active lexora`, `https://vlexora.duckdns.org/login` trả 200, tệp `_app/immutable/entry/start.*.js` trong trang khớp với `frontend/build/index.html` ở máy cá nhân, và `pragma quick_check` của store là `ok`.
+- Quay lại bản cũ: dừng dịch vụ, chép bản `truoc-...sqlite` về `data/kb/lexora.sqlite`, giải nén `app-truoc-...tar.gz` vào `app` (đổi lại thư mục `frontend/build`), rồi khởi động lại.
 
 Đồng bộ kết quả thực nghiệm (trang Kết quả, tab Thực nghiệm và Báo cáo đọc trực tiếp từ thư mục này) sau mỗi lượt chạy mới trên máy cá nhân:
 nén `experiments/runs` (bỏ thư mục `audit-rejections-v1` có tệp giải mã và các tệp `.log`) cùng `data/normalized/experiment-scope-v1-veaeaad4a6edc`, chép lên rồi giải nén trong `~/lexora/app`; không cần khởi động lại.
