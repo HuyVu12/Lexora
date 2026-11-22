@@ -50,6 +50,16 @@ export function animate(targets: Targets, params: Params): WAAPIAnimation | null
 	return animation;
 }
 
+/**
+ * A FLIP move for an element whose resting place is owned by reactive state (an inline transform Svelte keeps
+ * up to date): plays `keyframes` with the native Web Animations API and leaves inline styles alone, so a
+ * position updated during the move is the one shown when it ends. Skipped under reduced motion.
+ */
+export function play(el: Element, keyframes: Keyframe[], { duration = DUR.slow, ease = EASE.inOut }: { duration?: number; ease?: string } = {}): Animation | null {
+	if (reducedMotion() || typeof el.animate !== 'function') return null;
+	return el.animate(keyframes, { duration, easing: ease });
+}
+
 export interface RevealOptions {
 	/** Distance in px the element rises from. */
 	y?: number;

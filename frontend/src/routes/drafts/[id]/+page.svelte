@@ -132,9 +132,13 @@
 			window.removeEventListener('scroll', update, true);
 		};
 	});
+	// The title is the page heading already; the line under the first article only says where the text comes from.
 	const provenance = $derived(
-		draft ? `${draft.title} · ${/^https:\/\//.test(draft.document.source_url ?? '') ? t('review.provenance.library') : t('review.provenance.upload')}` : ''
+		draft ? capital(/^https:\/\//.test(draft.document.source_url ?? '') ? t('review.provenance.library') : t('review.provenance.upload')) : ''
 	);
+	function capital(text: string) {
+		return text.charAt(0).toLocaleUpperCase('vi') + text.slice(1);
+	}
 
 	function jump(articleId: string) {
 		document.getElementById(`article-${articleId.split('/').pop()}`)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -191,7 +195,7 @@
 					<h1 class="title">{draft.title}</h1>
 					<p class="muted">{target}{#if draft.document.synthetic}<span class="chip synthetic">{t('common.synthetic')}</span>{/if}</p>
 				</div>
-				<div class="progress">
+				<div class="progress" data-tour="review-progress">
 					<p><strong>{t('review.progress', { done: decided, total: draft.progress.total })}</strong></p>
 					<div class="track" role="img" aria-label="{t('review.legend.approved', { n: draft.progress.approved })}, {t('review.legend.rejected', { n: draft.progress.rejected })}">
 						<i class="a" style:transform="scaleX({pa})"></i><i class="r" style:transform="translateX({pa * 100}%) scaleX({pr})"></i>
@@ -199,8 +203,7 @@
 					<p class="legend small">
 						<span><i class="a"></i>{t('review.legend.approved', { n: draft.progress.approved })}</span>
 						<span><i class="r"></i>{t('review.legend.rejected', { n: draft.progress.rejected })}</span>
-						<span><i></i>{t('review.legend.undecided', { n: draft.progress.undecided })}</span>
-						{#if draft.progress.gaps}<span><i class="g"></i><Term key="gap">{t('review.legend.gaps', { n: draft.progress.gaps_open })}</Term></span>{/if}
+						<!-- What is still open (norms and sentences without one) is counted once, in the bar at the bottom. -->
 					</p>
 				</div>
 			</div>
@@ -230,7 +233,7 @@
 								<span class="count" class:done={!s.open && !s.openGaps}>{s.claims.length - s.open}/{s.claims.length}</span>
 							</button>
 							{#if s.open || s.openGaps}
-								<div class="batch">
+								<div class="batch" data-tour="review-batch">
 									{#if s.open}<button type="button" class="btn small" disabled={busy} onclick={() => guarded(() => review(null, 'approve_article', { article_id: s.article.id }))}><Icon name="check" size={14} />{t('review.article.batch', { n: s.open })}</button>{/if}
 									{#if s.openGaps}<button type="button" class="btn small" disabled={busy} onclick={() => guarded(() => review(null, 'no_norm_article', { article_id: s.article.id }))}><Icon name="x" size={14} />{t('review.article.noNorm', { n: s.openGaps })}</button>{/if}
 								</div>
@@ -238,7 +241,7 @@
 						</li>
 					{/each}
 				</ol>
-				<div class="key">
+				<div class="key" data-tour="review-key">
 					<p class="label">{t('review.key')}</p>
 					{#each KEY_GROUPS as g (g.cls)}
 						<p class="keyrow"><span class="swatch {g.cls}" aria-hidden="true"></span><span
@@ -269,7 +272,7 @@
 					{#key focusedClaim.id}<div class="swap" in:rise={{ y: 4, duration: 160 }}><NormCard claim={focusedClaim} number={numbers.get(focusedClaim.id) ?? 0} {units} {review} /></div>{/key}
 				{:else if focusedGap}
 					{@const g = focusedGap}
-					<article class="sheet gapcard" in:rise={{ y: 4, duration: 160 }}>
+					<article data-tour="gap-card" class="sheet gapcard" in:rise={{ y: 4, duration: 160 }}>
 						<h2 class="heading"><Term key="gap">{g.decision ? t('review.gap.dismissed') : t('review.gap.title')}</Term></h2>
 						<blockquote class="serif">{g.text}</blockquote>
 						{#if g.ai_note}<p class="pencil">{g.ai_note}</p>{/if}
@@ -327,7 +330,7 @@
 			</p>
 			<div class="row">
 				<button type="button" class="btn quiet" disabled={busy} onclick={discard}>{t('review.discard')}</button>
-				<a class="btn primary" href="/drafts/{id}/preview">{t('review.preview')}<Icon name="arrow" /></a>
+				<a class="btn primary" href="/drafts/{id}/preview" data-tour="review-preview">{t('review.preview')}<Icon name="arrow" /></a>
 			</div>
 		</footer>
 	</div>
@@ -413,9 +416,6 @@
 		height: 9px;
 		border-radius: 2px;
 		background: var(--rule-strong);
-	}
-	.legend .g {
-		background: var(--attention);
 	}
 	.ghost-title,
 	.ghost-index,
@@ -620,8 +620,11 @@
 			position: static;
 			max-height: none;
 		}
+		/* The flags (40px) sit at the sheet's right padding plus 14px: 28px keeps them clear of the text and
+		 * their overhang inside the page gutter. */
 		.paper {
-			padding: 24px 20px;
+			--sheet-pad-right: 28px;
+			padding: 24px var(--sheet-pad-right) 24px 20px;
 		}
 		.progress {
 			min-width: 0;

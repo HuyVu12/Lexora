@@ -7,6 +7,7 @@
 	import TopBar from '#lib/components/TopBar.svelte';
 	import Toast from '#lib/components/Toast.svelte';
 	import GlossaryTip from '#lib/components/GlossaryTip.svelte';
+	import TourOverlay from '#lib/components/TourOverlay.svelte';
 	import Skeleton from '#lib/components/Skeleton.svelte';
 	import { session } from '#lib/session.svelte.js';
 	import { activity } from '#lib/activity.svelte.js';
@@ -75,6 +76,7 @@
 </main>
 <Toast />
 <GlossaryTip />
+<TourOverlay />
 
 <style>
 	main:focus {

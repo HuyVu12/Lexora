@@ -6,7 +6,7 @@
 	import { cachedAppState, loadAppState } from '#lib/app-state.svelte.js';
 	import { t, formatDate } from '#lib/i18n/index.svelte.js';
 	import { session, canReview } from '#lib/session.svelte.js';
-	import { countUp, revealItems } from '#lib/motion.js';
+	import { revealItems } from '#lib/motion.js';
 
 	// The last copy of the state shows at once (coming back from another page is instant); a fresh copy
 	// replaces it when it arrives. The first visit shows skeletons shaped like the real lists.
@@ -19,16 +19,9 @@
 	});
 	const reviewer = $derived(canReview(session.account));
 	const drafts = $derived((app?.drafts ?? []).filter((d) => d.status === 'draft'));
-	const norms = $derived((app?.knowledge_bases ?? []).reduce((sum, kb) => sum + kb.approved_claims, 0));
-	const stats = $derived(
-		app
-			? [
-					{ n: app.knowledge_bases.length, key: 'home.stat.kbs' as const },
-					{ n: norms, key: 'home.stat.norms' as const },
-					reviewer ? { n: drafts.length, key: 'home.stat.drafts' as const } : { n: app.chat_sessions.length, key: 'home.stat.chats' as const }
-				]
-			: []
-	);
+	// Each fact appears once: counts live on the lists themselves (drafts, base cards, recent chats), so the
+	// title carries no summary line. "How Lexora works" is for someone who has not started yet.
+	const newcomer = $derived(!!app && !app.chat_sessions.length && !drafts.length);
 </script>
 
 <svelte:head><title>{t('nav.home')} · Lexora</title></svelte:head>
@@ -37,15 +30,6 @@
 	<header class="page-head">
 		<div>
 			<h1 class="title">{t('home.hello', { name: session.account?.display_name ?? '' })}</h1>
-			<ul class="stats" aria-label={t('home.stat.label')}>
-				{#if app}
-					{#each stats as s (s.key)}
-						<li><strong {@attach countUp(s.n, { duration: fresh ? 700 : 0 })}></strong> {t(s.key, { n: s.n })}</li>
-					{/each}
-				{:else}
-					{#each [110, 170, 150] as w (w)}<li><Skeleton width="{w}px" height="12px" /></li>{/each}
-				{/if}
-			</ul>
 		</div>
 		<div class="row">
 			<a class="btn" href="/chat"><Icon name="chat" />{t('home.ask')}</a>
@@ -102,7 +86,7 @@
 		<div class="layout">
 			<div class="stack">
 				{#if reviewer}
-					<section class="block" aria-labelledby="drafts-h">
+					<section class="block" aria-labelledby="drafts-h" data-tour="home-drafts">
 						<h2 id="drafts-h" class="subtitle">{t('home.drafts.title')}</h2>
 						{#if drafts.length}
 							<ul class="list" {@attach fresh && revealItems()}>
@@ -130,7 +114,7 @@
 					</section>
 				{/if}
 
-				<section class="block" aria-labelledby="kbs-h">
+				<section class="block" aria-labelledby="kbs-h" data-tour="home-kbs">
 					<h2 id="kbs-h" class="subtitle">{t('home.kbs.title')}</h2>
 					{#if app.knowledge_bases.length}
 						<ul class="kbs" {@attach fresh && revealItems({ delay: 60 })}>
@@ -139,7 +123,7 @@
 									<a class="kb panel panel-link" href="/kb/{kb.id}">
 										<span class="kb-body">
 											<span class="kb-top"><strong class="serif">{kb.name}</strong><span class="chip {kb.data_class}">{kb.data_class === 'private' ? t('kb.private') : t('kb.public')}</span></span>
-											{#if kb.description}<span class="small muted">{kb.description}</span>{/if}
+											{#if kb.description}<span class="small muted desc" title={kb.description}>{kb.description}</span>{/if}
 											<span class="kb-facts small">
 												<span>{t('home.kb.docs', { n: kb.documents })}</span>
 												<span>{t('home.kb.norms', { n: kb.approved_claims })}</span>
@@ -157,14 +141,14 @@
 			</div>
 
 			<aside class="stack">
-				<section class="panel side">
+				<section class="panel side" data-tour="home-chats">
 					<h2 class="heading">{t('home.chats.title')}</h2>
 					{#if app.chat_sessions.length}
 						<ul class="chats">
 							{#each app.chat_sessions.slice(0, 6) as s (s.id)}
 								<li>
-									<a href="/chat/{s.id}">{s.bindings.map((b) => b.kb_name ?? t('chat.deletedKb')).join(', ')}</a>
-									<span class="small muted">{formatDate(s.created_at)} · {t('home.chats.turns', { n: s.turns })}</span>
+									<a href="/chat/{s.id}">{s.title ?? s.bindings.map((b) => b.kb_name ?? t('chat.deletedKb')).join(', ')}</a>
+									<span class="small muted">{formatDate(s.updated_at ?? s.created_at)} · {t('home.chats.turns', { n: s.turns })}</span>
 								</li>
 							{/each}
 						</ul>
@@ -172,6 +156,7 @@
 						<p class="small muted">{t('home.chats.empty')}</p>
 					{/if}
 				</section>
+				{#if newcomer}
 				<section class="panel side intro">
 					<h2 class="heading">{t('home.intro.title')}</h2>
 					<p class="small">{t('home.intro.body')}</p>
@@ -181,40 +166,20 @@
 					<p class="small"><Term key="norm" /> · <Term key="evidence" /> · <Term key="approved" /></p>
 					<a href="/about">{t('home.intro.more')}</a>
 				</section>
+				{/if}
 			</aside>
 		</div>
 	{/if}
 </div>
 
 <style>
-	.stats {
-		display: flex;
-		flex-wrap: wrap;
-		gap: 4px 0;
-		margin: 8px 0 0;
-		padding: 0;
-		list-style: none;
-		min-height: 23px;
-		align-items: center;
-		color: var(--ink-2);
-	}
-	.stats li {
-		display: inline-flex;
-		align-items: baseline;
-		gap: 5px;
-	}
-	.stats li + li::before {
-		content: '';
-		width: 3px;
-		height: 3px;
-		margin: 0 12px;
-		border-radius: 50%;
-		background: var(--rule-strong);
-		align-self: center;
-	}
-	.stats strong {
-		font-weight: 600;
-		color: var(--ink);
+	/* A long description stays two lines on the card; the full text is in its tooltip and on the base's page. */
+	.desc {
+		display: -webkit-box;
+		-webkit-box-orient: vertical;
+		-webkit-line-clamp: 2;
+		line-clamp: 2;
+		overflow: hidden;
 	}
 	.layout {
 		display: grid;
@@ -360,12 +325,6 @@
 		}
 	}
 	@media (max-width: 640px) {
-		.stats {
-			gap: 2px 14px;
-		}
-		.stats li + li::before {
-			display: none;
-		}
 		.item {
 			grid-template-columns: 40px minmax(0, 1fr);
 		}

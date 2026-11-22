@@ -4,6 +4,8 @@
 	import GuideButton from './GuideButton.svelte';
 	import { t } from '#lib/i18n/index.svelte.js';
 	import { guide } from '#lib/guide.svelte.js';
+	import { session } from '#lib/session.svelte.js';
+	import { tourForGuide, startTour } from '#lib/tour/tour.svelte.js';
 	import { animate, flip, reducedMotion, DUR, EASE } from '#lib/motion.js';
 	import type { MessageKey } from '#lib/i18n/vi.js';
 
@@ -21,6 +23,8 @@
 	const steps = $derived(Array.from({ length: count }, (_, i) => [key(String(i + 1)), key(`${i + 1}.d`)] as [MessageKey, MessageKey]));
 	const storageKey = $derived(`lexora-guide-${name}`);
 	const bodyId = $derived(`guide-body-${name}`);
+	// The step-by-step tour for this page, if the signed-in role has one (see lib/tour/tours).
+	const offered = $derived(tourForGuide(name, session.account?.role ?? null));
 
 	function stored(): boolean {
 		try {
@@ -41,9 +45,10 @@
 	});
 
 	// The "?" lives inside the page's h1. Mounting it as its own small root keeps the heading's text intact.
-	const buttonProps = $state({ open: true, label: '', hint: '', controls: '', ontoggle: () => toggle() });
+	const buttonProps = $state({ open: true, label: '', hint: '', controls: '', ontoggle: () => toggle(), tourId: null as string | null });
 	$effect(() => {
 		buttonProps.open = open;
+		buttonProps.tourId = offered?.id ?? null;
 		buttonProps.label = t('guide.what');
 		buttonProps.hint = open ? t('guide.hide') : t('guide.show');
 		buttonProps.controls = bodyId;
@@ -141,6 +146,9 @@
 			<h2 id="guide-{name}" class="visually-hidden">{t('guide.what')}: {t(pageName)}</h2>
 			<div class="head">
 				<p class="purpose">{t(purpose)}</p>
+				{#if offered}
+					<button type="button" class="btn small follow" onclick={() => startTour(offered.id)}><Icon name="route" size={16} />{t('tour.menu.follow')}</button>
+				{/if}
 				<button type="button" class="btn quiet small close" aria-expanded="true" aria-controls={bodyId} title={t('guide.hide')} onclick={toggle}>
 					<Icon name="x" size={16} /><span class="visually-hidden">{t('guide.hide')}</span>
 				</button>
@@ -188,10 +196,31 @@
 		container: guide / inline-size;
 	}
 	.head {
-		display: flex;
-		align-items: flex-start;
-		justify-content: space-between;
-		gap: 12px;
+		display: grid;
+		grid-template-columns: minmax(0, 1fr) auto;
+		align-items: start;
+		gap: 8px 12px;
+	}
+	.head:has(.follow) {
+		grid-template-columns: minmax(0, 1fr) auto auto;
+	}
+	/* A narrow guide puts "Follow step by step" under the purpose line instead of squeezing it. */
+	@container guide (max-width: 620px) {
+		.follow {
+			grid-row: 2;
+			grid-column: 1 / -1;
+			justify-self: start;
+			margin: 0;
+		}
+	}
+	.follow {
+		margin: -4px 0 0;
+		background: var(--paper);
+		border-color: #d5e0f5;
+		color: var(--flag);
+	}
+	.follow:hover:not(:disabled) {
+		border-color: var(--flag);
 	}
 	.close {
 		flex: none;

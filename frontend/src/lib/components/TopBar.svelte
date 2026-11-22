@@ -7,19 +7,21 @@
 	import { api } from '#lib/api.js';
 	import { clearAppState } from '#lib/app-state.svelte.js';
 	import { pop, popOut } from '#lib/motion.js';
+	import { tourStatus, startTour, toursFor } from '#lib/tour/tour.svelte.js';
 	import type { MessageKey } from '#lib/i18n/vi.js';
 
 	// Three everyday links stay on the bar; the four research pages share one menu; account management and
 	// monitoring live in the avatar menu, so even an admin sees a short bar.
-	type Item = { href: string; key: MessageKey; match: (p: string) => boolean };
+	// `tour` is the item's data-tour id, the anchor the step-by-step tours point at.
+	type Item = { href: string; key: MessageKey; match: (p: string) => boolean; tour?: string };
 	const account = $derived(session.account);
-	const home: Item = { href: '/', key: 'nav.home', match: (p) => p === '/' || p.startsWith('/kb') };
-	const chat: Item = { href: '/chat', key: 'nav.chat', match: (p) => p.startsWith('/chat') };
-	const importing: Item = { href: '/import', key: 'nav.import', match: (p) => p.startsWith('/import') || p.startsWith('/drafts') };
+	const home: Item = { href: '/', key: 'nav.home', tour: 'nav-home', match: (p) => p === '/' || p.startsWith('/kb') };
+	const chat: Item = { href: '/chat', key: 'nav.chat', tour: 'nav-chat', match: (p) => p.startsWith('/chat') };
+	const importing: Item = { href: '/import', key: 'nav.import', tour: 'nav-import', match: (p) => p.startsWith('/import') || p.startsWith('/drafts') };
 	const results: Item = { href: '/research/results', key: 'nav.results', match: (p) => p.startsWith('/research/results') };
-	const monitor: Item = { href: '/dev', key: 'nav.monitor', match: (p) => p.startsWith('/dev') };
+	const monitor: Item = { href: '/dev', key: 'nav.monitor', tour: 'nav-monitor', match: (p) => p.startsWith('/dev') };
 	const users: Item = { href: '/admin/users', key: 'nav.users', match: (p) => p.startsWith('/admin') };
-	const docs: Item = { href: '/docs', key: 'nav.docs', match: (p) => p.startsWith('/docs') };
+	const docs: Item = { href: '/docs', key: 'nav.docs', tour: 'nav-docs', match: (p) => p.startsWith('/docs') };
 	const research: Item[] = [
 		{ href: '/research', key: 'nav.corpora', match: (p) => p.startsWith('/research') && !/^\/research\/(questions|gold|audit|results)/.test(p) },
 		{ href: '/research/questions', key: 'nav.questions', match: (p) => p.startsWith('/research/questions') },
@@ -32,6 +34,11 @@
 	const after = $derived(account ? [docs] : []);
 	const manage = $derived([...(account?.role === 'admin' ? [users] : []), ...(account?.role === 'admin' && canMonitor(account) ? [monitor] : [])]);
 	const inResearch = $derived(research.some((item) => item.match(page.url.pathname)));
+	const tours = $derived(toursFor(account?.role ?? null));
+	function beginTour(id: string) {
+		open = '';
+		startTour(id);
+	}
 
 	let open = $state<'' | 'research' | 'user'>('');
 	afterNavigate(() => (open = ''));
@@ -113,11 +120,11 @@
 	{#if account}
 		<nav aria-label={t('nav.main')} bind:this={navEl}>
 			{#each links as item (item.href)}
-				<a href={item.href} aria-current={item.match(page.url.pathname) ? 'page' : undefined}>{t(item.key)}</a>
+				<a href={item.href} data-tour={item.tour} aria-current={item.match(page.url.pathname) ? 'page' : undefined}>{t(item.key)}</a>
 			{/each}
 			{#if canReview(account)}
 				<div class="has-menu research">
-					<button type="button" id="research-button" class="nav-button" class:current={inResearch} aria-expanded={open === 'research'}
+					<button type="button" id="research-button" data-tour="nav-research" class="nav-button" class:current={inResearch} aria-expanded={open === 'research'}
 						aria-controls="research-menu" onclick={() => toggle('research')}>{t('nav.zone.research')}<Icon name="chevron" size={16} /></button>
 					{#if open === 'research'}
 						<div class="drop" id="research-menu" in:pop={{ origin: 'top left' }} out:popOut>
@@ -129,27 +136,27 @@
 				</div>
 			{/if}
 			{#each after as item (item.href)}
-				<a href={item.href} aria-current={item.match(page.url.pathname) ? 'page' : undefined}>{t(item.key)}</a>
+				<a href={item.href} data-tour={item.tour} aria-current={item.match(page.url.pathname) ? 'page' : undefined}>{t(item.key)}</a>
 			{/each}
 			<span class="mark" class:shown={mark.shown} class:ready={mark.ready} style:transform="translateX({mark.x}px) scaleX({mark.w})" aria-hidden="true"></span>
 		</nav>
 	{/if}
 	<div class="end">
 		<a class="about" href="/about" aria-current={page.url.pathname === '/about' ? 'page' : undefined}>{t('nav.about')}</a>
-		<button type="button" class="lang" aria-label={t('lang.label')} onpointerenter={() => preloadLocale('en')} onfocus={() => preloadLocale('en')}
+		<button type="button" class="lang" data-tour="lang-switch" aria-label={t('lang.label')} onpointerenter={() => preloadLocale('en')} onfocus={() => preloadLocale('en')}
 			onclick={() => i18n.set(i18n.locale === 'vi' ? 'en' : 'vi')}>
 			<Icon name="globe" size={16} /><span class="lang-text">{t('lang.switchTo')}</span>
 		</button>
 		{#if account}
 			<div class="user has-menu">
-				<button type="button" id="user-button" class="who" class:current={manage.some((item) => item.match(page.url.pathname))}
+				<button type="button" id="user-button" data-tour="user-menu" class="who" class:current={manage.some((item) => item.match(page.url.pathname))}
 					aria-expanded={open === 'user'} aria-controls="user-menu" onclick={() => toggle('user')}>
 					<span class="avatar" aria-hidden="true">{account.display_name.slice(0, 1).toUpperCase()}</span>
 					<span class="name" title={account.display_name}><span class="full">{account.display_name}</span><small>{t(`role.${account.role}`)}</small></span>
 					<Icon name="chevron" size={16} />
 				</button>
 				{#if open === 'user'}
-					<div class="menu" id="user-menu" in:pop={{ origin: 'top right' }} out:popOut>
+					<div class="menu" id="user-menu" data-tour-part="user-menu" in:pop={{ origin: 'top right' }} out:popOut>
 						<div class="who-card">
 							<strong>{account.display_name}</strong>
 							<span class="small muted">@{account.username} · {t(`role.${account.role}`)}</span>
@@ -161,6 +168,19 @@
 							<!-- On phones the bar hides Documents, so the avatar menu carries it. -->
 							<a class="phone-only" href={docs.href} aria-current={docs.match(page.url.pathname) ? 'page' : undefined}>{t(docs.key)}</a>
 						</div>
+						{#if tours.length}
+							<div class="menu-tours">
+								<p class="label">{t('tour.menu.title')}</p>
+								{#each tours as item (item.id)}
+									{@const mark = tourStatus(item.id)}
+									<button type="button" onclick={() => beginTour(item.id)}>
+										<Icon name="route" size={16} />
+										<span>{t(item.title)}</span>
+										{#if mark === 'done'}<span class="mark-done" title={t('tour.menu.done')}><Icon name="check" size={14} /><span class="visually-hidden">{t('tour.menu.done')}</span></span>{/if}
+									</button>
+								{/each}
+							</div>
+						{/if}
 						<button type="button" class="btn quiet small" onclick={logout}><Icon name="logout" size={16} />{t('user.logout')}</button>
 					</div>
 				{/if}
@@ -340,6 +360,47 @@
 	}
 	.menu .btn {
 		justify-content: flex-start;
+	}
+	.menu-tours {
+		display: grid;
+		gap: 2px;
+		padding-bottom: 4px;
+		margin-bottom: 4px;
+		border-bottom: 1px solid var(--rule);
+	}
+	.menu-tours .label {
+		padding: 4px 10px 2px;
+		font-size: 12px;
+	}
+	.menu-tours button {
+		display: flex;
+		align-items: center;
+		gap: 10px;
+		min-height: 36px;
+		padding: 0 10px;
+		border: 0;
+		border-radius: var(--r-control);
+		background: none;
+		color: var(--ink-2);
+		font: inherit;
+		font-weight: 500;
+		text-align: left;
+		cursor: pointer;
+		transition: background-color var(--dur-fast) ease;
+	}
+	.menu-tours button > span:not(.mark-done) {
+		flex: 1;
+	}
+	.menu-tours button :global(svg) {
+		flex: none;
+		color: var(--flag);
+	}
+	.menu-tours button:hover {
+		background: var(--desk);
+		color: var(--ink);
+	}
+	.menu-tours .mark-done :global(svg) {
+		color: var(--approve);
 	}
 	.end {
 		margin-left: auto;

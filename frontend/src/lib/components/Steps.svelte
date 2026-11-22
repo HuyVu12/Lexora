@@ -3,6 +3,7 @@
 	import Icon from './Icon.svelte';
 
 	// Where the reviewer is in import, review, publish. Done steps carry a check; a thin rule joins the steps.
+	// No numerals: the numbers on a page belong to its guide and the matching section badges (one scheme).
 	let { current }: { current: 1 | 2 | 3 | 4 } = $props();
 	const steps = ['steps.1', 'steps.2', 'steps.3'] as const;
 </script>
@@ -10,7 +11,7 @@
 <ol class="steps" aria-label={t('steps.label')}>
 	{#each steps as key, i (key)}
 		<li class:done={i + 1 < current} class:current={i + 1 === current} aria-current={i + 1 === current ? 'step' : undefined}>
-			<span class="dot" aria-hidden="true">{#if i + 1 < current}<Icon name="check" size={13} />{:else}{i + 1}{/if}</span>{t(key)}
+			<span class="dot" aria-hidden="true">{#if i + 1 < current}<Icon name="check" size={11} />{/if}</span>{t(key)}
 		</li>
 	{/each}
 </ol>
@@ -44,8 +45,8 @@
 		background: var(--approve);
 	}
 	.dot {
-		width: 22px;
-		height: 22px;
+		width: 16px;
+		height: 16px;
 		border-radius: 50%;
 		display: grid;
 		place-items: center;
