@@ -433,7 +433,7 @@
 					<p class="bar-scope"><span class="scope-names">{scopeNames.join(', ')}</span><span class="dot" aria-hidden="true"></span><Term key="revision">{t('chat.frozen')}</Term></p>
 				{/if}
 			</div>
-			<button type="button" class="icon-btn narrow-only" aria-label={t('chat.new')} onclick={newChat}><Icon name="plus" size={20} /></button>
+			<button type="button" class="icon-btn narrow-only" aria-label={t('chat.new')} onclick={newChat} data-tour="chat-new"><Icon name="plus" size={20} /></button>
 		</header>
 
 		<div class="thread" bind:this={thread} onscroll={onScroll}>
@@ -508,6 +508,7 @@
 				<label class="visually-hidden" for="chat-input">{t('chat.question')}</label>
 				<textarea
 					id="chat-input"
+					data-tour="chat-composer"
 					rows="1"
 					maxlength="1500"
 					placeholder={t('chat.placeholder')}
@@ -519,13 +520,13 @@
 				></textarea>
 				<div class="tools">
 					<div class="anchor">
-						<button type="button" class="pill" bind:this={scopeBtn} aria-haspopup="dialog" aria-expanded={scopeOpen} aria-controls="chat-scope" onclick={() => (scopeOpen ? closeScope() : openScope())} disabled={!app}>
+						<button type="button" class="pill" data-tour="chat-scope" bind:this={scopeBtn} aria-haspopup="dialog" aria-expanded={scopeOpen} aria-controls="chat-scope" onclick={() => (scopeOpen ? closeScope() : openScope())} disabled={!app}>
 							<Icon name="book" size={16} />
 							<span>{scopeIds.length ? t('chat.scope.pill', { n: scopeIds.length }) : t('chat.scope.none')}</span>
 							<Icon name="chevron" size={14} />
 						</button>
 						{#if scopeOpen}
-							<div class="pop scope-pop" id="chat-scope" role="dialog" aria-labelledby="chat-scope-title" in:pop={{ origin: 'bottom left', y: 6 }} out:popOut={{ y: 4 }} {@attach dismiss(() => closeScope(), () => scopeBtn)}>
+							<div class="pop scope-pop" id="chat-scope" data-tour-part="chat-scope" role="dialog" aria-labelledby="chat-scope-title" in:pop={{ origin: 'bottom left', y: 6 }} out:popOut={{ y: 4 }} {@attach dismiss(() => closeScope(), () => scopeBtn)}>
 								<p class="pop-title" id="chat-scope-title">{t('chat.scope.title')}</p>
 								<p class="pop-hint">{chat ? t('chat.scope.locked') : t('chat.scope.hint')}</p>
 								{#if !kbs.length}
@@ -555,13 +556,13 @@
 						{/if}
 					</div>
 					<div class="anchor">
-						<button type="button" class="pill" bind:this={optionsBtn} aria-haspopup="dialog" aria-expanded={optionsOpen} aria-controls="chat-options" onclick={toggleOptions}>
+						<button type="button" class="pill" data-tour="chat-options" bind:this={optionsBtn} aria-haspopup="dialog" aria-expanded={optionsOpen} aria-controls="chat-options" onclick={toggleOptions}>
 							<Icon name="sliders" size={16} />
 							<span class="pill-label">{mode === 'llm' ? t('chat.mode.short.llm') : t('chat.mode.short.extractive')}</span>
 							<Icon name="chevron" size={14} />
 						</button>
 						{#if optionsOpen}
-							<div class="pop options-pop" id="chat-options" role="dialog" tabindex="-1" aria-labelledby="chat-options-title" bind:this={optionsEl} in:pop={{ origin: 'bottom left', y: 6 }} out:popOut={{ y: 4 }} onkeydown={(e) => menuKeys(e, optionsEl)} {@attach dismiss(() => closeOptions(), () => optionsBtn)}>
+							<div class="pop options-pop" id="chat-options" data-tour-part="chat-options" role="dialog" tabindex="-1" aria-labelledby="chat-options-title" bind:this={optionsEl} in:pop={{ origin: 'bottom left', y: 6 }} out:popOut={{ y: 4 }} onkeydown={(e) => menuKeys(e, optionsEl)} {@attach dismiss(() => closeOptions(), () => optionsBtn)}>
 								<fieldset>
 									<legend class="pop-title" id="chat-options-title">{t('chat.mode')}</legend>
 									<label class="choice-row">
@@ -587,7 +588,7 @@
 							</div>
 						{/if}
 					</div>
-					<button type="submit" class="send" disabled={!canSend} aria-label={t('chat.send')} title={t('chat.send')}>
+					<button type="submit" class="send" data-tour="chat-send" disabled={!canSend} aria-label={t('chat.send')} title={t('chat.send')}>
 						{#if asking}<span class="spinner" aria-hidden="true"></span>{:else}<Icon name="send" size={18} />{/if}
 					</button>
 				</div>

@@ -161,7 +161,7 @@
 		{:else}
 		<div class="cols">
 			<div class="stack">
-				<section class="panel" aria-labelledby="add-heading">
+				<section class="panel" data-tour="corpus-add" aria-labelledby="add-heading">
 					<h2 class="heading" id="add-heading"><StepTag n={1} />{t('corpus.add')}</h2>
 					<div class="segmented" role="group" aria-label={t('corpus.add')}>
 						<button type="button" aria-pressed={mode === 'search'} onclick={() => (mode = 'search')}><Icon name="search" size={16} />{t('corpus.add.search')}</button>
@@ -195,7 +195,7 @@
 					{/if}
 				</section>
 
-				<section class="panel" aria-labelledby="docs-heading">
+				<section class="panel" data-tour="corpus-docs" aria-labelledby="docs-heading">
 					<h2 class="heading" id="docs-heading"><StepTag n={2} />{t('corpus.documents')}</h2>
 					{#if corpus.documents.length}
 						<ul class="docs">
@@ -227,7 +227,7 @@
 				</section>
 			</div>
 
-			<section class="panel versions" aria-labelledby="versions-heading">
+			<section class="panel versions" data-tour="corpus-versions" aria-labelledby="versions-heading">
 				<h2 class="heading" id="versions-heading"><StepTag n={3} /><Term key="frozen_version">{t('corpus.versions')}</Term></h2>
 				<p class="small muted">{t('corpus.versions.lead')}</p>
 				{#if corpus.changed_since_version && corpus.documents.length}

@@ -96,7 +96,7 @@
 				</ol>
 			</section>
 
-			<aside class="panel side" id="audit" aria-labelledby="audit-heading">
+			<aside class="panel side" id="audit" data-tour="doc-warnings" aria-labelledby="audit-heading">
 				<h2 class="heading" id="audit-heading"><Term key="parser_warning">{t('corpus.doc.auditTitle')}</Term></h2>
 				<p class="small muted">{t('corpus.doc.auditLead')}</p>
 				{#if doc.audit.length}

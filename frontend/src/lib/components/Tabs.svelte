@@ -67,12 +67,13 @@
 	}
 </script>
 
-<div class="tabs" role="tablist" aria-label={label} tabindex="-1" bind:this={bar} onkeydown={keys}>
+<div class="tabs" role="tablist" aria-label={label} tabindex="-1" bind:this={bar} onkeydown={keys} data-tour="tabs">
 	{#each tabs as tab (tab.id)}
 		<button
 			type="button"
 			role="tab"
 			id="{idPrefix}-{tab.id}"
+			data-tour="tab-{tab.id}"
 			aria-selected={value === tab.id}
 			aria-controls={controls}
 			tabindex={value === tab.id ? 0 : -1}

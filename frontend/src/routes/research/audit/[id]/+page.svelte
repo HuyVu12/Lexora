@@ -2,6 +2,7 @@
 	import Skeleton from '#lib/components/Skeleton.svelte';
 	import Icon from '#lib/components/Icon.svelte';
 	import ItemRail from '#lib/components/ItemRail.svelte';
+	import TourHelp from '#lib/components/TourHelp.svelte';
 	import WorkspaceSkeleton from '#lib/components/WorkspaceSkeleton.svelte';
 	import { rise, DUR } from '#lib/motion.js';
 	import '#lib/components/workspace.css';
@@ -109,11 +110,12 @@
 		<header class="page-head">
 			<div>
 				<h1 class="title serif">{#if ws}{ws.name}{:else}<span class="title-ghost" style:width="min(380px, 70vw)"><Skeleton height="30px" /></span>{/if}</h1>
-				<p class="facts"><span>{t('audit.blind')}</span></p>
+				<TourHelp tour="audit" />
+				<p class="facts" data-tour="audit-blind"><span>{t('audit.blind')}</span></p>
 			</div>
 			<div class="row">
 				<a class="btn quiet" href="/docs/huong-dan-kiem-tra-quy-pham"><Icon name="doc" size={16} />{t('audit.guide')}</a>
-				{#if ws?.can_score}<a class="btn" href="/research/audit/{id}/score">{t('audit.score')}</a>{/if}
+				{#if ws?.can_score}<a class="btn" data-tour="audit-score" href="/research/audit/{id}/score">{t('audit.score')}</a>{/if}
 			</div>
 		</header>
 		{#if !ws}
@@ -153,7 +155,7 @@
 									<p class="context">{#each current.context.split('\n') as line, i (i)}<span>{line}</span>{/each}</p>
 								</div>
 							{/if}
-							<div class="block">
+							<div class="block" data-tour="audit-unit">
 								<p class="label">{t('audit.unit')}{#if hit}<mark class="key-mark">{t('audit.sentenceMarked')}</mark>{/if}</p>
 								{#if hit}
 									<p class="ws-text serif">{hit.before}<mark class="hit">{current.sentence}</mark>{hit.after}</p>
@@ -164,7 +166,7 @@
 									<p class="ws-selection small"><span class="label">{t('audit.sentence')}</span> <mark>{current.sentence}</mark></p>
 								{/if}
 							</div>
-							<div class="block">
+							<div class="block" data-tour="audit-norm">
 								<p class="label">{t('audit.norm')}</p>
 								<dl class="norm">
 									{#each normLines(current.norm) as line, i (i)}<dt>{line.name}</dt><dd>{line.value}</dd>{/each}
@@ -173,7 +175,7 @@
 						</div>
 					{/key}
 
-					<fieldset class="verdicts" disabled={busy}>
+					<fieldset class="verdicts" disabled={busy} data-tour="audit-labels">
 						<legend class="label">{t('audit.pick')}</legend>
 						{#each ws.labels as value, i (value)}
 							<label class="opt" class:on={label === value}>
@@ -183,8 +185,8 @@
 							</label>
 						{/each}
 					</fieldset>
-					<label class="field"><span>{t('audit.note')}</span><textarea rows="2" bind:value={note} placeholder={t('audit.notePh')}></textarea></label>
-					<div class="row ws-actions">
+					<label class="field" data-tour="audit-note"><span>{t('audit.note')}</span><textarea rows="2" bind:value={note} placeholder={t('audit.notePh')}></textarea></label>
+					<div class="row ws-actions" data-tour="audit-save">
 						<span class="small muted">{t('audit.keys')}</span>
 						<span class="spacer"></span>
 						<button type="button" class="btn" disabled={busy || !label} onclick={() => save(false)}>{t('audit.save')}</button>

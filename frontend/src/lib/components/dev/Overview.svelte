@@ -58,13 +58,13 @@
 </script>
 
 {#if data.alerts.length}
-	<ul class="alerts" aria-label={t('dev.alerts')}>
+	<ul class="alerts" data-tour="dev-alerts" aria-label={t('dev.alerts')}>
 		{#each data.alerts as a, i (i)}
 			<li class="notice small" class:error={a.level === 'critical'} class:warn={a.level === 'warning'}><Icon name="warn" size={16} />{alertText(a)}</li>
 		{/each}
 	</ul>
 {:else}
-	<p class="notice info small"><Icon name="check" size={16} />{t('dev.alerts.none')}</p>
+	<p class="notice info small" data-tour="dev-alerts"><Icon name="check" size={16} />{t('dev.alerts.none')}</p>
 {/if}
 
 <div class="dev-tiles">
@@ -79,7 +79,7 @@
 	<div class="dev-tile"><span class="label">{t('dev.tile.cost')}</span><strong>{data.today.cost_usd ? `${data.today.cost_usd.toFixed(2)} USD` : '-'}</strong><span class="small muted">{t('dev.tile.costNote')}</span></div>
 </div>
 
-<section class="panel" aria-labelledby="controls-heading">
+<section class="panel" data-tour="dev-controls" aria-labelledby="controls-heading">
 	<h2 class="heading" id="controls-heading">{t('dev.controls.title')}</h2>
 	<p class="small muted">{data.can_change ? t('dev.controls.lead') : t('dev.controls.readOnly')}</p>
 	<div class="table-scroll">

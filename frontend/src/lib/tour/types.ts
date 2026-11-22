@@ -49,6 +49,8 @@ export interface TourStep {
 	target?: string;
 	/** Among several elements with the same `data-tour` id, prefer the first one matching this selector. */
 	prefer?: string;
+	/** Which of several matching elements to use when none is preferred: the first (default) or the last (the newest answer). */
+	pick?: 'first' | 'last';
 	placement?: 'auto' | 'top' | 'bottom' | 'left' | 'right';
 	/** Extra room around the target in px (default 6). */
 	padding?: number;

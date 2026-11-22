@@ -96,8 +96,8 @@
 </script>
 
 <div class="side">
-	<button type="button" class="btn primary new" onclick={onnew}><Icon name="plus" />{t('chat.new')}</button>
-	<nav class="list" aria-label={t('chat.sidebar')} onscroll={() => menuFor && closeMenu(false)}>
+	<button type="button" class="btn primary new" onclick={onnew} data-tour="chat-new"><Icon name="plus" />{t('chat.new')}</button>
+	<nav class="list" data-tour="chat-history" aria-label={t('chat.sidebar')} onscroll={() => menuFor && closeMenu(false)}>
 		{#if sessions === null}
 			<div class="ghost" aria-hidden="true">
 				<Skeleton width="56px" height="11px" />

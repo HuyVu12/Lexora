@@ -64,7 +64,7 @@
 </script>
 
 <button type="button" class="backdrop" aria-label={t('chat.source.close')} tabindex="-1" onclick={onclose}></button>
-<aside class="source" aria-labelledby="source-title" in:slideIn={narrow ? { y: 60 } : { x: 18 }} out:slideIn={narrow ? { y: 60, duration: 160 } : { x: 12, duration: 140 }}>
+<aside class="source" data-tour="chat-source" aria-labelledby="source-title" in:slideIn={narrow ? { y: 60 } : { x: 18 }} out:slideIn={narrow ? { y: 60, duration: 160 } : { x: 12, duration: 140 }}>
 	<header class="head">
 		<p class="label" id="source-title">{t('chat.source.title', { n: number })}</p>
 		<button type="button" class="close" bind:this={closeBtn} aria-label={t('chat.source.close')} onclick={onclose}><Icon name="x" size={18} /></button>

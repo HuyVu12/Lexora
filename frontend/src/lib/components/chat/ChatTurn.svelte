@@ -73,7 +73,7 @@
 		<p class="bubble" lang="vi"><span class="visually-hidden">{t('chat.you')}: </span>{turn.question}</p>
 	</div>
 
-	<div class="answer">
+	<div class="answer" data-tour="chat-answer">
 		<LexoraMark />
 		{#if stage}
 			<p class="stage" role="status"><span class="dots" aria-hidden="true"><i></i><i></i><i></i></span>{stage}</p>
@@ -86,6 +86,7 @@
 						{s.text}{#each s.citation_ids as cid (cid)}{@const n = citationNumber(turn, cid)}<button
 								type="button"
 								class="cite"
+								data-tour="chat-cite"
 								class:on={isActive(cid)}
 								aria-label={t('chat.cite', { n })}
 								aria-pressed={isActive(cid)}
@@ -113,7 +114,7 @@
 							<span class="num" aria-hidden="true">{k + 1}</span>
 							<div class="quote-body">
 								<p class="quote-text serif" lang="vi">{c.evidence.quote.trim()}</p>
-								<button type="button" class="where" aria-pressed={isActive(c.id)} aria-label={t('chat.cite.where', { n: k + 1, title: c.title, unit: unitLabel(c.evidence.unit_id) })} onclick={(e) => oncite(index, c.id, e.currentTarget)}>
+								<button type="button" class="where" data-tour="chat-cite" aria-pressed={isActive(c.id)} aria-label={t('chat.cite.where', { n: k + 1, title: c.title, unit: unitLabel(c.evidence.unit_id) })} onclick={(e) => oncite(index, c.id, e.currentTarget)}>
 									<span class="doc">{c.title}</span>{#if unitLabel(c.evidence.unit_id)}<span class="unit">{unitLabel(c.evidence.unit_id)}</span>{/if}<span class="go"><Icon name="chevron" size={14} /></span>
 								</button>
 								{#if c.synthetic || c.edited || (c.dense_rank && !c.lexical_rank)}
@@ -133,7 +134,7 @@
 					<ol>
 						{#each turn.citations as c, k (c.id)}
 							<li>
-								<button type="button" class="source-row" class:on={isActive(c.id)} aria-pressed={isActive(c.id)} onclick={(e) => oncite(index, c.id, e.currentTarget)}>
+								<button type="button" class="source-row" data-tour="chat-cite" class:on={isActive(c.id)} aria-pressed={isActive(c.id)} onclick={(e) => oncite(index, c.id, e.currentTarget)}>
 									<span class="num" aria-hidden="true">{k + 1}</span>
 									<span class="source-text">
 										<span class="source-where"><strong>{c.title}</strong>{#if unitLabel(c.evidence.unit_id)} · {unitLabel(c.evidence.unit_id)}{/if}{#if c.synthetic} <span class="chip synthetic">{t('common.synthetic')}</span>{/if}</span>
@@ -147,7 +148,7 @@
 			{/if}
 
 			<div class="foot reveal">
-				<button type="button" class="icon-btn" class:done={copied} aria-label={copied ? t('chat.copied') : t('chat.copy')} title={t('chat.copy')} onclick={copy}><Icon name={copied ? 'check' : 'copy'} size={16} /></button>
+				<button type="button" class="icon-btn" data-tour="chat-copy" class:done={copied} aria-label={copied ? t('chat.copied') : t('chat.copy')} title={t('chat.copy')} onclick={copy}><Icon name={copied ? 'check' : 'copy'} size={16} /></button>
 				<span class="meta">
 					{#if extractive || none}
 						{t(turn.retrieval?.mode === 'hybrid' ? 'chat.meta.hybrid' : 'chat.meta.lexical')}

@@ -82,7 +82,7 @@
 	});
 </script>
 
-<section class="panel rail" aria-labelledby="rail-heading">
+<section class="panel rail" aria-labelledby="rail-heading" data-tour="item-rail">
 	<div class="top">
 		<div class="head">
 			<h2 class="heading" id="rail-heading">{heading}</h2>

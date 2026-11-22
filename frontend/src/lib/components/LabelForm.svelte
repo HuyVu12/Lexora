@@ -120,7 +120,7 @@
 {/snippet}
 
 <div class="label-form">
-	<fieldset>
+	<fieldset data-tour="qs-type">
 		<legend class="label">{t('qs.field.type')}</legend>
 		<div class="options">
 			{#each TYPES as kind (kind)}
@@ -129,7 +129,7 @@
 		</div>
 	</fieldset>
 
-	<fieldset>
+	<fieldset data-tour="qs-status">
 		<legend class="label">{t('qs.field.status')}</legend>
 		<div class="options two">
 			{#each STATUSES as status (status)}
@@ -138,7 +138,7 @@
 		</div>
 	</fieldset>
 
-	<fieldset>
+	<fieldset data-tour="qs-units">
 		<legend class="label"><Term key="relevant_units">{t('qs.field.units', { n: fields.relevant_unit_ids.length })}</Term></legend>
 		{#if fields.relevant_unit_ids.length}
 			<ul class="chosen" bind:this={chosenList}>
@@ -152,7 +152,7 @@
 		{:else}
 			<p class="small muted">{fields.expected_status === 'refuse' ? t('qs.units.noneRefuse') : t('qs.units.none')}</p>
 		{/if}
-		<label class="field search">
+		<label class="field search" data-tour="qs-unit-search">
 			<span>{t('qs.unit.search')}</span>
 			<input type="search" bind:this={searchBox} bind:value={query} placeholder={t('qs.unit.searchPh')} autocomplete="off" />
 		</label>
@@ -160,7 +160,7 @@
 		{#if found.length}
 			<ul class="found" bind:this={foundList}>
 				{#each rows as c (c.unit_id)}
-					<li class:picked={fields.relevant_unit_ids.includes(c.unit_id)} class:parent={c.parent} style:--depth={Math.min(c.depth, 3)} data-unit={c.unit_id}>
+					<li class:picked={fields.relevant_unit_ids.includes(c.unit_id)} class:parent={c.parent} style:--depth={Math.min(c.depth, 3)} data-unit={c.unit_id} data-tour="qs-unit-row">
 						<div>{@render where(c, c.unit_id)}<span class="serif">{c.text.trim()}</span></div>
 						{#if fields.relevant_unit_ids.includes(c.unit_id)}
 							<span class="small picked-mark" tabindex="-1"><Icon name="check" size={16} />{t('qs.unit.added')}</span>

@@ -9,7 +9,8 @@
 	// The "?" beside a page title. PageGuide mounts it into the title, so it carries no text node: the heading's
 	// text stays exactly the page name. On a page with a step-by-step tour it opens a small menu (short guide or
 	// step by step); elsewhere it opens and closes the page guide directly. The menu is moved to <body>, so the
-	// heading never contains it.
+	// heading never contains it. Without `ontoggle` (a page with a tour but no page guide, see TourHelp) the
+	// "?" starts the tour directly.
 	let {
 		open,
 		label,
@@ -17,7 +18,7 @@
 		controls,
 		ontoggle,
 		tourId = null
-	}: { open: boolean; label: string; hint: string; controls: string; ontoggle: () => void; tourId?: string | null } = $props();
+	}: { open: boolean; label: string; hint: string; controls: string; ontoggle?: () => void; tourId?: string | null } = $props();
 
 	const offered = $derived(tourId ? (TOURS.find((x) => x.id === tourId) ?? null) : null);
 	const seen = $derived(offered ? tourStatus(offered.id) : 'new');
@@ -27,7 +28,8 @@
 	let list = $state<HTMLElement | null>(null);
 
 	async function press() {
-		if (!offered) return ontoggle();
+		if (!offered) return ontoggle?.();
+		if (!ontoggle) return startTour(offered.id);
 		if (menu) return (menu = false);
 		const box = button!.getBoundingClientRect();
 		at = { x: Math.max(8, Math.min(box.left, document.documentElement.clientWidth - 248)), y: box.bottom + 8 };
@@ -79,9 +81,9 @@
 	data-tour="guide-button"
 	aria-label={label}
 	title={offered ? label : hint}
-	aria-haspopup={offered ? 'menu' : undefined}
-	aria-expanded={offered ? menu : open}
-	aria-controls={offered ? (menu ? 'guide-menu' : undefined) : controls}
+	aria-haspopup={offered && ontoggle ? 'menu' : undefined}
+	aria-expanded={!ontoggle ? undefined : offered ? menu : open}
+	aria-controls={!ontoggle ? undefined : offered ? (menu ? 'guide-menu' : undefined) : controls}
 	onclick={press}
 >
 	<Icon name="help" size={16} />
@@ -90,7 +92,7 @@
 {#if menu && offered}
 	<div class="guide-menu" id="guide-menu" role="menu" tabindex="-1" aria-label={label} bind:this={list} style:left="{at.x}px" style:top="{at.y}px"
 		onkeydown={keys} {@attach toBody} in:pop={{ origin: 'top left' }} out:popOut>
-		<button type="button" role="menuitem" class="item" onclick={() => choose(ontoggle)}>
+		<button type="button" role="menuitem" class="item" onclick={() => choose(() => ontoggle?.())}>
 			<Icon name="help" size={16} /><span>{open ? t('tour.menu.shortHide') : t('tour.menu.short')}</span>
 		</button>
 		<button type="button" role="menuitem" class="item" onclick={() => choose(() => startTour(offered.id))}>

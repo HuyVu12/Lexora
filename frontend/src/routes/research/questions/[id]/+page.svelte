@@ -230,7 +230,7 @@
 		{#if frozen}<p class="notice info">{t('qs.frozenNote')}</p>{/if}
 
 		{#if ws.show_proposals === null && !frozen}
-			<section class="panel mode">
+			<section class="panel mode" data-tour="qs-mode">
 				<h2 class="heading"><StepTag n={1} />{t('qs.mode.title')}</h2>
 				<p class="small">{t('qs.mode.lead')}</p>
 				<div class="choices">
@@ -328,7 +328,7 @@
 							{#if current.label}<p class="small">{t('qs.savedAt', { date: formatDate(current.label.updated_at) })}</p>{/if}
 						{:else}
 							<LabelForm setId={id} bind:fields bind:note seed={current.text} />
-							<div class="row ws-actions">
+							<div class="row ws-actions" data-tour="qs-save">
 								<button type="button" class="btn" disabled={busy} onclick={() => save(false)}>{t('qs.save')}</button>
 								<button type="button" class="btn primary" disabled={busy} onclick={() => save(true)}>{t('qs.saveNext')}<Icon name="arrow" /></button>
 								{#if current.label}<span class="small muted">{t('qs.savedAt', { date: formatDate(current.label.updated_at) })}</span>{/if}

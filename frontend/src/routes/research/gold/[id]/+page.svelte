@@ -214,7 +214,7 @@
 						<p class="muted">{t('gold.pickOne')}</p>
 					{:else}
 						{#key current.key}
-							<div class="ws-item" in:rise={{ y: 0, duration: DUR.press }}>
+							<div class="ws-item" data-tour="gold-item" in:rise={{ y: 0, duration: DUR.press }}>
 								<div class="ws-where">
 									<p><strong>{t('gold.sentenceN', { n: index + 1 })}</strong><span>{current.path}</span></p>
 									<span class="ws-state" class:done={current.norms !== null}>{status(current)}</span>
@@ -223,7 +223,7 @@
 									{current.document_title}{#if current.in_sample}{' · '}<span class="in-sample">{t('gold.sample.inSample')}</span>{/if}
 								</p>
 								{#if current.context}<p class="ws-context"><span class="label">{t('gold.context')}</span> {current.context}</p>{/if}
-								<p class="serif ws-text" bind:this={sentenceEl}>{current.text}</p>
+								<p class="serif ws-text" data-tour="gold-text" bind:this={sentenceEl}>{current.text}</p>
 								<p class="ws-selection small" aria-live="polite">
 									{#if selection}<span class="label">{t('gold.selection')}</span> <mark>{selection}</mark>{:else}<span class="muted">{t('gold.selectionNone')}</span>{/if}
 								</p>
@@ -231,8 +231,8 @@
 						{/key}
 						<p class="small muted">{t('gold.verbatim')}</p>
 						<GoldNormEditor bind:norms slots={ws.slots} modalities={ws.modalities} {selection} disabled={busy} />
-						<div class="row ws-actions">
-							<button type="button" class="btn" disabled={busy} onclick={() => save(true, [])}>{t('gold.noNorm')}</button>
+						<div class="row ws-actions" data-tour="gold-save">
+							<button type="button" class="btn" data-tour="gold-no-norm" disabled={busy} onclick={() => save(true, [])}>{t('gold.noNorm')}</button>
 							<span class="spacer"></span>
 							<button type="button" class="btn" disabled={busy || !norms.length} onclick={() => save(false)}>{t('gold.save')}</button>
 							<button type="button" class="btn primary" disabled={busy || !norms.length} onclick={() => save(true)}>{t('gold.saveNext')}<Icon name="arrow" /></button>

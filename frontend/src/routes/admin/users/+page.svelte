@@ -78,7 +78,7 @@
 		</header>
 		<PageGuide name="users" steps={3} />
 		<div class="layout">
-			<section class="panel list" aria-busy={!accounts}>
+			<section class="panel list" data-tour="users-list" aria-busy={!accounts}>
 				<table class="table">
 					<thead>
 						<tr><th scope="col">{t('users.username')}</th><th scope="col">{t('users.role')}</th><th scope="col">{t('users.status')}</th><th scope="col">{t('users.actions')}</th></tr>
@@ -133,11 +133,11 @@
 					</tbody>
 				</table>
 			</section>
-			<form class="panel create" onsubmit={create}>
+			<form class="panel create" data-tour="users-create" onsubmit={create}>
 				<h2 class="heading">{t('users.create')}</h2>
 				<label class="field"><span>{t('users.username')}</span><input autocomplete="off" required minlength="3" maxlength="64" pattern="[A-Za-z0-9._\-]+" bind:value={username} /></label>
 				<label class="field"><span>{t('users.displayName')}</span><input required maxlength="100" bind:value={displayName} /></label>
-				<fieldset class="roles">
+				<fieldset class="roles" data-tour="users-roles">
 					<legend class="label">{t('users.role')}</legend>
 					{#each ROLES as r (r)}
 						<label class="choice"><input type="radio" name="role" value={r} bind:group={role} /><strong>{t(`role.${r}`)}</strong><span>{t(`users.roleHelp.${r}`)}</span></label>
@@ -201,6 +201,37 @@
 	@media (max-width: 1000px) {
 		.layout {
 			grid-template-columns: 1fr;
+		}
+	}
+	/* Phones: each account becomes a short block (name, role, status, actions) instead of a table to scroll sideways. */
+	@media (max-width: 640px) {
+		.list {
+			overflow-x: visible;
+		}
+		.table thead {
+			display: none;
+		}
+		.table,
+		.table tbody,
+		.table tr,
+		.table td {
+			display: block;
+		}
+		.table tr {
+			display: grid;
+			gap: 8px;
+			padding: 12px 0;
+			border-bottom: 1px solid var(--rule);
+		}
+		.table tr:last-child {
+			border-bottom: 0;
+		}
+		.table td {
+			padding: 0;
+			border: 0;
+		}
+		.reset-row td {
+			padding: 8px 10px;
 		}
 	}
 </style>

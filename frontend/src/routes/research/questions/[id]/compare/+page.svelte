@@ -124,7 +124,7 @@
 			<PageSkeleton head={false} blocks={3} />
 		{:else}
 		<h2 class="heading section-title"><StepTag n={1} />{t('cmp.metrics')}</h2>
-		<section class="metrics" aria-label={t('cmp.metrics')}>
+		<section class="metrics" data-tour="cmp-metrics" aria-label={t('cmp.metrics')}>
 			<div><span class="value">{report.labelled_by_both}/{report.questions}</span><span class="small muted">{t('cmp.both')}</span></div>
 			<div><span class="value">{fmt(report.kappa_question_type)}</span><span class="small muted"><Term key="kappa">{t('cmp.kappaType')}</Term></span></div>
 			<div><span class="value">{fmt(report.kappa_expected_status)}</span><span class="small muted"><Term key="kappa">{t('cmp.kappaStatus')}</Term></span></div>
@@ -147,7 +147,7 @@
 		{/if}
 
 		<h2 class="heading section-title"><StepTag n={2} />{t('cmp.final')}</h2>
-		<div class="row between toolbar">
+		<div class="row between toolbar" data-tour="cmp-final">
 			<div class="segmented" role="group" aria-label={t('cmp.filter')}>
 				<button type="button" aria-pressed={filter === 'disagree'} onclick={() => (filter = 'disagree')}>{t('cmp.filter.disagree')}</button>
 				<button type="button" aria-pressed={filter === 'open'} onclick={() => (filter = 'open')}>{t('cmp.filter.open')}</button>
@@ -189,7 +189,7 @@
 		</ol>
 
 		{#if !frozen}
-			<section class="panel freeze">
+			<section class="panel freeze" data-tour="cmp-freeze">
 				<h2 class="heading"><StepTag n={3} />{t('cmp.freeze')}</h2>
 				<p class="small muted">{t('cmp.freezeLead')}</p>
 				<label class="field inline"><span><Term key="held_out">{t('cmp.heldOut')}</Term></span><input type="number" min="10" max="50" step="5" bind:value={heldOut} />%</label>

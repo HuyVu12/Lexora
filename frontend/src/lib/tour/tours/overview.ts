@@ -5,7 +5,7 @@ const REVIEW = ['admin', 'reviewer'] as const;
 /** First orientation for every role: the main areas, where things live, language, account menu and the "?". */
 export const overview: Tour = {
 	id: 'overview',
-	version: 1,
+	version: 2,
 	title: 'tour.overview.name',
 	summary: 'tour.overview.summary',
 	guides: ['homeReviewer', 'homeReader'],
@@ -49,6 +49,8 @@ export const overview: Tour = {
 			route: '/',
 			padding: 8
 		},
-		{ id: 'done', title: 'tour.overview.done.title', body: 'tour.overview.done.body' }
+		{ id: 'done', roles: ['reader', 'dev'], title: 'tour.overview.done.title', body: 'tour.overview.done.body' },
+		// Reviewers end on the research tours, which the user menu lists.
+		{ id: 'doneResearch', target: 'user-menu', roles: [...REVIEW], title: 'tour.overview.doneResearch.title', body: 'tour.overview.doneResearch.body' }
 	]
 };

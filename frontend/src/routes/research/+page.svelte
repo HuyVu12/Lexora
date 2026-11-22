@@ -66,7 +66,7 @@
 		<PageGuide name="corpora" steps={3} />
 
 		<div class="cols">
-			<section class="section" aria-labelledby="corpora-heading" aria-busy={!listing}>
+			<section class="section" data-tour="corpus-list" aria-labelledby="corpora-heading" aria-busy={!listing}>
 				<h2 class="subtitle" id="corpora-heading">{t('research.list')}</h2>
 				{#if !listing}
 					<span class="visually-hidden" role="status">{t('common.loading')}</span>
@@ -106,7 +106,7 @@
 				{/if}
 			</section>
 
-			<form class="panel create" onsubmit={create}>
+			<form class="panel create" data-tour="corpus-create" onsubmit={create}>
 				<h2 class="heading"><StepTag n={1} />{t('research.create')}</h2>
 				<label class="field"><span>{t('research.name')}</span><input maxlength="120" required bind:value={name} placeholder={t('research.namePh')} /></label>
 				<label class="field"><span>{t('research.description')} <span class="hint">({t('common.optional')})</span></span><textarea maxlength="2000" rows="3" bind:value={description}></textarea></label>

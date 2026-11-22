@@ -86,7 +86,8 @@
 	function find(s: TourStep): HTMLElement | null {
 		if (!s.target) return null;
 		const all = [...document.querySelectorAll<HTMLElement>(selectorFor(s.target))].filter(visible);
-		return (s.prefer ? all.find((el) => el.matches(s.prefer!)) : undefined) ?? all[0] ?? null;
+		const pool = s.prefer && all.some((el) => el.matches(s.prefer!)) ? all.filter((el) => el.matches(s.prefer!)) : all;
+		return (s.pick === 'last' ? pool[pool.length - 1] : pool[0]) ?? null;
 	}
 
 	const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
@@ -269,7 +270,7 @@
 
 	async function enter(s: TourStep, mine: number) {
 		stopWatching();
-		done = false;
+		// `done` stays as it was until the next step is shown, so a finished action keeps its tick meanwhile.
 		seeking = true;
 		slow = false;
 		const slowTimer = setTimeout(() => mine === token && (slow = true), 450);
@@ -323,6 +324,7 @@
 		const fromCard = card.ready && !card.dock ? { x: card.x, y: card.y } : null;
 		tracked = el ? { el, step: s } : null;
 		box = el ? measureBox(el, s) : null;
+		done = false;
 		view = { index: tour.index, phase: next, key: view.key + 1 };
 		seeking = false;
 		await tick();
