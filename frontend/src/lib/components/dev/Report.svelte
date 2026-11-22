@@ -79,7 +79,7 @@
 					</tr>
 				</thead>
 				<tbody>
-					{#each data.extraction as r (r.model)}
+					{#each data.extraction as r, i (i)}
 						<tr>
 							<th scope="row"><code>{r.model}</code></th>
 							<td class="num">{r.batches_ok}/{r.batches_planned ?? '-'}</td>
@@ -99,7 +99,7 @@
 		<h3 class="label">{t('results.explained')}</h3>
 		<div class="legend">{#each CATEGORIES as c (c)}<span><i style="background:{COLORS[c]}"></i>{t(`results.explained.${c}` as MessageKey)}</span>{/each}</div>
 		<div class="bars" role="img" aria-label={data.extraction.map((r) => `${r.model} ${pct(r.rejected_rate)}`).join(', ')}>
-			{#each data.extraction as r (r.model)}
+			{#each data.extraction as r, i (i)}
 				<div class="bar-row">
 					<code class="name">{r.model}</code>
 					<span class="track"><span class="bar" style="width:{((r.rejected_rate ?? 0) / top) * 100}%">

@@ -4,6 +4,7 @@
 	import { t } from '#lib/i18n/index.svelte.js';
 	import type { DevUsage } from '#lib/types.js';
 	import type { MessageKey } from '#lib/i18n/vi.js';
+	import { countUp } from '#lib/motion.js';
 
 	let { data }: { data: DevUsage } = $props();
 
@@ -21,8 +22,8 @@
 </script>
 
 <div class="dev-tiles">
-	<div class="dev-tile"><span class="label">{t('dev.usage.sessions')}</span><strong>{data.active_sessions}</strong><span class="small muted">{t('dev.usage.sessionsNote')}</span></div>
-	<div class="dev-tile"><span class="label">{t('dev.usage.questions')}</span><strong>{data.questions}</strong><span class="small muted">{t('dev.usage.inDays', { days: data.days })}</span></div>
+	<div class="dev-tile"><span class="label">{t('dev.usage.sessions')}</span><strong {@attach countUp(data.active_sessions)}></strong><span class="small muted">{t('dev.usage.sessionsNote')}</span></div>
+	<div class="dev-tile"><span class="label">{t('dev.usage.questions')}</span><strong {@attach countUp(data.questions)}></strong><span class="small muted">{t('dev.usage.inDays', { days: data.days })}</span></div>
 	<div class="dev-tile" class:warn={(data.no_evidence_rate ?? 0) > 0.3}>
 		<span class="label"><Term key="no_evidence_rate">{t('dev.usage.noEvidence')}</Term></span><strong>{pct(data.no_evidence_rate)}</strong>
 		<span class="small muted">{t('dev.usage.citations', { n: data.citations_mean === null ? '-' : data.citations_mean.toFixed(1) })}</span>

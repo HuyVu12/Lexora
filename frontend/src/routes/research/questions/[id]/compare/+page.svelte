@@ -2,7 +2,9 @@
 	import PageGuide from '#lib/components/PageGuide.svelte';
 	import StepTag from '#lib/components/StepTag.svelte';
 	import { page } from '$app/state';
+	import Skeleton from '#lib/components/Skeleton.svelte';
 	import Icon from '#lib/components/Icon.svelte';
+	import PageSkeleton from '#lib/components/PageSkeleton.svelte';
 	import Term from '#lib/components/Term.svelte';
 	import LabelForm from '#lib/components/LabelForm.svelte';
 	import { api } from '#lib/api.js';
@@ -104,18 +106,18 @@
 		<h1 class="title">{t('common.forbidden.title')}</h1>
 	{:else if error}
 		<p class="notice error" role="alert">{error}</p>
-	{:else if !report || !summary}
-		<p class="muted">{t('common.loading')}</p>
 	{:else}
-		<p class="crumb"><a href="/research/questions/{id}"><Icon name="back" size={16} />{summary.name}</a></p>
+		<p class="crumb"><a href="/research/questions/{id}"><Icon name="back" size={16} />{summary?.name ?? t('qs.title')}</a></p>
 		<header class="page-head">
 			<div>
 				<h1 class="title">{t('cmp.title')}</h1>
-				<p class="lead">{t('cmp.lead', { a: report.first.name ?? report.first.annotator, b: report.second.name ?? report.second.annotator })}</p>
+				<p class="lead">{#if report}{t('cmp.lead', { a: report.first.name ?? report.first.annotator, b: report.second.name ?? report.second.annotator })}{:else}<Skeleton width="min(520px, 80vw)" height="14px" />{/if}</p>
 			</div>
 		</header>
 		<PageGuide name="compare" steps={3} />
-
+		{#if !report || !summary}
+			<PageSkeleton head={false} blocks={3} />
+		{:else}
 		<h2 class="heading section-title"><StepTag n={1} />{t('cmp.metrics')}</h2>
 		<section class="metrics" aria-label={t('cmp.metrics')}>
 			<div><span class="value">{report.labelled_by_both}/{report.questions}</span><span class="small muted">{t('cmp.both')}</span></div>
@@ -190,20 +192,13 @@
 				{#if report.adjudicated < report.questions}<p class="small muted">{t('cmp.freezeNeed', { n: report.questions - report.adjudicated })}</p>{/if}
 			</section>
 		{/if}
+		{/if}
 	{/if}
 </div>
 
 <style>
 	.section-title {
 		margin: 0 0 10px;
-	}
-	.crumb {
-		margin: 0 0 8px;
-	}
-	.crumb a {
-		display: inline-flex;
-		align-items: center;
-		gap: 6px;
 	}
 	.metrics {
 		display: grid;

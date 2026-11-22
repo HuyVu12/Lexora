@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { t, formatDate } from '#lib/i18n/index.svelte.js';
 	import type { DevKb } from '#lib/types.js';
+	import { countUp } from '#lib/motion.js';
 
 	let { data }: { data: DevKb } = $props();
 
@@ -10,10 +11,10 @@
 </script>
 
 <div class="dev-tiles">
-	<div class="dev-tile"><span class="label">{t('dev.kb.bases')}</span><strong>{data.knowledge_bases.length}</strong><span class="small muted">{t('dev.kb.approved', { n: approved.toLocaleString() })}</span></div>
-	<div class="dev-tile"><span class="label">{t('dev.kb.openDrafts')}</span><strong>{data.drafts.length}</strong></div>
-	<div class="dev-tile" class:warn={undecided > 0}><span class="label">{t('dev.kb.undecided')}</span><strong>{undecided.toLocaleString()}</strong></div>
-	<div class="dev-tile"><span class="label">{t('dev.kb.corpora')}</span><strong>{data.corpora.length}</strong></div>
+	<div class="dev-tile"><span class="label">{t('dev.kb.bases')}</span><strong {@attach countUp(data.knowledge_bases.length)}></strong><span class="small muted">{t('dev.kb.approved', { n: approved.toLocaleString() })}</span></div>
+	<div class="dev-tile"><span class="label">{t('dev.kb.openDrafts')}</span><strong {@attach countUp(data.drafts.length)}></strong></div>
+	<div class="dev-tile" class:warn={undecided > 0}><span class="label">{t('dev.kb.undecided')}</span><strong {@attach countUp(undecided, { format: (n) => n.toLocaleString() })}></strong></div>
+	<div class="dev-tile"><span class="label">{t('dev.kb.corpora')}</span><strong {@attach countUp(data.corpora.length)}></strong></div>
 </div>
 
 <section class="panel" aria-labelledby="bases-heading">

@@ -3,7 +3,9 @@
 	import GoldNormEditor from '#lib/components/GoldNormEditor.svelte';
 	import ConfirmDialog from '#lib/components/ConfirmDialog.svelte';
 	import { page } from '$app/state';
+	import Skeleton from '#lib/components/Skeleton.svelte';
 	import Icon from '#lib/components/Icon.svelte';
+	import PageSkeleton from '#lib/components/PageSkeleton.svelte';
 	import Term from '#lib/components/Term.svelte';
 	import { api } from '#lib/api.js';
 	import { t } from '#lib/i18n/index.svelte.js';
@@ -109,18 +111,18 @@
 		<h1 class="title">{t('common.forbidden.title')}</h1>
 	{:else if error}
 		<p class="notice error" role="alert">{error}</p>
-	{:else if !report || !meta}
-		<p class="muted">{t('common.loading')}</p>
 	{:else}
 		<p class="crumb"><a href="/research/gold/{id}"><Icon name="back" size={16} />{t('gold.cmp.back')}</a></p>
 		<header class="page-head">
 			<div>
-				<h1 class="title serif">{t('gold.cmp.title')} · {meta.name}</h1>
+				<h1 class="title serif">{t('gold.cmp.title')}{#if meta}{` · ${meta.name}`}{/if}</h1>
 				<p class="lead">{t('gold.cmp.lead')}</p>
 			</div>
 		</header>
 		<PageGuide name="goldCompare" steps={3} />
-
+		{#if !report || !meta}
+			<PageSkeleton head={false} blocks={2} cols />
+		{:else}
 		<div class="summary">
 			<section class="panel stats" aria-labelledby="agree-heading">
 				<h2 class="heading" id="agree-heading">{t('gold.cmp.agreement')}</h2>
@@ -221,18 +223,11 @@
 		<ConfirmDialog bind:open={confirmBulk} title={t('gold.cmp.bulkTitle')} confirmLabel={t('gold.cmp.bulkGo', { n: bulkable })} onconfirm={finalise}>
 			<p>{t('gold.cmp.bulkBody', { agreed: report.plan.agreed, single: report.plan.single })}</p>
 		</ConfirmDialog>
+		{/if}
 	{/if}
 </div>
 
 <style>
-	.crumb {
-		margin: 0 0 8px;
-	}
-	.crumb a {
-		display: inline-flex;
-		align-items: center;
-		gap: 6px;
-	}
 	.panel {
 		display: grid;
 		gap: 10px;

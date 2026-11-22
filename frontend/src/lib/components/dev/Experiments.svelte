@@ -2,6 +2,7 @@
 	import { t, formatDate } from '#lib/i18n/index.svelte.js';
 	import type { DevExperiments } from '#lib/types.js';
 	import type { MessageKey } from '#lib/i18n/vi.js';
+	import { countUp } from '#lib/motion.js';
 
 	let { data }: { data: DevExperiments } = $props();
 
@@ -13,7 +14,7 @@
 
 <div class="dev-tiles">
 	{#each KINDS as kind (kind)}
-		<div class="dev-tile"><span class="label">{t(`dev.run.${kind}` as MessageKey)}</span><strong>{count(kind)}</strong></div>
+		<div class="dev-tile"><span class="label">{t(`dev.run.${kind}` as MessageKey)}</span><strong {@attach countUp(count(kind))}></strong></div>
 	{/each}
 </div>
 

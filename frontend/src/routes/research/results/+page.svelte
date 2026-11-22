@@ -1,20 +1,27 @@
+<script module lang="ts">
+	import type { KbRunSummary } from '#lib/types.js';
+	type Results = { runs: KbRunSummary[]; validator_version: string; folder: string };
+	// Reading the run folders takes a few seconds on a cold server: coming back shows the last copy at once.
+	let last: Results | null = null;
+</script>
+
 <script lang="ts">
+	import Skeleton from '#lib/components/Skeleton.svelte';
 	import PageGuide from '#lib/components/PageGuide.svelte';
 	import Icon from '#lib/components/Icon.svelte';
 	import Term from '#lib/components/Term.svelte';
 	import { api } from '#lib/api.js';
 	import { t, formatDate } from '#lib/i18n/index.svelte.js';
 	import { session, canSeeResults } from '#lib/session.svelte.js';
-	import type { KbRunSummary } from '#lib/types.js';
 	import type { MessageKey } from '#lib/i18n/vi.js';
 
-	let data = $state<{ runs: KbRunSummary[]; validator_version: string; folder: string } | null>(null);
+	let data = $state<Results | null>(last);
 	let error = $state('');
 
 	$effect(() => {
 		if (canSeeResults(session.account))
-			api<{ runs: KbRunSummary[]; validator_version: string; folder: string }>('/api/experiments/kb')
-				.then((v) => (data = v))
+			api<Results>('/api/experiments/kb')
+				.then((v) => (data = last = v))
 				.catch((e) => (error = e.message));
 	});
 
@@ -46,7 +53,15 @@
 		<header class="page-head">
 			<div>
 				<h1 class="title">{t('results.title')}</h1>
-				<p class="lead">{t('results.lead')}</p>
+				<p class="facts">
+					{#if data}
+						<span><strong>{data.runs.length}</strong> {t('results.facts.runs', { n: data.runs.length })}</span>
+						<span>{t('results.facts.validator', { v: data.validator_version })}</span>
+						<span title={data.folder}><code>{data.folder}</code></span>
+					{:else}
+						{#each [90, 170, 200] as w (w)}<span><Skeleton width="{w}px" height="12px" /></span>{/each}
+					{/if}
+				</p>
 			</div>
 		</header>
 		<PageGuide name="results" steps={2} />
@@ -54,7 +69,23 @@
 		{#if error}
 			<p class="notice error" role="alert">{error}</p>
 		{:else if !data}
-			<p class="muted">{t('common.loading')}</p>
+			<section class="panel" aria-busy="true">
+				<span class="visually-hidden" role="status">{t('common.loading')}</span>
+				<div class="ghost" aria-hidden="true">
+					<span class="ghost-line h"><Skeleton width="260px" height="16px" /></span>
+					<span class="ghost-line"><Skeleton width="min(640px, 90%)" height="11px" /></span>
+					{#each [0, 1] as table (table)}
+						<div class="ghost-table">
+							<span class="ghost-row head">{#each { length: 9 } as _, i (i)}<Skeleton width={i ? '64%' : '42%'} height="11px" />{/each}</span>
+							{#each [0, 1, 2, 3, 4, 5] as row (row)}
+								<span class="ghost-row">{#each { length: 9 } as _, i (i)}<Skeleton width={i ? '52%' : '72%'} height="12px" />{/each}</span>
+							{/each}
+						</div>
+						{#if !table}<Skeleton width="200px" height="13px" />{/if}
+					{/each}
+					{#each [0, 1, 2, 3] as row (row)}<Skeleton width="300px" height="13px" />{/each}
+				</div>
+			</section>
 		{:else}
 			<section class="panel" aria-labelledby="kb-heading">
 				<h2 class="heading" id="kb-heading">{t('results.kb.title')}</h2>
@@ -197,6 +228,46 @@
 </div>
 
 <style>
+	.facts code {
+		font-size: 12.5px;
+		color: var(--muted);
+		max-width: 360px;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+	}
+	.ghost {
+		display: grid;
+		gap: 12px;
+	}
+	/* Each placeholder line is as tall as the text line it stands for, so the table starts where it will. */
+	.ghost-line {
+		display: flex;
+		align-items: center;
+		height: 20px;
+	}
+	.ghost-line.h {
+		height: 22px;
+	}
+	.ghost-table {
+		display: grid;
+	}
+	.ghost-row {
+		display: grid;
+		grid-template-columns: 1.6fr repeat(8, minmax(0, 1fr));
+		gap: 12px;
+		align-items: center;
+		justify-items: end;
+		height: 46px;
+		border-bottom: 1px solid var(--rule);
+	}
+	.ghost-row > :global(:first-child) {
+		justify-self: start;
+	}
+	.ghost-row.head {
+		height: 40px;
+		border-bottom-color: var(--rule-strong);
+	}
 	.panel {
 		display: grid;
 		gap: 12px;
@@ -225,9 +296,15 @@
 		border-bottom: 1px solid var(--rule-strong);
 	}
 	tbody th {
-		display: grid;
-		gap: 2px;
 		font-weight: 500;
+	}
+	/* The cell stays a table cell (so its rule lines up with the row); its lines stack inside it. */
+	tbody th > code,
+	tbody th > .small {
+		display: block;
+	}
+	tbody th > code + .small {
+		margin-top: 2px;
 	}
 	tbody th code {
 		white-space: nowrap;

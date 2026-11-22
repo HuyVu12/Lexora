@@ -6,6 +6,7 @@
 	import { act, notify } from '#lib/toast.svelte.js';
 	import type { DevOverview, Feature, FeatureControl } from '#lib/types.js';
 	import type { MessageKey } from '#lib/i18n/vi.js';
+	import { countUp } from '#lib/motion.js';
 
 	let { data, reload }: { data: DevOverview; reload: () => void } = $props();
 
@@ -67,13 +68,13 @@
 {/if}
 
 <div class="dev-tiles">
-	<div class="dev-tile"><span class="label">{t('dev.tile.calls')}</span><strong>{num(data.today.calls)}</strong><span class="small muted">{t('dev.tile.today')}</span></div>
+	<div class="dev-tile"><span class="label">{t('dev.tile.calls')}</span><strong {@attach countUp(data.today.calls, { format: num })}></strong><span class="small muted">{t('dev.tile.today')}</span></div>
 	<div class="dev-tile" class:bad={data.today.calls > 0 && data.today.errors / data.today.calls > 0.2}>
-		<span class="label">{t('dev.tile.errors')}</span><strong>{num(data.today.errors)}</strong>
+		<span class="label">{t('dev.tile.errors')}</span><strong {@attach countUp(data.today.errors, { format: num })}></strong>
 		<span class="small muted">{data.today.calls ? pct(data.today.errors / data.today.calls) : '-'}</span>
 	</div>
-	<div class="dev-tile"><span class="label"><Term key="blocked_calls">{t('dev.tile.blocked')}</Term></span><strong>{num(data.today.blocked)}</strong><span class="small muted">{t('dev.tile.today')}</span></div>
-	<div class="dev-tile"><span class="label">{t('dev.tile.tokens')}</span><strong>{num(data.today.prompt_tokens + data.today.completion_tokens)}</strong>
+	<div class="dev-tile"><span class="label"><Term key="blocked_calls">{t('dev.tile.blocked')}</Term></span><strong {@attach countUp(data.today.blocked, { format: num })}></strong><span class="small muted">{t('dev.tile.today')}</span></div>
+	<div class="dev-tile"><span class="label">{t('dev.tile.tokens')}</span><strong {@attach countUp(data.today.prompt_tokens + data.today.completion_tokens, { format: num })}></strong>
 		<span class="small muted">{t('dev.tile.tokensSplit', { in: num(data.today.prompt_tokens), out: num(data.today.completion_tokens) })}</span></div>
 	<div class="dev-tile"><span class="label">{t('dev.tile.cost')}</span><strong>{data.today.cost_usd ? `${data.today.cost_usd.toFixed(2)} USD` : '-'}</strong><span class="small muted">{t('dev.tile.costNote')}</span></div>
 </div>

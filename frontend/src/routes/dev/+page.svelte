@@ -1,6 +1,8 @@
 <script lang="ts">
 	import PageGuide from '#lib/components/PageGuide.svelte';
 	import Icon from '#lib/components/Icon.svelte';
+	import Tabs from '#lib/components/Tabs.svelte';
+	import Skeleton from '#lib/components/Skeleton.svelte';
 	import Overview from '#lib/components/dev/Overview.svelte';
 	import Calls from '#lib/components/dev/Calls.svelte';
 	import Experiments from '#lib/components/dev/Experiments.svelte';
@@ -30,9 +32,11 @@
 
 	let tab = $state<Tab>('overview');
 	let days = $state(14);
-	// The data always travels with the tab that loaded it, so a tab never renders another tab's numbers.
-	let loaded = $state<{ tab: Tab; value: unknown } | null>(null);
-	const data = $derived(loaded && loaded.tab === tab ? loaded.value : null);
+	// Each tab keeps the last numbers it loaded (per range), so coming back to a tab shows them at once while
+	// a fresh copy loads. The data always travels with the tab that loaded it: a tab never renders another's.
+	let loaded = $state<Record<string, unknown>>({});
+	const slot = (which: Tab) => (RANGED.includes(which) ? `${which}:${days}` : which);
+	const data = $derived(loaded[slot(tab)] ?? null);
 	let error = $state('');
 	let loading = $state(false);
 	let request = 0;
@@ -54,7 +58,7 @@
 		error = '';
 		try {
 			const value = await api(ENDPOINT[which] + (RANGED.includes(which) ? `?days=${days}` : ''));
-			if (mine === request) loaded = { tab: which, value };
+			if (mine === request) loaded[slot(which)] = value;
 		} catch (e) {
 			if (mine === request) error = (e as Error).message;
 		} finally {
@@ -69,16 +73,6 @@
 
 	function select(next: Tab) {
 		history.replaceState(history.state, '', `#${next}`);
-		tab = next;
-	}
-	function keys(event: KeyboardEvent) {
-		const at = TABS.indexOf(tab);
-		const next = event.key === 'ArrowRight' ? TABS[(at + 1) % TABS.length] : event.key === 'ArrowLeft' ? TABS[(at - 1 + TABS.length) % TABS.length] : null;
-		if (next) {
-			event.preventDefault();
-			select(next);
-			document.getElementById(`tab-${next}`)?.focus();
-		}
 	}
 </script>
 
@@ -105,18 +99,21 @@
 		</header>
 		<PageGuide name="dev" steps={3} />
 
-		<div class="tabs" role="tablist" aria-label={t('dev.tabs')} tabindex="-1" onkeydown={keys}>
-			{#each TABS as name (name)}
-				<button type="button" role="tab" id="tab-{name}" aria-selected={tab === name} aria-controls="panel" tabindex={tab === name ? 0 : -1}
-					onclick={() => select(name)}>{t(`dev.tab.${name}` as MessageKey)}</button>
-			{/each}
-		</div>
+		<Tabs bind:value={tab} label={t('dev.tabs')} idPrefix="tab" controls="panel" onchange={select} tabs={TABS.map((name) => ({ id: name, label: t(`dev.tab.${name}` as MessageKey) }))} />
 
 		<div class="dev-tab" id="panel" role="tabpanel" aria-labelledby="tab-{tab}" aria-busy={loading}>
 			{#if error}
 				<p class="notice error" role="alert">{error}</p>
 			{:else if !data}
-				<p class="muted">{t('common.loading')}</p>
+				<span class="visually-hidden" role="status">{t('common.loading')}</span>
+				<div class="dev-tiles" aria-hidden="true">
+					{#each [0, 1, 2, 3] as i (i)}<div class="dev-tile ghost"><Skeleton width="60%" height="12px" /><Skeleton width="44%" height="26px" /><Skeleton width="70%" height="11px" /></div>{/each}
+				</div>
+				<div class="panel ghost-panel" aria-hidden="true">
+					<Skeleton width="30%" height="16px" />
+					<Skeleton width="60%" height="11px" />
+					{#each [0, 1, 2, 3] as i (i)}<span class="ghost-row"><Skeleton width="80%" height="12px" /><Skeleton width="60%" height="12px" /><Skeleton width="40%" height="12px" /><Skeleton width="50%" height="12px" /></span>{/each}
+				</div>
 			{:else if tab === 'overview'}
 				<Overview data={data as DevOverview} reload={load} />
 			{:else if tab === 'calls'}
@@ -137,36 +134,22 @@
 </div>
 
 <style>
-	.tabs {
-		display: flex;
-		gap: 2px;
-		margin: 0 0 20px;
-		border-bottom: 1px solid var(--rule-strong);
-		overflow-x: auto;
-		scrollbar-width: none;
+	.page :global(.tabs) {
+		margin-bottom: var(--space-5);
 	}
-	.tabs button {
-		border: 0;
-		background: none;
-		padding: 10px 14px;
-		font: inherit;
-		font-weight: 500;
-		color: var(--ink-2);
-		border-bottom: 2px solid transparent;
-		margin-bottom: -1px;
-		cursor: pointer;
-		white-space: nowrap;
+	.ghost {
+		gap: 10px;
 	}
-	.tabs button:hover {
-		color: var(--ink);
+	.ghost-panel {
+		display: grid;
+		gap: 14px;
 	}
-	.tabs button[aria-selected='true'] {
-		color: var(--ink);
-		border-bottom-color: var(--graphite);
-	}
-	.tabs button:focus-visible {
-		outline: 2px solid var(--focus);
-		outline-offset: -2px;
-		border-radius: 4px 4px 0 0;
+	.ghost-row {
+		display: grid;
+		grid-template-columns: 2fr 2fr 1fr 1fr;
+		gap: 16px;
+		align-items: center;
+		height: 44px;
+		border-top: 1px solid var(--rule);
 	}
 </style>

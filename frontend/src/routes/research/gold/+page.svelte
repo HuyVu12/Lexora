@@ -1,26 +1,40 @@
+<script module lang="ts">
+	import type { FrozenVersionOption, GoldSetSummary } from '#lib/types.js';
+	type Listing = { sets: GoldSetSummary[]; versions: FrozenVersionOption[] };
+	// The last listing shows at once when you come back; a fresh one replaces it when it arrives.
+	let last: Listing | null = null;
+</script>
+
 <script lang="ts">
 	import PageGuide from '#lib/components/PageGuide.svelte';
 	import StepTag from '#lib/components/StepTag.svelte';
+	import Skeleton from '#lib/components/Skeleton.svelte';
 	import { goto } from '$app/navigation';
 	import Icon from '#lib/components/Icon.svelte';
 	import { api } from '#lib/api.js';
 	import { t, formatDay } from '#lib/i18n/index.svelte.js';
 	import { session, canReview } from '#lib/session.svelte.js';
 	import { act, notify } from '#lib/toast.svelte.js';
-	import type { FrozenVersionOption, GoldSetSummary } from '#lib/types.js';
+	import { revealItems } from '#lib/motion.js';
 
-	let sets = $state<GoldSetSummary[] | null>(null);
-	let versions = $state<FrozenVersionOption[]>([]);
+	let data = $state<Listing | null>(last);
+	const fresh = !last;
 	let name = $state('');
-	let versionId = $state('');
+	let versionId = $state(last?.versions[0]?.id ?? '');
 	let sample = $state(20);
 	let busy = $state(false);
 
+	const sets = $derived(data?.sets ?? null);
+	const versions = $derived(data?.versions ?? []);
+	const me = $derived(session.account?.username ?? '');
+	const mine = (s: GoldSetSummary) => s.labelled[me] ?? 0;
+	const sentences = $derived(sets?.reduce((n, s) => n + s.sentences, 0) ?? 0);
+	const labelled = $derived(sets?.reduce((n, s) => n + mine(s), 0) ?? 0);
+
 	const load = () =>
-		api<{ sets: GoldSetSummary[]; versions: FrozenVersionOption[] }>('/api/gold')
+		api<Listing>('/api/gold')
 			.then((v) => {
-				sets = v.sets;
-				versions = v.versions;
+				data = last = v;
 				versionId ||= v.versions[0]?.id ?? '';
 			})
 			.catch((e) => notify(e.message, true));
@@ -64,45 +78,68 @@
 		<header class="page-head">
 			<div>
 				<h1 class="title">{t('gold.title')}</h1>
-				<p class="lead">{t('gold.lead')}</p>
+				<p class="facts">
+					{#if sets}
+						<span><strong>{sets.length}</strong> {t('gold.facts.sets', { n: sets.length })}</span>
+						<span>{t('gold.facts.mine', { done: labelled, n: sentences })}</span>
+					{:else}
+						{#each [90, 170] as w (w)}<span><Skeleton width="{w}px" height="12px" /></span>{/each}
+					{/if}
+				</p>
 			</div>
 		</header>
 		<PageGuide name="golds" steps={2} />
 
 		<div class="cols">
-			<section class="panel" aria-labelledby="sets-heading">
-				<h2 class="heading" id="sets-heading"><StepTag n={2} />{t('gold.list')}</h2>
+			<section class="section" aria-labelledby="sets-heading" aria-busy={!sets}>
+				<h2 class="subtitle" id="sets-heading"><StepTag n={2} />{t('gold.list')}</h2>
 				{#if !sets}
-					<p class="muted">{t('common.loading')}</p>
+					<span class="visually-hidden" role="status">{t('common.loading')}</span>
+					<ul class="cards" aria-hidden="true">
+						{#each [0, 1] as i (i)}
+							<li class="panel card-row">
+								<span class="body"><Skeleton width="46%" height="17px" /><Skeleton width="72%" height="11px" /><Skeleton width="38%" height="11px" /></span>
+								<span class="side"><Skeleton width="120px" height="11px" /><Skeleton width="120px" height="6px" radius="3px" /></span>
+							</li>
+						{/each}
+					</ul>
 				{:else if sets.length}
-					<ul class="sets">
+					<ul class="cards" {@attach fresh && revealItems({ step: 40 })}>
 						{#each sets as s (s.id)}
 							<li>
-								<a class="serif name" href="/research/gold/{s.id}">{s.name}</a>
-								<p class="small muted">
-									{t('gold.counts', { articles: s.articles, sentences: s.sentences })} ·
-									{#if s.sample_size}{t('gold.sampleFacts', { articles: s.sample_size.articles, sentences: s.sample_size.sentences })} ·{/if}
-									{t('qs.onVersion', { n: s.corpus_version })} ·
-									{s.imported ? t('qs.importedFrom', { who: s.created_by }) : t('research.createdBy', { who: s.created_by, date: formatDay(s.created_at) })}
-								</p>
-								{#if Object.keys(s.labelled).length || s.adjudicated}
-									<p class="small">
-										{#each Object.entries(s.labelled) as [who, n] (who)}<span class="who">{t('gold.labelledBy', { who, n })}</span>{/each}
-										{#if s.adjudicated}<span class="who">{t('gold.adjudicatedN', { n: s.adjudicated })}</span>{/if}
-									</p>
-								{/if}
+								<a class="panel panel-link card-row" href="/research/gold/{s.id}">
+									<span class="body">
+										<span class="name">{s.name}</span>
+										<span class="dotted">
+											<span>{t('gold.counts', { articles: s.articles, sentences: s.sentences })}</span>
+											{#if s.sample_size}<span>{t('gold.sampleFacts', { articles: s.sample_size.articles, sentences: s.sample_size.sentences })}</span>{/if}
+											<span>{t('qs.onVersion', { n: s.corpus_version })}</span>
+										</span>
+										<span class="dotted">
+											<span>{s.imported ? t('qs.importedFrom', { who: s.created_by }) : t('research.createdBy', { who: s.created_by, date: formatDay(s.created_at) })}</span>
+											{#each Object.entries(s.labelled).filter(([who]) => who !== me) as [who, n] (who)}<span>{t('gold.labelledBy', { who, n })}</span>{/each}
+											{#if s.adjudicated}<span>{t('gold.adjudicatedN', { n: s.adjudicated })}</span>{/if}
+										</span>
+									</span>
+									<span class="side progress">
+										<span class="small">{t('gold.facts.mine', { done: mine(s), n: s.sentences })}</span>
+										<span class="meter" aria-hidden="true"><i style:transform="scaleX({s.sentences ? Math.min(mine(s), s.sentences) / s.sentences : 0})"></i></span>
+									</span>
+								</a>
 							</li>
 						{/each}
 					</ul>
 				{:else}
-					<p class="muted">{t('gold.empty')}</p>
+					<p class="empty-note">{t('gold.empty')}</p>
 				{/if}
 			</section>
 
-			<div class="stack">
-				<form class="panel" onsubmit={create}>
+			<div class="side-stack">
+				<form class="panel form" onsubmit={create}>
 					<h2 class="heading"><StepTag n={1} />{t('gold.create')}</h2>
-					{#if versions.length}
+					{#if !data}
+						<Skeleton lines={3} height="38px" gap="14px" last="100%" />
+					{:else if versions.length}
 						<label class="field"><span>{t('gold.name')}</span><input maxlength="120" required bind:value={name} placeholder={t('gold.namePh')} /></label>
 						<label class="field"><span>{t('gold.version')}</span>
 							<select bind:value={versionId}>
@@ -119,7 +156,7 @@
 					{/if}
 				</form>
 
-				<section class="panel">
+				<section class="panel form">
 					<h2 class="heading"><StepTag n={1} />{t('gold.importPack')}</h2>
 					<p class="small muted">{t('gold.importPackLead')}</p>
 					<label class="field"><span>{t('gold.packFile')}</span><input type="file" accept=".json,application/json" disabled={busy} onchange={importPack} /></label>
@@ -132,44 +169,36 @@
 <style>
 	.cols {
 		display: grid;
-		grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
-		gap: 20px;
+		grid-template-columns: minmax(0, 1fr) 380px;
+		gap: var(--space-8);
 		align-items: start;
 	}
-	.panel {
+	.side-stack {
+		display: grid;
+		gap: var(--space-4);
+	}
+	.form {
 		display: grid;
 		gap: 12px;
+		padding: 20px 22px;
 	}
-	.sets {
-		list-style: none;
-		margin: 0;
-		padding: 0;
+	.progress {
+		min-width: 150px;
 	}
-	.sets li {
-		display: grid;
-		gap: 4px;
-		justify-items: start;
-		padding: 14px 0;
-		border-top: 1px solid var(--rule);
+	.progress .meter {
+		width: 150px;
 	}
-	.sets li:first-child {
-		border-top: 0;
-		padding-top: 4px;
-	}
-	.sets p {
-		margin: 0;
-	}
-	.name {
-		font-size: 1.15rem;
-		font-weight: 600;
-	}
-	.who + .who::before {
-		content: ' · ';
-		color: var(--muted);
-	}
-	@media (max-width: 900px) {
+	@media (max-width: 960px) {
 		.cols {
-			grid-template-columns: 1fr;
+			grid-template-columns: minmax(0, 1fr);
+		}
+	}
+	@media (max-width: 640px) {
+		.progress .meter {
+			width: 100%;
+		}
+		.progress {
+			width: 100%;
 		}
 	}
 </style>

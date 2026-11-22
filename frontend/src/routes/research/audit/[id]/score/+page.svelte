@@ -1,5 +1,6 @@
 <script lang="ts">
 	import Icon from '#lib/components/Icon.svelte';
+	import Skeleton from '#lib/components/Skeleton.svelte';
 	import { page } from '$app/state';
 	import { api } from '#lib/api.js';
 	import { t } from '#lib/i18n/index.svelte.js';
@@ -53,9 +54,14 @@
 		{#if error}
 			<p class="notice error" role="alert">{error}</p>
 		{:else if !score}
-			<p class="muted">{t('common.loading')}</p>
+			<section class="panel" aria-busy="true">
+				<span class="visually-hidden" role="status">{t('common.loading')}</span>
+				<div class="ghost" aria-hidden="true">
+					{#each [0, 1, 2, 3, 4] as i (i)}<span class="ghost-row"><Skeleton width="70%" height="12px" /><Skeleton width="60%" height="12px" />{#each [0, 1, 2, 3, 4, 5, 6] as j (j)}<Skeleton width="40%" height="12px" />{/each}</span>{/each}
+				</div>
+			</section>
 		{:else if !score.labelled}
-			<p class="muted">{t('audit.scoreEmpty')}</p>
+			<p class="empty-note">{t('audit.scoreEmpty')}</p>
 		{:else}
 			<section class="panel">
 				<div class="table-wrap">
@@ -91,13 +97,20 @@
 </div>
 
 <style>
-	.crumb {
-		margin: 0 0 8px;
-	}
-	.crumb a {
-		display: inline-flex;
+	.ghost-row {
+		display: grid;
+		grid-template-columns: 1.4fr 1fr repeat(7, minmax(0, 0.7fr));
+		gap: 12px;
 		align-items: center;
-		gap: 6px;
+		justify-items: end;
+		height: 46px;
+		border-bottom: 1px solid var(--rule);
+	}
+	.ghost-row > :global(:nth-child(-n + 2)) {
+		justify-self: start;
+	}
+	.ghost-row:last-child {
+		border-bottom: 0;
 	}
 	.source {
 		min-width: 260px;

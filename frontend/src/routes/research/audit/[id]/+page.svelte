@@ -1,5 +1,10 @@
 <script lang="ts">
+	import Skeleton from '#lib/components/Skeleton.svelte';
 	import Icon from '#lib/components/Icon.svelte';
+	import ItemRail from '#lib/components/ItemRail.svelte';
+	import WorkspaceSkeleton from '#lib/components/WorkspaceSkeleton.svelte';
+	import { rise, DUR } from '#lib/motion.js';
+	import '#lib/components/workspace.css';
 	import { page } from '$app/state';
 	import { api } from '#lib/api.js';
 	import { t } from '#lib/i18n/index.svelte.js';
@@ -36,6 +41,19 @@
 		const at = line.indexOf(':');
 		return at > 0 ? { name: line.slice(0, at), value: line.slice(at + 1).trim() } : { name: '', value: line };
 	});
+
+	const labelName = (value: AuditLabel) => t(`audit.label.${value}` as MessageKey);
+	const tone = (value: AuditLabel) => (value === 'sai' ? 'bad' : value === 'khong_ro' ? 'unsure' : 'good');
+	const railItems = $derived(
+		(ws?.rows ?? []).map((r, i) => ({
+			key: r.item_id,
+			n: i + 1,
+			text: r.sentence,
+			done: !!r.mine,
+			status: r.mine ? labelName(r.mine.label) : t('gold.status.todo'),
+			label: r.mine?.label
+		}))
+	);
 
 	function pick(itemId: string) {
 		selected = itemId;
@@ -80,81 +98,83 @@
 		<h1 class="title">{t('common.forbidden.title')}</h1>
 	{:else if error}
 		<p class="notice error" role="alert">{error}</p>
-	{:else if !ws}
-		<p class="muted">{t('common.loading')}</p>
 	{:else}
 		<p class="crumb"><a href="/research/audit"><Icon name="back" size={16} />{t('audit.title')}</a></p>
 		<header class="page-head">
 			<div>
-				<h1 class="title serif">{ws.name}</h1>
-				<p class="facts"><span>{t('audit.mine', { done, n: ws.rows.length })}</span><span>{t('audit.blind')}</span></p>
+				<h1 class="title serif">{#if ws}{ws.name}{:else}<span class="title-ghost" style:width="min(380px, 70vw)"><Skeleton height="30px" /></span>{/if}</h1>
+				<p class="facts">{#if ws}<span>{t('audit.mine', { done, n: ws.rows.length })}</span>{:else}<span><Skeleton width="150px" height="12px" /></span>{/if}<span>{t('audit.blind')}</span></p>
 			</div>
 			<div class="row">
 				<a class="btn quiet" href="/docs/huong-dan-kiem-tra-quy-pham"><Icon name="doc" size={16} />{t('audit.guide')}</a>
-				{#if ws.can_score}<a class="btn" href="/research/audit/{id}/score">{t('audit.score')}</a>{/if}
+				{#if ws?.can_score}<a class="btn" href="/research/audit/{id}/score">{t('audit.score')}</a>{/if}
 			</div>
 		</header>
+		{#if !ws}
+			<WorkspaceSkeleton tabs={0} />
+		{:else}
 
-		<div class="cols">
-			<section class="panel list" aria-labelledby="list-heading">
-				<h2 class="heading" id="list-heading">{t('audit.rows')}</h2>
-				<progress max={ws.rows.length} value={done} aria-label={t('audit.mine', { done, n: ws.rows.length })}></progress>
-				<ol class="items">
-					{#each ws.rows as row, i (row.item_id)}
-						<li>
-							<button type="button" class="item" aria-current={row.item_id === selected ? 'true' : undefined} onclick={() => pick(row.item_id)}>
-								<span class="num">{i + 1}</span>
-								<span class="text">{row.sentence}</span>
-								<span class="tag">{#if row.mine}<span class="chip small label-{row.mine.label}">{t(`audit.label.${row.mine.label}` as MessageKey)}</span>{/if}</span>
-							</button>
-						</li>
-					{/each}
-				</ol>
-				<div class="side-tools">
+		<div class="ws-cols">
+			<ItemRail heading={t('audit.rows')} items={railItems} {selected} onpick={pick} {done} total={ws.rows.length} progress={t('audit.mine', { done, n: ws.rows.length })}>
+				{#snippet marker(item)}
+					{#if item.label}
+						<span class="verdict {tone(item.label)}" title={labelName(item.label)} aria-hidden="true">{ws ? ws.labels.indexOf(item.label) + 1 : ''}</span>
+					{:else}
+						<span class="verdict" aria-hidden="true"></span>
+					{/if}
+				{/snippet}
+				{#snippet foot()}
 					{#each others as [who, info] (who)}
 						<a class="btn small" href="/research/audit/{id}/compare?other={encodeURIComponent(who)}">{t('audit.compareWith', { name: info.name })}<Icon name="arrow" size={16} /></a>
 					{/each}
 					{#if done}<a class="btn quiet small" href="/api/audit/sheet.csv?id={id}&source={encodeURIComponent(session.account?.username ?? '')}" download><Icon name="download" size={16} />{t('audit.downloadMine')}</a>{/if}
-				</div>
-			</section>
+				{/snippet}
+			</ItemRail>
 
-			<section class="panel work" aria-labelledby="item-heading">
+			<section class="panel ws-work" aria-labelledby="item-heading">
 				{#if !current}
 					<p class="muted">{t('audit.pickOne')}</p>
 				{:else}
-					<h2 class="heading" id="item-heading">{t('audit.rowN', { n: index + 1, total: ws.rows.length })}</h2>
-					{#if current.context}
-						<div class="block">
-							<p class="label">{t('audit.context')}</p>
-							<p class="context">{#each current.context.split('\n') as line, i (i)}<span>{line}</span>{/each}</p>
+					{#key current.item_id}
+						<div class="ws-item" in:rise={{ y: 0, duration: DUR.press }}>
+							<div class="ws-where">
+								<p><strong id="item-heading">{t('audit.rowN', { n: index + 1, total: ws.rows.length })}</strong></p>
+								<span class="ws-state" class:done={!!current.mine}>{current.mine ? labelName(current.mine.label) : t('gold.status.todo')}</span>
+							</div>
+							{#if current.context}
+								<div class="block">
+									<p class="label">{t('audit.context')}</p>
+									<p class="context">{#each current.context.split('\n') as line, i (i)}<span>{line}</span>{/each}</p>
+								</div>
+							{/if}
+							<div class="block">
+								<p class="label">{t('audit.unit')}</p>
+								<p class="ws-text serif">{current.unit_text}</p>
+								{#if current.sentence && current.sentence !== current.unit_text.trim()}
+									<p class="ws-selection small"><span class="label">{t('audit.sentence')}</span> <mark>{current.sentence}</mark></p>
+								{/if}
+							</div>
+							<div class="block">
+								<p class="label">{t('audit.norm')}</p>
+								<dl class="norm">
+									{#each normLines(current.norm) as line, i (i)}<dt>{line.name}</dt><dd>{line.value}</dd>{/each}
+								</dl>
+							</div>
 						</div>
-					{/if}
-					<div class="block">
-						<p class="label">{t('audit.unit')}</p>
-						<p class="unit serif">{current.unit_text}</p>
-						{#if current.sentence && current.sentence !== current.unit_text.trim()}
-							<p class="small"><span class="label">{t('audit.sentence')}</span> <mark>{current.sentence}</mark></p>
-						{/if}
-					</div>
-					<div class="block norm">
-						<p class="label">{t('audit.norm')}</p>
-						<dl>
-							{#each normLines(current.norm) as line, i (i)}<dt>{line.name}</dt><dd>{line.value}</dd>{/each}
-						</dl>
-					</div>
+					{/key}
 
-					<fieldset class="choices-grid" disabled={busy}>
+					<fieldset class="verdicts" disabled={busy}>
 						<legend class="label">{t('audit.pick')}</legend>
 						{#each ws.labels as value, i (value)}
 							<label class="opt" class:on={label === value}>
 								<input type="radio" name="audit-label" {value} bind:group={label} />
 								<span class="key" aria-hidden="true">{i + 1}</span>
-								<span><strong>{t(`audit.label.${value}` as MessageKey)}</strong><span class="small muted">{t(`audit.label.${value}.d` as MessageKey)}</span></span>
+								<span><strong>{labelName(value)}</strong><span class="small muted">{t(`audit.label.${value}.d` as MessageKey)}</span></span>
 							</label>
 						{/each}
 					</fieldset>
 					<label class="field"><span>{t('audit.note')}</span><textarea rows="2" bind:value={note} placeholder={t('audit.notePh')}></textarea></label>
-					<div class="row actions">
+					<div class="row ws-actions">
 						<span class="small muted">{t('audit.keys')}</span>
 						<span class="spacer"></span>
 						<button type="button" class="btn" disabled={busy || !label} onclick={() => save(false)}>{t('audit.save')}</button>
@@ -163,136 +183,53 @@
 				{/if}
 			</section>
 		</div>
+		{/if}
 	{/if}
 </div>
 
 <style>
-	.crumb {
-		margin: 0 0 8px;
-	}
-	.crumb a {
-		display: inline-flex;
-		align-items: center;
-		gap: 6px;
-	}
-	.facts {
-		display: flex;
-		flex-wrap: wrap;
-		gap: 6px 18px;
-		margin-top: 10px;
-		color: var(--ink-2);
-	}
-	.cols {
+	.verdict {
 		display: grid;
-		grid-template-columns: minmax(260px, 0.8fr) minmax(0, 1.7fr);
-		gap: 20px;
-		align-items: start;
-	}
-	.panel {
-		display: grid;
-		gap: 12px;
-	}
-	.list {
-		position: sticky;
-		top: calc(var(--topbar) + 16px);
-		max-height: calc(100vh - var(--topbar) - 32px);
-		grid-template-rows: auto auto 1fr auto;
-		overflow: hidden;
-	}
-	progress {
-		width: 100%;
-	}
-	.items {
-		list-style: none;
-		margin: 0 -8px;
-		padding: 0;
-		overflow: auto;
-	}
-	.item {
-		width: 100%;
-		display: grid;
-		grid-template-columns: 2.2rem minmax(0, 1fr) auto;
-		gap: 8px;
-		align-items: start;
-		text-align: left;
-		padding: 8px;
-		border: 0;
-		border-radius: var(--r-control);
-		background: none;
-		font: inherit;
-		color: inherit;
-		cursor: pointer;
-	}
-	.item:hover,
-	.item[aria-current='true'] {
-		background: var(--desk);
-	}
-	.item[aria-current='true'] .num {
-		color: var(--ink);
-		font-weight: 600;
-	}
-	.num {
-		color: var(--muted);
-		font-variant-numeric: tabular-nums;
-	}
-	.text {
-		display: -webkit-box;
-		-webkit-line-clamp: 2;
-		line-clamp: 2;
-		-webkit-box-orient: vertical;
-		overflow: hidden;
-	}
-	.chip.small {
+		place-items: center;
+		width: 20px;
+		height: 20px;
+		border-radius: 5px;
+		border: 1.5px solid var(--rule-strong);
 		font-size: 11.5px;
-		padding: 0 7px;
-		white-space: nowrap;
+		font-weight: 700;
+		line-height: 1;
 	}
-	.label-sai {
-		color: var(--reject);
-		border-color: currentColor;
+	.verdict.good {
+		border-color: var(--approve);
+		background: var(--approve);
+		color: var(--paper);
 	}
-	.label-dung {
-		color: var(--approve);
-		border-color: currentColor;
+	.verdict.bad {
+		border-color: var(--reject);
+		background: var(--reject);
+		color: var(--paper);
 	}
-	.side-tools {
-		display: grid;
-		gap: 8px;
-		padding-top: 10px;
-		border-top: 1px solid var(--rule);
-	}
-	.side-tools .btn {
-		justify-content: flex-start;
+	.verdict.unsure {
+		border-color: var(--attention);
+		background: var(--attention-soft);
+		color: var(--attention);
 	}
 	.block {
 		display: grid;
 		gap: 4px;
 	}
-	.block p {
-		margin: 0;
-	}
 	.context {
 		display: grid;
 		gap: 2px;
+		font-size: 14px;
 		color: var(--ink-2);
-		max-width: 80ch;
 	}
-	.unit {
-		font-size: 1.2rem;
-		line-height: 1.6;
-		max-width: 72ch;
-	}
-	mark {
-		background: var(--hl-object);
-		padding: 0 3px;
-		border-radius: 3px;
-	}
-	.norm dl {
+	.norm {
 		display: grid;
 		grid-template-columns: minmax(110px, max-content) minmax(0, 1fr);
-		gap: 6px 14px;
-		margin: 0;
-		padding: 12px 14px;
+		gap: 6px 16px;
+		margin: 2px 0 0;
+		padding: 12px 16px;
 		background: var(--desk);
 		border-radius: var(--r-control);
 	}
@@ -303,12 +240,16 @@
 		margin: 0;
 		overflow-wrap: anywhere;
 	}
-	.choices-grid {
+	.verdicts {
 		display: grid;
+		grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
 		gap: 8px;
 		border: 0;
 		padding: 0;
 		margin: 0;
+	}
+	.verdicts legend {
+		margin-bottom: 8px;
 	}
 	.opt {
 		display: grid;
@@ -319,13 +260,19 @@
 		border: 1px solid var(--rule);
 		border-radius: var(--r-control);
 		cursor: pointer;
+		transition:
+			border-color var(--dur-fast) ease,
+			background-color var(--dur-fast) ease;
 	}
-	.opt:hover {
-		border-color: var(--ink-2);
+	@media (hover: hover) {
+		.opt:hover {
+			border-color: var(--ink-2);
+		}
 	}
 	.opt.on {
 		border-color: var(--graphite);
 		background: var(--desk);
+		box-shadow: inset 0 0 0 1px var(--graphite);
 	}
 	.opt input {
 		margin-top: 3px;
@@ -343,22 +290,5 @@
 		border: 1px solid var(--rule-strong);
 		font-size: 12px;
 		color: var(--muted);
-	}
-	.actions {
-		gap: 10px;
-		align-items: center;
-		flex-wrap: wrap;
-	}
-	.spacer {
-		flex: 1;
-	}
-	@media (max-width: 1000px) {
-		.cols {
-			grid-template-columns: 1fr;
-		}
-		.list {
-			position: static;
-			max-height: 380px;
-		}
 	}
 </style>
