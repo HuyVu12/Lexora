@@ -1,5 +1,6 @@
 """Deterministic retrieval keys of the knowledge base (`kb-keys-v1`): in the index text only, never in what the
-generator reads; DK4 keys come from the validated claims only; off by default. Synthetic statute, not real law."""
+generator reads; DK4 keys come from the validated claims only; off by default. The thin claim view (`claims_view:
+thin`) prints only what is not verbatim in the source text. Synthetic statute, not real law."""
 
 import json
 from pathlib import Path
@@ -18,7 +19,7 @@ from legal_ai.evaluation.preflight import check
 from legal_ai.evaluation.retrieval_run import run
 from legal_ai.indexing.kb_keys import MODALITY_KEYS, SANCTION_KEY, KbKeys, check_config
 from legal_ai.indexing.packing import Packer
-from legal_ai.indexing.records import kb_unit_records
+from legal_ai.indexing.records import kb_unit_records, structural_records, thin_lines, token_spans
 
 # Digest of the DK3 records of the fixture (full and compact views) built by the code before kb-keys-v1 (commit cba25dc).
 OLD_RECORDS_SHA256 = "5435eb7206fc439e6d00aef013cbdcc7615213f850a5215380413ba160c32b85"
@@ -129,6 +130,55 @@ class KbKeysTests(unittest.TestCase):
         report = check([self.root / "r3-plain", four])
         shape = next(c for c in report["checks"] if c["check"] == "DK3 and DK4 use the same record shape and graph")
         self.assertEqual(shape["status"], "fail", "DK3 without keys and DK4 with keys are not one ladder")
+
+    def test_thin_view_prints_only_what_is_not_verbatim(self):
+        lead = claim(self.units, "syn/chapter-i/article-1/clause-2", "Không quá 6 ngày đối với công việc khác", "kb:4",
+                     actor="hai bên", quantities="6 ngày", conditions="đối với công việc khác")
+        lead["inheritance"] = {"version": "claims-inherit-v1", "slots": {"actor": {"rule": "leadin-subject"}}}
+        twin = dict(lead, claim_id="kb:5")
+        claims = self.claims + [lead, twin]
+        dk2 = {r["unit_ids"][0]: r for r in structural_records(self.documents, self.units, self.texts)}
+        compact = {r["unit_ids"][0]: r for r in kb_unit_records("DK3", self.documents, self.units, self.texts, claims, view="compact")}
+        thin = {r["unit_ids"][0]: r for r in kb_unit_records("DK3", self.documents, self.units, self.texts, claims, view="thin")}
+        for unit_id, row in thin.items():
+            base = dk2[unit_id]["index_text"].rstrip("\n")
+            self.assertEqual(row["index_text"], compact[unit_id]["index_text"], "search still reads the full claims")
+            self.assertTrue(row["generator_text"].startswith(base))
+            self.assertLessEqual(row["token_count"], compact[unit_id]["token_count"])
+            suffix = row["generator_text"][len(base):]
+            for c in (c for c in claims if c["unit_id"] == unit_id):
+                for name, value in c["slots"].items():
+                    if value and not (name == "actor" and "inheritance" in c):
+                        self.assertNotIn(value, suffix, f"slot {name} is verbatim source text")
+                self.assertNotIn(c["modality_cue"], suffix)
+        self.assertEqual(thin["syn/chapter-i/article-1/clause-1"]["generator_text"], dk2["syn/chapter-i/article-1/clause-1"]["index_text"].rstrip("\n"),
+                         "an unknown modality adds nothing: no claim line at all")
+        self.assertEqual(thin["syn/chapter-i/article-1/clause-1"]["token_count"], dk2["syn/chapter-i/article-1/clause-1"]["token_count"])
+        self.assertTrue(thin["syn/chapter-i/article-2/clause-1"]["generator_text"].endswith("cho bên B.\n[Quy phạm 1] nghĩa vụ"),
+                        "an extracted actor is verbatim: only the modality label is printed")
+        self.assertNotIn("Chủ thể", thin["syn/chapter-i/article-3/clause-1"]["generator_text"].split("[Quy phạm 1]")[1],
+                         "an inherited actor already in the unit text is not repeated")
+        point = thin["syn/chapter-i/article-1/clause-2"]["generator_text"]
+        self.assertTrue(point.endswith("\n[Quy phạm 1] nghĩa vụ · Chủ thể (từ câu dẫn): hai bên"), point)
+        self.assertNotIn("[Quy phạm 2]", point, "an identical line is printed once")
+        self.assertEqual(thin_lines([], "x"), [])
+        packed = Packer("P3", list(thin.values()), self.units, self.documents).pack([thin["syn/chapter-i/article-1/clause-2"]], 10 ** 6)
+        block = next(b for b in packed["blocks"] if b["record"]["unit_ids"] == ["syn/chapter-i/article-1/clause-2"])
+        self.assertTrue(block["text"].endswith("[Quy phạm 1] nghĩa vụ · Chủ thể (từ câu dẫn): hai bên"))
+        self.assertEqual(block["token_count"], len(token_spans(block["text"])), "the budget counts the thin line")
+
+    def test_thin_view_with_keys_reads_thin_and_searches_keys(self):
+        keyed = kb_unit_records("DK3", self.documents, self.units, self.texts, self.claims, view="thin", index_keys=self.keys)
+        thin = kb_unit_records("DK3", self.documents, self.units, self.texts, self.claims, view="thin")
+        for a, b in zip(thin, keyed):
+            self.assertEqual(a["generator_text"], b["generator_text"])
+            self.assertEqual(a["token_count"], b["token_count"])
+        row = next(r for r in keyed if r["unit_ids"] == ["syn/chapter-i/article-3/clause-1"])
+        self.assertIn("người gây thiệt hại", row["index_text"])
+        self.assertNotIn("người gây thiệt hại", row["generator_text"])
+        result = run(self.root / "bundle", self.questions, self.condition("dk3t", "DK3", claims_view="thin", index_keys=self.spec()), self.shared,
+                     self.root / "r-thin")
+        self.assertEqual(result["mean_recall"]["1"], 1.0)
 
     def test_bad_configs_are_rejected(self):
         for bad in ("kb-keys-v1", {"version": "kb-keys-v2", "aliases": "x"}, {"version": "kb-keys-v1"}):

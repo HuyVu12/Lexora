@@ -218,6 +218,31 @@ def compact_claim(claim):
     return " · ".join(parts)
 
 
+THIN_ACTOR = "Chủ thể (từ câu dẫn)"
+VIEWS = ("full", "compact", "thin")
+
+
+def thin_lines(claims, text):
+    """The claim lines of `claims_view: thin` (plan 22/11/2026, section 4.3): only what the generator cannot read
+    verbatim in the record's own `text`. Per claim, its modality label (none for `unknown`) and, when
+    `claims-inherit-v1` filled the actor from the parent's lead-in and that actor does not occur in `text`, the actor
+    marked as coming from the lead-in. Other slot values and the modal cue are verbatim source text and are left out;
+    a claim that adds nothing gets no line, and a line already printed for the record is not repeated."""
+    lines = []
+    for claim in claims:
+        slots = claim.get("slots") if isinstance(claim.get("slots"), dict) else {}
+        modality = claim.get("modality")
+        parts = [MODALITY_LABELS[modality]] if modality in MODALITY_LABELS and modality != "unknown" else []
+        actor = slots.get("actor")
+        inherited = (claim.get("inheritance") or {}).get("slots") or {}
+        if "actor" in inherited and isinstance(actor, str) and actor.strip() and actor.strip() not in text:
+            parts.append(f"{THIN_ACTOR}: {actor.strip()}")
+        line = " · ".join(parts)
+        if line and line not in lines:
+            lines.append(line)
+    return lines
+
+
 def kb_unit_records(condition, documents, units, texts, claims, max_tokens=384, view="full", index_keys=None):
     """DK3/DK4 (`record: unit_with_claims`): the DK2 record of every leaf unit, its exact source text, path and lead
     text unchanged, followed by the serialized knowledge-base claims of that unit. A unit without a claim keeps its
@@ -226,13 +251,15 @@ def kb_unit_records(condition, documents, units, texts, claims, max_tokens=384, 
     the shared title and path.
 
     With `view="compact"` the generator reads `generator_text` instead: the DK2 text and one structure line per claim
-    (`compact_claim`), while `index_text` keeps the full claims for searching; budgets count `generator_text`.
+    (`compact_claim`), while `index_text` keeps the full claims for searching; budgets count `generator_text`. With
+    `view="thin"` the lines are `thin_lines` (only what is not verbatim in the source text), and a record whose claims
+    add nothing reads exactly as its DK2 record.
 
     `index_keys` (a `kb_keys.KbKeys`, `kb-keys-v1`) appends the record's key phrases as one last line of `index_text`
     only and lists them in `index_keys`; the generator reads the same text as without keys (in the full view it becomes
     an explicit `generator_text`). Without `index_keys` the records are exactly those of earlier runs."""
-    if view not in ("full", "compact"):
-        raise ValueError("claims_view must be full or compact")
+    if view not in VIEWS:
+        raise ValueError(f"claims_view must be one of {', '.join(VIEWS)}")
     by_id = {u["unit_id"]: u for u in units}
     attached = {}
     for claim in claims:
@@ -254,8 +281,8 @@ def kb_unit_records(condition, documents, units, texts, claims, max_tokens=384, 
                "record_id": f"{condition.lower()}:{row['record_id'].split(':', 1)[1]}",
                "token_count": row["token_count"] + sum(len(token_spans(b)) for b in bodies),
                "claim_ids": [c["claim_id"] for c in mine]}
-        if view == "compact":
-            lines = [compact_claim(c) for c in mine]
+        if view in ("compact", "thin"):
+            lines = [compact_claim(c) for c in mine] if view == "compact" else thin_lines(mine, row["text"])
             row["generator_text"] = base + "".join(f"\n[Quy phạm {n}] {line}" for n, line in enumerate(lines, 1))
             row["token_count"] = len(token_spans(row["text"])) + sum(len(token_spans(line)) for line in lines)
         if index_keys is not None and mine:
