@@ -20,7 +20,10 @@ the remaining records in the order of RRF over the full lists, so the head of th
 
 DK3/DK4 records are either one serialized claim each (`record: claims`, the first design, kept as an ablation) or
 the DK2 record of each unit with its claims attached (`record: unit_with_claims`). With a `graph` block the ranking
-is expanded over the knowledge base's cross-reference edges (`retrieval.graph`), keeping the list length.
+is expanded over the knowledge base's cross-reference edges (`retrieval.graph`), keeping the list length; with
+`graph.amendments` it is then expanded over amendment edges (`retrieval.amendment_graph`, validity option B of
+22/11/2026): DK3 follows them whatever the question's date, a condition with unit-level validity (DK4) only when the
+edge is effective by that date, before its unit status filter. Neighbours carry their relation note as `status_note`.
 
 With `shared.subqueries` (a decomposition run, the same for every condition) each question is ranked once as
 written and once per issue query, and the rankings are merged round-robin, so every issue gets early records.
@@ -39,6 +42,7 @@ from legal_ai.indexing.packing import PACKING_VERSION, Packer, condition_mode
 from legal_ai.kb.validity import DROP, STATUS_VERSION, VERSIONS as STATUS_VERSIONS, RecordFilter
 from legal_ai.indexing.records import RECORD_VERSION, TOKENIZER, check_records, claim_records, fixed_chunks, kb_unit_records, structural_records, token_spans
 from legal_ai.evaluation import decompose
+from legal_ai.retrieval import amendment_graph
 from legal_ai.retrieval import graph as kb_graph
 from legal_ai.retrieval import legal_chain
 from legal_ai.retrieval import norm_query
@@ -246,8 +250,9 @@ METHODS = ("bm25", "dense", "hybrid")
 
 def load_validity(condition, shared, documents, units, bundle):
     """The `Validity` of a condition with a `validity` block ({level: unit|document, amendments: edge run}), or None.
-    Unit level (DK2-DK4) drops units that are expired, repealed or not yet effective at the question's date and notes
-    amended ones; document level (the DK1-hl control) drops chunks of documents that do not apply on that date."""
+    Unit level drops units that are expired, repealed or not yet effective at the question's date and replaces or notes
+    amended ones (DK4 under option B of 22/11/2026; DK2-DK4 in the 16/11 `validity/` configs); document level drops
+    records of documents that do not apply on that date (DK1-hl, and DK2/DK3 under option B)."""
     spec = condition.get("validity")
     if not spec:
         return None
@@ -375,6 +380,17 @@ def run(bundle, questions_path, condition_path, shared_path, output, embedder=No
             raise ValueError("the relation run was made from another corpus bundle")
         relations = read_jsonl(folder / "relations.jsonl")
         edges = legal_chain.typed_edges(units, relations, documents, graph.get("source_aliases"), chain.get("references", True))
+    # Validity option B (22/11/2026): amendment edges as knowledge-base relations of DK3/DK4. They are followed after the
+    # reference expansion; only a condition with unit-level validity (DK4) checks the edge dates per question.
+    amend_links, amend_report, amend_sha = None, None, None
+    if graph and graph.get("amendments"):
+        if chain:
+            raise ValueError("graph.amendments is not available with graph.chain")
+        spec = amendment_graph.check_config(graph["amendments"])
+        amend_edges, amend_sha = amendment_graph.load(spec, Path(bundle) / "units.jsonl")
+        amend_links, amend_report = amendment_graph.relations(amend_edges, units)
+    amend_dated = (condition.get("validity") or {}).get("level") == "unit"
+    units_by_id, documents_by_id = {u["unit_id"]: u for u in units}, {d["document_id"]: d for d in documents}
     concepts = None
     if graph and not chain and "concept" in graph["edges"]:
         concepts = kb_graph.record_concepts(records, kb_graph.concept_keys(kb_claims(condition, Path(bundle) / "units.jsonl")))
@@ -438,12 +454,24 @@ def run(bundle, questions_path, condition_path, shared_path, output, embedder=No
             via = {i: v for i, _, v in expanded if v is not None}
             ranked = extend_tail([(i, s) for i, s, _ in expanded], ranked, depth)
         as_of = question.get("as_of") or shared.get("validity_as_of")
-        dropped, question_packer = 0, packer
+        amended_via = {}
+        if amend_links is not None:
+            expanded = amendment_graph.expand(ranked[:MIN_DEPTH], records, amend_links, MIN_DEPTH, graph["amendments"].get("max_neighbors", 2),
+                                              as_of if amend_dated else None, units_by_id, documents_by_id)
+            amended_via = {i: v for i, _, v in expanded if v is not None}
+            ranked = extend_tail([(i, s) for i, s, _ in expanded], ranked, depth)
+        notes = {i: v["note"] for i, v in amended_via.items()}  # Relation notes; validity notes are added below.
+        dropped, unused_claims, question_packer = 0, None, packer
         if validity is not None:
-            ranked, notes, dropped = filter_valid(ranked, records, validity, condition["validity"]["level"], as_of)
+            before = ranked
+            ranked, status_notes, dropped = filter_valid(ranked, records, validity, condition["validity"]["level"], as_of)
+            kept = {i for i, _ in ranked}
+            if condition["representation"] in KB_FILES:  # Claims of records the status filter removed are not used.
+                unused_claims = len({c for i, _ in before if i not in kept for c in records[i].get("claim_ids", [])})
+            notes = {i: "\n".join(n for n in (notes.get(i), status_notes.get(i)) if n) for i in kept if notes.get(i) or status_notes.get(i)}
             if packing == "P2":  # Siblings pass the same validity rule as ranked records.
                 question_packer = packer.bind(lambda record, day=as_of: validity.record_filter.admit_record(record, day))
-        top = [records[i] if i not in (notes if validity is not None else {}) else records[i] | {"status_note": notes[i]} for i, _ in ranked]
+        top = [records[i] | {"status_note": notes[i]} if i in notes else records[i] for i, _ in ranked]
         gold = question["relevant_unit_ids"]
         row = {"question_id": question["question_id"], "family_id": question.get("family_id"), "split": question.get("split"),
                "expected_status": question.get("expected_status"), "gold_unit_ids": gold,
@@ -451,9 +479,13 @@ def run(bundle, questions_path, condition_path, shared_path, output, embedder=No
                            "token_count": records[i]["token_count"],
                            **({"via_reference_from": records[via[i]]["record_id"]} if i in via else {}),
                            **({"via_role": roles[i]} if i in roles else {}),
-                           **({"status_note": notes[i]} if validity is not None and i in notes else {})} for n, (i, score) in enumerate(ranked, 1)],
-               **({"validity": {"as_of": as_of, "as_of_source": "question" if question.get("as_of") else "default", "dropped": dropped}}
+                           **({"via_amendment": {"from": records[amended_via[i]["from"]]["record_id"], "edge_id": amended_via[i]["edge_id"],
+                                                 "role": amended_via[i]["role"]}} if i in amended_via else {}),
+                           **({"status_note": notes[i]} if i in notes else {})} for n, (i, score) in enumerate(ranked, 1)],
+               **({"validity": {"as_of": as_of, "as_of_source": "question" if question.get("as_of") else "default", "dropped": dropped,
+                                **({"unused_claims": unused_claims} if unused_claims is not None else {})}}
                   if validity is not None else {}),
+               **({"amendment_neighbours": len(amended_via)} if amend_links is not None else {}),
                "recall": {}, "context_tokens": {}, "recall_at_tokens": {}}
         row.update(score_top(top, gold, ks, budgets, adaptive_budget(rule, len(issues or [])) if rule else None, question_packer,
                              question.get("stale_unit_ids"), question.get("not_yet_effective_unit_ids")))
@@ -486,7 +518,9 @@ def run(bundle, questions_path, condition_path, shared_path, output, embedder=No
         "graph": ({"version": legal_chain.CHAIN_VERSION, **graph, "edge_count": sum(len(v) for v in edges.values()),
                    "relations_sha256": digest((Path(chain["relation_run"]) / "relations.jsonl").read_bytes())} if chain else
                   {"version": kb_graph.GRAPH_VERSION, **graph, "edge_count": sum(len(v) for v in edges.values()),
-                   **({"relations_sha256": digest((Path(graph["relation_run"]) / "relations.jsonl").read_bytes())} if relations is not None else {})}
+                   **({"relations_sha256": digest((Path(graph["relation_run"]) / "relations.jsonl").read_bytes())} if relations is not None else {}),
+                   **({"amendment_relations": {"version": amendment_graph.AMENDMENT_GRAPH_VERSION, "edges_sha256": amend_sha,
+                                               "date_check": amend_dated, **amend_report}} if amend_links is not None else {})}
                   if graph else None),
         "method": method, "dense": ({**embedder.describe(), "texts_sha256": dense.texts_sha256} if dense else None),
         "network": False, "model_calls": 0,
