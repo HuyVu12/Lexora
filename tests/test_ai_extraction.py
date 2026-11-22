@@ -356,9 +356,12 @@ class HybridRetrievalTests(unittest.TestCase):
 
     def test_keyword_match_far_below_best_similarity_is_dropped(self):
         passages = [{"claim_id": n, "evidence": {"quote": q}, "scope": []} for n, q in
-                    (("a", "Người sử dụng lao động phải thông báo kết quả thử việc"), ("b", "Thời gian thử việc do hai bên thỏa thuận"))]
+                    (("a", "Người sử dụng lao động phải thông báo kết quả thử việc"), ("b", "Kết quả thử việc phải được thông báo bằng văn bản"))]
         question = "Người sử dụng lao động phải thông báo kết quả thử việc không?"
         self.assertEqual(len(retrieve(passages, question)), 2)  # lexical gate alone keeps both
+        # A passage sharing only "thử việc" with the question no longer passes the lexical evidence gate at all.
+        only_topic = passages + [{"claim_id": "c", "evidence": {"quote": "Thời gian thử việc do hai bên thỏa thuận"}, "scope": []}]
+        self.assertEqual(sorted(c["claim_id"] for c in retrieve(only_topic, question)), ["a", "b"])
         kept = hybrid_retrieve(passages, question, [0.90, 0.78])
         self.assertEqual([c["claim_id"] for c in kept], ["a"])
         self.assertEqual(len(hybrid_retrieve(passages, question, [0.90, 0.85])), 2)

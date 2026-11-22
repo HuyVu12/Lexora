@@ -13,7 +13,7 @@ from legal_ai.ingestion.source_library import SourceLibrary
 from legal_ai.kb.import_review import ReviewStore, empty_graph
 from legal_ai.providers.pilot import ProviderError
 from legal_ai.providers.router import RouterProvider, api_url, read_settings
-from legal_ai.rag.review_chat import ChatService, approved_passages, query_terms, validate_generation
+from legal_ai.rag.review_chat import ChatService, approved_passages, hybrid_retrieve, query_terms, retrieve, terms, toned, validate_generation
 
 TEXT = "Điều 1. DỮ LIỆU TỔNG HỢP KHÔNG PHẢI LUẬT\n1. Người lao động phải thông báo kết quả thử việc cho người lao động. Người sử dụng lao động phải trả khoản bí mật.\n"
 
@@ -138,6 +138,54 @@ class ReviewChatTests(unittest.TestCase):
         for turn_index, citation in ((1, "C1"), (-1, "C1"), (0, "C9"), ("0", "C1")):
             with self.assertRaises(ValueError):
                 self.chat.source(session["id"], turn_index, citation)
+
+    GATE_TEXT = ("Điều 1. Thử việc (DỮ LIỆU TỔNG HỢP, KHÔNG PHẢI LUẬT)\n"
+                 "1. Tiền lương của người lao động trong thời gian thử việc ít nhất phải bằng 85% mức lương của công việc đó.\n"
+                 "2. Người sử dụng lao động phải bảo vệ quyền và lợi ích hợp pháp của người lao động trong thời gian thử việc.\n"
+                 "Điều 2. Kỷ luật lao động\n"
+                 "1. Người sử dụng lao động phải xử lý kỷ luật lao động trong thời hiệu 06 tháng kể từ ngày xảy ra hành vi vi phạm.\n"
+                 "2. Hòa giải viên lao động phải hướng dẫn các bên về quyền và lợi ích hợp pháp.\n"
+                 "Điều 3. Tàu bay\n"
+                 "1. Thành viên tổ lái tàu bay phải được trả lương theo giá trị công việc quy định tại Bộ luật này.\n")
+
+    def gate_passages(self):
+        revision = self.publish(self.GATE_TEXT, reject_secret=False, name="Kho cổng căn cứ")
+        passages, _ = self.chat._passages([{"kb_id": revision["kb_id"], "revision_id": revision["id"]}])
+        return passages
+
+    def test_evidence_gate_answers_labour_questions_with_or_without_accents(self):
+        passages = self.gate_passages()
+        for question, expected in (("Tiền lương thử việc ít nhất bằng bao nhiêu?", "85%"),
+                                   ("tien luong thu viec it nhat bang bao nhieu", "85%"),
+                                   ("Thời hiệu xử lý kỷ luật lao động là bao lâu?", "06 tháng"),
+                                   ("thoi hieu xu ly ky luat bao lau", "06 tháng"),
+                                   # The tone mark may sit on either vowel: "hoà" is "hòa".
+                                   ("Hoà giải viên lao động hướng dẫn gì?", "Hòa giải viên")):
+            cited = retrieve(passages, question)
+            self.assertTrue(cited, question)
+            self.assertIn(expected, cited[0]["evidence"]["quote"], question)
+        self.assertEqual(toned("hoà"), toned("hòa"))
+        self.assertNotEqual(toned("vé"), toned("về"), "accented words keep their accents when matched")
+
+    def test_evidence_gate_refuses_questions_that_only_share_common_words(self):
+        passages = self.gate_passages()
+        for question in ("Bitcoin có hợp pháp không?", "Giá xăng hôm nay?",
+                         "Công ty có phải mua vé máy bay cho nhân viên đi du lịch không?", "gia xang hom nay"):
+            # Each shares at least two folded words with some passage, which the earlier gate accepted.
+            shared = max(len(query_terms(question) & set(terms(p["evidence"]["quote"]))) for p in passages)
+            self.assertGreaterEqual(shared, 2, question)
+            self.assertEqual(retrieve(passages, question), [], question)
+            self.assertEqual(hybrid_retrieve(passages, question, [0.5] * len(passages)), [], "dense below its threshold adds nothing")
+        # The dense path keeps its own evidence rule: a clearly similar passage still enters on its own.
+        similar = [0.5] * len(passages)
+        similar[0] = 0.9
+        self.assertEqual(len(hybrid_retrieve(passages, "Giá xăng hôm nay?", similar)), 1)
+
+    def test_out_of_scope_chat_question_gets_the_no_evidence_answer(self):
+        revision = self.publish(self.GATE_TEXT, reject_secret=False, name="Kho cổng căn cứ")
+        session = self.chat.start([revision["kb_id"]])
+        self.assertEqual(self.chat.ask(session["id"], "Bitcoin có hợp pháp không?")["status"], "insufficient_evidence")
+        self.assertEqual(self.chat.ask(session["id"], "Tiền lương thử việc ít nhất bằng bao nhiêu?")["status"], "sources_found")
 
     def test_suggestions_are_offline_and_only_offer_questions_with_evidence(self):
         revision = self.publish("Điều 26. Thử việc\n1. Tiền lương của người lao động trong thời gian thử việc ít nhất phải bằng 85% mức lương của công việc đó.\n"

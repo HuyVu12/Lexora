@@ -26,6 +26,20 @@ DENSE_MIN_SIMILARITY = 0.72
 # than the best passage; two shared words such as "thử việc" are not enough on their own.
 DENSE_RELATIVE_MARGIN = 0.10
 PASSAGE_CACHE_SIZE = 16  # Approved passages of one revision: small next to the revision itself.
+# Evidence gate of the chat (docs/features/reviewed-kb-chat.md, "Cổng căn cứ"). Besides sharing two content words with
+# the question, a passage may answer it only when it holds, on its own, one of:
+# - at least GATE_SHARE of the question's IDF mass (a word absent from every approved passage weighs the most, so
+#   "bitcoin" or "xăng" cannot be outvoted by common words such as "hợp", "pháp", "giá");
+# - GATE_PHRASES whole two-syllable words of the question (adjacent content words such as "thử việc", "kỷ luật");
+# - GATE_LONG_WORDS content words covering GATE_LONG_SHARE of the mass (long questions told as a story).
+# Thresholds come from an offline check over the pilot base (hand-written in/out-of-scope questions and the labelled
+# question set); see the doc. This gate is the chat's only; the DK1-DK4 retrieval runs do not use it.
+GATE_SHARE = 0.5
+GATE_PHRASES = 2
+GATE_LONG_WORDS = 5
+GATE_LONG_SHARE = 0.2
+# Vietnamese tone marks (huyền, sắc, ngã, hỏi, nặng); vowel-quality marks (ă, â, ê, ô, ơ, ư) are kept.
+TONE_MARKS = {"\u0300", "\u0301", "\u0303", "\u0309", "\u0323"}
 TITLE_MAX = 120  # A conversation title typed by its owner.
 DEFAULT_TITLE_CHARS = 70  # The first question, cut on a word boundary, names a conversation without a title.
 SUGGESTION_COUNT = 4
@@ -107,27 +121,81 @@ def passage_terms(text):
     return Counter(terms(text))
 
 
-def lexical_scores(passages, question):
-    """(BM25 score, passage index) for passages matching enough query terms."""
-    query = query_terms(question)
+def toned(word):
+    """A word with its accents, wherever the tone mark sits: "hòa" and "hoà", "thủy" and "thuỷ" give one key."""
+    chars = unicodedata.normalize("NFD", word.casefold())
+    tone = "".join(c for c in chars if c in TONE_MARKS)
+    return unicodedata.normalize("NFC", "".join(c for c in chars if c not in TONE_MARKS)) + ("#" + tone if tone else "")
+
+
+def word_key(word, exact):
+    """Accented words match their exact accented form ("vé" never meets "về", "đá" never "đa"); a word typed without
+    any accent can only be compared accent-folded."""
+    return "t:" + toned(word) if exact else "f:" + "".join(terms(word))
+
+
+@lru_cache(maxsize=8192)
+def passage_index(text):
+    """Key counts (accented and folded form of every word) and adjacent word pairs of one passage. Shared: read only."""
+    words = tokens(text)
+    counts = Counter()
+    for word in words:
+        counts[word_key(word, True)] += 1
+        counts[word_key(word, False)] += 1
+    pairs = frozenset((word_key(a, exact), word_key(b, exact)) for a, b in zip(words, words[1:]) for exact in (True, False))
+    return counts, pairs
+
+
+def question_index(question):
+    """The question's content keys (stopwords removed) and the adjacent pairs of content words in it."""
+    keys, pairs, previous = set(), set(), None
+    for word in tokens(question.casefold()):
+        folded = terms(word)
+        if word in STOP or (word.isascii() and folded and folded[0] in STOP_FOLDED) or not folded:
+            previous = None
+            continue
+        keys.add(word_key(word, not word.isascii()))
+        if previous is not None:
+            exact = not (word.isascii() or previous.isascii())
+            pairs.add((word_key(previous, exact), word_key(word, exact)))
+        previous = word
+    return keys, pairs
+
+
+def passage_text(passage):
+    return passage["evidence"]["quote"] + " " + " ".join(s["quote"] for s in passage["scope"])
+
+
+def gated(passages, question):
+    """(BM25 score, passage index, IDF share) of the passages that pass the evidence gate (see GATE_SHARE)."""
+    query, phrases = question_index(question)
     if not query or not passages:
         return []
-    docs = [passage_terms(p["evidence"]["quote"] + " " + " ".join(s["quote"] for s in p["scope"])) for p in passages]
-    lengths = [sum(d.values()) for d in docs]
+    docs = [passage_index(passage_text(p)) for p in passages]
+    lengths = [sum(counts.values()) for counts, _ in docs]
     average = sum(lengths) / len(docs)
-    frequencies = {word: sum(word in d for d in docs) for word in query}  # Document frequency, once per query term.
+    idf = {key: math.log(1 + (len(docs) - df + .5) / (df + .5))
+           for key in query for df in [sum(key in counts for counts, _ in docs)]}
+    mass = sum(idf.values())
     ranked = []
-    for index, counts in enumerate(docs):
+    for index, (counts, pairs) in enumerate(docs):
         matched = query & counts.keys()
         if len(matched) < min(2, len(query)):
             continue
+        share = sum(idf[key] for key in matched) / mass
+        if not (share >= GATE_SHARE or len(phrases & pairs) >= GATE_PHRASES or (len(matched) >= GATE_LONG_WORDS and share >= GATE_LONG_SHARE)):
+            continue
         score = 0.0
-        for word in matched:
-            frequency = counts[word]
-            df = frequencies[word]
-            score += math.log(1 + (len(docs) - df + .5) / (df + .5)) * frequency * 2.5 / (frequency + 1.5 * (.25 + .75 * lengths[index] / average))
-        ranked.append((score, index))
+        for key in matched:
+            frequency = counts[key]
+            score += idf[key] * frequency * 2.5 / (frequency + 1.5 * (.25 + .75 * lengths[index] / average))
+        ranked.append((score, index, share))
     return ranked
+
+
+def lexical_scores(passages, question):
+    """(BM25 score, passage index) for passages that pass the evidence gate."""
+    return [(score, index) for score, index, _ in gated(passages, question)]
 
 
 def select(passages, ranked, top_k=3):
@@ -365,13 +433,10 @@ class ChatService:
         if not bindings:
             return {"suggestions": []}
         passages, _ = self._passages(bindings)
-        docs = [passage_terms(p["evidence"]["quote"] + " " + " ".join(x["quote"] for x in p["scope"])).keys() for p in passages]
 
         def covered(question):
-            # Stricter than the answer gate: most of the question's words must appear in one approved passage, so
-            # a suggestion never leads to a passage that only shares "thời gian" or "người lao động" with it.
-            query = query_terms(question)
-            return bool(query) and max((len(query & d) for d in docs), default=0) >= SUGGESTION_COVERAGE * len(query)
+            # Stricter than the answer gate: one approved passage holds most of the question's information.
+            return max((share for _, _, share in gated(passages, question)), default=0) >= SUGGESTION_COVERAGE
         picked = [q for q in SUGGESTED_QUESTIONS if covered(q)][:SUGGESTION_COUNT]
         if len(picked) < SUGGESTION_COUNT:
             counts = Counter()
