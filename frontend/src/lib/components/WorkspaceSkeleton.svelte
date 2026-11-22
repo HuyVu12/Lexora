@@ -35,8 +35,15 @@
 
 <style>
 	.ghost-rail {
+		height: var(--ws-h);
 		padding: 0;
 		overflow: hidden;
+	}
+	@media (max-width: 1000px) {
+		.ghost-rail {
+			height: auto;
+			max-height: 400px;
+		}
 	}
 	.ghost-top {
 		display: grid;

@@ -17,9 +17,10 @@
 	import Icon from './Icon.svelte';
 	import { reducedMotion } from '#lib/motion.js';
 
-	// The item list of an annotation workspace: a sticky panel as tall as the window, a progress count, a
-	// current-item marker that glides when you click another item and jumps when you save and move on
-	// (fast keyboard work never waits for motion), done and to-do markers, and the current item kept in view.
+	// The item list of an annotation workspace: a sticky panel as tall as the window (header included, see
+	// workspace.css), a progress count, a current-item marker that glides when you click another item and jumps
+	// when you save and move on (fast keyboard work never waits for motion), done and to-do markers, the current
+	// item kept in view, and soft fades at the list's edges where more items are scrolled out of sight.
 	let {
 		heading,
 		items,
@@ -53,6 +54,20 @@
 	let scroller = $state<HTMLElement | null>(null);
 	let cursor = $state<HTMLElement | null>(null);
 	let glide = false;
+	let more = $state({ above: false, below: false });
+
+	function edges() {
+		if (!scroller) return;
+		const { scrollTop, clientHeight, scrollHeight } = scroller;
+		more.above = scrollTop > 2;
+		more.below = scrollTop + clientHeight < scrollHeight - 2;
+	}
+	$effect(() => {
+		if (!scroller) return;
+		const observer = new ResizeObserver(edges);
+		observer.observe(scroller);
+		return () => observer.disconnect();
+	});
 
 	function choose(key: string) {
 		glide = key !== selected;
@@ -76,9 +91,12 @@
 		cursor.style.opacity = '1';
 		glide = false;
 		// Keep the current row in view inside the list, without scrolling the page.
-		const pad = 12;
-		if (y < scroller.scrollTop + pad) scroller.scrollTop = Math.max(0, y - pad);
-		else if (y + row.offsetHeight > scroller.scrollTop + scroller.clientHeight - pad) scroller.scrollTop = y + row.offsetHeight - scroller.clientHeight + pad;
+		// The margins clear the edge fades, so the current row is never the faded one.
+		const above = 28;
+		const below = 60;
+		if (y < scroller.scrollTop + above) scroller.scrollTop = Math.max(0, y - above);
+		else if (y + row.offsetHeight > scroller.scrollTop + scroller.clientHeight - below) scroller.scrollTop = y + row.offsetHeight - scroller.clientHeight + below;
+		edges();
 	});
 </script>
 
@@ -94,7 +112,10 @@
 		{@render head?.()}
 	</div>
 	{#if items.length}
-		<div class="scroller" bind:this={scroller}>
+		<div class="list">
+		<span class="fade top" class:on={more.above} aria-hidden="true"></span>
+		<span class="fade bottom" class:on={more.below} aria-hidden="true"></span>
+		<div class="scroller" bind:this={scroller} onscroll={edges}>
 			<span class="cursor" bind:this={cursor} aria-hidden="true"></span>
 			<ol class="rail-items">
 				{#each items as item (item.key)}
@@ -111,6 +132,7 @@
 				{/each}
 			</ol>
 		</div>
+		</div>
 	{:else if empty}
 		<p class="small muted none">{empty}</p>
 	{/if}
@@ -121,8 +143,7 @@
 	.rail {
 		position: sticky;
 		top: calc(var(--topbar) + var(--space-4));
-		max-height: calc(100vh - var(--topbar) - var(--space-8));
-		max-height: calc(100dvh - var(--topbar) - var(--space-8));
+		max-height: var(--ws-h, calc(100dvh - var(--topbar) - var(--space-8)));
 		display: flex;
 		flex-direction: column;
 		padding: 0;
@@ -153,7 +174,15 @@
 	.meter {
 		height: 4px;
 	}
-	/* The list scrolls on its own; soft shadows at its edges show there is more above or below. */
+	/* The list scrolls on its own. Where items are scrolled out of sight, the edge fades into the paper instead of
+	 * cutting a row in half; the fades stop short of the scrollbar so it stays crisp. */
+	.list {
+		position: relative;
+		flex: 1;
+		min-height: 0;
+		display: flex;
+		flex-direction: column;
+	}
 	.scroller {
 		position: relative;
 		flex: 1;
@@ -161,11 +190,28 @@
 		overflow-y: auto;
 		overscroll-behavior: contain;
 		padding: 6px 8px;
-		background:
-			linear-gradient(var(--paper) 40%, rgb(255 255 255 / 0)) top / 100% 28px no-repeat local,
-			linear-gradient(rgb(255 255 255 / 0), var(--paper) 60%) bottom / 100% 28px no-repeat local,
-			radial-gradient(farthest-side at 50% 0, rgb(20 22 24 / 0.12), transparent) top / 100% 9px no-repeat scroll,
-			radial-gradient(farthest-side at 50% 100%, rgb(20 22 24 / 0.12), transparent) bottom / 100% 9px no-repeat scroll;
+	}
+	.fade {
+		position: absolute;
+		z-index: 1;
+		left: 0;
+		right: 14px;
+		pointer-events: none;
+		opacity: 0;
+		transition: opacity var(--dur-fast) ease;
+	}
+	.fade.on {
+		opacity: 1;
+	}
+	.fade.top {
+		top: 0;
+		height: 24px;
+		background: linear-gradient(var(--paper), rgb(255 255 255 / 0));
+	}
+	.fade.bottom {
+		bottom: 0;
+		height: 56px;
+		background: linear-gradient(rgb(255 255 255 / 0), var(--paper) 85%);
 	}
 	.cursor {
 		position: absolute;
@@ -271,10 +317,19 @@
 		padding: 12px 16px 16px;
 		border-top: 1px solid var(--rule);
 	}
+	/* A page may pass tools that are all hidden for now (nothing to compare yet): no empty strip then. */
+	.foot:not(:has(:global(*))) {
+		display: none;
+	}
 	@media (max-width: 1000px) {
 		.rail {
 			position: static;
 			max-height: 400px;
+		}
+	}
+	@media (prefers-reduced-motion: reduce) {
+		.fade {
+			transition: none;
 		}
 	}
 </style>
