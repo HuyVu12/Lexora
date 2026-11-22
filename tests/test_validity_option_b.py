@@ -1,5 +1,6 @@
 """Validity option B (22/11/2026): DK2 filters by document dates only, DK3 follows amendment edges as knowledge-base
-relations without checking status, DK4 adds the checks (edge dates, unit status, claims of stale units unused). Synthetic texts only, not real law."""
+relations without checking status, DK4 adds the checks (edge dates, unit status, claims of stale units unused), and
+preflight checks that ladder. Synthetic texts only, not real law."""
 
 import json
 from pathlib import Path
@@ -15,6 +16,7 @@ from test_kb_records_graph import claim
 from test_retrieval_run import SYNTHETIC, bundle
 from test_validity import AMENDING
 from legal_ai.common.io import digest, read_jsonl, write_json, write_jsonl
+from legal_ai.evaluation.preflight import check, validation_steps
 from legal_ai.evaluation.retrieval_run import run
 from legal_ai.kb.amendments import detect, link_amending_units
 from legal_ai.retrieval import amendment_graph
@@ -177,6 +179,27 @@ class OptionBTests(unittest.TestCase):
         self.assertFalse(any(u.startswith("2-2021-nd-cp/") for u in self.units_of(early["notice"])), "a document not yet in force is dropped")
         with self.assertRaisesRegex(ValueError, "DK3/DK4 only"):
             run(self.root / "bundle", self.questions("2022-01-01"), self.condition("dk2g", "DK2", graph=self.graph), self.shared, self.root / "dk2g")
+
+    def test_preflight_checks_the_option_b_ladder(self):
+        dirs = {}
+        for name, path in (("dk2", self.dk2()), ("dk3", self.dk3()), ("dk4", self.dk4()),
+                           ("dk2-unit", self.condition("dk2-unit", "DK2", validity={"level": "unit", "amendments": self.edge_dir.as_posix()})),
+                           ("dk4-doc", self.condition("dk4-doc", "DK4", validity={"level": "document", "amendments": self.edge_dir.as_posix()})),
+                           ("dk3-plain", self.condition("dk3-plain", "DK3", validity={"level": "document"},
+                                                        graph={k: v for k, v in self.graph.items() if k != "amendments"}))):
+            run(self.root / "bundle", self.questions("2022-01-01"), path, self.shared, self.root / f"pf-{name}")
+            dirs[name] = self.root / f"pf-{name}"
+        statuses = lambda names: {c["check"]: c["status"] for c in check([dirs[n] for n in names])["checks"]}
+        good = statuses(["dk2", "dk3", "dk4"])
+        self.assertEqual((good["validity option B ladder"], good["DK3 and DK4 use the same record shape and graph"]), ("pass", "pass"))
+        self.assertEqual(statuses(["dk2-unit", "dk3", "dk4"])["validity option B ladder"], "fail", "DK2 must stay at document level")
+        self.assertEqual(statuses(["dk2", "dk3", "dk4-doc"])["validity option B ladder"], "fail", "DK4 must check unit status")
+        mismatch = statuses(["dk2", "dk3-plain", "dk4"])
+        self.assertEqual((mismatch["validity option B ladder"], mismatch["DK3 and DK4 use the same record shape and graph"]), ("fail", "fail"))
+        manifests = {n: json.loads((dirs[n] / "manifest.json").read_text(encoding="utf-8")) for n in ("dk2", "dk3", "dk4")}
+        self.assertEqual(validation_steps(manifests["dk2"]), {"document_dates"})
+        self.assertEqual(validation_steps(manifests["dk3"]), {"document_dates", "edge_resolution"})
+        self.assertEqual(validation_steps(manifests["dk4"]), {"document_dates", "edge_resolution", "edge_dates", "unit_status", "claim_validation"})
 
 
 if __name__ == "__main__":
