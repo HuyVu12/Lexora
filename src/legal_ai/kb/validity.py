@@ -198,7 +198,7 @@ class Validity:
 
 
 class RecordFilter:
-    """Validity of index records at a date, shared by the ranking filter of the retrieval run and by the packer (P2
+    """Validity of index records at a date, shared by the ranking filter of the retrieval run and by the packer (P2/P3
     siblings), so a unit is kept, annotated or replaced the same way wherever it enters the context.
 
     `level` is `unit` (DK2-DK4) or `document` (the DK1-hl control: only the document dates count)."""

@@ -305,11 +305,17 @@ class AmendingUnitTests(unittest.TestCase):
 
 
     def test_p2_siblings_never_bring_back_a_unit_the_filter_removed(self):
+        self.check_siblings_never_bring_back_a_removed_unit("P2")
+
+    def test_p3_siblings_never_bring_back_a_unit_the_filter_removed(self):
+        self.check_siblings_never_bring_back_a_removed_unit("P3")
+
+    def check_siblings_never_bring_back_a_removed_unit(self, mode):
         from legal_ai.evaluation.answer_run import pack_with_groups
         from legal_ai.evaluation.retrieval_run import within_budget
         records = structural_records(self.documents, self.units, self.texts)
         by_unit = {r["unit_ids"][0]: r for r in records}
-        packer = Packer("P2", records, self.units, self.documents)
+        packer = Packer(mode, records, self.units, self.documents)
         rfilter = RecordFilter(Validity(self.documents, self.units, self.edges), "unit", records)
         admit = lambda record: rfilter.admit_record(record, "2022-01-01")
         unit = "1-2020-nd-cp/chapter-i/"
@@ -332,6 +338,12 @@ class AmendingUnitTests(unittest.TestCase):
         self.assertIn("[ghi chú thử]", noted[0]["text"], "a ranked item's status note reaches the generator")
 
     def test_retrieval_run_with_p2_scores_no_stale_sibling_and_reports_wrong_versions(self):
+        self.check_run_scores_no_stale_sibling("P2")
+
+    def test_retrieval_run_with_p3_scores_no_stale_sibling_and_reports_wrong_versions(self):
+        self.check_run_scores_no_stale_sibling("P3")
+
+    def check_run_scores_no_stale_sibling(self, mode):
         questions = self.root / "q2.json"
         unit = "1-2020-nd-cp/chapter-i/"
         new_wording = next(e["amending_unit_id"] for e in self.edges if e["target_unit_id"] == self.old)
@@ -340,17 +352,17 @@ class AmendingUnitTests(unittest.TestCase):
              "relevant_unit_ids": [unit + "article-2/clause-2/point-b"], "stale_unit_ids": [unit + "article-2/clause-2/point-a"]},
             {"question_id": "past", "question": "Báo trước bao nhiêu ngày đối với hợp đồng xác định thời hạn?", "as_of": "2021-01-01",
              "relevant_unit_ids": [self.old], "not_yet_effective_unit_ids": [new_wording]}]})
-        shared = self.root / "shared-p2.json"
-        write_json(shared, {"top_k": 3, "validity_as_of": "2022-01-01", "token_budgets": [2000], "context_packing": "P2",
+        shared = self.root / f"shared-{mode}.json"
+        write_json(shared, {"top_k": 3, "validity_as_of": "2022-01-01", "token_budgets": [2000], "context_packing": mode,
                             "retrieval": {"method": "bm25", "tokenizer": "lexora-syllable-v1", "k1": 1.2, "b": 0.75, "recall_k": [1, 3]}})
         with_validity = self.root / "dk2-hl.json"
         write_json(with_validity, {"condition": "DK2", "representation": "structural_units", "max_tokens": 384,
                                    "validity": {"level": "unit", "amendments": (self.root / "edges").as_posix()}})
         plain = self.root / "dk2.json"
         write_json(plain, {"condition": "DK2", "representation": "structural_units", "max_tokens": 384})
-        filtered = run(self.root / "bundle", questions, with_validity, shared, self.root / "p2-hl")
-        unfiltered = run(self.root / "bundle", questions, plain, shared, self.root / "p2")
-        self.assertEqual(filtered["stale_context_rate_at_tokens"]["2000"], 0.0, "P2 siblings obey the validity filter")
+        filtered = run(self.root / "bundle", questions, with_validity, shared, self.root / f"{mode}-hl")
+        unfiltered = run(self.root / "bundle", questions, plain, shared, self.root / mode)
+        self.assertEqual(filtered["stale_context_rate_at_tokens"]["2000"], 0.0, f"{mode} siblings obey the validity filter")
         self.assertEqual(unfiltered["stale_context_rate_at_tokens"]["2000"], 1.0)
         self.assertEqual((filtered["questions_with_wrong_version_units"], unfiltered["questions_with_wrong_version_units"]), (2, 2))
         self.assertEqual(filtered["wrong_version_context_rate_at_tokens"]["2000"], 0.0, "a unit not yet in force is not shown")
