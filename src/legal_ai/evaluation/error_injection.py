@@ -6,6 +6,16 @@ seeded sample of clean claims is copied and corrupted in one way; each copy and 
 its own, so duplicate detection does not interfere. Types marked `expected_detectable: false` change meaning while
 every quote stays verbatim (a dropped negation, exception or condition); the validator is not built to see them,
 and they are kept on purpose so the report shows its limits instead of only the easy errors.
+
+Validator and inheritance (both default to the original setting, `kb-validator-v3` without inheritance, whose
+outputs stay byte-identical): `validator="kb-validator-v4"` re-validates with the validator that also accepts values
+quoted from the parent's lead-in, and `inheritance="claims-inherit-v1"` (needs v4) derives each claim the way
+`kb_run.materialize` derives the main knowledge base. The order is fixed: errors go into the extracted claims, then
+inheritance fills empty actor, action and outcome slots from the lead-in, then the validator runs; this is the order
+a model error would travel through the pipeline, and it keeps inheritance from overwriting a planted value (it only
+fills empty slots). A source run whose claims already carry inherited slots is refused with inheritance, because
+injecting after inheritance would test another order. With v4 the report also counts, per type, the corrupted
+claims that were accepted because a corrupted value or modal cue was found in the lead-in (`accepted_via_lead_in`).
 """
 
 import json
@@ -14,7 +24,9 @@ import random
 import re
 
 from legal_ai.common.io import canonical, digest, read_jsonl, write_json, write_jsonl
-from legal_ai.validation.claims import VALIDATOR_VERSION, validate
+from legal_ai.evaluation.kb_run import INHERITANCE, VALIDATORS
+from legal_ai.validation import claims_v4
+from legal_ai.validation.claims import VALIDATOR_VERSION
 
 INJECTION_VERSION = "error-injection-v1"
 OTHER_ACTOR = "Cơ quan quản lý nhà nước về lao động"
@@ -139,16 +151,57 @@ def inject(clean, units, per_type=30, seed="lexora-inject-v1"):
     return injected
 
 
-def run(kb_dir, units, output, per_type=30, seed="lexora-inject-v1"):
+def _check_setting(validator, inheritance, claims):
+    if validator not in VALIDATORS:
+        raise ValueError(f"validator must be one of {sorted(VALIDATORS)}")
+    if inheritance is not None and inheritance not in INHERITANCE:
+        raise ValueError(f"inheritance must be one of {sorted(INHERITANCE)}")
+    if inheritance is not None and validator == VALIDATOR_VERSION:
+        raise ValueError("inherited slots quote the lead-in, which kb-validator-v3 rejects; use kb-validator-v4")
+    if inheritance is not None and any(claim.get("inheritance") for claim in claims):
+        raise ValueError("the source claims already carry inherited slots; give a run without inheritance (errors go in first, inheritance after)")
+
+
+def _corrupted_fields(before, after):
+    """Slot names (and `modality_cue`) whose value the corruption changed or moved to another unit."""
+    if (before["unit_id"], before["unit_version_id"]) != (after["unit_id"], after["unit_version_id"]):
+        fields = {name for name, value in (after.get("slots") or {}).items() if value not in (None, "")}
+        return fields | ({"modality_cue"} if after.get("modality_cue") else set())
+    fields = {name for name, value in (after.get("slots") or {}).items()
+              if value not in (None, "") and value != (before.get("slots") or {}).get(name)}
+    if after.get("modality_cue") and (after.get("modality"), after.get("modality_cue")) != (before.get("modality"), before.get("modality_cue")):
+        fields.add("modality_cue")
+    return fields
+
+
+def via_lead_in(before, after, result):
+    """Corrupted fields an accepted v4 result found in the parent's lead-in (empty when none or not accepted)."""
+    lead = (result.get("evidence") or {}).get("lead_in") if result["decision"] == "accepted" else None
+    if not lead:
+        return []
+    found = set(lead["slots"]) | ({"modality_cue"} if lead["modality_cue"] else set())
+    return sorted(found & _corrupted_fields(before, after))
+
+
+def run(kb_dir, units, output, per_type=30, seed="lexora-inject-v1", validator=VALIDATOR_VERSION, inheritance=None):
     kb_dir, output = Path(kb_dir), Path(output)
     if output.exists() and any(output.iterdir()):
         raise ValueError("output must be empty: use a new directory")
     clean = [{k: v for k, v in c.items() if k not in ("evidence", "validation")} for c in read_jsonl(kb_dir / "dk4.jsonl")]
+    _check_setting(validator, inheritance, clean)
     injected = inject(clean, units, per_type, seed)
-    verdict = lambda claim: validate([claim], units)[0]
+
+    def verdict(claim):
+        derived = INHERITANCE[inheritance]([claim], units)[0][0] if inheritance else claim
+        result = VALIDATORS[validator]([derived], units)[0]
+        if inheritance:
+            result = result | {"inherited_slots": sorted(((derived.get("inheritance") or {}).get("slots") or {}))}
+        return result
+
     clean_results = [verdict(c) for c in clean]
     injected_results = [verdict(c) for c in injected]
-    by_type = {}
+    sources = {c["claim_id"]: c for c in clean}
+    by_type, let_through = {}, []
     for claim, result in zip(injected, injected_results):
         meta = claim["injection"]
         row = by_type.setdefault(meta["type"], {"expected_detectable": meta["expected_detectable"], "expected_check": meta["expected_check"],
@@ -156,12 +209,20 @@ def run(kb_dir, units, output, per_type=30, seed="lexora-inject-v1"):
         row["injected"] += 1
         row["rejected"] += result["decision"] == "rejected"
         row["rejected_by_expected_check"] += bool(meta["expected_check"]) and result["checks"].get(meta["expected_check"]) == "fail"
+        if validator == claims_v4.VALIDATOR_VERSION:
+            fields = via_lead_in(sources[meta["source_claim_id"]], claim, result)
+            row["accepted_via_lead_in"] = row.get("accepted_via_lead_in", 0) + bool(fields)
+            if fields:
+                let_through.append({"claim_id": claim["claim_id"], "type": meta["type"], "fields": fields,
+                                    "lead_in_unit_id": result["evidence"]["lead_in"]["unit_id"],
+                                    "values": {name: claim.get("modality_cue") if name == "modality_cue" else claim["slots"].get(name) for name in fields}})
     for row in by_type.values():
         row["detection_rate"] = row["rejected"] / row["injected"] if row["injected"] else None
     false_rejects = sum(r["decision"] == "rejected" for r in clean_results)
     caught = sum(r["decision"] == "rejected" for r in injected_results)
     detectable = [(c, r) for c, r in zip(injected, injected_results) if c["injection"]["expected_detectable"]]
-    report = {"injection_version": INJECTION_VERSION, "validator_version": VALIDATOR_VERSION, "seed": seed, "per_type": per_type,
+    report = {"injection_version": INJECTION_VERSION, "validator_version": validator, **({"inheritance_version": inheritance} if inheritance else {}),
+              "seed": seed, "per_type": per_type,
               "kb_run": kb_dir.as_posix(), "dk4_sha256": digest((kb_dir / "dk4.jsonl").read_bytes()),
               "clean_claims": len(clean), "false_rejects_on_clean": false_rejects,
               "false_reject_rate": false_rejects / len(clean) if clean else None,
@@ -171,6 +232,10 @@ def run(kb_dir, units, output, per_type=30, seed="lexora-inject-v1"):
               "by_type": dict(sorted(by_type.items())),
               "notes": ["Types with expected_detectable=false keep every quote verbatim; the validator is not designed to catch them",
                         "Clean means accepted by the validator in DK4, not checked against the human gold set"]}
+    if validator == claims_v4.VALIDATOR_VERSION:
+        report["accepted_via_lead_in"] = let_through
+    if inheritance:
+        report["notes"].append("Order: errors were put into the extracted claims, then claims-inherit-v1 filled empty slots, then the validator ran")
     write_jsonl(output / "injected.jsonl", injected)
     write_jsonl(output / "results.jsonl", [{"claim_id": c["claim_id"], "kind": "injected", **r} for c, r in zip(injected, injected_results)]
                 + [{"claim_id": c["claim_id"], "kind": "clean", **r} for c, r in zip(clean, clean_results)])
@@ -191,7 +256,7 @@ def _change_visible_number(claim, rng, pool, units):
 PLANT_TYPES = {"number_changed": _change_visible_number, "modality_flipped": _flip_modality, "fabricated_actor": _fabricate_actor}
 
 
-def plant(kb_dir, units, output, target_unit_ids, seed="lexora-plant-v1"):
+def plant(kb_dir, units, output, target_unit_ids, seed="lexora-plant-v1", validator=VALIDATOR_VERSION, inheritance=None):
     """A knowledge-base run whose DK3 claims on `target_unit_ids` are each replaced by one corrupted copy, and whose
     DK4 is the automatic validator applied to that DK3, exactly as `kb_run.materialize` builds it.
 
@@ -199,11 +264,14 @@ def plant(kb_dir, units, output, target_unit_ids, seed="lexora-plant-v1"):
     deadlines, a flipped modality, a fabricated actor), one per claim, the type rotating over the targets in a
     seeded order. The new run keeps the source run's manifest (same corpus bundle) plus a `planted` block, so
     retrieval runs can point a DK3/DK4 condition at it. It is a stress test of what validation buys downstream,
-    not an estimate of the natural error rate."""
+    not an estimate of the natural error rate. With `inheritance` the planted DK3 is passed through it before the
+    validator (errors first, then inheritance, then validation, as in the module docstring); `planted.jsonl` keeps
+    the values before inheritance."""
     kb_dir, output = Path(kb_dir), Path(output)
     if output.exists() and any(output.iterdir()):
         raise ValueError("output must be empty: use a new directory")
     claims = read_jsonl(kb_dir / "dk3.jsonl")
+    _check_setting(validator, inheritance, claims)
     targets = set(target_unit_ids)
     order = sorted((c for c in claims if c["unit_id"] in targets), key=lambda c: digest(f"{seed}:{c['claim_id']}"))
     names = list(PLANT_TYPES)
@@ -221,21 +289,32 @@ def plant(kb_dir, units, output, target_unit_ids, seed="lexora-plant-v1"):
                                 "before": {k: claim.get(k) for k in ("modality", "slots")}, "after": {k: copy.get(k) for k in ("modality", "slots")}})
                 break
     dk3 = [replaced.get(c["claim_id"], c) for c in claims]
-    results = validate(dk3, units)
+    inherited = None
+    if inheritance:
+        dk3, inherited = INHERITANCE[inheritance](dk3, units)
+    results = VALIDATORS[validator](dk3, units)
     accepted = {r["claim_id"]: r for r in results if r["decision"] == "accepted"}
-    dk4 = [c | {"evidence": accepted[c["claim_id"]]["evidence"], "validation": VALIDATOR_VERSION} for c in dk3 if c["claim_id"] in accepted]
+    dk4 = [c | {"evidence": accepted[c["claim_id"]]["evidence"], "validation": validator} for c in dk3 if c["claim_id"] in accepted]
     caught = {cid for cid in replaced if cid not in accepted}
+    sources = {c["claim_id"]: c for c in claims}
     by_type = {}
     for row in planted:
         entry = by_type.setdefault(row["type"], {"planted": 0, "removed_from_dk4": 0})
         entry["planted"] += 1
         entry["removed_from_dk4"] += row["claim_id"] in caught
         row["in_dk4"] = row["claim_id"] not in caught
+        if validator == claims_v4.VALIDATOR_VERSION:
+            fields = via_lead_in(sources[row["claim_id"]], replaced[row["claim_id"]], accepted[row["claim_id"]]) if row["in_dk4"] else []
+            row["via_lead_in"] = fields
+            entry["kept_via_lead_in"] = entry.get("kept_via_lead_in", 0) + bool(fields)
     manifest = json.loads((kb_dir / "manifest.json").read_text(encoding="utf-8"))
-    manifest["planted"] = {"plant_version": PLANT_VERSION, "seed": seed, "source_run": kb_dir.as_posix(), "validator_version": VALIDATOR_VERSION,
+    manifest["planted"] = {"plant_version": PLANT_VERSION, "seed": seed, "source_run": kb_dir.as_posix(), "validator_version": validator,
+                           **({"inheritance_version": inheritance} if inheritance else {}),
                            "target_units": len(targets), "target_claims": len(order), "planted": len(planted),
                            "removed_from_dk4": len(caught), "by_type": by_type,
                            "dk3_claims": len(dk3), "dk4_claims": len(dk4)}
+    if inherited is not None:
+        manifest["planted"]["inheritance"] = inherited
     output.mkdir(parents=True, exist_ok=True)
     write_json(output / "manifest.json", manifest)
     write_jsonl(output / "dk3.jsonl", dk3)

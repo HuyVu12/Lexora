@@ -10,7 +10,7 @@ sys.path.insert(0, str(ROOT / "src"))
 sys.path.insert(0, str(ROOT / "tests"))
 
 from test_retrieval_run import bundle
-from legal_ai.evaluation import kb_run
+from legal_ai.evaluation import extraction_gold as gold, kb_run
 from legal_ai.extraction.inherit import VERSION as INHERIT_VERSION, analyse, inherit, lead_in
 from legal_ai.extraction.llm_norms import LLM_SLOTS
 from legal_ai.validation.evidence import check_evidence
@@ -147,6 +147,68 @@ class InheritTests(Fixture):
             parent = {"unit_type": "clause", "text": f"2. {lead}\n"}
             found, _ = analyse(parent, 3, 3 + len(lead))
             self.assertEqual({k: parent["text"][s:e] for k, (s, e, _) in found.items()}, expected, lead)
+
+
+class GoldInheritedScoringTests(Fixture):
+    """RQ1 `gold-inherited-v1`: the gold leaves lead-in values empty, so `ignore` scores without inherited slots."""
+
+    def gold_rows(self):
+        rows = gold.template(self.units, ["syn/article-1"])
+        point = self.unit("clause-1/point-a")
+        for row in rows:
+            if row["unit_id"] == point["unit_id"]:
+                row["norms"] = [{"modality": "prohibition", "modality_cue": None, "slots": {"action": row["text"]}}]
+        return rows
+
+    def test_ignore_removes_only_inherited_slots_and_default_scores_them(self):
+        rows = self.gold_rows()
+        model = self.claim("clause-2/point-a", modality="entitlement", actor="Bên B")  # Not in the sentence, but not inherited.
+        claims, _ = inherit([self.claim("clause-1/point-a", modality="prohibition"), model], self.units)
+        self.assertEqual(set(claims[0]["inheritance"]["slots"]), {"actor", "outcome"})
+        self.assertNotIn("inheritance", claims[1])
+
+        kept = {tuple(sorted(n["slots"])) for r in gold.claim_predictions(claims, rows, "ignore") for n in r["norms"]}
+        self.assertEqual(kept, {("action",), ("action", "actor")}, "the model's own actor stays, the inherited actor and outcome go")
+        self.assertEqual(gold.claim_predictions(claims, rows), gold.claim_predictions(claims, rows, "score"))
+        with self.assertRaisesRegex(ValueError, "inherited"):
+            gold.claim_predictions(claims, rows, "drop")
+
+        scored = gold.score_claims(rows, claims, self.units)
+        ignored = gold.score_claims(rows, claims, self.units, "ignore")
+        self.assertEqual(scored["strict"]["norms"]["tp"], 0, "an inherited actor the gold left empty breaks the norm match")
+        self.assertEqual(ignored["strict"]["norms"]["tp"], 1)
+        self.assertEqual(scored["strict"]["per_slot"]["outcome"]["predicted"], 1)
+        self.assertNotIn("outcome", ignored["strict"]["per_slot"])
+        self.assertEqual({k: v for k, v in scored.items() if k != "inherited"}, gold.score(rows, gold.claim_predictions(claims, rows)))
+
+        block = ignored["inherited"]
+        self.assertEqual((block["scoring"], block["mode"], block["claims_with_inherited_slots"]), (gold.INHERITED_SCORING, "ignore", 1))
+        self.assertEqual(block["total"], {"values": 2, "gold_slot_empty": 2, "gold_slot_empty_lead_in_verbatim": 2, "gold_sentence_without_norm": 0,
+                                          "gold_slot_filled": 0, "gold_slot_filled_lenient_match": 0})
+        self.assertEqual(scored["inherited"]["total"], block["total"], "the counts do not depend on the mode")
+
+    def test_claims_without_inheritance_score_exactly_as_before(self):
+        rows = self.gold_rows()
+        claims = [self.claim("clause-1/point-a", modality="prohibition", actor="bên A")]
+        before = gold.score(rows, gold.claim_predictions(claims, rows))
+        self.assertEqual(gold.score_claims(rows, claims, self.units), before, "no inherited block, same numbers")
+        ignored = gold.score_claims(rows, claims, self.units, "ignore")
+        self.assertEqual({k: v for k, v in ignored.items() if k != "inherited"}, before)
+        self.assertEqual(ignored["inherited"]["total"]["values"], 0)
+
+    def test_gold_slot_filled_and_a_moved_span_are_counted_apart(self):
+        rows = self.gold_rows()
+        for row in rows:
+            for item in row["norms"]:
+                item["slots"]["outcome"] = None
+        [claim], _ = inherit([self.claim("clause-1/point-a", modality="prohibition")], self.units)
+        point = next(r for r in rows if r["unit_id"] == claim["unit_id"])
+        point["norms"][0]["slots"]["actor"] = "bên B"  # The gold names an actor of the sentence; the inherited one does not match it.
+        claim["inheritance"]["slots"]["outcome"]["span"] = [0, 5]  # Not inside the lead-in any more.
+        block = gold.inherited_report([claim], rows, self.units)
+        self.assertEqual(block["per_slot"]["actor"]["gold_slot_filled"], 1)
+        self.assertEqual(block["per_slot"]["actor"]["gold_slot_filled_lenient_match"], 0)
+        self.assertEqual((block["per_slot"]["outcome"]["gold_slot_empty"], block["per_slot"]["outcome"]["gold_slot_empty_lead_in_verbatim"]), (1, 0))
 
 
 if __name__ == "__main__":
