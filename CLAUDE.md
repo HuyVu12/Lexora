@@ -61,7 +61,7 @@ python -m venv .venv; .venv\Scripts\python -m pip install -e ".[web,web-test,cat
 .venv\Scripts\python -m legal_ai.web --store data/kb/app-new.sqlite --seed data/kb/entity-relation-review/graph.json --port 8766  # --frontend <build dir>, --source-catalog, opt-in 9Router flags
 ```
 
-Frontend (SvelteKit 3, Svelte 5, TypeScript; npm packages approved 2026-11-06):
+Frontend (SvelteKit 3, Svelte 5, TypeScript; npm packages approved 2026-11-06, animejs 2026-11-22):
 
 ```powershell
 cd frontend; npm install; npm run build; cd ..                          # static SPA into frontend/build
@@ -72,6 +72,7 @@ node scripts/check_app_browser.cjs http://127.0.0.1:<port> <screenshot-dir>   # 
 ```
 
 Kit 3 notes: options go to `sveltekit({...})` in `vite.config.ts` (no svelte.config.js); `$lib` is replaced by the `#lib` subpath import from `package.json`, and TypeScript modules are imported with a `.js` suffix (`#lib/api.js`). Interface strings live in `frontend/src/lib/i18n/vi.ts` (source of keys) and `en.ts` (typed `Record<MessageKey, string>`, so a missing key fails the build); Paraglide was rejected because its build fetches and runs a plugin from a CDN. A variable must not be named `state` in a component (it collides with the `$state` rune).
+Motion goes through `frontend/src/lib/motion.ts` (animejs v4 imported per module: `animejs/waapi`, `animejs/utils`, `animejs/easings/spring`, never the full engine) with the duration and easing tokens in `app.css`; animate only transform and opacity, and every helper must be instant under `prefers-reduced-motion`. Page changes use the native View Transitions API in `+layout.svelte`; loading states use `Skeleton.svelte`, not a bare loading line. `PageGuide` collapses into the "?" button (`GuideButton.svelte`) inside the page h1.
 Question sets live under `frontend/src/routes/research/questions` (list and pack import, `[id]` workspace with proposal-mode choice, `LabelForm`, batched model proposals, drafts and exchange, `[id]/compare` adjudication and freeze); model calls need `--proposal-model <model> --approve-claude` and a `ConfirmDialog` per batch. Research corpora live under `frontend/src/routes/research` (list, `[id]` with catalog search, vbpl.vn link and file upload, `[id]/document/[row]` parser review); a vbpl.vn fetch always goes through the confirmation dialog and needs the server flag `--allow-vbpl`, the catalog needs `--catalog` or `data/catalog/catalog-v1.sqlite`. The knowledge graph is the in-app route `frontend/src/routes/kb/[id]/graph` (Cytoscape.js via `lib/components/GraphCanvas.svelte`, element builders in `lib/graph.ts`, data from `GET /api/kb/graph`); in Cytoscape font strings, quote family names containing digits (`'Source Serif 4 Variable'`) or the canvas silently falls back to 10px. The standalone `kb/*viewer.html` pages remain only for `cli graph-build` exports.
 `legal_ai.web` without a build answers 503 with build instructions; `tests/test_web_api.py` skips without FastAPI.
 Test files insert `src/` into `sys.path` themselves, so tests run without `PYTHONPATH`.

@@ -25,6 +25,8 @@
 </dialog>
 
 <style>
+	/* Opens with a short rise and scale from the centre (a modal is not anchored to its trigger) and closes faster.
+	 * @starting-style and allow-discrete let CSS animate both ways of a native <dialog>. */
 	dialog {
 		max-width: 540px;
 		width: calc(100% - 32px);
@@ -33,9 +35,40 @@
 		padding: 22px 24px;
 		box-shadow: var(--shadow-pop);
 		color: var(--ink);
+		opacity: 0;
+		transform: translateY(6px) scale(0.98);
+		transition:
+			opacity var(--dur-fast) ease,
+			transform var(--dur-fast) var(--ease-out),
+			overlay var(--dur-fast) allow-discrete,
+			display var(--dur-fast) allow-discrete;
+	}
+	dialog[open] {
+		opacity: 1;
+		transform: none;
+		transition-duration: var(--dur-base);
+	}
+	@starting-style {
+		dialog[open] {
+			opacity: 0;
+			transform: translateY(10px) scale(0.97);
+		}
 	}
 	dialog::backdrop {
+		background: rgb(20 22 24 / 0);
+		transition:
+			background-color var(--dur-fast) ease,
+			overlay var(--dur-fast) allow-discrete,
+			display var(--dur-fast) allow-discrete;
+	}
+	dialog[open]::backdrop {
 		background: rgb(20 22 24 / 0.35);
+		transition-duration: var(--dur-base);
+	}
+	@starting-style {
+		dialog[open]::backdrop {
+			background: rgb(20 22 24 / 0);
+		}
 	}
 	.actions {
 		justify-content: flex-end;

@@ -2,6 +2,7 @@
 	import { t } from '#lib/i18n/index.svelte.js';
 	import Icon from './Icon.svelte';
 
+	// Where the reviewer is in import, review, publish. Done steps carry a check; a thin rule joins the steps.
 	let { current }: { current: 1 | 2 | 3 | 4 } = $props();
 	const steps = ['steps.1', 'steps.2', 'steps.3'] as const;
 </script>
@@ -17,18 +18,30 @@
 <style>
 	.steps {
 		display: flex;
-		gap: 28px;
+		align-items: center;
+		gap: 12px;
 		list-style: none;
-		margin: 0 0 20px;
+		margin: 0 0 var(--space-5);
 		padding: 0;
 		color: var(--muted);
-		font-size: 14px;
+		font-size: 13.5px;
 		flex-wrap: wrap;
 	}
 	li {
 		display: flex;
 		align-items: center;
 		gap: 8px;
+	}
+	li + li::before {
+		content: '';
+		width: 28px;
+		height: 1px;
+		margin-right: 4px;
+		background: var(--rule-strong);
+	}
+	li.done + li::before,
+	li.done + li.done::before {
+		background: var(--approve);
 	}
 	.dot {
 		width: 22px;
@@ -57,5 +70,14 @@
 		background: var(--graphite);
 		border-color: var(--graphite);
 		color: #fff;
+		box-shadow: 0 0 0 3px rgb(42 45 48 / 0.12);
+	}
+	@media (max-width: 640px) {
+		.steps {
+			gap: 6px 16px;
+		}
+		li + li::before {
+			display: none;
+		}
 	}
 </style>

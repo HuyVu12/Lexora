@@ -128,9 +128,11 @@
 		box-shadow: var(--shadow-pop);
 		font-size: 13.5px;
 		line-height: 1.55;
-		animation: rise 0.18s var(--ease-out);
+		transform-origin: 50% 0;
+		animation: rise var(--dur-fast) var(--ease-out);
 	}
 	#glossary-tip.above {
+		transform-origin: 50% 100%;
 		animation-name: drop;
 	}
 	.term {
@@ -167,16 +169,18 @@
 		border-radius: 2px;
 		padding: 0 2px;
 	}
+	/* Grows from the side of the word it explains. Moving to the next word keeps the tip open, so only the
+	 * first tip of a reading run animates. */
 	@keyframes rise {
 		from {
 			opacity: 0;
-			transform: translateY(4px);
+			transform: translateY(-3px) scale(0.97);
 		}
 	}
 	@keyframes drop {
 		from {
 			opacity: 0;
-			transform: translateY(-4px);
+			transform: translateY(3px) scale(0.97);
 		}
 	}
 </style>

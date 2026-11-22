@@ -2,9 +2,11 @@
 	import { page } from '$app/state';
 	import { goto, afterNavigate } from '$app/navigation';
 	import Icon from './Icon.svelte';
-	import { t, i18n } from '#lib/i18n/index.svelte.js';
+	import { t, i18n, preloadLocale } from '#lib/i18n/index.svelte.js';
 	import { session, canReview, canMonitor } from '#lib/session.svelte.js';
 	import { api } from '#lib/api.js';
+	import { clearAppState } from '#lib/app-state.svelte.js';
+	import { pop, popOut } from '#lib/motion.js';
 	import type { MessageKey } from '#lib/i18n/vi.js';
 
 	// Three everyday links stay on the bar; the four research pages share one menu; account management and
@@ -49,9 +51,47 @@
 	async function logout() {
 		await api('/api/auth/logout', {}).catch(() => undefined);
 		session.account = null;
+		clearAppState();
 		open = '';
 		await goto('/login');
 	}
+
+	// One underline slides between the bar's items instead of each item drawing its own: it shows where you
+	// are and, as it travels, where you came from. Measured from the current item; transform-only.
+	let navEl = $state<HTMLElement | null>(null);
+	let mark = $state({ x: 0, w: 0, shown: false, ready: false });
+	function measure() {
+		const current = navEl?.querySelector<HTMLElement>(':scope > a[aria-current="page"], .nav-button.current');
+		if (!navEl || !current) {
+			mark.shown = false;
+			return;
+		}
+		const nav = navEl.getBoundingClientRect();
+		const box = current.getBoundingClientRect();
+		mark.x = box.left - nav.left + 12;
+		mark.w = Math.max(0, box.width - 24);
+		mark.shown = true;
+	}
+	$effect(() => {
+		// Re-measure when the place, the items or their language change.
+		void page.url.pathname;
+		void links.length;
+		void i18n.locale;
+		if (!navEl) return;
+		const frame = requestAnimationFrame(() => {
+			measure();
+			// The first placement is instant; only later moves slide.
+			if (!mark.ready) requestAnimationFrame(() => (mark.ready = true));
+		});
+		return () => cancelAnimationFrame(frame);
+	});
+	$effect(() => {
+		if (!navEl) return;
+		const observer = new ResizeObserver(() => measure());
+		observer.observe(navEl);
+		document.fonts?.ready.then(() => measure());
+		return () => observer.disconnect();
+	});
 </script>
 
 <svelte:window onclick={outside} onkeydown={escape} />
@@ -71,7 +111,7 @@
 		<span>Lexora</span>
 	</a>
 	{#if account}
-		<nav aria-label={t('nav.main')}>
+		<nav aria-label={t('nav.main')} bind:this={navEl}>
 			{#each links as item (item.href)}
 				<a href={item.href} aria-current={item.match(page.url.pathname) ? 'page' : undefined}>{t(item.key)}</a>
 			{/each}
@@ -80,7 +120,7 @@
 					<button type="button" id="research-button" class="nav-button" class:current={inResearch} aria-expanded={open === 'research'}
 						aria-controls="research-menu" onclick={() => toggle('research')}>{t('nav.zone.research')}<Icon name="chevron" size={16} /></button>
 					{#if open === 'research'}
-						<div class="drop" id="research-menu">
+						<div class="drop" id="research-menu" in:pop={{ origin: 'top left' }} out:popOut>
 							{#each research as item (item.href)}
 								<a href={item.href} aria-current={item.match(page.url.pathname) ? 'page' : undefined}>{t(item.key)}</a>
 							{/each}
@@ -91,11 +131,13 @@
 			{#each after as item (item.href)}
 				<a href={item.href} aria-current={item.match(page.url.pathname) ? 'page' : undefined}>{t(item.key)}</a>
 			{/each}
+			<span class="mark" class:shown={mark.shown} class:ready={mark.ready} style:transform="translateX({mark.x}px) scaleX({mark.w})" aria-hidden="true"></span>
 		</nav>
 	{/if}
 	<div class="end">
 		<a class="about" href="/about" aria-current={page.url.pathname === '/about' ? 'page' : undefined}>{t('nav.about')}</a>
-		<button type="button" class="lang" aria-label={t('lang.label')} onclick={() => i18n.set(i18n.locale === 'vi' ? 'en' : 'vi')}>
+		<button type="button" class="lang" aria-label={t('lang.label')} onpointerenter={() => preloadLocale('en')} onfocus={() => preloadLocale('en')}
+			onclick={() => i18n.set(i18n.locale === 'vi' ? 'en' : 'vi')}>
 			<Icon name="globe" size={16} /><span class="lang-text">{t('lang.switchTo')}</span>
 		</button>
 		{#if account}
@@ -107,7 +149,7 @@
 					<Icon name="chevron" size={16} />
 				</button>
 				{#if open === 'user'}
-					<div class="menu" id="user-menu">
+					<div class="menu" id="user-menu" in:pop={{ origin: 'top right' }} out:popOut>
 						<div class="who-card">
 							<strong>{account.display_name}</strong>
 							<span class="small muted">@{account.username} · {t(`role.${account.role}`)}</span>
@@ -161,10 +203,30 @@
 		font: 600 19px/1 var(--serif);
 	}
 	nav {
+		position: relative;
 		display: flex;
 		align-items: center;
 		gap: 2px;
 		height: 100%;
+	}
+	.mark {
+		position: absolute;
+		left: 0;
+		bottom: -1px;
+		width: 1px;
+		height: 2px;
+		background: var(--graphite);
+		transform-origin: 0 50%;
+		opacity: 0;
+		pointer-events: none;
+	}
+	.mark.shown {
+		opacity: 1;
+	}
+	.mark.ready {
+		transition:
+			transform var(--dur-slow) var(--ease-out),
+			opacity var(--dur-fast) ease;
 	}
 	nav > a,
 	.nav-button,
@@ -184,6 +246,9 @@
 		text-decoration: none;
 		white-space: nowrap;
 		cursor: pointer;
+		transition:
+			background-color var(--dur-fast) ease,
+			color var(--dur-fast) ease;
 	}
 	nav > a:hover,
 	.nav-button:hover,
@@ -195,18 +260,9 @@
 	.nav-button.current,
 	.about[aria-current='page'] {
 		color: var(--ink);
-		background: var(--desk);
 	}
-	nav > a[aria-current='page']::after,
-	.nav-button.current::after {
-		content: '';
-		position: absolute;
-		left: 12px;
-		right: 12px;
-		bottom: -10px;
-		height: 2px;
-		border-radius: 2px;
-		background: var(--graphite);
+	.about[aria-current='page'] {
+		background: var(--desk);
 	}
 	.has-menu {
 		position: relative;
@@ -219,7 +275,7 @@
 	.nav-button :global(svg),
 	.who :global(svg:last-child) {
 		color: var(--muted);
-		transition: transform 0.15s var(--ease-out);
+		transition: transform var(--dur-base) var(--ease-out);
 	}
 	[aria-expanded='true'] :global(svg:last-child) {
 		transform: rotate(180deg);
@@ -227,6 +283,7 @@
 	.drop,
 	.menu {
 		position: absolute;
+		z-index: 1;
 		top: calc(100% + 8px);
 		min-width: 200px;
 		padding: 6px;
@@ -254,6 +311,7 @@
 		color: var(--ink-2);
 		font-weight: 500;
 		text-decoration: none;
+		transition: background-color var(--dur-fast) ease;
 	}
 	.drop a:hover,
 	.menu-links a:hover {
@@ -304,6 +362,17 @@
 	}
 	.lang:hover {
 		border-color: var(--ink-2);
+	}
+	.lang:active,
+	.who:active {
+		transform: scale(0.97);
+	}
+	.lang,
+	.who {
+		transition:
+			border-color var(--dur-fast) ease,
+			background-color var(--dur-fast) ease,
+			transform var(--dur-press) var(--ease-out);
 	}
 	.who {
 		display: flex;
@@ -404,7 +473,8 @@
 	}
 	@media (prefers-reduced-motion: reduce) {
 		.nav-button :global(svg),
-		.who :global(svg:last-child) {
+		.who :global(svg:last-child),
+		.mark.ready {
 			transition: none;
 		}
 	}
