@@ -602,7 +602,7 @@
 	{/if}
 </div>
 
-<ConfirmDialog bind:open={confirmOpen} title={t('chat.delete.title')} confirmLabel={t('chat.delete')} onconfirm={confirmDelete}>
+<ConfirmDialog bind:open={confirmOpen} title={t('chat.delete.title')} confirmLabel={t('chat.delete')} tone="danger" onconfirm={confirmDelete}>
 	<p class="confirm-body">{t('chat.delete.body', { title: deleting?.title ?? t('chat.untitled') })}</p>
 </ConfirmDialog>
 

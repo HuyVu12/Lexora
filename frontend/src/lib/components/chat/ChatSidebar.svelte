@@ -161,7 +161,7 @@
 											{@attach dismiss(() => closeMenu(), () => trigger(s.id))}
 										>
 											<button type="button" role="menuitem" onclick={() => startRename(s)}><Icon name="edit" size={16} />{t('chat.rename')}</button>
-											<button type="button" role="menuitem" class="danger" onclick={() => { closeMenu(false); ondelete(s); }}><Icon name="x" size={16} />{t('chat.delete')}</button>
+											<button type="button" role="menuitem" class="danger" onclick={() => { closeMenu(false); ondelete(s); }}><Icon name="trash" size={16} />{t('chat.delete')}</button>
 										</div>
 									{/if}
 								{/if}

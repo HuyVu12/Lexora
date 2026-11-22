@@ -104,10 +104,16 @@
 		busy = false;
 	}
 
-	const remove = (d: CorpusDocument) =>
+	let removing = $state<CorpusDocument | null>(null);
+	let removeOpen = $state(false);
+	const remove = (d: CorpusDocument) => {
+		removing = d;
+		removeOpen = true;
+	};
+	const confirmRemove = () =>
 		act(async () => {
-			if (!confirm(t('corpus.removeConfirm', { title: d.title }))) return;
-			corpus = await api<CorpusDetail>('/api/corpus/remove', { corpus_id: id, document_row: d.id });
+			if (!removing) return;
+			corpus = await api<CorpusDetail>('/api/corpus/remove', { corpus_id: id, document_row: removing.id });
 		});
 
 	async function freeze(event: SubmitEvent) {
@@ -249,6 +255,8 @@
 		{/if}
 	{/if}
 </div>
+
+<ConfirmDialog bind:open={removeOpen} title={t('corpus.removeConfirm', { title: removing?.title ?? '' })} confirmLabel={t('corpus.removeGo')} tone="danger" onconfirm={confirmRemove} />
 
 <ConfirmDialog bind:open={confirmOpen} title={t('corpus.confirm.title')} confirmLabel={t('corpus.confirm.go')} onconfirm={confirmFetch}>
 	<p>{t('corpus.confirm.body')}</p>

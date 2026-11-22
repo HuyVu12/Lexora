@@ -34,7 +34,8 @@
 		send: 'M12 19V5m0 0l-6 6m6-6l6 6',
 		down: 'M12 5v14m0 0l-6-6m6 6l6-6',
 		menu: 'M4 7h16M4 12h16M4 17h16',
-		sliders: 'M4 7h9M17 7h3M4 17h3M11 17h9M15 5v4M9 15v4'
+		sliders: 'M4 7h9M17 7h3M4 17h3M11 17h9M15 5v4M9 15v4',
+		trash: 'M4 7h16M10 3h4M6 7l1 13h10l1-13M10 11v6M14 11v6'
 	} as const;
 
 	let { name, size = 18, label }: { name: keyof typeof PATHS; size?: number; label?: string } = $props();

@@ -133,10 +133,16 @@
 			await load();
 		});
 	};
-	const removeQuestion = (item: QuestionItem) =>
+	let removing = $state<QuestionItem | null>(null);
+	let removeOpen = $state(false);
+	const removeQuestion = (item: QuestionItem) => {
+		removing = item;
+		removeOpen = true;
+	};
+	const confirmRemove = () =>
 		act(async () => {
-			if (!confirm(t('qs.removeConfirm', { n: item.position }))) return;
-			await api('/api/question-set/question/remove', { set_id: id, question_id: item.id });
+			if (!removing) return;
+			await api('/api/question-set/question/remove', { set_id: id, question_id: removing.id });
 			await load();
 		});
 
@@ -419,6 +425,8 @@
 		{/if}
 	{/if}
 </div>
+
+<ConfirmDialog bind:open={removeOpen} title={t('qs.removeConfirm', { n: removing?.position ?? '' })} confirmLabel={t('qs.remove')} tone="danger" onconfirm={confirmRemove} />
 
 <ConfirmDialog bind:open={confirmOpen} title={t('qs.confirm.title')} confirmLabel={t('qs.confirm.go')} onconfirm={runConfirmed}>
 	{#if pending?.kind === 'propose'}

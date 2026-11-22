@@ -3,10 +3,19 @@
 	import Icon from './Icon.svelte';
 	import { t } from '#lib/i18n/index.svelte.js';
 
-	// A modal question before an outward action (a model call, a network fetch). Escape and Cancel close it.
-	let { open = $bindable(false), title, confirmLabel, onconfirm, children }: { open: boolean; title: string; confirmLabel: string; onconfirm: () => void; children: Snippet } =
-		$props();
+	// A modal question before an outward action (a model call, a network fetch) or one that removes something.
+	// Escape and Cancel close it. `tone="danger"` is for removals: a red confirm button with a trash icon instead of
+	// the check, so "Xóa" never reads as an approval.
+	let {
+		open = $bindable(false),
+		title,
+		confirmLabel,
+		onconfirm,
+		tone = 'default',
+		children
+	}: { open: boolean; title: string; confirmLabel: string; onconfirm: () => void; tone?: 'default' | 'danger'; children?: Snippet } = $props();
 	let dialog = $state<HTMLDialogElement | null>(null);
+	const titleId = $props.id();
 
 	$effect(() => {
 		if (!dialog) return;
@@ -15,12 +24,14 @@
 	});
 </script>
 
-<dialog bind:this={dialog} aria-labelledby="confirm-title" onclose={() => (open = false)}>
-	<h2 class="heading" id="confirm-title">{title}</h2>
-	{@render children()}
+<dialog bind:this={dialog} aria-labelledby={titleId} onclose={() => (open = false)}>
+	<h2 class="heading" id={titleId}>{title}</h2>
+	{@render children?.()}
 	<div class="row actions">
 		<button type="button" class="btn quiet" onclick={() => (open = false)}>{t('common.cancel')}</button>
-		<button type="button" class="btn primary" onclick={() => { open = false; onconfirm(); }}><Icon name="check" />{confirmLabel}</button>
+		<button type="button" class="btn {tone === 'danger' ? 'danger' : 'primary'}" onclick={() => { open = false; onconfirm(); }}
+			><Icon name={tone === 'danger' ? 'trash' : 'check'} />{confirmLabel}</button
+		>
 	</div>
 </dialog>
 
@@ -74,5 +85,15 @@
 		justify-content: flex-end;
 		gap: 10px;
 		margin-top: 12px;
+	}
+	.danger {
+		background: var(--reject);
+		border-color: var(--reject);
+		color: #fff;
+		box-shadow: 0 1px 2px rgb(20 22 24 / 0.16);
+	}
+	.danger:hover {
+		background: color-mix(in srgb, var(--reject) 86%, black);
+		border-color: color-mix(in srgb, var(--reject) 86%, black);
 	}
 </style>
