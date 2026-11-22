@@ -8,7 +8,9 @@
 	import NormCard from '#lib/components/NormCard.svelte';
 	import Term from '#lib/components/Term.svelte';
 	import Icon from '#lib/components/Icon.svelte';
+	import Skeleton from '#lib/components/Skeleton.svelte';
 	import { api } from '#lib/api.js';
+	import { rise } from '#lib/motion.js';
 	import { t, unitLabel } from '#lib/i18n/index.svelte.js';
 	import { session, canReview } from '#lib/session.svelte.js';
 	import { notify } from '#lib/toast.svelte.js';
@@ -57,6 +59,8 @@
 	const focusedClaim = $derived(focus?.kind === 'claim' ? draft?.claims.find((c) => c.id === focus!.id) ?? null : null);
 	const focusedGap = $derived(focus?.kind === 'gap' ? draft?.gaps.find((g) => g.id === focus!.id) ?? null : null);
 	const decided = $derived(draft ? draft.progress.total - draft.progress.undecided : 0);
+	const pa = $derived(draft?.progress.total ? draft.progress.approved / draft.progress.total : 0);
+	const pr = $derived(draft?.progress.total ? draft.progress.rejected / draft.progress.total : 0);
 	const target = $derived(
 		draft ? (draft.target.mode === 'new' ? t('review.target.new', { name: draft.target.name ?? '' }) : t('review.target.merge', { name: draft.kb?.name ?? '' })) : ''
 	);
@@ -144,7 +148,24 @@
 {:else if loadError}
 	<div class="page"><p class="notice error" role="alert">{loadError}</p></div>
 {:else if !draft}
-	<p class="page muted">{t('common.loading')}</p>
+	<div class="review" aria-busy="true">
+		<span class="visually-hidden" role="status">{t('common.loading')}</span>
+		<header class="head">
+			<Steps current={2} />
+			<div class="titlebar">
+				<div class="ghost-title"><Skeleton width="min(460px, 70vw)" height="30px" /><Skeleton width="220px" height="13px" /></div>
+				<div class="progress"><Skeleton width="180px" height="15px" /><Skeleton height="8px" radius="4px" /><Skeleton width="300px" height="12px" /></div>
+			</div>
+		</header>
+		<div class="grid">
+			<aside class="index ghost-index">{#each [0, 1, 2, 3, 4] as i (i)}<Skeleton width="{88 - i * 6}%" height="14px" />{/each}</aside>
+			<div class="paper sheet ghost-paper">
+				<Skeleton width="38%" height="20px" />
+				{#each [0, 1, 2] as i (i)}<Skeleton lines={3} height="15px" gap="14px" last="54%" />{/each}
+			</div>
+			<aside class="side"><div class="sheet hint ghost-card"><Skeleton width="50%" height="16px" /><Skeleton lines={4} height="12px" gap="10px" /></div></aside>
+		</div>
+	</div>
 {:else if draft.status !== 'draft'}
 	<div class="page"><h1 class="title">{draft.title}</h1><p class="lead">{t('review.cancelled')}</p><a class="btn" href="/import">{t('nav.import')}</a></div>
 {:else if ['queued', 'running'].includes(draft.extraction.state)}
@@ -156,7 +177,7 @@
 		<section class="sheet extracting" aria-live="polite">
 			<h2 class="subtitle">{t('review.extracting.title')}</h2>
 			<p>{t('review.extracting.body', { model: x.model })}</p>
-			<div class="track big" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow={pct}><i style:width="{Math.max(4, pct)}%"></i></div>
+			<div class="track big" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow={pct}><i style:transform="scaleX({Math.max(4, pct) / 100})"></i></div>
 			<p class="small muted">{x.total ? t('review.extracting.progress', { done: x.done, total: x.total }) : t('review.extracting.preparing')}</p>
 			<p class="small muted">{t('review.extracting.leave')}</p>
 		</section>
@@ -173,10 +194,7 @@
 				<div class="progress">
 					<p><strong>{t('review.progress', { done: decided, total: draft.progress.total })}</strong></p>
 					<div class="track" role="img" aria-label="{t('review.legend.approved', { n: draft.progress.approved })}, {t('review.legend.rejected', { n: draft.progress.rejected })}">
-						<i class="a" style:width="{draft.progress.total ? (100 * draft.progress.approved) / draft.progress.total : 0}%"></i><i
-							class="r"
-							style:width="{draft.progress.total ? (100 * draft.progress.rejected) / draft.progress.total : 0}%"
-						></i>
+						<i class="a" style:transform="scaleX({pa})"></i><i class="r" style:transform="translateX({pa * 100}%) scaleX({pr})"></i>
 					</div>
 					<p class="legend small">
 						<span><i class="a"></i>{t('review.legend.approved', { n: draft.progress.approved })}</span>
@@ -248,10 +266,10 @@
 
 			<aside class="side">
 				{#if focusedClaim}
-					<NormCard claim={focusedClaim} number={numbers.get(focusedClaim.id) ?? 0} {units} {review} />
+					{#key focusedClaim.id}<div class="swap" in:rise={{ y: 4, duration: 160 }}><NormCard claim={focusedClaim} number={numbers.get(focusedClaim.id) ?? 0} {units} {review} /></div>{/key}
 				{:else if focusedGap}
 					{@const g = focusedGap}
-					<article class="sheet gapcard">
+					<article class="sheet gapcard" in:rise={{ y: 4, duration: 160 }}>
 						<h2 class="heading"><Term key="gap">{g.decision ? t('review.gap.dismissed') : t('review.gap.title')}</Term></h2>
 						<blockquote class="serif">{g.text}</blockquote>
 						{#if g.ai_note}<p class="pencil">{g.ai_note}</p>{/if}
@@ -349,16 +367,20 @@
 		display: grid;
 		gap: 6px;
 	}
+	/* Progress segments scale instead of resizing, so each decision animates on the compositor. */
 	.track {
+		position: relative;
 		height: 8px;
 		border-radius: 4px;
 		background: #cdd0d0;
-		display: flex;
 		overflow: hidden;
 	}
 	.track i {
+		position: absolute;
+		inset: 0;
 		display: block;
-		height: 100%;
+		transform-origin: 0 50%;
+		transition: transform var(--dur-slow) var(--ease-out);
 	}
 	.track .a,
 	.legend .a {
@@ -374,7 +396,6 @@
 	}
 	.track.big i {
 		background: var(--graphite);
-		transition: width 0.4s var(--ease-out);
 	}
 	.legend {
 		display: flex;
@@ -395,6 +416,20 @@
 	}
 	.legend .g {
 		background: var(--attention);
+	}
+	.ghost-title,
+	.ghost-index,
+	.ghost-card {
+		display: grid;
+		gap: 12px;
+	}
+	.ghost-paper {
+		display: grid;
+		gap: 26px;
+		align-content: start;
+	}
+	.swap {
+		display: grid;
 	}
 	.grid {
 		max-width: 1560px;

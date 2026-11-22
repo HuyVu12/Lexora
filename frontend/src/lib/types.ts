@@ -46,7 +46,7 @@ export interface ChatSessionSummary {
 	id: string;
 	created_at: string;
 	turns: number;
-	bindings: { kb_id: string; kb_name: string | null; revision: string }[];
+	bindings: { kb_id: string; kb_name: string | null; revision_id: string }[];
 }
 
 export interface AppState {
@@ -207,7 +207,7 @@ export interface Turn {
 
 export interface ChatSession {
 	id: string;
-	bindings: { kb_id: string; kb_name: string; revision: string }[];
+	bindings: { kb_id: string; kb_name: string; revision_id: string }[];
 	turns: Turn[];
 }
 

@@ -4,7 +4,9 @@
 	import { goto } from '$app/navigation';
 	import Icon from '#lib/components/Icon.svelte';
 	import Term from '#lib/components/Term.svelte';
+	import Skeleton from '#lib/components/Skeleton.svelte';
 	import { api } from '#lib/api.js';
+	import { revealItems } from '#lib/motion.js';
 	import { t, formatDate } from '#lib/i18n/index.svelte.js';
 	import { session, canReview } from '#lib/session.svelte.js';
 	import { act } from '#lib/toast.svelte.js';
@@ -34,7 +36,31 @@
 	{#if error}
 		<p class="notice error" role="alert">{error}</p>
 	{:else if !kb}
-		<p class="muted">{t('common.loading')}</p>
+		<div aria-busy="true">
+			<span class="visually-hidden" role="status">{t('common.loading')}</span>
+			<header class="page-head">
+				<div class="ghost-head">
+					<Skeleton width="min(420px, 70vw)" height="30px" />
+					<Skeleton width="min(520px, 80vw)" height="14px" />
+					<p class="ghost-facts"><Skeleton width="70px" height="12px" /><Skeleton width="130px" height="12px" /><Skeleton width="80px" height="12px" /><Skeleton width="72px" height="20px" radius="999px" /></p>
+				</div>
+				<div class="row"><Skeleton width="150px" height="38px" radius="6px" /><Skeleton width="150px" height="38px" radius="6px" /></div>
+			</header>
+			<div class="cols">
+				<section class="panel">
+					<Skeleton width="120px" height="16px" />
+					<Skeleton width="60%" height="11px" />
+					<ul class="docs">
+						{#each [0, 1, 2] as i (i)}<li><Skeleton width="34px" height="34px" radius="8px" /><Skeleton width="70%" height="15px" /><Skeleton width="44px" height="12px" /></li>{/each}
+					</ul>
+				</section>
+				<section class="panel">
+					<Skeleton width="140px" height="16px" />
+					<Skeleton width="72%" height="11px" />
+					<div class="ghost-timeline">{#each [0, 1] as i (i)}<Skeleton lines={3} height="11px" gap="8px" last="40%" />{/each}</div>
+				</section>
+			</div>
+		</div>
 	{:else}
 		{#if published}<p class="notice info published" role="status">{t('kb.published')}</p>{/if}
 		<header class="page-head">
@@ -56,14 +82,12 @@
 		</header>
 		<PageGuide name="kb" steps={3} />
 
-
-
 		<div class="cols">
 			<section class="panel">
 				<h2 class="heading">{t('kb.documents')}</h2>
 				<p class="small muted">{t('kb.documents.validity')}</p>
 				{#if kb.documents.length}
-					<ul class="docs">
+					<ul class="docs" {@attach revealItems({ step: 35, y: 6 })}>
 						{#each kb.documents as d, i (i)}
 							<li>
 								<span class="docicon"><Icon name="doc" /></span>
@@ -77,7 +101,7 @@
 			<section class="panel">
 				<h2 class="heading">{t('kb.history')}</h2>
 				<p class="small muted">{t('kb.history.lead')}</p>
-				<ol class="timeline">
+				<ol class="timeline" {@attach revealItems({ step: 50, y: 6, delay: 80 })}>
 					{#each kb.revisions as r, i (r.id)}
 						<li class:current={i === 0}>
 							<p><strong>{formatDate(r.created_at)}</strong>{#if i === 0}<span class="chip dark">{t('kb.current')}</span>{/if}</p>
@@ -95,14 +119,6 @@
 	.published {
 		margin-bottom: 20px;
 	}
-	.facts {
-		display: flex;
-		flex-wrap: wrap;
-		gap: 6px 18px;
-		align-items: center;
-		margin-top: 10px;
-		color: var(--ink-2);
-	}
 	.cols {
 		display: grid;
 		grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr);
@@ -112,6 +128,22 @@
 	.panel {
 		display: grid;
 		gap: 8px;
+		align-content: start;
+	}
+	.ghost-head {
+		display: grid;
+		gap: 12px;
+	}
+	.ghost-facts {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 6px 18px;
+		align-items: center;
+	}
+	.ghost-timeline {
+		display: grid;
+		gap: 22px;
+		margin-top: 12px;
 	}
 	.docs {
 		list-style: none;

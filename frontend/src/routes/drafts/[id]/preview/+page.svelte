@@ -4,6 +4,7 @@
 	import { goto } from '$app/navigation';
 	import Steps from '#lib/components/Steps.svelte';
 	import Icon from '#lib/components/Icon.svelte';
+	import Skeleton from '#lib/components/Skeleton.svelte';
 	import { api, ApiError } from '#lib/api.js';
 	import { t } from '#lib/i18n/index.svelte.js';
 	import { session, canReview } from '#lib/session.svelte.js';
@@ -52,7 +53,12 @@
 	{:else if error}
 		<p class="notice error" role="alert">{error}</p>
 	{:else if !draft || !p}
-		<p class="muted">{t('common.loading')}</p>
+		<div class="ghost" aria-busy="true">
+			<span class="visually-hidden" role="status">{t('common.loading')}</span>
+			<Steps current={3} />
+			<div class="ghost-head"><Skeleton width="300px" height="30px" /><Skeleton width="420px" height="15px" /></div>
+			<section class="panel summary"><Skeleton width="80%" height="20px" /><Skeleton lines={4} height="13px" gap="16px" last="100%" /></section>
+		</div>
 	{:else}
 		<Steps current={3} />
 		<header class="page-head">
@@ -63,7 +69,7 @@
 		</header>
 		<PageGuide name="preview" steps={3} />
 
-		<section class="sheet summary">
+		<section class="panel summary">
 			<p class="headline serif">{t('preview.summary', { n: draft.diff.approved, target })}</p>
 			<table class="table">
 				<thead><tr><th scope="col"></th><th scope="col" class="num">{t('preview.col.now')}</th><th scope="col" class="num">{t('preview.col.after')}</th><th scope="col" class="num">{t('preview.col.change')}</th></tr></thead>
@@ -73,7 +79,7 @@
 					{/each}
 				</tbody>
 			</table>
-			<dl class="facts">
+			<dl class="diff-facts">
 				<div><dt>{t('preview.rejected')}</dt><dd>{draft.diff.rejected}</dd></div>
 				<div><dt>{t('preview.edited')}</dt><dd>{draft.diff.edited}</dd></div>
 				{#if p.gaps}<div><dt>{t('preview.noNorm')}</dt><dd>{p.gaps - p.gaps_open}</dd></div>{/if}
@@ -107,6 +113,11 @@
 	.narrow {
 		max-width: 860px;
 	}
+	.ghost-head {
+		display: grid;
+		gap: 12px;
+		margin-bottom: var(--space-6);
+	}
 	.summary {
 		padding: 28px 32px;
 		display: grid;
@@ -121,20 +132,20 @@
 		color: var(--approve);
 		font-weight: 600;
 	}
-	.facts {
+	.diff-facts {
 		display: grid;
 		grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
 		gap: 8px 24px;
 		margin: 0;
 	}
-	.facts div {
+	.diff-facts div {
 		display: flex;
 		justify-content: space-between;
 		gap: 12px;
 		padding: 8px 0;
 		border-bottom: 1px solid var(--rule);
 	}
-	.facts dd {
+	.diff-facts dd {
 		margin: 0;
 		font-weight: 600;
 	}

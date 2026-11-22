@@ -6,10 +6,12 @@
 	import Steps from '#lib/components/Steps.svelte';
 	import Term from '#lib/components/Term.svelte';
 	import Icon from '#lib/components/Icon.svelte';
+	import Skeleton from '#lib/components/Skeleton.svelte';
 	import CatalogSearch from '#lib/components/CatalogSearch.svelte';
 	import ArticlePicker from '#lib/components/ArticlePicker.svelte';
 	import ConfirmDialog from '#lib/components/ConfirmDialog.svelte';
 	import { api } from '#lib/api.js';
+	import { loadAppState } from '#lib/app-state.svelte.js';
 	import { t, formatDay } from '#lib/i18n/index.svelte.js';
 	import { session, canReview } from '#lib/session.svelte.js';
 	import { notify, act } from '#lib/toast.svelte.js';
@@ -20,6 +22,7 @@
 	const MAX_ARTICLES = 60;
 
 	let app = $state<AppState | null>(null);
+	const openDrafts = $derived(app?.drafts.filter((d) => d.status === 'draft').length ?? 0);
 	let sources = $state<SourceEntry[]>([]);
 	let source = $state<'library' | 'catalog' | 'link' | 'file' | 'paste'>('file');
 	let listing = $state<CorpusListing | null>(null);
@@ -43,7 +46,7 @@
 
 	$effect(() => {
 		if (!canReview(session.account)) return;
-		Promise.all([api<AppState>('/api/state'), api<{ entries: SourceEntry[] }>('/api/sources'), api<CorpusListing>('/api/corpora')])
+		Promise.all([loadAppState(), api<{ entries: SourceEntry[] }>('/api/sources'), api<CorpusListing>('/api/corpora')])
 			.then(([s, lib, corpora]) => {
 				app = s;
 				sources = lib.entries;
@@ -149,7 +152,15 @@
 		<header class="page-head">
 			<div>
 				<h1 class="title">{t('import.title')}</h1>
-				<p class="lead">{t('import.lead')}</p>
+				<p class="facts">
+					{#if app}
+						<span><strong>{app.knowledge_bases.length}</strong> {t('home.stat.kbs', { n: app.knowledge_bases.length })}</span>
+						<span><strong>{openDrafts}</strong> {t('home.stat.drafts', { n: openDrafts })}</span>
+					{:else}
+						<span><Skeleton width="100px" height="12px" /></span><span><Skeleton width="150px" height="12px" /></span>
+					{/if}
+					<span>{t('import.lead')}</span>
+				</p>
 			</div>
 		</header>
 		<PageGuide name="import" steps={4} />

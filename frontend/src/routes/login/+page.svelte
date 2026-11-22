@@ -4,12 +4,14 @@
 	import { api, ApiError } from '#lib/api.js';
 	import { session } from '#lib/session.svelte.js';
 	import { t } from '#lib/i18n/index.svelte.js';
+	import { reveal, highlighterSweep, animate, DUR } from '#lib/motion.js';
 	import type { Account } from '#lib/types.js';
 
 	let username = $state('');
 	let password = $state('');
 	let busy = $state(false);
 	let error = $state('');
+	let card = $state<HTMLFormElement | null>(null);
 	const expired = $derived(page.url.searchParams.get('expired') === '1');
 
 	function safeNext(): string {
@@ -27,6 +29,8 @@
 		} catch (e) {
 			error = e instanceof ApiError ? e.message : String(e);
 			password = '';
+			// A refused sign-in gives the card a short shake: the eye goes back to the form.
+			animate(card!, { transform: ['translateX(0)', 'translateX(-6px)', 'translateX(5px)', 'translateX(-3px)', 'translateX(0)'], duration: DUR.slow + 60 });
 		} finally {
 			busy = false;
 		}
@@ -36,10 +40,10 @@
 <svelte:head><title>{t('login.title')} · Lexora</title></svelte:head>
 
 <div class="wrap">
-	<form class="sheet card" onsubmit={submit} aria-describedby={error ? 'login-error' : undefined}>
+	<form class="sheet card" onsubmit={submit} aria-describedby={error ? 'login-error' : undefined} bind:this={card} {@attach reveal({ y: 12, duration: DUR.page })}>
 		<h1 class="title">{t('login.title')}</h1>
 		<p class="lead">{t('login.lead')}</p>
-		<p class="specimen serif" aria-hidden="true">
+		<p class="specimen serif" aria-hidden="true" {@attach highlighterSweep({ delay: 260, step: 80, duration: 360 })}>
 			<mark class="hl-condition">Khi kết thúc thời gian thử việc</mark>,
 			<mark class="hl-actor">người sử dụng lao động</mark> <b>phải</b>
 			<mark class="hl-action">thông báo</mark> <mark class="hl-object">kết quả thử việc</mark> cho
@@ -81,8 +85,9 @@
 		background: var(--desk);
 		border-radius: var(--r-sheet);
 	}
+	/* The colour is a background image so it can be drawn left to right like a highlighter stroke. */
 	.specimen mark {
-		background: var(--hl);
+		background: linear-gradient(var(--hl), var(--hl)) left center / 100% 100% no-repeat;
 		color: var(--ink);
 		padding: 1px 2px;
 		border-radius: 2px;
