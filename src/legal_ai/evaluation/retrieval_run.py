@@ -10,7 +10,7 @@ without gold units (expected refusals) are excluded from the mean and counted. B
 span several units, every K also reports the mean number of index tokens behind the top-K records, so a
 higher recall bought with more context stays visible, and Recall at fixed token budgets (`token_budgets`, default
 250 to 6000) packs ranked records with the answer run's own packing function (`indexing.packing`, `context_packing`
-P0/P1/P2 in the shared settings; DK1 always P0) while the tokens the generator would read fit the budget, so conditions
+P0-P3 in the shared settings; DK1 always P0) while the tokens the generator would read fit the budget, so conditions
 are compared on equal context too. `tokens_to_reach` gives, per recall target (`recall_targets`, default 0.4 and 0.8),
 the smallest budget at which the mean recall reaches it, computed exactly from every question's packing breakpoints.
 
@@ -279,7 +279,7 @@ def load_validity(condition, shared, documents, units, bundle):
 
 def validity_of_run(manifest, records):
     """The `RecordFilter` a retrieval run used (None without a validity block), rebuilt from its manifest so the answer
-    run packs P2 siblings exactly as the retrieval run scored them; the bundle and the edges must hash as recorded."""
+    run packs P2/P3 siblings exactly as the retrieval run scored them; the bundle and the edges must hash as recorded."""
     spec = manifest["condition"].get("validity")
     if not spec:
         return None
@@ -304,7 +304,7 @@ def filter_valid(ranked, records, validity, level, as_of):
     Unit level: a unit whose whole new wording is a unit of the corpus (an amending unit of scope v3, linked by
     `amending_unit_id`) is replaced at its rank by that unit's records; other amended units keep their record with a
     status note, and their amending units follow right after. Amending units obey their own document dates. The rule
-    itself is `kb.validity.RecordFilter.admit`, which the packer also applies to P2 siblings."""
+    itself is `kb.validity.RecordFilter.admit`, which the packer also applies to P2/P3 siblings."""
     rfilter = getattr(validity, "record_filter", None)
     if rfilter is None or rfilter.level != level or getattr(rfilter, "source", None) is not records:
         rfilter = validity.record_filter = RecordFilter(validity, level, records)
@@ -469,7 +469,7 @@ def run(bundle, questions_path, condition_path, shared_path, output, embedder=No
             if condition["representation"] in KB_FILES:  # Claims of records the status filter removed are not used.
                 unused_claims = len({c for i, _ in before if i not in kept for c in records[i].get("claim_ids", [])})
             notes = {i: "\n".join(n for n in (notes.get(i), status_notes.get(i)) if n) for i in kept if notes.get(i) or status_notes.get(i)}
-            if packing == "P2":  # Siblings pass the same validity rule as ranked records.
+            if packer.adds_siblings:  # P2/P3 siblings pass the same validity rule as ranked records.
                 question_packer = packer.bind(lambda record, day=as_of: validity.record_filter.admit_record(record, day))
         top = [records[i] | {"status_note": notes[i]} if i in notes else records[i] for i, _ in ranked]
         gold = question["relevant_unit_ids"]

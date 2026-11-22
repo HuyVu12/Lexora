@@ -2,7 +2,7 @@
 
 For every question of a retrieval run, the top-K records (the same `top_k` for DK1-DK4) are packed into evidence
 blocks E01.. within a token budget, in rank order, by the retrieval run's `context_packing` (`indexing.packing`: flat
-P0, or grouped per Article P1/P2 with the shared header printed once); a block shows what the condition retrieved
+P0, or grouped per Article P1-P3 with the shared header printed once); a block shows what the condition retrieved
 (fixed chunk, structural unit with its path, or the unit with its claims). One structured model call
 per question returns a status and statements that each cite block IDs; the schema lists only this question's IDs.
 
@@ -62,7 +62,8 @@ def pack_with_groups(ranked, records, top_k, budget, packer=None):
     shown = [records[item["record_id"]] | ({"status_note": item["status_note"]} if item.get("status_note") else {}) for item in ranked]
     packed = (packer or Packer("P0")).pack(shown, budget, top_k)
     blocks = [{"id": b["id"], "record_id": b["record"]["record_id"], "unit_ids": b["record"]["unit_ids"], "token_count": b["token_count"],
-               "text": b["text"], "group": b["group"], **({"sibling": True} if b["sibling"] else {})} for b in packed["blocks"]]
+               "text": b["text"], "group": b["group"], **({"sibling": True} if b["sibling"] else {}),
+               **({"lead": b["lead"]} if b.get("lead") is not None else {})} for b in packed["blocks"]]
     return blocks, packed
 
 
@@ -134,9 +135,9 @@ def run(retrieval_dir, questions_path, config_path, provider, output, *, split=N
     edges = chain_edges(retrieval) if config.get("relations_in_context") else None
     record_list = list(records.values())
     packer = packer_for(retrieval, record_list)
-    # P2 siblings pass the validity rule of the retrieval run at each question's date (`kb.validity.RecordFilter`).
+    # P2/P3 siblings pass the validity rule of the retrieval run at each question's date (`kb.validity.RecordFilter`).
     from legal_ai.evaluation.retrieval_run import validity_of_run
-    rfilter = validity_of_run(retrieval, record_list) if packer.mode == "P2" else None
+    rfilter = validity_of_run(retrieval, record_list) if packer.adds_siblings else None
     issues = {}
     if retrieval.get("subqueries"):
         from legal_ai.evaluation.decompose import load
@@ -189,9 +190,11 @@ def run(retrieval_dir, questions_path, config_path, provider, output, *, split=N
             prompt = json.dumps(request | {"evidence": evidence_payload(packed)}, ensure_ascii=False)
             grouped = packer.mode != "P0"
             row = {"question_id": question["question_id"], "condition": manifest["condition"],
-                   "context": [{k: b[k] for k in ("id", "record_id", "unit_ids", "token_count", *(("group", "sibling") if grouped else ())) if k in b}
+                   "context": [{k: b[k] for k in ("id", "record_id", "unit_ids", "token_count", *(("group", "sibling", "lead") if grouped else ())) if k in b}
                                for b in blocks],
                    **({"context_groups": [{"header_tokens": g["header_tokens"]} for g in packed["groups"]]} if grouped else {}),
+                   # P3: the Clause leads printed once per group (`lead` of a context block indexes them).
+                   **({"context_leads": [{"group": lead["group"], "lead_tokens": lead["tokens"]} for lead in packed["leads"]]} if "leads" in packed else {}),
                    "context_tokens": packed["tokens"], "context_token_budget": budget, "prompt_sha256": digest(prompt),
                    **({"relations": relations} if edges is not None else {})}
             try:
@@ -271,12 +274,15 @@ def verification_load(answers, records, units):
             continue
         blocks = {b["id"]: b for b in answer.get("context", [])}
         headers = answer.get("context_groups")
+        leads = answer.get("context_leads")
         for statement in answer.get("statements", []):
             cited = [blocks[e] for e in statement["evidence_ids"] if e in blocks]
             statements += 1
             cited_tokens += sum(b["token_count"] for b in cited)
             if headers:
                 cited_tokens += sum(headers[g]["header_tokens"] for g in {b["group"] for b in cited})
+            if leads:  # P3: a cited Point is read with its Clause lead, counted once per statement.
+                cited_tokens += sum(leads[n]["lead_tokens"] for n in {b["lead"] for b in cited if b.get("lead") is not None})
             for block in cited:
                 citations += 1
                 record_units = (records.get(block["record_id"]) or {}).get("unit_ids", block["unit_ids"])
