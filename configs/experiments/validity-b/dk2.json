@@ -1,0 +1,11 @@
+{
+  "condition": "DK2",
+  "variant": "DK2-doc",
+  "representation": "structural_units",
+  "max_tokens": 384,
+  "status": "draft",
+  "validity": {
+    "level": "document"
+  },
+  "note": "Validity option B (decided 22/11/2026, docs/planning/dk2-dk4-improvement-2026-11-22.md sections 3.4, 4.4, 5.2), dates at the question's as_of, else shared.validity_as_of. DK2 is structure plus source metadata: records of documents not in force at that date are dropped by the documents' vbpl.vn dates, as in DK1-hl; no amendment edges and no unit status, so amended or repealed units of a document in force stay."
+}
