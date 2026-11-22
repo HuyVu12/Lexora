@@ -21,7 +21,11 @@ Một tệp cấu hình đã dùng cho một lượt chạy thì không sửa n�
 - `answer-main.json`: cấu hình sinh câu trả lời cho lượt chính (prompt `answer-v4.md`, 3.000 token, top 50); model chốt trên dòng lệnh.
 - `ablations/dk1-chunk{128,256,512}.json`: độ nhạy cỡ đoạn của ĐK1 (WP2), chỉ đo truy xuất trên tập dev; `dk1-chunk128.json` cùng tham số với `dk1-128.json`.
 
-Cách đóng gói ngữ cảnh (`context_packing`: P0, P1, P2 của `pack-article-v1`) nằm trong cấu hình dùng chung; ĐK1 luôn là P0.
+Cách đóng gói ngữ cảnh (`context_packing`: P0, P1, P2, P3 của `pack-article-v1`) nằm trong cấu hình dùng chung; ĐK1 luôn là P0.
+P3 (kế hoạch 22/11, mục 3.1) giữ xếp hạng và phần thêm anh em của P2, nhưng in câu dẫn của mỗi Khoản một lần trong khối Điều và dùng tên văn bản rút gọn tới số hiệu; mỗi Điểm vẫn có mã đoạn riêng.
+
+- `shared-rrf100.json`: ứng viên của kế hoạch 22/11, khác `shared.json` đúng hai trường (`rrf_candidates` 100 cho mọi điều kiện kể cả ĐK1, `context_packing` P3 cho ĐK2-ĐK4); chọn trên dev bằng quy tắc của WP3 trước mốc dừng biến thể.
+- ĐK3/ĐK4 với kế thừa câu dẫn: tạo tệp điều kiện mới (không sửa tệp cũ) với `kb_run` trỏ vào thư mục dẫn xuất của `cli kb-materialize <run> --output <mới> --validator kb-validator-v4 --inherit claims-inherit-v1`; manifest dẫn xuất giữ `units_sha256` của lượt gốc nên `run-retrieval` dùng được ngay.
 
 ## Đóng băng từ 11/11/2026
 
