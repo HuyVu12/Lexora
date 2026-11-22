@@ -56,7 +56,6 @@
 				<h1 class="title serif">{#if doc}{doc.title}{:else}<span class="title-ghost" style:width="min(520px, 70vw)"><Skeleton height="30px" /></span>{/if}</h1>
 				{#if doc}
 					<p class="facts">
-						<code>{doc.document_id}</code>
 						<span><Term key="leaf_unit">{t('corpus.doc.counts', { articles: doc.article_count, leaves: doc.leaf_count })}</Term></span>
 						{#if doc.metadata.effect_status?.name}<span><Term key="effect_status">{doc.metadata.effect_status.name}</Term></span>{/if}
 						{#if doc.source_kind === 'vbpl'}
@@ -65,10 +64,9 @@
 							<span>{t('corpus.doc.file', { name: doc.source_ref })}</span>
 						{/if}
 					</p>
-					<p class="small muted sha">SHA-256 <code>{doc.source_sha256}</code></p>
+					<details class="tech"><summary>{t('common.technical')}</summary><p>{t('corpus.docId')}: <code>{doc.document_id}</code> · SHA-256 <code>{doc.source_sha256}</code></p></details>
 				{:else}
 					<p class="facts"><span><Skeleton width="100px" height="12px" /></span><span><Skeleton width="150px" height="12px" /></span><span><Skeleton width="130px" height="12px" /></span></p>
-					<p class="small muted sha"><Skeleton width="420px" height="11px" /></p>
 				{/if}
 			</div>
 		</header>

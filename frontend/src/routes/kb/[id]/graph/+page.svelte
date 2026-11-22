@@ -148,8 +148,8 @@
 			<div>
 				<p class="crumb"><a href="/kb/{kb.id}"><Icon name="back" size={16} />{t('graph.back')}</a></p>
 				<h1 class="title">{t('graph.title')} · {kb.name}</h1>
-				<p class="small muted">
-					{t('graph.stats', { norms: index.norms.length, units: index.units.size, revision: data.revision.slice(0, 8) })}
+				<p class="small muted" title="{t('kb.revisionId')}: {data.revision}">
+					{t('graph.stats', { norms: index.norms.length, units: index.units.size })}
 					{#if data.graph.summary?.synthetic}<span class="chip synthetic">{t('common.synthetic')}</span>{/if}
 				</p>
 			</div>

@@ -90,9 +90,9 @@
 					<ul class="docs" {@attach revealItems({ step: 35, y: 6 })}>
 						{#each kb.documents as d, i (i)}
 							<li>
-								<span class="docicon"><Icon name="doc" /></span>
+								<span class="docicon" title={/^https:\/\//.test(d.source_url) ? undefined : t('kb.uploaded')}><Icon name="doc" /></span>
 								<span class="docname"><span class="serif">{d.title}</span>{#if d.synthetic}<span class="chip synthetic">{t('common.synthetic')}</span>{/if}</span>
-								{#if /^https:\/\//.test(d.source_url)}<a href={d.source_url} target="_blank" rel="noopener noreferrer">{t('kb.source')}</a>{:else}<span class="small muted">{t('kb.uploaded')}</span>{/if}
+								{#if /^https:\/\//.test(d.source_url)}<a href={d.source_url} target="_blank" rel="noopener noreferrer">{t('kb.source')}</a>{/if}
 							</li>
 						{/each}
 					</ul>
@@ -100,13 +100,16 @@
 			</section>
 			<section class="panel">
 				<h2 class="heading">{t('kb.history')}</h2>
-				<p class="small muted">{t('kb.history.lead')}</p>
 				<ol class="timeline" {@attach revealItems({ step: 50, y: 6, delay: 80 })}>
 					{#each kb.revisions as r, i (r.id)}
 						<li class:current={i === 0}>
 							<p><strong>{formatDate(r.created_at)}</strong>{#if i === 0}<span class="chip dark">{t('kb.current')}</span>{/if}</p>
-							<p class="small">{r.reviewer ? `${r.reviewer}: ${r.reason}` : r.reason}</p>
-							<p class="small muted">{t('kb.revisionId')}: <code>{r.id}</code></p>
+							{#if i > 0 && r.reviewer === kb.revisions[i - 1].reviewer && r.reason === kb.revisions[i - 1].reason}
+								<p class="small muted">{t('kb.sameReason')}</p>
+							{:else}
+								<p class="small">{r.reviewer ? `${r.reviewer}: ${r.reason}` : r.reason}</p>
+							{/if}
+							{#if canReview(session.account)}<details class="tech"><summary>{t('kb.revisionId')}</summary><p><code>{r.id}</code></p></details>{/if}
 						</li>
 					{/each}
 				</ol>

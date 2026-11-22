@@ -10,6 +10,13 @@
 	const pct = (v: number | null | undefined) => (v === null || v === undefined ? '-' : `${(v * 100).toFixed(1)}%`);
 	const count = (kind: string) => data.runs.filter((r) => r.kind === kind).length;
 	const sorted = $derived([...data.runs].sort((a, b) => (b.created_at ?? '').localeCompare(a.created_at ?? '')));
+	// The validator only needs a column when some run used an older one; otherwise it is one line under the heading.
+	const mixed = $derived(data.kb.some((r) => r.validator_version && r.validator_version !== data.validator_version));
+	// A model run twice (two scopes) is told apart by its run name; every other row shows the model alone.
+	const repeated = $derived(new Set(data.kb.map((r) => r.model).filter((m, i, all) => all.indexOf(m) !== i)));
+	const RECENT = 8;
+	let allRuns = $state(false);
+	const runs = $derived(allRuns ? sorted : sorted.slice(0, RECENT));
 </script>
 
 <div class="dev-tiles">
@@ -23,6 +30,7 @@
 		<h2 class="heading" id="kb-heading">{t('dev.exp.kb')}</h2>
 		<a href="/research/results">{t('dev.exp.openResults')}</a>
 	</div>
+	{#if data.kb.length && !mixed}<p class="small muted">{t('dev.exp.validator')}: {data.validator_version}</p>{/if}
 	{#if data.kb.length}
 		<div class="table-scroll">
 			<table class="table">
@@ -34,19 +42,19 @@
 						<th scope="col" class="num">ĐK4</th>
 						<th scope="col" class="num">{t('results.col.rejected')}</th>
 						<th scope="col" class="num">{t('results.col.injection')}</th>
-						<th scope="col">{t('dev.exp.validator')}</th>
+						{#if mixed}<th scope="col">{t('dev.exp.validator')}</th>{/if}
 					</tr>
 				</thead>
 				<tbody>
 					{#each data.kb as r (r.run)}
 						<tr>
-							<th scope="row"><code>{r.model}</code><span class="small muted block">{r.run}</span></th>
+							<th scope="row"><code title={r.run}>{r.model}</code>{#if repeated.has(r.model)}<span class="small muted run">{r.run}</span>{/if}</th>
 							<td class="num">{r.batches_ok}/{r.batches_planned ?? r.batches_attempted}</td>
 							<td class="num">{r.dk3_claims}</td>
 							<td class="num">{r.dk4_claims}</td>
 							<td class="num">{pct(r.rejected_rate)}</td>
 							<td class="num">{r.injection ? pct(r.injection.detectable_rate) : '-'}</td>
-							<td>{r.validator_version ?? '-'}{#if r.validator_version && r.validator_version !== data.validator_version}<span class="chip stale">{t('dev.exp.stale')}</span>{/if}</td>
+							{#if mixed}<td>{r.validator_version ?? '-'}{#if r.validator_version && r.validator_version !== data.validator_version}<span class="chip stale">{t('dev.exp.stale')}</span>{/if}</td>{/if}
 						</tr>
 					{/each}
 				</tbody>
@@ -80,10 +88,13 @@
 	<section class="panel" aria-labelledby="runs-heading">
 		<h2 class="heading" id="runs-heading">{t('dev.exp.runs')}</h2>
 		<ul class="dev-list">
-			{#each sorted as r (r.name)}
+			{#each runs as r (r.name)}
 				<li><span><code>{r.name}</code></span><span class="small muted">{t(`dev.run.${r.kind}` as MessageKey)}{r.created_at ? ` · ${formatDate(r.created_at)}` : ''}</span></li>
 			{/each}
 		</ul>
+		{#if sorted.length > RECENT}
+			<div><button type="button" class="btn quiet small" aria-expanded={allRuns} onclick={() => (allRuns = !allRuns)}>{allRuns ? t('dev.exp.fewerRuns') : t('dev.exp.allRuns', { n: sorted.length })}</button></div>
+		{/if}
 	</section>
 </div>
 
@@ -95,7 +106,7 @@
 		gap: 12px;
 		flex-wrap: wrap;
 	}
-	.block {
+	.run {
 		display: block;
 	}
 	.stale {

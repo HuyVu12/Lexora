@@ -86,7 +86,6 @@
 		<header class="page-head">
 			<div>
 				<h1 class="title">{t('dev.title')}</h1>
-				<p class="lead">{session.account?.role === 'dev' ? t('dev.lead.dev') : t('dev.lead.admin')}</p>
 			</div>
 			<div class="row">
 				{#if RANGED.includes(tab)}

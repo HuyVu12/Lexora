@@ -196,8 +196,8 @@
 							{#each corpus.documents as d (d.id)}
 								<li>
 									<div class="doc-main">
-										<a class="serif" href="/research/{corpus.id}/document/{d.id}">{d.title}</a>
-										<span class="small muted"><code>{d.document_id}</code> · <Term key="leaf_unit">{t('corpus.doc.counts', { articles: d.article_count, leaves: d.leaf_count })}</Term></span>
+										<a class="serif" href="/research/{corpus.id}/document/{d.id}" title={d.document_id}>{d.title}</a>
+										<span class="small muted"><Term key="leaf_unit">{t('corpus.doc.counts', { articles: d.article_count, leaves: d.leaf_count })}</Term></span>
 										<span class="small muted">
 											{#if d.source_kind === 'vbpl'}
 												<a href={d.source_url} target="_blank" rel="noopener noreferrer">vbpl.vn</a> · {t('corpus.doc.accessed', { date: formatDay(d.accessed_at) })}
@@ -239,7 +239,7 @@
 								<p><strong>{t('corpus.version', { n: v.number })}</strong> · <span class="small">{formatDate(v.frozen_at)}</span></p>
 								{#if v.note}<p class="small">{v.note}</p>{/if}
 								<p class="small muted">{t('corpus.version.facts', { docs: v.document_count, units: v.unit_count, who: v.frozen_by })}</p>
-								<p class="small muted">{t('corpus.version.id')}: <code>{v.id}</code> · SHA-256 <code title={v.bundle_sha256}>{v.bundle_sha256.slice(0, 12)}</code></p>
+								<details class="tech"><summary>{t('common.technical')}</summary><p>{t('corpus.version.id')}: <code>{v.id}</code> · SHA-256 <code title={v.bundle_sha256}>{v.bundle_sha256.slice(0, 12)}</code></p></details>
 							</li>
 						{/each}
 					</ol>

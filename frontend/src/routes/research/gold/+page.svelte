@@ -28,8 +28,6 @@
 	const versions = $derived(data?.versions ?? []);
 	const me = $derived(session.account?.username ?? '');
 	const mine = (s: GoldSetSummary) => s.labelled[me] ?? 0;
-	const sentences = $derived(sets?.reduce((n, s) => n + s.sentences, 0) ?? 0);
-	const labelled = $derived(sets?.reduce((n, s) => n + mine(s), 0) ?? 0);
 
 	const load = () =>
 		api<Listing>('/api/gold')
@@ -81,9 +79,8 @@
 				<p class="facts">
 					{#if sets}
 						<span><strong>{sets.length}</strong> {t('gold.facts.sets', { n: sets.length })}</span>
-						<span>{t('gold.facts.mine', { done: labelled, n: sentences })}</span>
 					{:else}
-						{#each [90, 170] as w (w)}<span><Skeleton width="{w}px" height="12px" /></span>{/each}
+						{#each [90] as w (w)}<span><Skeleton width="{w}px" height="12px" /></span>{/each}
 					{/if}
 				</p>
 			</div>

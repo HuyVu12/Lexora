@@ -3,6 +3,7 @@
 	import GoldNormEditor from '#lib/components/GoldNormEditor.svelte';
 	import ConfirmDialog from '#lib/components/ConfirmDialog.svelte';
 	import { page } from '$app/state';
+	import { goto } from '$app/navigation';
 	import Skeleton from '#lib/components/Skeleton.svelte';
 	import Icon from '#lib/components/Icon.svelte';
 	import PageSkeleton from '#lib/components/PageSkeleton.svelte';
@@ -17,6 +18,10 @@
 	type Item = GoldComparison['items'][number];
 	const id = $derived(page.params.id ?? '');
 	const other = $derived(page.url.searchParams.get('other') ?? '');
+	// The comparison needs the other annotator; a link without one goes back to the set instead of waiting forever.
+	$effect(() => {
+		if (id && !other) goto(`/research/gold/${id}`, { replaceState: true });
+	});
 	let report = $state<GoldComparison | null>(null);
 	let meta = $state<Pick<GoldWorkspace, 'name' | 'slots' | 'modalities' | 'annotators'> | null>(null);
 	let error = $state('');
@@ -116,7 +121,7 @@
 		<header class="page-head">
 			<div>
 				<h1 class="title serif">{t('gold.cmp.title')}{#if meta}{` · ${meta.name}`}{/if}</h1>
-				<p class="lead">{t('gold.cmp.lead')}</p>
+				<p class="lead">{#if report && meta}{t('cmp.lead', { a: nameOf(report.first), b: nameOf(report.second) })}{:else}<Skeleton width="min(520px, 80vw)" height="14px" />{/if}</p>
 			</div>
 		</header>
 		<PageGuide name="goldCompare" steps={3} />

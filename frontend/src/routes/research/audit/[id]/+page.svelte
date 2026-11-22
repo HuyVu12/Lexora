@@ -36,6 +36,12 @@
 	const done = $derived(ws ? ws.rows.filter((r) => r.mine).length : 0);
 	const index = $derived(ws ? ws.rows.findIndex((r) => r.item_id === selected) : -1);
 	const current = $derived(ws && index >= 0 ? ws.rows[index] : null);
+	// The extracted sentence is part of the unit text: mark it in place instead of printing it a second time.
+	const hit = $derived.by(() => {
+		if (!current?.sentence || current.sentence === current.unit_text.trim()) return null;
+		const at = current.unit_text.indexOf(current.sentence);
+		return at < 0 ? null : { before: current.unit_text.slice(0, at), after: current.unit_text.slice(at + current.sentence.length) };
+	});
 	const others = $derived(ws ? Object.entries(ws.labelled).filter(([who]) => who !== session.account?.username) : []);
 	const normLines = (norm: string) => norm.split('\n').filter(Boolean).map((line) => {
 		const at = line.indexOf(':');
@@ -103,7 +109,7 @@
 		<header class="page-head">
 			<div>
 				<h1 class="title serif">{#if ws}{ws.name}{:else}<span class="title-ghost" style:width="min(380px, 70vw)"><Skeleton height="30px" /></span>{/if}</h1>
-				<p class="facts">{#if ws}<span>{t('audit.mine', { done, n: ws.rows.length })}</span>{:else}<span><Skeleton width="150px" height="12px" /></span>{/if}<span>{t('audit.blind')}</span></p>
+				<p class="facts"><span>{t('audit.blind')}</span></p>
 			</div>
 			<div class="row">
 				<a class="btn quiet" href="/docs/huong-dan-kiem-tra-quy-pham"><Icon name="doc" size={16} />{t('audit.guide')}</a>
@@ -148,9 +154,13 @@
 								</div>
 							{/if}
 							<div class="block">
-								<p class="label">{t('audit.unit')}</p>
-								<p class="ws-text serif">{current.unit_text}</p>
-								{#if current.sentence && current.sentence !== current.unit_text.trim()}
+								<p class="label">{t('audit.unit')}{#if hit}<mark class="key-mark">{t('audit.sentenceMarked')}</mark>{/if}</p>
+								{#if hit}
+									<p class="ws-text serif">{hit.before}<mark class="hit">{current.sentence}</mark>{hit.after}</p>
+								{:else}
+									<p class="ws-text serif">{current.unit_text}</p>
+								{/if}
+								{#if !hit && current.sentence && current.sentence !== current.unit_text.trim()}
 									<p class="ws-selection small"><span class="label">{t('audit.sentence')}</span> <mark>{current.sentence}</mark></p>
 								{/if}
 							</div>
@@ -217,6 +227,22 @@
 	.block {
 		display: grid;
 		gap: 4px;
+	}
+	.hit,
+	.key-mark {
+		background: var(--hl-object);
+		color: var(--ink);
+		border-radius: 3px;
+		-webkit-box-decoration-break: clone;
+		box-decoration-break: clone;
+	}
+	.hit {
+		padding: 0 2px;
+	}
+	.key-mark {
+		margin-left: 8px;
+		padding: 0 4px;
+		font-weight: 400;
 	}
 	.context {
 		display: grid;

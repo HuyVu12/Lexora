@@ -26,7 +26,6 @@
 
 	const sets = $derived(data?.sets ?? null);
 	const versions = $derived(data?.versions ?? []);
-	const model = $derived(data?.proposal_model ?? null);
 	const frozenCount = $derived(sets?.filter((s) => s.frozen).length ?? 0);
 
 	const load = () =>
@@ -81,9 +80,8 @@
 					{#if sets}
 						<span><strong>{sets.length}</strong> {t('qs.facts.sets', { n: sets.length })}</span>
 						<span><strong>{frozenCount}</strong> {t('qs.facts.frozen', { n: frozenCount })}</span>
-						<span title={model ? t('qs.model.on', { model }) : t('qs.model.off')}>{model ? t('qs.facts.modelOn', { model }) : t('qs.facts.modelOff')}</span>
 					{:else}
-						{#each [110, 90, 190] as w (w)}<span><Skeleton width="{w}px" height="12px" /></span>{/each}
+						{#each [110, 90] as w (w)}<span><Skeleton width="{w}px" height="12px" /></span>{/each}
 					{/if}
 				</p>
 			</div>

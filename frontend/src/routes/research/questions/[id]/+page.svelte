@@ -210,7 +210,6 @@
 				<p class="facts">
 					{#if ws}
 						<span>{t('qs.count', { n: ws.items.length })}</span>
-						<span>{t('qs.labelledOf', { done: ws.labelled, n: ws.items.length })}</span>
 						<a href="/research/{ws.corpus_id}">{t('qs.onVersion', { n: ws.corpus_version })}</a>
 						{#if ws.show_proposals !== null}<span class="chip"><Term key="proposal_mode">{ws.show_proposals ? t('qs.mode.shownChip') : t('qs.mode.hiddenChip')}</Term></span>{/if}
 					{:else}<span><Skeleton width="120px" height="12px" /></span><span><Skeleton width="150px" height="12px" /></span><span><Skeleton width="110px" height="12px" /></span>{/if}

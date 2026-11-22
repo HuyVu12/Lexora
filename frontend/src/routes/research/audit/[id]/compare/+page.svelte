@@ -3,6 +3,7 @@
 	import Icon from '#lib/components/Icon.svelte';
 	import PageSkeleton from '#lib/components/PageSkeleton.svelte';
 	import { page } from '$app/state';
+	import { goto } from '$app/navigation';
 	import { api } from '#lib/api.js';
 	import { t } from '#lib/i18n/index.svelte.js';
 	import { session, canReview } from '#lib/session.svelte.js';
@@ -13,6 +14,10 @@
 	const LABELS: AuditLabel[] = ['sai', 'dien_dat', 'dung_ngu_canh', 'dung', 'khong_ro'];
 	const id = $derived(page.params.id ?? '');
 	const other = $derived(page.url.searchParams.get('other') ?? '');
+	// The comparison needs the other annotator; a link without one goes back to the set instead of waiting forever.
+	$effect(() => {
+		if (id && !other) goto(`/research/audit/${id}`, { replaceState: true });
+	});
 	let data = $state<AuditCompare | null>(null);
 	let error = $state('');
 	let filter = $state<'disagree' | 'open' | 'all'>('disagree');

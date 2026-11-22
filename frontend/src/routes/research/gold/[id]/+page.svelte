@@ -168,7 +168,6 @@
 				<p class="facts">
 					{#if ws}
 						<span>{t('gold.counts', { articles: ws.articles, sentences: ws.sentences })}</span>
-						<span>{t('gold.progress', { done, n: ws.items.length })}</span>
 						{#if ws.sample}<span>{t('gold.sampleFacts', { articles: ws.sample.article_count, sentences: ws.sample.sentences })}</span>{/if}
 						<span>{t('qs.onVersion', { n: ws.corpus_version })}</span>
 					{:else}<span><Skeleton width="120px" height="12px" /></span><span><Skeleton width="150px" height="12px" /></span><span><Skeleton width="110px" height="12px" /></span>{/if}

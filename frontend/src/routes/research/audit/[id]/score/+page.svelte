@@ -116,10 +116,13 @@
 		min-width: 260px;
 		margin: 0;
 	}
+	.panel,
+	.empty-note {
+		margin-top: 16px;
+	}
 	.panel {
 		display: grid;
 		gap: 12px;
-		margin-top: 16px;
 	}
 	.table-wrap {
 		overflow-x: auto;

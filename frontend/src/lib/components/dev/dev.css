@@ -78,6 +78,11 @@
 .dev-list li > :first-child {
 	overflow-wrap: anywhere;
 }
+/* The figure on the right stays on one line; the label beside it wraps instead. */
+.dev-list li > :last-child:not(:first-child) {
+	flex: none;
+	white-space: nowrap;
+}
 .status-ok {
 	color: var(--approve);
 }

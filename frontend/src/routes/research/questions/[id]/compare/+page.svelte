@@ -2,6 +2,7 @@
 	import PageGuide from '#lib/components/PageGuide.svelte';
 	import StepTag from '#lib/components/StepTag.svelte';
 	import { page } from '$app/state';
+	import { goto } from '$app/navigation';
 	import Skeleton from '#lib/components/Skeleton.svelte';
 	import Icon from '#lib/components/Icon.svelte';
 	import PageSkeleton from '#lib/components/PageSkeleton.svelte';
@@ -16,6 +17,10 @@
 
 	const id = $derived(page.params.id ?? '');
 	const other = $derived(page.url.searchParams.get('other') ?? '');
+	// The comparison needs the other annotator; a link without one goes back to the set instead of waiting forever.
+	$effect(() => {
+		if (id && !other) goto(`/research/questions/${id}`, { replaceState: true });
+	});
 	let report = $state<Comparison | null>(null);
 	let summary = $state<QuestionSetSummary | null>(null);
 	let error = $state('');

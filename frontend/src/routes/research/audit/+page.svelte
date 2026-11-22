@@ -23,8 +23,6 @@
 				.catch((e) => (error = e.message));
 	});
 	const mine = (s: AuditSetSummary) => s.labelled[session.account?.username ?? '']?.n ?? 0;
-	const items = $derived(data?.sets.reduce((n, s) => n + s.items, 0) ?? 0);
-	const done = $derived(data?.sets.reduce((n, s) => n + mine(s), 0) ?? 0);
 </script>
 
 <svelte:head><title>{t('audit.title')} · Lexora</title></svelte:head>
@@ -40,9 +38,8 @@
 				<p class="facts">
 					{#if data}
 						<span><strong>{data.sets.length}</strong> {t('audit.facts.sets', { n: data.sets.length })}</span>
-						<span>{t('audit.facts.mine', { done, n: items })}</span>
 					{:else}
-						{#each [110, 160] as w (w)}<span><Skeleton width="{w}px" height="12px" /></span>{/each}
+						{#each [110] as w (w)}<span><Skeleton width="{w}px" height="12px" /></span>{/each}
 					{/if}
 				</p>
 			</div>

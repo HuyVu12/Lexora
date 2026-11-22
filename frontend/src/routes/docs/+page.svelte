@@ -29,7 +29,6 @@
 	const groups = $derived(
 		[...new Set(shown.map((d) => d.category))].map((category) => ({ category, items: shown.filter((d) => d.category === category) }))
 	);
-	const categories = $derived(new Set((documents ?? []).map((d) => d.category)).size);
 	const date = (value: string | null) => (value ? value.split('-').reverse().join('/') : '');
 </script>
 
@@ -42,9 +41,8 @@
 			<p class="facts">
 				{#if documents}
 					<span><strong>{documents.length}</strong> {t('docs.facts.n', { n: documents.length })}</span>
-					<span><strong>{categories}</strong> {t('docs.facts.groups', { n: categories })}</span>
 				{:else}
-					<span><Skeleton width="90px" height="12px" /></span><span><Skeleton width="70px" height="12px" /></span>
+					<span><Skeleton width="90px" height="12px" /></span>
 				{/if}
 			</p>
 		</div>

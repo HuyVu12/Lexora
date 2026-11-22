@@ -57,14 +57,8 @@
 					{#if listing}
 						<span><strong>{listing.corpora.length}</strong> {t('research.facts.corpora', { n: listing.corpora.length })}</span>
 						<span><strong>{frozen}</strong> {t('research.facts.versions', { n: frozen })}</span>
-						<span title={listing.catalog ? t('research.catalog.ready', { n: listing.catalog.documents.toLocaleString('vi-VN') }) : t('research.catalog.missing')}>
-							<Icon name="search" size={15} />{listing.catalog ? t('research.facts.catalog', { n: listing.catalog.documents.toLocaleString('vi-VN') }) : t('research.facts.noCatalog')}
-						</span>
-						<span title={listing.vbpl_enabled ? t('research.vbpl.on') : t('research.vbpl.off')}>
-							<Icon name="globe" size={15} />{listing.vbpl_enabled ? t('research.facts.vbplOn') : t('research.facts.vbplOff')}
-						</span>
 					{:else}
-						{#each [80, 140, 170, 130] as w (w)}<span><Skeleton width="{w}px" height="12px" /></span>{/each}
+						{#each [80, 140] as w (w)}<span><Skeleton width="{w}px" height="12px" /></span>{/each}
 					{/if}
 				</p>
 			</div>
@@ -114,7 +108,6 @@
 
 			<form class="panel create" onsubmit={create}>
 				<h2 class="heading"><StepTag n={1} />{t('research.create')}</h2>
-				<p class="small muted">{t('research.createLead')}</p>
 				<label class="field"><span>{t('research.name')}</span><input maxlength="120" required bind:value={name} placeholder={t('research.namePh')} /></label>
 				<label class="field"><span>{t('research.description')} <span class="hint">({t('common.optional')})</span></span><textarea maxlength="2000" rows="3" bind:value={description}></textarea></label>
 				<div><button class="btn primary" type="submit" disabled={busy}><Icon name="plus" />{t('research.createSubmit')}</button></div>
@@ -124,9 +117,6 @@
 </div>
 
 <style>
-	.facts :global(svg) {
-		color: var(--muted);
-	}
 	.cols {
 		display: grid;
 		grid-template-columns: minmax(0, 1fr) 380px;
