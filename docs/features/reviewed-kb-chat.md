@@ -50,7 +50,11 @@ Flag `--approve-router` là opt-in kỹ thuật, không khẳng định model mi
 - `POST /api/publish`: `{draft_id, reviewer, reason}` → `{revision, kb_id, summary}`; `409 base_changed` nếu kho đã có revision mới.
 - `POST /api/chat/start`: `{kb_ids}` → session; từ chối kho chưa có claim được human review.
 - `POST /api/chat/ask`: `{session_id, question, mode, allow_public_transfer, semantic}`; mode `extractive` mặc định, `llm` opt-in; `semantic: true` bật tìm kết hợp. Phản hồi có `retrieval: {mode: hybrid|lexical, reason}`.
-- `GET /api/chat/session?id=...`: lịch sử và bindings.
+- `GET /api/chat/session?id=...`: lịch sử, bindings, `title` (tên người dùng đặt, mặc định là câu hỏi đầu tiên rút gọn) và `updated_at`.
+- `POST /api/chat/rename`: `{session_id, title}`; tên rỗng trả về tên mặc định. Chỉ chủ cuộc trò chuyện; lượt hỏi đã lưu không bị sửa.
+- `POST /api/chat/hide`: `{session_id}`; ẩn khỏi danh sách của chủ (bảng `chat_session_meta.hidden_at`), không xóa bản ghi để giữ dữ liệu kiểm tra và thống kê. Cuộc đã ẩn trả 404 ở mọi route chat.
+- `GET /api/chat/source?session_id=...&turn=...&citation=...`: câu trích trong nguyên văn đơn vị của revision đã ghim, đường dẫn Chương/Điều/Khoản và các kho chứa; chỉ phần `text[start:end]` là evidence đã duyệt.
+- `GET /api/chat/suggestions?kb=...`: tối đa 4 câu hỏi gợi ý cho các kho đã chọn, tạo offline (câu hỏi thường gặp có đoạn đã duyệt khớp, rồi tiêu đề Điều có nhiều quy phạm nhất), không gọi model.
 
 Tài khoản cục bộ với ba vai trò (`legal_ai.auth`), không phải SSO. Kho công bố revision mới thì session hiện có vẫn dùng revision cũ; tạo session mới để dùng revision mới. Từng câu hỏi cần đủ ngữ cảnh, chưa rewrite follow-up bằng model.
 

@@ -243,6 +243,41 @@ class WebApiTests(unittest.TestCase):
         self.assertEqual(other.get("/api/chat/session", params={"id": session["id"]}).status_code, 404)
         self.assertEqual(self.post(other, "/api/chat/ask", {"session_id": session["id"], "question": "x"}).status_code, 404)
 
+    def test_chat_rename_hide_source_and_suggestions_follow_ownership(self):
+        published = self.publish(self.client("phapche", "review password 1"))
+        reader, other = self.client("nhansu", "reader password 1"), self.client("admin", "admin password 1")
+        kept = self.post(reader, "/api/chat/start", {"kb_ids": [published["kb_id"]]}).json()
+        session = self.post(reader, "/api/chat/start", {"kb_ids": [published["kb_id"]]}).json()
+        answer = self.post(reader, "/api/chat/ask", {"session_id": session["id"], "question": "thông báo kết quả thử việc"}).json()
+        listed = {s["id"]: s for s in reader.get("/api/state").json()["chat_sessions"]}
+        self.assertEqual(listed[session["id"]]["title"], "thông báo kết quả thử việc")
+        self.assertIsNone(listed[kept["id"]]["title"])
+        # Other accounts can neither rename, hide, read sources of, nor see the conversation.
+        self.assertEqual(self.post(other, "/api/chat/rename", {"session_id": session["id"], "title": "x"}).status_code, 404)
+        self.assertEqual(self.post(other, "/api/chat/hide", {"session_id": session["id"]}).status_code, 404)
+        self.assertEqual(other.get("/api/chat/source", params={"session_id": session["id"], "turn": 0, "citation": "C1"}).status_code, 404)
+        self.assertEqual(self.post(reader, "/api/chat/rename", {"session_id": session["id"], "title": "x", "extra": 1}).status_code, 400)
+        renamed = self.post(reader, "/api/chat/rename", {"session_id": session["id"], "title": "Thử việc"})
+        self.assertEqual(renamed.json(), {"id": session["id"], "title": "Thử việc", "custom_title": True})
+        self.assertEqual(reader.get("/api/chat/session", params={"id": session["id"]}).json()["title"], "Thử việc")
+        source = reader.get("/api/chat/source", params={"session_id": session["id"], "turn": 0, "citation": answer["citations"][0]["id"]}).json()
+        self.assertEqual(source["text"][source["start"]:source["end"]], source["quote"])
+        self.assertEqual(reader.get("/api/chat/source", params={"session_id": session["id"], "turn": 5, "citation": "C1"}).status_code, 400)
+        suggestions = reader.get("/api/chat/suggestions", params={"kb": [published["kb_id"]]})
+        self.assertEqual(suggestions.status_code, 200)
+        self.assertIsInstance(suggestions.json()["suggestions"], list)
+        self.assertEqual(reader.get("/api/chat/suggestions").status_code, 400)
+        self.assertEqual(self.client().get("/api/chat/suggestions", params={"kb": [published["kb_id"]]}).status_code, 401)
+        # Hiding removes it from the owner's list and every chat route, but the record stays in the store.
+        self.assertEqual(self.post(reader, "/api/chat/hide", {"session_id": session["id"]}).json(), {"hidden": session["id"]})
+        self.assertEqual([s["id"] for s in reader.get("/api/state").json()["chat_sessions"]], [kept["id"]])
+        self.assertEqual(reader.get("/api/chat/session", params={"id": session["id"]}).status_code, 404)
+        self.assertEqual(self.post(reader, "/api/chat/ask", {"session_id": session["id"], "question": "thử việc"}).status_code, 404)
+        self.assertEqual(self.post(reader, "/api/chat/rename", {"session_id": session["id"], "title": "y"}).status_code, 404)
+        with self.store.connect() as db:
+            body = json.loads(db.execute("SELECT body FROM chat_sessions WHERE id=?", (session["id"],)).fetchone()[0])
+        self.assertEqual(len(body["turns"]), 1)
+
     def test_publish_records_the_signed_in_reviewer_and_detects_stale_drafts(self):
         reviewer = self.client("phapche", "review password 1")
         draft = self.prepare(reviewer).json()

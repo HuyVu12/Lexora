@@ -127,6 +127,15 @@ class ChatAskBody(Body):
     semantic: bool = False
 
 
+class ChatRenameBody(Body):
+    session_id: str
+    title: str
+
+
+class ChatHideBody(Body):
+    session_id: str
+
+
 class AccountCreateBody(Body):
     username: str
     display_name: str
@@ -400,7 +409,8 @@ def create_app(store, port, *, provider=None, source_catalog=None, extractor=Non
         return account
 
     def own_chat(session_id, account):
-        if session_id not in accounts.chats_of(account["id"]):
+        # A conversation its owner removed from view answers like one that never existed.
+        if session_id not in accounts.chats_of(account["id"]) or chat.hidden(session_id):
             raise Denied(404, "Không tìm thấy cuộc trò chuyện")
 
     @app.middleware("http")
@@ -669,6 +679,27 @@ def create_app(store, port, *, provider=None, source_catalog=None, extractor=Non
         ops.record_event("chat_ask", mode=body.mode, semantic=body.semantic, status=answer.get("status"), citations=len(answer.get("citations") or []),
                          kbs=len(answer.get("bindings") or []), ms=round((time.monotonic() - began) * 1000))  # Counts only, never the question.
         return answer
+
+    @app.post("/api/chat/rename")
+    def chat_rename(body: ChatRenameBody, account=Depends(current)):
+        own_chat(body.session_id, account)
+        renamed = chat.rename(body.session_id, body.title)
+        return {k: renamed[k] for k in ("id", "title", "custom_title")}
+
+    @app.post("/api/chat/hide")
+    def chat_hide(body: ChatHideBody, account=Depends(current)):
+        own_chat(body.session_id, account)
+        return chat.hide(body.session_id)
+
+    @app.get("/api/chat/source")
+    def chat_source(session_id: str = Query(), turn: int = Query(), citation: str = Query(), account=Depends(current)):
+        own_chat(session_id, account)
+        return chat.source(session_id, turn, citation)
+
+    @app.get("/api/chat/suggestions")
+    def chat_suggestions(kb: list[str] = Query(default=[]), _=Depends(current)):
+        # Readers only ever see published bases; the service skips any base without a published revision.
+        return chat.suggestions(kb)
 
     # Research corpora (reviewers) -------------------------------------------------------
     @app.get("/api/corpora")

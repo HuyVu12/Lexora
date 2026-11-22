@@ -77,10 +77,79 @@ class ReviewChatTests(unittest.TestCase):
         self.assertEqual([b["revision_id"] for b in new["bindings"]], [second["id"]])
         self.assertEqual(self.chat.ask(new["id"], "cấp chứng chỉ an toàn")["status"], "sources_found")
         self.assertEqual(self.chat.ask(old["id"], "cấp chứng chỉ an toàn")["status"], "insufficient_evidence")
-        self.assertEqual([s["id"] for s in self.chat.sessions({old["id"], new["id"], "missing"})], [new["id"], old["id"]])
+        # Most recently active first: the old conversation was asked last.
+        self.assertEqual([s["id"] for s in self.chat.sessions({old["id"], new["id"], "missing"})], [old["id"], new["id"]])
         self.assertEqual([s["id"] for s in self.chat.sessions({old["id"]})], [old["id"]], "only the given sessions are read")
         self.assertEqual(self.chat.sessions(set()), [])
         self.assertEqual(self.chat.sessions({new["id"]})[0]["bindings"][0]["kb_name"], "Kho chat")
+
+    def test_titles_default_to_the_first_question_and_renaming_never_touches_turns(self):
+        revision = self.publish()
+        session = self.chat.start([revision["kb_id"]])
+        self.assertIsNone(session["title"], "no question, no title yet")
+        long_question = "thông báo kết quả thử việc " * 6
+        self.chat.ask(session["id"], long_question)
+        [summary] = self.chat.sessions({session["id"]})
+        self.assertTrue(summary["title"].endswith("…") and len(summary["title"]) <= 71 and not summary["custom_title"])
+        self.assertTrue(long_question.startswith(summary["title"][:-1]))
+        with self.store.connect() as db:
+            before = db.execute("SELECT body FROM chat_sessions WHERE id=?", (session["id"],)).fetchone()[0]
+        renamed = self.chat.rename(session["id"], "  Thử   việc\n")
+        self.assertEqual((renamed["title"], renamed["custom_title"]), ("Thử việc", True))
+        self.assertEqual(self.chat.sessions({session["id"]})[0]["title"], "Thử việc")
+        with self.store.connect() as db:
+            self.assertEqual(db.execute("SELECT body FROM chat_sessions WHERE id=?", (session["id"],)).fetchone()[0], before, "stored turns unchanged")
+        self.assertFalse(self.chat.rename(session["id"], "")["custom_title"], "an empty title goes back to the first question")
+        for bad in ("x" * 121, None):
+            with self.assertRaises(ValueError):
+                self.chat.rename(session["id"], bad)
+        with self.assertRaises(ValueError):
+            self.chat.rename("missing", "Tên")
+
+    def test_hidden_sessions_leave_every_listing_but_keep_their_record(self):
+        revision = self.publish()
+        kept, hidden = self.chat.start([revision["kb_id"]]), self.chat.start([revision["kb_id"]])
+        self.chat.ask(hidden["id"], "thông báo kết quả thử việc")
+        self.assertEqual(self.chat.hide(hidden["id"]), {"hidden": hidden["id"]})
+        self.assertTrue(self.chat.hidden(hidden["id"]))
+        self.assertEqual([s["id"] for s in self.chat.sessions({kept["id"], hidden["id"]})], [kept["id"]])
+        self.assertEqual([s["id"] for s in self.chat.sessions()], [kept["id"]])
+        for call in (lambda: self.chat.session(hidden["id"]), lambda: self.chat.ask(hidden["id"], "thử việc"),
+                     lambda: self.chat.rename(hidden["id"], "x"), lambda: self.chat.hide(hidden["id"]),
+                     lambda: self.chat.source(hidden["id"], 0, "C1")):
+            with self.assertRaises(ValueError):
+                call()
+        with self.store.connect() as db:
+            body = json.loads(db.execute("SELECT body FROM chat_sessions WHERE id=?", (hidden["id"],)).fetchone()[0])
+        self.assertEqual(len(body["turns"]), 1, "the record and its turns stay for audits and usage counts")
+
+    def test_source_shows_the_quote_inside_its_pinned_unit_text(self):
+        revision = self.publish()
+        session = self.chat.start([revision["kb_id"]])
+        turn = self.chat.ask(session["id"], "Ai thông báo kết quả thử việc?")
+        source = self.chat.source(session["id"], 0, turn["citations"][0]["id"])
+        self.assertEqual(source["text"][source["start"]:source["end"]], source["quote"])
+        self.assertIn("bí mật", source["text"], "the unit text is context; the quote alone is the approved evidence")
+        self.assertNotIn("bí mật", source["quote"])
+        self.assertEqual([p["unit_type"] for p in source["path"]][-1], source["unit_type"])
+        self.assertEqual(source["path"][0]["unit_type"], "article")
+        self.assertEqual(source["sources"][0]["kb_name"], "Kho chat")
+        self.assertEqual(source["revision_id"], revision["id"])
+        for turn_index, citation in ((1, "C1"), (-1, "C1"), (0, "C9"), ("0", "C1")):
+            with self.assertRaises(ValueError):
+                self.chat.source(session["id"], turn_index, citation)
+
+    def test_suggestions_are_offline_and_only_offer_questions_with_evidence(self):
+        revision = self.publish("Điều 26. Thử việc\n1. Tiền lương của người lao động trong thời gian thử việc ít nhất phải bằng 85% mức lương của công việc đó.\n"
+                                "Điều 27. Giờ làm việc ban đêm\n1. Người sử dụng lao động phải trả thêm tiền lương cho giờ làm việc ban đêm.\n")
+        suggestions = self.chat.suggestions([revision["kb_id"]])["suggestions"]
+        self.assertEqual(suggestions[0], "Tiền lương thử việc ít nhất bằng bao nhiêu?")
+        self.assertLessEqual(len(suggestions), 4)
+        self.assertIn("Pháp luật quy định thế nào về giờ làm việc ban đêm?", suggestions)
+        self.assertNotIn("Lao động nữ được nghỉ thai sản bao lâu?", suggestions, "no approved passage, no suggestion")
+        for kb_ids in ([], ["missing"], "x", [revision["kb_id"]] * 2):
+            with self.assertRaises(ValueError):
+                self.chat.suggestions(kb_ids)
 
     def test_only_approved_sentence_not_full_unit_retrieved(self):
         revision = self.publish()
