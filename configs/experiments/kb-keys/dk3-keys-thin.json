@@ -1,0 +1,28 @@
+{
+  "condition": "DK3",
+  "representation": "llm_kb_raw",
+  "automatic_validation": false,
+  "manual_review": false,
+  "status": "draft",
+  "kb_run": "experiments/runs/kb-inherit-2026-11-23/v3-sonnet-v4-inherit",
+  "kb_model_note": "Derived offline from experiments/runs/kb-scope-v3-sonnet (Claude Sonnet 5.5, norm-llm-v1, corpus scope v3 v48feefc6d53b) with kb-materialize --validator kb-validator-v4 --inherit claims-inherit-v1 (23/11/2026); no model call.",
+  "record": "unit_with_claims",
+  "max_tokens": 384,
+  "graph": {
+    "edges": [
+      "reference",
+      "referenced_by"
+    ],
+    "max_neighbors": 2,
+    "source_aliases": {
+      "Bộ luật Lao động": "45-2019-qh14"
+    },
+    "require_match": true
+  },
+  "claims_view": "thin",
+  "note": "DK3 with kb-keys-v1 in the index text and claims_view thin for the generator (plan 22/11/2026 section 4.3): only the modality label and an actor inherited from the lead-in.",
+  "index_keys": {
+    "version": "kb-keys-v1",
+    "aliases": "configs/experiments/actor-aliases.json"
+  }
+}

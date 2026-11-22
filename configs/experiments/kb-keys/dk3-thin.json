@@ -1,0 +1,24 @@
+{
+  "condition": "DK3",
+  "representation": "llm_kb_raw",
+  "automatic_validation": false,
+  "manual_review": false,
+  "status": "draft",
+  "kb_run": "experiments/runs/kb-inherit-2026-11-23/v3-sonnet-v4-inherit",
+  "kb_model_note": "Derived offline from experiments/runs/kb-scope-v3-sonnet (Claude Sonnet 5.5, norm-llm-v1, corpus scope v3 v48feefc6d53b) with kb-materialize --validator kb-validator-v4 --inherit claims-inherit-v1 (23/11/2026); no model call.",
+  "record": "unit_with_claims",
+  "max_tokens": 384,
+  "graph": {
+    "edges": [
+      "reference",
+      "referenced_by"
+    ],
+    "max_neighbors": 2,
+    "source_aliases": {
+      "Bộ luật Lao động": "45-2019-qh14"
+    },
+    "require_match": true
+  },
+  "claims_view": "thin",
+  "note": "DK3 with claims_view thin and no retrieval keys: separates the effect of the thinner generator text from kb-keys-v1 (same index as dk3-compact.json)."
+}
