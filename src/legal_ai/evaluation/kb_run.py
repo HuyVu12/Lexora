@@ -12,6 +12,13 @@ without paying twice; model answers cannot be reproduced by re-running (no seed)
 - `validation.jsonl`: the automatic validator's result for each DK3 claim;
 - `dk4.jsonl`: the accepted DK3 claims with their evidence offsets (KB after automatic validation).
 DK4 is a subset of DK3 by construction, so the two differ only by validation.
+
+By default `materialize` rewrites the run's own files with `kb-validator-v3` and no inheritance, exactly as the
+run was first built. A derived materialization reads `raw.jsonl` of a source run and writes into a NEW directory,
+optionally with another validator (`kb-validator-v4`: lead-in evidence) and with `claims-inherit-v1` (an empty
+actor, action or outcome filled from the parent's lead-in, with its own evidence) applied to DK3 before validation.
+Its `manifest.json` is the source manifest plus a `derivation` record, so retrieval runs and tools that read the
+manifest work on it unchanged, and the source run is never touched.
 """
 
 from datetime import datetime, timezone
@@ -20,14 +27,19 @@ import time
 from pathlib import Path
 
 from legal_ai.common.io import canonical, digest, read_jsonl, write_json, write_jsonl
+from legal_ai.extraction import inherit as claims_inherit
 from legal_ai.extraction.llm_norms import LLM_SLOTS, MAX_NORMS_PER_SENTENCE, RUN as PROMPT_RUN, SCHEMA, SYSTEM, parse_json, plan, request_text
 from legal_ai.extraction.norms import leaf_units, sentences
 from legal_ai.providers.pilot import ProviderError
-from legal_ai.validation.claims import VALIDATOR_VERSION, validate
+from legal_ai.validation import claims as validator_v3, claims_v4 as validator_v4
+from legal_ai.validation.claims import VALIDATOR_VERSION
 
 RUN_VERSION = "llm-kb-run-v1"
 KB_VERSION = "llm-kb-v1"
 CHAT_MAX_TOKENS = 16000  # Reasoning models spend part of the budget before answering.
+DERIVATION_VERSION = "llm-kb-derived-v1"
+VALIDATORS = {validator_v3.VALIDATOR_VERSION: validator_v3.validate, validator_v4.VALIDATOR_VERSION: validator_v4.validate}
+INHERITANCE = {claims_inherit.VERSION: claims_inherit.inherit}
 
 
 def targets(units):
@@ -135,16 +147,52 @@ def _claims(units, raw_rows, run_id):
     return claims, gaps
 
 
-def materialize(bundle_units, output):
-    """Rebuild dk3.jsonl, validation.jsonl, dk4.jsonl and report.json from raw.jsonl (offline, deterministic)."""
+def _derivation(source, output, raw_bytes, validator, inheritance):
+    """The derivation record of a derived materialization; refuses an output that holds anything else."""
+    record = {"derivation_version": DERIVATION_VERSION, "source_run": Path(source).as_posix(), "raw_sha256": digest(raw_bytes),
+              "validator_version": validator, "inheritance_version": inheritance}
+    if Path(output).resolve() == Path(source).resolve():
+        raise ValueError("a derived materialization needs a new output directory, not the source run")
+    manifest_path = Path(output) / "manifest.json"
+    if manifest_path.exists():
+        if json.loads(manifest_path.read_text(encoding="utf-8")).get("derivation") != record:
+            raise ValueError("output holds another run or derivation; use a new directory")
+    elif Path(output).exists() and any(Path(output).iterdir()):
+        raise ValueError("output must be a new, empty directory")
+    return record
+
+
+def materialize(bundle_units, output, *, source=None, validator=VALIDATOR_VERSION, inheritance=None):
+    """Rebuild dk3.jsonl, validation.jsonl, dk4.jsonl and report.json from raw.jsonl (offline, deterministic).
+
+    Without `source` the run in `output` is rebuilt in place, and only with the defaults (kb-validator-v3, no
+    inheritance), so a run's own files always reproduce its first build. With `source` the raw answers of that run
+    are materialized into `output`, a new directory, with the chosen validator and inheritance."""
+    if validator not in VALIDATORS:
+        raise ValueError(f"validator must be one of {sorted(VALIDATORS)}")
+    if inheritance is not None and inheritance not in INHERITANCE:
+        raise ValueError(f"inheritance must be one of {sorted(INHERITANCE)}")
+    if inheritance is not None and validator == validator_v3.VALIDATOR_VERSION:
+        raise ValueError("inherited slots quote the lead-in, which kb-validator-v3 rejects; use kb-validator-v4")
+    if source is None and (validator != VALIDATOR_VERSION or inheritance is not None):
+        raise ValueError("another validator or inheritance makes a derived knowledge base: give the source run and a new output directory")
     output = Path(output)
-    raw_rows = read_jsonl(output / "raw.jsonl")
-    manifest = json.loads((output / "manifest.json").read_text(encoding="utf-8"))
+    origin = Path(source) if source is not None else output
+    if not (origin / "raw.jsonl").exists():
+        raise ValueError(f"{origin.as_posix()} has no raw.jsonl; materialize from the original knowledge-base run")
+    raw_rows = read_jsonl(origin / "raw.jsonl")
+    manifest = json.loads((origin / "manifest.json").read_text(encoding="utf-8"))
+    derivation = _derivation(origin, output, (origin / "raw.jsonl").read_bytes(), validator, inheritance) if source is not None else None
     claims, gaps = _claims(bundle_units, raw_rows, manifest["run_id"])
-    results = validate(claims, bundle_units)
+    inherited = None
+    if inheritance is not None:
+        claims, inherited = INHERITANCE[inheritance](claims, bundle_units)
+    results = VALIDATORS[validator](claims, bundle_units)
     accepted = {r["claim_id"]: r for r in results if r["decision"] == "accepted"}
-    dk4 = [claim | {"evidence": accepted[claim["claim_id"]]["evidence"], "validation": VALIDATOR_VERSION}
+    dk4 = [claim | {"evidence": accepted[claim["claim_id"]]["evidence"], "validation": validator}
            for claim in claims if claim["claim_id"] in accepted]
+    if derivation is not None:
+        write_json(output / "manifest.json", manifest | {"derivation": derivation})
     write_jsonl(output / "dk3.jsonl", claims)
     write_jsonl(output / "validation.jsonl", results)
     write_jsonl(output / "dk4.jsonl", dk4)
@@ -159,12 +207,23 @@ def materialize(bundle_units, output):
         for name, value in result["checks"].items():
             check_counts[name][value] = check_counts[name].get(value, 0) + 1
     ok = [row for row in raw_rows if row.get("status") == "ok"]
-    report = {"run_version": RUN_VERSION, "kb_version": KB_VERSION, "validator_version": VALIDATOR_VERSION,
+    report = {"run_version": RUN_VERSION, "kb_version": KB_VERSION, "validator_version": validator,
               "batches_ok": len({r["key"] for r in ok}), "batch_errors": sum(1 for r in raw_rows if r.get("status") != "ok"),
               "sentences_without_answer": len(gaps), "dk3_claims": len(claims), "dk4_claims": len(dk4),
               "rejected": len(claims) - len(dk4), "checks": check_counts, "reasons": dict(sorted(reasons.items())),
               "cost_usd": round(sum(r.get("cost_usd") or 0 for r in ok), 4),
               "dk3_sha256": digest("".join(canonical(c) + "\n" for c in claims)), "dk4_sha256": digest("".join(canonical(c) + "\n" for c in dk4))}
+    if derivation is not None:
+        report["derivation"] = derivation
+    if inherited is not None:
+        report["inheritance"] = inherited
+    if validator == validator_v4.VALIDATOR_VERSION:
+        lead = [r["evidence"]["lead_in"] for r in accepted.values() if "lead_in" in r["evidence"]]
+        values = {}
+        for entry in lead:
+            for name in entry["slots"] + (["modality_cue"] if entry["modality_cue"] else []):
+                values[name] = values.get(name, 0) + 1
+        report["lead_in_evidence"] = {"accepted_claims": len(lead), "values": dict(sorted(values.items()))}
     write_json(output / "report.json", report)
     return report
 
