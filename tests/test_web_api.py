@@ -191,6 +191,46 @@ class WebApiTests(unittest.TestCase):
         self.assertEqual(self.client().get("/api/kb/graph", params={"id": published["kb_id"]}).status_code, 401)
         self.assertEqual(reader.get("/api/kb/graph", params={"id": "missing"}).status_code, 400)
 
+    def test_cached_views_follow_reviews_publishes_and_new_run_folders(self):
+        runs = Path(self.temp.name) / "runs"
+        self.app = create_app(self.store, PORT, token="t0ken", frontend_dir=self.build, experiments_dir=runs)
+        vu, reader = self.client("phapche", "review password 1"), self.client("nhansu", "reader password 1")
+        self.assertEqual(vu.get("/api/experiments/kb").json()["runs"], [])
+        draft = self.prepare(vu).json()
+        shown = vu.get("/api/draft", params={"id": draft["id"]})
+        self.assertEqual(shown.headers["content-type"], "application/json")
+        self.assertEqual(shown.json(), json.loads(json.dumps(self.store.draft_view(draft["id"]))))
+        self.post(vu, "/api/draft/review", {"draft_id": draft["id"], "item_id": draft["claims"][0]["id"], "decision": "approve"})
+        [row] = vu.get("/api/state").json()["drafts"]
+        self.assertEqual((row["decided"], row["claims"]), (1, len(draft["claims"])))
+        self.approve_all(vu, draft)
+        first = self.post(vu, "/api/publish", {"draft_id": draft["id"], "reason": "Đối chiếu"}).json()
+        self.assertEqual(vu.get("/api/state").json()["drafts"][0]["status"], "merged")
+        self.assertEqual(reader.get("/api/kb/graph", params={"id": first["kb_id"]}).json()["revision"], first["revision"])
+        merge = {"mode": "merge", "kb_id": first["kb_id"]}
+        second_draft = self.prepare(vu, SOURCE.replace("Điều 1.", "Điều 2."), merge, "y").json()
+        self.approve_all(vu, second_draft)
+        second = self.post(vu, "/api/publish", {"draft_id": second_draft["id"], "reason": "Đối chiếu"}).json()
+        [kb] = reader.get("/api/state").json()["knowledge_bases"]
+        self.assertEqual((kb["current_revision"], kb["revisions"], kb["documents"]), (second["revision"], 2, 2))
+        self.assertEqual(kb["approved_claims"], second["summary"]["approved_claims"])
+        graph = reader.get("/api/kb/graph", params={"id": first["kb_id"]}).json()
+        self.assertEqual(graph["revision"], second["revision"], "a new publish is served at once")
+        self.assertEqual(len([n for n in graph["graph"]["nodes"] if n["kind"] == "Document"]), 2)
+
+        sys.path.insert(0, str(ROOT / "tests"))
+        from test_kb_run import LAW, StandIn
+        from test_retrieval_run import bundle
+        from legal_ai.evaluation import kb_run
+        _, units, _ = bundle(Path(self.temp.name) / "bundle", {"syn": LAW})
+        kb_run.start(Path(self.temp.name) / "bundle", runs / "kb-a", "stand-in", "medium")
+        kb_run.extract(units, StandIn(), runs / "kb-a")
+        kb_run.materialize(units, runs / "kb-a")
+        [run] = vu.get("/api/experiments/kb").json()["runs"]
+        self.assertEqual((run["run"], run["dk3_claims"]), ("kb-a", 6))
+        (runs / "kb-a" / "report.json").write_text(json.dumps({"dk3_claims": 7, "dk4_claims": 3}), encoding="utf-8")
+        self.assertEqual(vu.get("/api/experiments/kb").json()["runs"][0]["dk3_claims"], 7, "a changed run file is read again")
+
     def test_chats_are_private_to_their_account(self):
         published = self.publish(self.client("phapche", "review password 1"))
         reader = self.client("nhansu", "reader password 1")

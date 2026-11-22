@@ -2,12 +2,14 @@
 
 from collections import Counter
 from datetime import datetime, timezone
+from functools import lru_cache
 import json
 import math
 import threading
 import unicodedata
 from uuid import uuid4
 
+from legal_ai.common.cache import BoundedCache
 from legal_ai.common.io import canonical, digest
 from legal_ai.providers.pilot import ProviderError
 from legal_ai.rag.dense import DenseIndex, fuse
@@ -23,6 +25,7 @@ DENSE_MIN_SIMILARITY = 0.72
 # In hybrid mode a passage, even a keyword match, is dropped when it is clearly less similar
 # than the best passage; two shared words such as "thử việc" are not enough on their own.
 DENSE_RELATIVE_MARGIN = 0.10
+PASSAGE_CACHE_SIZE = 16  # Approved passages of one revision: small next to the revision itself.
 
 
 def terms(text):
@@ -79,13 +82,21 @@ def approved_passages(graph):
     return passages
 
 
+@lru_cache(maxsize=8192)
+def passage_terms(text):
+    """Term counts of one passage text; shared between questions, so callers must not modify them."""
+    return Counter(terms(text))
+
+
 def lexical_scores(passages, question):
     """(BM25 score, passage index) for passages matching enough query terms."""
     query = query_terms(question)
     if not query or not passages:
         return []
-    docs = [Counter(terms(p["evidence"]["quote"] + " " + " ".join(s["quote"] for s in p["scope"]))) for p in passages]
-    average = sum(sum(d.values()) for d in docs) / len(docs)
+    docs = [passage_terms(p["evidence"]["quote"] + " " + " ".join(s["quote"] for s in p["scope"])) for p in passages]
+    lengths = [sum(d.values()) for d in docs]
+    average = sum(lengths) / len(docs)
+    frequencies = {word: sum(word in d for d in docs) for word in query}  # Document frequency, once per query term.
     ranked = []
     for index, counts in enumerate(docs):
         matched = query & counts.keys()
@@ -94,8 +105,8 @@ def lexical_scores(passages, question):
         score = 0.0
         for word in matched:
             frequency = counts[word]
-            df = sum(word in d for d in docs)
-            score += math.log(1 + (len(docs) - df + .5) / (df + .5)) * frequency * 2.5 / (frequency + 1.5 * (.25 + .75 * sum(counts.values()) / average))
+            df = frequencies[word]
+            score += math.log(1 + (len(docs) - df + .5) / (df + .5)) * frequency * 2.5 / (frequency + 1.5 * (.25 + .75 * lengths[index] / average))
         ranked.append((score, index))
     return ranked
 
@@ -156,6 +167,9 @@ class ChatService:
         self.store, self.provider = store, provider
         self.dense = DenseIndex(store, embedder) if embedder is not None else None
         self._lock = threading.Lock()
+        # Approved passages per (revision, KB), checked once: revisions are immutable, so the integrity checks of
+        # `approved_passages` hold for as long as the ID exists. Entries are shared; callers copy before changing.
+        self._approved = BoundedCache(PASSAGE_CACHE_SIZE)
         with store.connect() as db:
             db.execute("CREATE TABLE IF NOT EXISTS chat_sessions (id TEXT PRIMARY KEY, body TEXT NOT NULL)")
             legacy = [(i, json.loads(b)) for i, b in db.execute("SELECT id, body FROM chat_sessions").fetchall()]
@@ -171,15 +185,27 @@ class ChatService:
     def _kbs(self):
         return {kb["id"]: kb for kb in self.store.knowledge_bases()}
 
-    def _named(self, bindings):
-        kbs = self._kbs()
+    @staticmethod
+    def _named(bindings, kbs):
         return [{**b, "kb_name": kbs.get(b["kb_id"], {}).get("name")} for b in bindings]
 
-    def sessions(self):
+    def sessions(self, ids=None):
+        """Sessions newest first; with `ids`, only those (the signed-in account's), so others are never read."""
         with self.store.connect() as db:
-            rows = [json.loads(r[0]) for r in db.execute("SELECT body FROM chat_sessions ORDER BY rowid DESC")]
+            if ids is None:
+                rows = db.execute("SELECT body FROM chat_sessions ORDER BY rowid DESC").fetchall()
+            else:
+                ids = sorted(i for i in ids if isinstance(i, str))
+                rows = []
+                for at in range(0, len(ids), 500):
+                    chunk = ids[at:at + 500]
+                    rows += db.execute(f"SELECT body, rowid FROM chat_sessions WHERE id IN ({','.join('?' * len(chunk))})", chunk).fetchall()
+                rows.sort(key=lambda row: -row[1])
+        if not rows:
+            return []
+        kbs = self._kbs()
         return [{"id": r["id"], "created_at": r["created_at"], "turns": len(r["turns"]),
-                 "bindings": self._named(r["bindings"])} for r in rows]
+                 "bindings": self._named(r["bindings"], kbs)} for r in (json.loads(row[0]) for row in rows)]
 
     def session(self, session_id):
         with self.store.connect() as db:
@@ -187,8 +213,11 @@ class ChatService:
         if row is None:
             raise ValueError("chat_session_not_found")
         session = json.loads(row[0])
-        session["bindings"] = self._named(session["bindings"])
+        session["bindings"] = self._named(session["bindings"], self._kbs())
         return session
+
+    def _approved_passages(self, revision_id, kb_id):
+        return self._approved.get((revision_id, kb_id), lambda: approved_passages(self.store.revision(revision_id, kb_id)["graph"]))
 
     def start(self, kb_ids):
         if not isinstance(kb_ids, list) or not 1 <= len(kb_ids) <= MAX_SESSION_KBS or len(set(map(str, kb_ids))) != len(kb_ids):
@@ -198,10 +227,9 @@ class ChatService:
             kb = self.store.knowledge_base(kb_id)
             if kb["archived_at"]:
                 raise ValueError("Kho “" + kb["name"] + "” đã được lưu trữ")
-            revision = self.store.revision(kb["current_revision"], kb_id)
-            if not approved_passages(revision["graph"]):
+            if not self._approved_passages(kb["current_revision"], kb_id):
                 raise ValueError("Kho “" + kb["name"] + "” chưa có quy phạm được duyệt. Hãy duyệt và công bố trước khi hỏi đáp")
-            bindings.append({"kb_id": kb_id, "revision_id": revision["id"]})
+            bindings.append({"kb_id": kb_id, "revision_id": kb["current_revision"]})
         session = {"schema_version": "review-chat-v2", "id": uuid4().hex, "bindings": bindings,
                    "created_at": datetime.now(timezone.utc).isoformat(), "turns": []}
         with self.store.connect() as db:
@@ -215,12 +243,13 @@ class ChatService:
             kb = self.store.knowledge_base(binding["kb_id"])
             if kb["archived_at"]:
                 raise ValueError("Kho “" + kb["name"] + "” đã được lưu trữ; hãy tạo cuộc trò chuyện mới")
-            revision = self.store.revision(binding["revision_id"], binding["kb_id"])
+            revision_id = binding["revision_id"]
+            passages = self._approved_passages(revision_id, binding["kb_id"])
             kbs.append(kb)
-            for passage in approved_passages(revision["graph"]):
+            for passage in passages:
                 e = passage["evidence"]
                 key = (e["normalized_sha256"], e["unit_version_id"], e["start"], e["end"])
-                source = {"kb_id": kb["id"], "kb_name": kb["name"], "revision": revision["id"],
+                source = {"kb_id": kb["id"], "kb_name": kb["name"], "revision": revision_id,
                           "claim_id": passage["claim_id"], "edited": passage["edited"]}
                 if key in merged:
                     merged[key]["sources"].append(source)

@@ -68,6 +68,20 @@ class ReviewChatTests(unittest.TestCase):
                 chat.start(kb_ids)
         self.assertEqual(chat.sessions(), [])
 
+    def test_a_publish_reaches_new_sessions_while_pinned_ones_keep_their_revision(self):
+        first = self.publish()
+        old = self.chat.start([first["kb_id"]])
+        self.assertEqual(self.chat.ask(old["id"], "thông báo kết quả thử việc")["status"], "sources_found")
+        second = self.publish("Điều 2. DỮ LIỆU TỔNG HỢP KHÔNG PHẢI LUẬT\n1. Người sử dụng lao động phải cấp chứng chỉ an toàn.\n")
+        new = self.chat.start([second["kb_id"]])
+        self.assertEqual([b["revision_id"] for b in new["bindings"]], [second["id"]])
+        self.assertEqual(self.chat.ask(new["id"], "cấp chứng chỉ an toàn")["status"], "sources_found")
+        self.assertEqual(self.chat.ask(old["id"], "cấp chứng chỉ an toàn")["status"], "insufficient_evidence")
+        self.assertEqual([s["id"] for s in self.chat.sessions({old["id"], new["id"], "missing"})], [new["id"], old["id"]])
+        self.assertEqual([s["id"] for s in self.chat.sessions({old["id"]})], [old["id"]], "only the given sessions are read")
+        self.assertEqual(self.chat.sessions(set()), [])
+        self.assertEqual(self.chat.sessions({new["id"]})[0]["bindings"][0]["kb_name"], "Kho chat")
+
     def test_only_approved_sentence_not_full_unit_retrieved(self):
         revision = self.publish()
         session = self.chat.start([revision["kb_id"]])

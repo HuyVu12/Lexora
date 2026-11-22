@@ -6,10 +6,12 @@ same run when one exists next to it. `compare` re-materializes every run with th
 runs are judged by the same rules, then writes a JSON file and a Markdown table. Offline; no model call.
 """
 
+from copy import deepcopy
 from datetime import datetime, timezone
 import json
 from pathlib import Path
 
+from legal_ai.common.cache import BoundedCache
 from legal_ai.common.io import read_jsonl, write_json
 
 COMPARE_VERSION = "kb-compare-v1"
@@ -108,8 +110,11 @@ def summarize(run_dir):
     report_stale = not report_path.exists() or (run_dir / "raw.jsonl").stat().st_mtime > report_path.stat().st_mtime
     raw = [row for row in read_jsonl(run_dir / "raw.jsonl") if row.get("code") not in STOP_CODES]
     bundle = Path(manifest["bundle"])
-    from legal_ai.evaluation.kb_run import batches
-    planned = len(batches(read_jsonl(bundle / "units.jsonl"))) if (bundle / "units.jsonl").exists() else None
+    from legal_ai.evaluation.kb_run import targets
+    from legal_ai.extraction.llm_norms import plan
+    # `kb_run.batches` makes one batch per planned group; counting the groups skips building every request text.
+    units = read_jsonl(bundle / "units.jsonl") if (bundle / "units.jsonl").exists() else None
+    planned = len(plan(units, targets(units))) if units is not None else None
     latest = {}
     for row in raw:
         if row["key"] not in latest or row.get("status") == "ok":
@@ -148,6 +153,44 @@ def summarize(run_dir):
             "median_call_seconds": median_s, "calling_minutes": total_min,
             "cost_usd": report.get("cost_usd"), "injection": _injection(run_dir), "report_stale": report_stale,
             "rejection_explained": _explained(run_dir) if (run_dir / "validation.jsonl").exists() else None}
+
+
+_SUMMARIES = BoundedCache(256)
+
+
+def _stat(path):
+    try:
+        info = path.stat()
+    except OSError:
+        return path.as_posix(), None, None
+    return path.as_posix(), info.st_size, info.st_mtime_ns
+
+
+def run_signature(run_dir, sibling_reports):
+    """Everything `summarize(run_dir)` reads, by path, size and modification time: every file of the run folder,
+    the bundle's units (planned batches) and the `report.json` of sibling folders (planted-error runs)."""
+    run_dir = Path(run_dir).absolute()
+    files = tuple(sorted(_stat(path) for path in run_dir.iterdir() if path.is_file()))
+    try:
+        bundle = json.loads((run_dir / "manifest.json").read_text(encoding="utf-8")).get("bundle")
+    except (OSError, ValueError):
+        bundle = None
+    units = _stat((Path(bundle) / "units.jsonl").absolute()) if isinstance(bundle, str) else None
+    return run_dir.as_posix(), files, units, sibling_reports
+
+
+def summaries(folder):
+    """`summarize` of every knowledge-base run under `folder`, each computed again only when one of its input files
+    changed (run folders are written once, so a summary normally lasts until a run is resumed or re-materialized)."""
+    folder = Path(folder)
+    if not folder.exists():
+        return []
+    siblings = tuple(sorted(_stat(path.absolute()) for path in folder.glob("*/report.json")))
+    result = []
+    for run_dir in kb_runs(folder):
+        summary = _SUMMARIES.get(run_signature(run_dir, siblings), lambda: summarize(run_dir))
+        result.append(deepcopy(summary))  # Callers own their copy; the cached one stays as computed.
+    return result
 
 
 def reason_label(code):

@@ -16,6 +16,7 @@ import sqlite3
 import unicodedata
 from uuid import uuid4
 
+from legal_ai.common.cache import BoundedCache
 from legal_ai.common.io import canonical, digest
 from legal_ai.extraction.norms import ClaimBuilder, leaf_units, sentences
 from legal_ai.ingestion.parser import parse
@@ -124,16 +125,61 @@ def entity_suggestions(graph, existing):
             for n in graph["nodes"] if n["kind"] in KINDS}
 
 
-def primary_quote(graph_nodes, claim):
-    evidence = {n["payload"]["evidence_id"]: n["payload"] for n in graph_nodes if n["kind"] == "Evidence"}
+def evidence_map(graph_nodes):
+    return {n["payload"]["evidence_id"]: n["payload"] for n in graph_nodes if n["kind"] == "Evidence"}
+
+
+def primary_anchor(evidence, claim):
+    """The longest evidence row of a claim inside its first source unit; `evidence` is `evidence_map(nodes)`."""
     anchors = [evidence[e] for e in claim["evidence_ids"] if e in evidence and evidence[e]["unit_version_id"] == claim["source_unit_version_ids"][0]]
     return max(anchors, key=lambda a: len(a["quote"])) if anchors else None
+
+
+DOCUMENT_FIELDS = ("document_id", "title", "source_url", "synthetic", "legal_status", "source_sha256", "accessed_at")
+REVISION_FIELDS = ("id", "parent", "created_at", "reviewer", "reason")
+
+
+def revision_summary(revision):
+    """What KB listings need from a revision, so they never parse its graph again (revisions are immutable)."""
+    nodes = revision["graph"]["nodes"]
+    return {**{k: revision[k] for k in REVISION_FIELDS}, "approved_claims": sum(1 for n in nodes if is_approved(n)),
+            "documents": [{k: n["payload"].get(k) for k in DOCUMENT_FIELDS} for n in nodes if n["kind"] == "Document"]}
+
+
+def draft_summary(draft):
+    """What the workspace listing needs from a draft body; rewritten with the body on every save."""
+    return {"id": draft["id"], "title": draft["title"], "status": draft["status"], "created_at": draft["created_at"],
+            "target": draft["target"], "kb_id": draft.get("kb_id"),
+            "extraction_state": draft.get("extraction", {}).get("state", "done"),
+            "claims": sum(1 for n in draft["graph"]["nodes"] if n["kind"] == "NormClaim")}
+
+
+# Summary rows live in their own tables: reading a column stored after a multi-MB body walks the body's overflow
+# pages. The triggers drop a summary whenever its row changes, whatever code wrote it; `_fill_summaries` and the
+# readers then rebuild it from the body, so a summary can be missing but never stale.
+SUMMARY_SCHEMA = (
+    "CREATE TABLE IF NOT EXISTS revision_summaries (id TEXT PRIMARY KEY, kb_id TEXT, body TEXT NOT NULL)",
+    "CREATE TABLE IF NOT EXISTS draft_summaries (id TEXT PRIMARY KEY, body TEXT NOT NULL)",
+    "CREATE INDEX IF NOT EXISTS revisions_kb ON revisions (kb_id)",
+    "CREATE TRIGGER IF NOT EXISTS revision_summary_stale AFTER UPDATE OF id, body, kb_id ON revisions "
+    "BEGIN DELETE FROM revision_summaries WHERE id = OLD.id; END",
+    "CREATE TRIGGER IF NOT EXISTS revision_summary_deleted AFTER DELETE ON revisions "
+    "BEGIN DELETE FROM revision_summaries WHERE id = OLD.id; END",
+    "CREATE TRIGGER IF NOT EXISTS draft_summary_stale AFTER UPDATE OF id, body ON drafts "
+    "BEGIN DELETE FROM draft_summaries WHERE id = OLD.id; END",
+    "CREATE TRIGGER IF NOT EXISTS draft_summary_deleted AFTER DELETE ON drafts "
+    "BEGIN DELETE FROM draft_summaries WHERE id = OLD.id; END",
+)
+REVISION_CACHE_SIZE = 4  # Parsed revisions are ~15 MB each on the VM store.
 
 
 class ReviewStore:
     def __init__(self, path, seed=None):
         self.path = Path(path)
         self.path.parent.mkdir(parents=True, exist_ok=True)
+        # Parsed revisions by ID. Revisions are immutable, so an entry never goes stale; callers get a shared
+        # object and must not modify it (publish and prepare copy what they change).
+        self._revisions = BoundedCache(REVISION_CACHE_SIZE)
         with self.connect() as db:
             db.execute("BEGIN IMMEDIATE")
             db.execute("CREATE TABLE IF NOT EXISTS meta (key TEXT PRIMARY KEY, value TEXT NOT NULL)")
@@ -143,6 +189,8 @@ class ReviewStore:
             db.execute("CREATE TABLE IF NOT EXISTS review_decisions (draft_id TEXT NOT NULL, item_id TEXT NOT NULL, body TEXT NOT NULL, PRIMARY KEY (draft_id, item_id))")
             if "kb_id" not in {row[1] for row in db.execute("PRAGMA table_info(revisions)")}:
                 db.execute("ALTER TABLE revisions ADD COLUMN kb_id TEXT")
+            for statement in SUMMARY_SCHEMA:
+                db.execute(statement)
             self._migrate(db)
             if seed and not db.execute("SELECT 1 FROM knowledge_bases LIMIT 1").fetchone():
                 graph = json.loads(Path(seed).read_text(encoding="utf-8"))
@@ -152,6 +200,7 @@ class ReviewStore:
                 self._insert_revision(db, kb["id"], None, graph, None,
                                       "Initial review graph; existing candidates remain unverified", None)
             db.execute("INSERT OR REPLACE INTO meta VALUES ('store_version', ?)", (STORE_VERSION,))
+            self._fill_summaries(db)  # Once per older store: later writes keep the summaries.
 
     # Storage helpers -------------------------------------------------------
 
@@ -174,7 +223,7 @@ class ReviewStore:
             draft = json.loads(body)
             if "target" not in draft:
                 draft.update(target={"mode": "merge", "kb_id": kb["id"]}, kb_id=kb["id"])
-                db.execute("UPDATE drafts SET body=? WHERE id=?", (canonical(draft), draft_id))
+                self._save_draft(db, draft)
 
     def _insert_kb(self, db, name, description, data_class):
         kb = {"id": uuid4().hex, "name": name, "description": description, "data_class": data_class,
@@ -186,7 +235,56 @@ class ReviewStore:
         revision = {"schema_version": "import-review-v1", "id": uuid4().hex, "kb_id": kb_id, "parent": parent,
                     "created_at": now(), "reviewer": reviewer, "reason": reason, "graph": graph, "review": review}
         db.execute("INSERT INTO revisions (id, body, kb_id) VALUES (?, ?, ?)", (revision["id"], canonical(revision), kb_id))
+        self._put_revision_summary(db, revision)
         return revision
+
+    @staticmethod
+    def _put_revision_summary(db, revision):
+        db.execute("INSERT OR REPLACE INTO revision_summaries VALUES (?, ?, ?)",
+                   (revision["id"], revision["kb_id"], canonical(revision_summary(revision))))
+
+    @staticmethod
+    def _put_draft_summary(db, draft):
+        db.execute("INSERT OR REPLACE INTO draft_summaries VALUES (?, ?)", (draft["id"], canonical(draft_summary(draft))))
+
+    def _save_draft(self, db, draft, *, insert=False):
+        """The only writer of draft bodies: the body and its summary change in the same transaction."""
+        if insert:
+            db.execute("INSERT INTO drafts VALUES (?, ?)", (draft["id"], canonical(draft)))
+        else:
+            db.execute("UPDATE drafts SET body=? WHERE id=?", (canonical(draft), draft["id"]))  # The trigger drops the old summary.
+        self._put_draft_summary(db, draft)
+
+    def _fill_summaries(self, db):
+        """Store the missing summaries: rows of a store older than summaries, or written by code that bypassed them."""
+        missing = "SELECT t.id FROM {0} t LEFT JOIN {1} s ON s.id = t.id WHERE s.id IS NULL"
+        if not any(db.execute(missing.format(*pair) + " LIMIT 1").fetchone()
+                   for pair in (("revisions", "revision_summaries"), ("drafts", "draft_summaries"))):
+            return
+        if not db.in_transaction:
+            db.execute("BEGIN IMMEDIATE")  # Read each body and store its summary with no writer in between.
+        for table, summaries, read, put in (("revisions", "revision_summaries", self._revision_row, self._put_revision_summary),
+                                            ("drafts", "draft_summaries", self._draft, self._put_draft_summary)):
+            for (row_id,) in db.execute(missing.format(table, summaries)).fetchall():
+                try:
+                    put(db, read(db, row_id))
+                except (KeyError, TypeError, AttributeError):
+                    continue  # A malformed body still fails where it is listed, as before; it must not stop the store from opening.
+
+    def _revision_summaries(self, db, kb_id=None):
+        """[(kb_id, summary)] of every revision, or of one KB's, newest first."""
+        self._fill_summaries(db)
+        result = []
+        for revision_id, owner, body in db.execute("SELECT r.id, s.kb_id, s.body FROM revisions r "
+                                                   "LEFT JOIN revision_summaries s ON s.id = r.id ORDER BY r.rowid DESC").fetchall():
+            if body is None:  # Inserted after the fill above by code that bypassed summaries: read it directly.
+                revision = self._revision_row(db, revision_id)
+                owner, summary = revision["kb_id"], revision_summary(revision)
+            else:
+                summary = json.loads(body)
+            if kb_id is None or owner == kb_id:
+                result.append((owner, summary))
+        return result
 
     def _kb(self, db, kb_id, *, active=True):
         row = db.execute("SELECT body FROM knowledge_bases WHERE id=?", (kb_id,)).fetchone() if isinstance(kb_id, str) else None
@@ -206,11 +304,21 @@ class ReviewStore:
         revision.setdefault("kb_id", kb_id)
         return revision
 
+    def _revision_row(self, db, revision_id):
+        row = db.execute("SELECT body, kb_id FROM revisions WHERE id=?", (revision_id,)).fetchone()
+        if row is None:
+            raise ValueError("Không tìm thấy revision")
+        return self._read_revision(*row)
+
+    def _load_revision(self, db, revision_id):
+        """A parsed revision, shared through the cache: treat it as read-only."""
+        return self._revisions.get(revision_id, lambda: self._revision_row(db, revision_id))
+
     def _current(self, db, kb_id):
-        row = db.execute("SELECT body, kb_id FROM revisions WHERE kb_id=? ORDER BY rowid DESC LIMIT 1", (kb_id,)).fetchone()
+        row = db.execute("SELECT id FROM revisions WHERE kb_id=? ORDER BY rowid DESC LIMIT 1", (kb_id,)).fetchone()
         if row is None:
             raise ValueError("Kho tri thức chưa có revision")
-        return self._read_revision(*row)
+        return self._load_revision(db, row[0])
 
     def _check_name(self, db, name):
         if not isinstance(name, str) or not name.strip() or len(name.strip()) > 100:
@@ -241,39 +349,44 @@ class ReviewStore:
     # Read API ---------------------------------------------------------------
 
     def current(self, kb_id):
+        """The KB's newest revision; a shared, read-only object (see `revision`)."""
         with self.connect() as db:
             self._kb(db, kb_id, active=False)
             return self._current(db, kb_id)
 
     def revision(self, revision_id, kb_id=None):
-        with self.connect() as db:
-            row = db.execute("SELECT body, kb_id FROM revisions WHERE id=?", (revision_id,)).fetchone() if isinstance(revision_id, str) else None
-        if row is None:
+        """One immutable revision. Parsed once per process and shared between callers: never modify it."""
+        if not isinstance(revision_id, str):
             raise ValueError("Không tìm thấy revision")
-        revision = self._read_revision(*row)
+        with self.connect() as db:
+            revision = self._load_revision(db, revision_id)
         if kb_id is not None and revision["kb_id"] != kb_id:
             raise ValueError("Revision không thuộc kho tri thức đã chọn")
         return revision
 
+    @staticmethod
+    def _kb_detail(kb, revisions):
+        current = revisions[0]
+        return {**kb, "current_revision": current["id"], "updated_at": current["created_at"],
+                "approved_claims": current["approved_claims"],
+                "documents": [{k: d[k] for k in DOCUMENT_FIELDS} for d in current["documents"]],
+                "revisions": [{k: r[k] for k in REVISION_FIELDS} for r in revisions]}
+
     def knowledge_base(self, kb_id):
         with self.connect() as db:
             kb = self._kb(db, kb_id, active=False)
-            rows = db.execute("SELECT body, kb_id FROM revisions WHERE kb_id=? ORDER BY rowid DESC", (kb_id,)).fetchall()
-        revisions = [self._read_revision(*r) for r in rows]
-        current = revisions[0]
-        documents = [{k: n["payload"].get(k) for k in ("document_id", "title", "source_url", "synthetic", "legal_status", "source_sha256", "accessed_at")}
-                     for n in current["graph"]["nodes"] if n["kind"] == "Document"]
-        return {**kb, "current_revision": current["id"], "updated_at": current["created_at"],
-                "approved_claims": sum(1 for n in current["graph"]["nodes"] if is_approved(n)),
-                "documents": documents,
-                "revisions": [{k: r[k] for k in ("id", "parent", "created_at", "reviewer", "reason")} for r in revisions]}
+            revisions = [summary for _, summary in self._revision_summaries(db, kb_id)]
+        return self._kb_detail(kb, revisions)
 
     def knowledge_bases(self):
         with self.connect() as db:
-            ids = [k["id"] for k in self._kbs(db)]
+            kbs = self._kbs(db)
+            chains = {}
+            for owner, summary in self._revision_summaries(db):
+                chains.setdefault(owner, []).append(summary)
         result = []
-        for kb_id in ids:
-            detail = self.knowledge_base(kb_id)
+        for kb in kbs:
+            detail = self._kb_detail(kb, chains.get(kb["id"], []))
             result.append({k: detail[k] for k in ("id", "name", "description", "data_class", "created_at", "archived_at",
                                                   "current_revision", "updated_at", "approved_claims")}
                           | {"documents": len(detail["documents"]), "revisions": len(detail["revisions"])})
@@ -293,13 +406,15 @@ class ReviewStore:
         kbs = self.knowledge_bases()
         names = {k["id"]: k["name"] for k in kbs}
         with self.connect() as db:
-            drafts = [json.loads(r[0]) for r in db.execute("SELECT body FROM drafts ORDER BY rowid DESC")]
+            self._fill_summaries(db)
+            # A draft saved after the fill by code that bypassed summaries has none yet: summarize its body directly.
+            drafts = [json.loads(body) if body is not None else draft_summary(self._draft(db, draft_id)) for draft_id, body in db.execute(
+                "SELECT d.id, s.body FROM drafts d LEFT JOIN draft_summaries s ON s.id = d.id ORDER BY d.rowid DESC").fetchall()]
             counts = {d: n for d, n in db.execute("SELECT draft_id, COUNT(*) FROM review_decisions WHERE item_id LIKE 'claim:%' AND item_id NOT LIKE '%/slot/%' GROUP BY draft_id")}
         return {"schema_version": STORE_VERSION, "knowledge_bases": kbs,
                 "drafts": [{"id": d["id"], "title": d["title"], "status": d["status"], "created_at": d["created_at"],
-                            "target": d["target"], "kb_name": names.get(d.get("kb_id")) or d["target"].get("name"),
-                            "extraction_state": d.get("extraction", {}).get("state", "done"),
-                            "claims": sum(1 for n in d["graph"]["nodes"] if n["kind"] == "NormClaim"),
+                            "target": d["target"], "kb_name": names.get(d["kb_id"]) or d["target"].get("name"),
+                            "extraction_state": d["extraction_state"], "claims": d["claims"],
                             "decided": counts.get(d["id"], 0)} for d in drafts]}
 
     # Draft creation -----------------------------------------------------------
@@ -354,7 +469,7 @@ class ReviewStore:
                  "extraction": {"mode": "rules", "state": "done"} if extraction == "rules" else
                                {"mode": "llm", "model": extraction_model.strip(), "state": "queued", "done": 0, "total": 0, "errors": []}}
         with self.connect() as db:
-            db.execute("INSERT INTO drafts VALUES (?, ?)", (draft["id"], canonical(draft)))
+            self._save_draft(db, draft, insert=True)
         return draft
 
     def discard(self, draft_id):
@@ -364,12 +479,9 @@ class ReviewStore:
             if draft["status"] != "draft":
                 raise ValueError("Chỉ hủy được bản nháp đang chờ duyệt")
             draft["status"] = "discarded"
-            db.execute("UPDATE drafts SET body=? WHERE id=?", (canonical(draft), draft_id))
+            self._save_draft(db, draft)
 
     # AI extraction lifecycle -----------------------------------------------------
-
-    def _save_draft(self, db, draft):
-        db.execute("UPDATE drafts SET body=? WHERE id=?", (canonical(draft), draft["id"]))
 
     def _rebuild(self, draft, claims, evidence):
         """Replace the draft's machine claims; source units, references and the rule report stay."""
@@ -443,8 +555,12 @@ class ReviewStore:
         """After a restart no job is alive: unblock drafts and keep their rule results."""
         with self.connect() as db:
             db.execute("BEGIN IMMEDIATE")
-            for (body,) in db.execute("SELECT body FROM drafts").fetchall():
-                draft = json.loads(body)
+            self._fill_summaries(db)
+            for draft_id, body in db.execute("SELECT d.id, s.body FROM drafts d LEFT JOIN draft_summaries s ON s.id = d.id").fetchall():
+                summary = json.loads(body) if body is not None else None
+                if summary is not None and (summary["status"] != "draft" or summary["extraction_state"] not in EXTRACTION_BUSY):
+                    continue  # Only drafts whose summary says busy, or that have none, are read.
+                draft = self._draft(db, draft_id)
                 if draft["status"] == "draft" and draft.get("extraction", {}).get("state") in EXTRACTION_BUSY:
                     draft["extraction"].update(state="interrupted")
                     self._save_draft(db, draft)
@@ -658,15 +774,20 @@ class ReviewStore:
             kb = self._kb(db, draft["kb_id"], active=False) if draft.get("kb_id") else None
         graph = draft["graph"]
         units = self._units(graph)
+        by_version = {}
+        for unit in units.values():
+            by_version.setdefault(unit["unit_version_id"], unit)
         base_graph = base["graph"] if base else empty_graph()
+        # Evidence maps are built once per view: a lookup per claim over every node made large drafts quadratic.
+        base_evidence = evidence_map(base_graph["nodes"])
         base_quotes = {}
         for n in base_graph["nodes"]:
             if is_approved(n):
-                anchor = primary_quote(base_graph["nodes"], n["payload"])
+                anchor = primary_anchor(base_evidence, n["payload"])
                 if anchor:
                     base_quotes[label_key(anchor["quote"])] = n["id"]
         order = {u["unit_id"]: (u["source_start"], i) for i, u in enumerate(units.values())}
-        evidence = {n["payload"]["evidence_id"]: n["payload"] for n in graph["nodes"] if n["kind"] == "Evidence"}
+        evidence = evidence_map(graph["nodes"])
         job = draft.get("extraction") or {"mode": "rules", "state": "done"}
         ai_verdicts = {(r["unit_version_id"], r["start"], r["end"]): r for r in job.get("sentences", [])}
         claims = []
@@ -675,8 +796,8 @@ class ReviewStore:
                 continue
             decision = saved.get(node["id"], {})
             effective = decision.get("curated") or machine_claim(node["payload"])
-            unit = self._unit_by_version(units, effective["source_unit_version_ids"][0])
-            anchor = primary_quote(graph["nodes"], node["payload"])
+            unit = by_version.get(effective["source_unit_version_ids"][0])
+            anchor = primary_anchor(evidence, node["payload"])
             slots = {}
             for name, slot in effective["slots"].items():
                 rows = [evidence.get(e) or (decision.get("new_evidence") or {}).get(e) for e in slot["evidence_ids"]]
@@ -714,13 +835,12 @@ class ReviewStore:
         claim_by_id = {c["id"]: c for c in claims}
         base_nodes = {n["id"]: n for n in base_graph["nodes"]}
 
-        def quote_of(graph_nodes, ids):
-            rows = {n["payload"]["evidence_id"]: n["payload"]["quote"] for n in graph_nodes if n["kind"] == "Evidence"}
-            return next((rows[e] for e in ids if e in rows), None)
+        def quote_of(rows, ids):
+            return next((rows[e]["quote"] for e in ids if e in rows), None)
 
         def base_context(target):
             owner = base_nodes.get(target.split("/slot/")[0])
-            anchor = primary_quote(base_graph["nodes"], owner["payload"]) if owner and owner["kind"] == "NormClaim" else None
+            anchor = primary_anchor(base_evidence, owner["payload"]) if owner and owner["kind"] == "NormClaim" else None
             return anchor["quote"] if anchor else None
 
         entities = []
@@ -731,10 +851,10 @@ class ReviewStore:
             decision = saved.get(node["id"], {})
             entities.append({"id": node["id"], "kind": node["kind"], "label": node["label"], "claim_id": owner,
                              "claim_decision": claim_by_id.get(owner, {}).get("decision"),
-                             "quote": quote_of(graph["nodes"], node["payload"]["evidence_ids"]),
+                             "quote": quote_of(evidence, node["payload"]["evidence_ids"]),
                              "context": (claim_by_id.get(owner, {}).get("quote") or {}).get("quote"),
                              "decision": decision.get("decision"), "target": decision.get("target"),
-                             "suggestions": [{"id": t, "label": base_nodes[t]["label"], "quote": quote_of(base_graph["nodes"], base_nodes[t]["payload"]["evidence_ids"]),
+                             "suggestions": [{"id": t, "label": base_nodes[t]["label"], "quote": quote_of(base_evidence, base_nodes[t]["payload"]["evidence_ids"]),
                                               "context": base_context(t)}
                                              for t in draft["suggestions"].get(node["id"], []) if t in base_nodes]})
         articles = []
@@ -911,5 +1031,5 @@ class ReviewStore:
                       "legal_status": "unknown"}
             revision = self._insert_revision(db, kb_id, base["id"] if base else None, merged, reviewer, reason, review)
             draft.update(status="merged", published_revision=revision["id"], kb_id=kb_id)
-            db.execute("UPDATE drafts SET body=? WHERE id=?", (canonical(draft), draft_id))
+            self._save_draft(db, draft)
         return revision
