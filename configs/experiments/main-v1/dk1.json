@@ -1,0 +1,10 @@
+{
+  "condition": "DK1",
+  "representation": "fixed_chunks",
+  "chunk_tokens": 128,
+  "overlap_tokens": 21,
+  "automatic_validation": false,
+  "manual_review": false,
+  "status": "draft",
+  "note": "Main design for the lookup set on corpus v1 (94 articles, veaeaad4a6edc; decided 15/11/2026), aligned with main-v3 on 23/11/2026 (docs/decisions.md 22/11 and 23/11). DK1 is the main 128-token chunking (128/21, as dk1-128.json, chosen 12/11/2026), packed P0. No validity block: corpus v1 has no amendment edges, so validity option B applies only to the corpus-v3 sets (main-v3)."
+}

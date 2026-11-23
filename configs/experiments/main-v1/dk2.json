@@ -1,0 +1,9 @@
+{
+  "condition": "DK2",
+  "representation": "structural_units",
+  "max_tokens": 384,
+  "automatic_validation": false,
+  "manual_review": false,
+  "status": "draft",
+  "note": "Main design for the lookup set on corpus v1 (94 articles, veaeaad4a6edc; decided 15/11/2026), aligned with main-v3 on 23/11/2026 (docs/decisions.md 22/11 and 23/11). DK2 is structural leaf units with path and lead-in, as dk2.json, packed P3 by shared-rrf100.json. No validity block: corpus v1 has no amendment edges (validity option B applies to the corpus-v3 sets only)."
+}

@@ -1,0 +1,24 @@
+{
+  "condition": "DK4",
+  "representation": "llm_kb_validated",
+  "automatic_validation": true,
+  "manual_review": false,
+  "status": "draft",
+  "kb_run": "experiments/runs/kb-inherit-2026-11-23/v1-gptoss-v4-inherit",
+  "kb_model_note": "Derived offline from experiments/runs/kb-scope-v1-gpt-oss-120b (gpt-oss-120b via 9Router, temperature 0, norm-llm-v1, 07/11/2026, corpus scope v1 veaeaad4a6edc; main extraction model for corpus v1, decided 08/11 and 15/11/2026) with kb-materialize --validator kb-validator-v4 --inherit claims-inherit-v1 (23/11/2026); no model call. DK4 reads dk4.jsonl of that derivation: the inherited claims accepted by kb-validator-v4.",
+  "record": "unit_with_claims",
+  "max_tokens": 384,
+  "graph": {
+    "edges": [
+      "reference",
+      "referenced_by"
+    ],
+    "max_neighbors": 2,
+    "source_aliases": {
+      "Bộ luật Lao động": "45-2019-qh14"
+    },
+    "require_match": true
+  },
+  "claims_view": "thin",
+  "note": "Main design for the lookup set on corpus v1, aligned with main-v3 on 23/11/2026 (docs/decisions.md 22/11 and 23/11). DK4 is DK3 with only the claims kb-validator-v4 accepted; same derived KB, record shape (claims_view thin, no index_keys) and reference graph. No amendment edges and no unit status: corpus v1 has no amendment edges, so on this set DK4 differs from DK3 by claim validation only."
+}
