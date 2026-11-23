@@ -5,6 +5,7 @@ from pathlib import Path
 import sys
 import tempfile
 import unittest
+from unittest import mock
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
@@ -15,6 +16,7 @@ from legal_ai.common.io import canonical, digest, read_jsonl, write_json
 from legal_ai.evaluation.answer_run import pack_with_groups, packer_for, verification_load
 from legal_ai.evaluation.preflight import check
 from legal_ai.evaluation.retrieval_run import _recall, recall_steps, run, score_top, tokens_to_reach, within_budget
+from legal_ai.indexing import packing
 from legal_ai.indexing.packing import SIBLING_GROUP_TOKENS, Packer, condition_mode, evidence_payload, short_title
 from legal_ai.indexing.records import kb_unit_records, structural_records, token_spans
 
@@ -228,6 +230,90 @@ class TreePackingTests(unittest.TestCase):
         self.assertEqual(packed["groups"][0]["header"], "Nghị định số 1/2020/NĐ-CP\nChương I > Điều 2")
         self.assertEqual((packed["leads"], packed["blocks"][0]["lead"]), ([], None))
         self.assertEqual(Packer("P2", [record], self.units, self.documents).pack([record], 10 ** 6)["groups"][0]["header"], f"{title}\nChương I > Điều 2")
+
+
+class TopArticlePackingTests(unittest.TestCase):
+    """P4: P3, except that the top-ranked Article is printed with all its leaves up to a larger cap."""
+
+    def setUp(self):
+        self.documents, self.units, self.texts = bundle(None, {"syn-a": SYNTHETIC, "syn-b": SECOND})
+        self.records = structural_records(self.documents, self.units, self.texts)
+        self.by_unit = {r["unit_ids"][0]: r for r in self.records}
+        self.p3 = Packer("P3", self.records, self.units, self.documents)
+        self.p4 = Packer("P4", self.records, self.units, self.documents)
+        self.article2 = [r for r in self.records if r["unit_ids"][0].startswith("syn-a/chapter-i/article-2")]
+
+    def ranked(self, *suffixes):
+        return [self.by_unit[f"syn-a/chapter-i/{s}"] for s in suffixes]
+
+    def caps(self, sibling, top):
+        return mock.patch.multiple(packing, SIBLING_GROUP_TOKENS=sibling, TOP_ARTICLE_TOKENS=top)
+
+    def test_defaults_and_mode_are_declared(self):
+        self.assertEqual((packing.TOP_ARTICLE_TOKENS, packing.SIBLING_GROUP_TOKENS), (1000, 400))
+        self.assertTrue(self.p4.adds_siblings)
+        self.assertEqual(condition_mode("DK3", "P4"), "P4")
+
+    def test_with_the_default_caps_a_small_article_packs_exactly_as_p3(self):
+        for ranked in (self.ranked("article-2/clause-1"), self.ranked("article-1/clause-2", "article-2/clause-2/point-b"), self.records):
+            one, two = self.p3.pack(ranked, 10 ** 6), self.p4.pack(ranked, 10 ** 6)
+            self.assertEqual({k: v for k, v in one.items()}, {k: v for k, v in two.items()})
+
+    def test_top_article_is_printed_whole_within_its_cap_and_the_others_as_p3(self):
+        ranked = self.ranked("article-2/clause-1", "article-1/clause-1")
+        full = self.p4.pack(self.ranked("article-2/clause-1"), 10 ** 6)
+        whole = full["tokens"]
+        with self.caps(sibling=whole - 1, top=whole):
+            three, four = self.p3.pack(ranked, 10 ** 6), self.p4.pack(ranked, 10 ** 6)
+        top = lambda packed: [b["record"]["unit_ids"][0] for b in packed["blocks"] if b["group"] == 0]
+        self.assertEqual(top(four), sorted(r["unit_ids"][0] for r in self.article2), "every leaf of the top Article, in text order")
+        self.assertLess(len(top(three)), len(top(four)), "P3 cuts the same block at the lower cap")
+        self.assertLessEqual(four["groups"][0]["header_tokens"] + sum(b["token_count"] for b in four["blocks"] if b["group"] == 0)
+                             + sum(x["tokens"] for x in four["leads"] if x["group"] == 0), whole)
+        rest = lambda packed: [(b["record"]["record_id"], b["sibling"]) for b in packed["blocks"] if b["group"] != 0]
+        self.assertEqual(rest(three), rest(four), "the other Articles are packed as in P3")
+
+    def test_top_cap_applies_to_the_first_article_only(self):
+        ranked = self.ranked("article-1/clause-1", "article-2/clause-1")
+        with self.caps(sibling=1, top=10 ** 6):
+            packed = self.p4.pack(ranked, 10 ** 6)
+        groups = {}
+        for b in packed["blocks"]:
+            groups.setdefault(b["group"], []).append(b["sibling"])
+        self.assertGreater(len(groups[0]), 1)
+        self.assertEqual(groups[1], [False], "the second Article gets no sibling at a tiny cap")
+
+    def test_ids_unique_budget_respected_and_no_unit_repeats(self):
+        ranked = self.ranked("article-2/clause-2/point-b", "article-1/clause-2", "article-2/clause-2/point-a", "article-1/clause-1", "article-3")
+        full = self.p4.pack(ranked, 10 ** 6)["tokens"]
+        with self.caps(sibling=SIBLING_GROUP_TOKENS, top=10 ** 6):
+            for budget in range(0, full + 5):
+                packed = self.p4.pack(ranked + ranked, budget)
+                self.assertTrue(len(packed["blocks"]) == 1 or packed["tokens"] <= budget, budget)
+                units = [b["record"]["unit_ids"][0] for b in packed["blocks"]]
+                self.assertEqual(len(units), len(set(units)), budget)
+                ids = [b["id"] for b in packed["blocks"]]
+                self.assertEqual(ids, [f"E{n:02d}" for n in range(1, len(ids) + 1)])
+                self.assertEqual(packed["tokens"], sum(g["header_tokens"] for g in packed["groups"]) + sum(x["tokens"] for x in packed["leads"])
+                                 + sum(b["token_count"] for b in packed["blocks"]))
+
+    def test_validity_admission_applies_to_the_added_units(self):
+        ranked = self.ranked("article-2/clause-1")
+        dropped = self.by_unit["syn-a/chapter-i/article-2/clause-2/point-a"]["record_id"]
+        with self.caps(sibling=1, top=10 ** 6):
+            plain = self.p4.pack(ranked, 10 ** 6)
+            filtered = self.p4.bind(lambda r: [] if r["record_id"] == dropped else [r]).pack(ranked, 10 ** 6)
+        self.assertIn(dropped, [b["record"]["record_id"] for b in plain["blocks"]])
+        self.assertNotIn(dropped, [b["record"]["record_id"] for b in filtered["blocks"]])
+        self.assertTrue(self.p4.bind(lambda r: [r]).adds_siblings)
+
+    def test_earlier_modes_do_not_see_the_top_cap(self):
+        ranked = self.ranked("article-2/clause-1")
+        for mode in ("P2", "P3"):
+            packer = Packer(mode, self.records, self.units, self.documents)
+            base = packer.pack(ranked, 10 ** 6)
+            with self.caps(sibling=SIBLING_GROUP_TOKENS, top=1):
+                self.assertEqual(packer.pack(ranked, 10 ** 6), base)
 
 
 class BudgetCurveTests(unittest.TestCase):
