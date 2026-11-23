@@ -7,12 +7,18 @@ the mean difference, the percentile 95% interval, wins/losses/ties and a two-sid
 means, shifted by the observed mean so that they follow the null of no difference, at least as far from zero as the
 observed mean, counted as (1 + hits) / (1 + rounds) so it is never 0. `holm` adjusts the p-values of the declared
 family (the four main comparisons DK1:DK2, DK2:DK3, DK3:DK4, DK1:DK4 by default); other pairs are exploratory and keep
-their raw p. `noise` compares two runs of the same condition (two generations, or two gradings of the same answers)
+their raw p. With `clustered` the bootstrap instead resamples whole paraphrase families (`family_id`; a question without one is its
+own cluster), so paraphrases of one question are not counted as independent evidence; the default is unchanged.
+`noise` compares two runs of the same condition (two generations, or two gradings of the same answers)
 the same way and adds the mean absolute per-question difference.
 
 Per-question values come from the scoring modules, never re-derived here: a metric name carries its source,
 `retrieval.<name>` (`predictions.jsonl` of a retrieval run: recall@K, complete@K, recall_at_tokens@B,
-complete_at_tokens@B, context_tokens@K, stale_context_at_tokens@B, recall_at_adaptive), `answer.<name>`
+complete_at_tokens@B, context_tokens@K, stale_context_at_tokens@B, recall_at_adaptive and the
+`evidence-coverage-v1` metrics `leaf_recall_tau1.0_at_tokens@B` (primary), `leaf_recall_tau0.8_at_tokens@B`,
+`leaf_recall_tau0.5_at_tokens@B`, `chars_recall_at_tokens@B`, `evidence_complete_at_tokens@B`, read from
+`predictions.jsonl` or, for runs made before the metric, from the `metrics-evidence.json` of `retrieval-rescore`),
+`answer.<name>`
 (`answer_run.question_scores`), `grades.<name>` (`answer_grading.item_scores` of a filled sheet and its key) and
 `judge.<name>` (`outcome_judge.item_scores`). A question present in one run of a pair but absent, unscored (failed
 answer, ungraded or unjudged item) or without a value in the other is listed in the comparison, never dropped silently.
@@ -33,6 +39,10 @@ SEED = "lexora-paired-v1"
 MAIN_PAIRS = (("DK1", "DK2"), ("DK2", "DK3"), ("DK3", "DK4"), ("DK1", "DK4"))
 RETRIEVAL_METRICS = {"recall": "recall", "complete": "recall", "context_tokens": "context_tokens",
                      "recall_at_tokens": "recall_at_tokens", "complete_at_tokens": "recall_at_tokens", "stale_context_at_tokens": "stale_at_tokens"}
+# evidence-coverage-v1 (`evaluation.evidence_coverage`): metric name -> key of the row's `evidence_coverage` block.
+EVIDENCE_METRICS = {"leaf_recall_tau1.0_at_tokens": "leaf_recall_tau1.0", "leaf_recall_tau0.8_at_tokens": "leaf_recall_tau0.8",
+                    "leaf_recall_tau0.5_at_tokens": "leaf_recall_tau0.5", "chars_recall_at_tokens": "chars_recall",
+                    "evidence_complete_at_tokens": "complete"}
 EPSILON = 1e-12
 
 
@@ -44,8 +54,13 @@ def _round(value):
     return None if value is None else round(value, 6)
 
 
-def paired_bootstrap(diffs, rounds=ROUNDS, seed=SEED):
-    """Mean of the paired differences with a percentile 95% interval, a two-sided p-value, wins, losses and ties."""
+def paired_bootstrap(diffs, rounds=ROUNDS, seed=SEED, clusters=None):
+    """Mean of the paired differences with a percentile 95% interval, a two-sided p-value, wins, losses and ties.
+
+    With `clusters` (one hashable key per difference, e.g. the paraphrase family) the bootstrap resamples whole
+    clusters with replacement, in order of first appearance, and each resampled mean is taken over all differences of
+    the drawn clusters, so paraphrases of one question do not count as independent evidence. The observed mean stays
+    the plain mean over all differences; the result then also reports `clusters`, their number."""
     if rounds < 1:
         raise ValueError("rounds must be at least 1")
     n = len(diffs)
@@ -56,10 +71,33 @@ def paired_bootstrap(diffs, rounds=ROUNDS, seed=SEED):
     observed = _mean(diffs)
     rng = random.Random(seed)
     draw = rng.random
-    means = sorted(math.fsum([diffs[int(draw() * n)] for _ in range(n)]) / n for _ in range(rounds))
+    if clusters is None:
+        means = sorted(math.fsum([diffs[int(draw() * n)] for _ in range(n)]) / n for _ in range(rounds))
+    else:
+        if len(clusters) != n:
+            raise ValueError("clusters must have one key per difference")
+        groups = {}
+        for key, d in zip(clusters, diffs):
+            groups.setdefault(key, []).append(d)
+        sums, sizes = [math.fsum(v) for v in groups.values()], [len(v) for v in groups.values()]
+        m = len(sums)
+        means = []
+        for _ in range(rounds):
+            picks = [int(draw() * m) for _ in range(m)]
+            means.append(math.fsum(sums[i] for i in picks) / sum(sizes[i] for i in picks))
+        means.sort()
     hits = sum(abs(m - observed) >= abs(observed) - EPSILON for m in means)
     low = rounds * 25 // 1000  # 2.5% of the resampled means lie below the interval and 2.5% above it.
-    return {"n": n, "difference": observed, "ci95": [means[low], means[rounds - 1 - low]], "p_value": (1 + hits) / (1 + rounds)} | counts
+    return {"n": n, "difference": observed, "ci95": [means[low], means[rounds - 1 - low]], "p_value": (1 + hits) / (1 + rounds)} | counts | (
+        {"clusters": len(groups)} if clusters is not None else {})
+
+
+def cluster_keys(paired, *runs):
+    """Cluster key per paired question: its `family_id` (from the runs' `families`), else the question itself."""
+    families = {}
+    for run in runs:
+        families.update({q: f for q, f in run.get("families", {}).items() if f})
+    return [f"family:{families[q]}" if q in families else f"question:{q}" for q in paired]
 
 
 def holm(p_values):
@@ -96,15 +134,17 @@ def _paired(first, second, names):
     return paired, [b[q] - a[q] for q in paired], questions
 
 
-def _summary(first, second, paired, diffs, questions, rounds, seed):
+def _summary(first, second, paired, diffs, questions, rounds, seed, clusters=None):
     return {"mean_first": _mean([first["values"][q] for q in paired]), "mean_second": _mean([second["values"][q] for q in paired]),
-            **paired_bootstrap(diffs, rounds, seed), "questions": questions}
+            **paired_bootstrap(diffs, rounds, seed, clusters), "questions": questions}
 
 
-def compare(first, second, rounds=ROUNDS, seed=SEED, names=("first", "second")):
-    """Paired comparison of two runs ({"values": {question_id: value or None}, "unscored": [question_id]}):
-    second minus first on the questions both scored."""
-    return _summary(first, second, *_paired(first, second, names), rounds, seed)
+def compare(first, second, rounds=ROUNDS, seed=SEED, names=("first", "second"), clustered=False):
+    """Paired comparison of two runs ({"values": {question_id: value or None}, "unscored": [question_id], optional
+    "families": {question_id: family_id}}): second minus first on the questions both scored; with `clustered` the
+    bootstrap resamples paraphrase families (a question without one is its own cluster)."""
+    paired, diffs, questions = _paired(first, second, names)
+    return _summary(first, second, paired, diffs, questions, rounds, seed, cluster_keys(paired, first, second) if clustered else None)
 
 
 def noise(first, second, rounds=ROUNDS, seed=SEED):
@@ -135,10 +175,12 @@ def _left_out(what, questions):
             for reason in ("missing", "unscored", "no_value") for name, ids in questions[reason].items() if ids]
 
 
-def build_report(metric, runs, pairs=MAIN_PAIRS, exploratory=(), repeats=None, regraded=None, rounds=ROUNDS, seed=SEED, inputs=None):
+def build_report(metric, runs, pairs=MAIN_PAIRS, exploratory=(), repeats=None, regraded=None, rounds=ROUNDS, seed=SEED, inputs=None,
+                 clustered=False):
     """The full report from per-question values already loaded: `runs`, `repeats` (second generation of a label,
     graded the same way) and `regraded` (the same answers graded a second time), each {label: run}; `inputs`
-    (paths and hashes) is recorded as given."""
+    (paths and hashes) is recorded as given. With `clustered` the comparisons resample paraphrase families (runs carry
+    `families`); noise blocks stay per question."""
     labels = set(runs)
     for a, b in list(pairs) + list(exploratory):
         if a not in labels or b not in labels:
@@ -150,7 +192,8 @@ def build_report(metric, runs, pairs=MAIN_PAIRS, exploratory=(), repeats=None, r
         raise ValueError("a pair is declared twice")
     report = {"stats_version": STATS_VERSION, "metric": metric, "inputs": inputs or {},
               "method": {"rounds": rounds, "seed": seed, "difference": "second minus first per question, mean over the questions both runs scored",
-                         "resampling": "paired bootstrap over questions; random.Random(seed) restarted for every comparison",
+                         "resampling": ("family-clustered paired bootstrap: paraphrase families (family_id; a question without one is its own cluster) "
+                                        "are resampled with replacement" if clustered else "paired bootstrap over questions") + "; random.Random(seed) restarted for every comparison",
                          "ci95": "percentile interval of the resampled means (2.5% cut from each tail)",
                          "p_value": "two-sided: (1 + resampled means shifted to the null at least as far from 0 as the observed mean) / (1 + rounds)",
                          "holm": "step-down over the main family only; exploratory pairs keep their raw p",
@@ -172,7 +215,7 @@ def build_report(metric, runs, pairs=MAIN_PAIRS, exploratory=(), repeats=None, r
     for family, declared in (("main", pairs), ("exploratory", exploratory)):
         for a, b in declared:
             entry = {"pair": f"{a}:{b}", "first": a, "second": b, "family": family, "difference_of": f"{b} minus {a}"}
-            entry |= compare(runs[a], runs[b], rounds, seed, (a, b) if a != b else ("first", "second"))
+            entry |= compare(runs[a], runs[b], rounds, seed, (a, b) if a != b else ("first", "second"), clustered)
             entry["noise"] = {kind: {label: {"difference": block["by_label"][label]["difference"],
                                              "mean_abs_difference": block["by_label"][label]["mean_abs_difference"]}
                                      for label in (a, b) if label in block["by_label"]} for kind, block in report["noise"].items()}
@@ -202,7 +245,26 @@ def _file(path):
 def _retrieval_values(name, run_dir):
     run_dir = Path(run_dir)
     field, _, point = name.partition("@")
-    if name == "recall_at_adaptive":
+    if field in EVIDENCE_METRICS:
+        key = EVIDENCE_METRICS[field]
+        stored = None
+        if not point:
+            raise ValueError(f"retrieval.{field} needs a budget: {field}@<tokens>")
+
+        def pick(row):
+            nonlocal stored
+            block = row.get("evidence_coverage")
+            if block is None:  # A run made before evidence-coverage-v1: the values written by `retrieval-rescore`.
+                if stored is None:
+                    path = run_dir / "metrics-evidence.json"
+                    if not path.exists():
+                        raise ValueError(f"retrieval.{field}: {run_dir.as_posix()} has no evidence_coverage; run `retrieval-rescore` on it first")
+                    stored = json.loads(path.read_text(encoding="utf-8"))["questions"]
+                block = stored[row["question_id"]]
+            if point not in block[key]:
+                raise ValueError(f"retrieval.{name}: {point} is not measured in {run_dir.as_posix()} (has {sorted(block[key], key=int)})")
+            return block[key][point]
+    elif name == "recall_at_adaptive":
         pick = lambda row: row.get("recall_at_adaptive")
     elif field in RETRIEVAL_METRICS and point:
         def pick(row):
@@ -218,10 +280,12 @@ def _retrieval_values(name, run_dir):
             return float(value == 1.0) if field.startswith("complete") else float(value)
     else:
         raise ValueError(f"unknown retrieval metric {name!r}; use recall@K, complete@K, context_tokens@K, recall_at_tokens@B, "
-                         "complete_at_tokens@B, stale_context_at_tokens@B or recall_at_adaptive")
+                         "complete_at_tokens@B, stale_context_at_tokens@B, recall_at_adaptive or an evidence-coverage-v1 metric "
+                         f"({', '.join(EVIDENCE_METRICS)})@B")
     rows = read_jsonl(run_dir / "predictions.jsonl")
     manifest = json.loads((run_dir / "manifest.json").read_text(encoding="utf-8"))
     return {"values": {row["question_id"]: pick(row) for row in rows}, "unscored": [],
+            "families": {row["question_id"]: row.get("family_id") for row in rows},
             "info": {"run": run_dir.as_posix(), "condition": manifest["condition"]["condition"],
                      "questions_sha256": manifest["inputs"]["questions"]["sha256"], "predictions": _file(run_dir / "predictions.jsonl")}}
 
@@ -301,7 +365,7 @@ def parse_pairs(specs):
 
 
 def compare_runs(metric, runs, pairs=MAIN_PAIRS, exploratory=(), repeats=None, regrade=None, questions=None, sheet=None, key=None,
-                 judge=None, rounds=ROUNDS, seed=SEED):
+                 judge=None, rounds=ROUNDS, seed=SEED, clustered=False):
     """Load the metric for labelled runs ({label: dir}) and build the report. `repeats` are second generation runs
     ({label: dir}, graded by the same sheet or judge run); `regrade` is a second grading of the same answers: another
     outcome judge run (judge.*) or another filled sheet of the same key (grades.*)."""
@@ -321,8 +385,15 @@ def compare_runs(metric, runs, pairs=MAIN_PAIRS, exploratory=(), repeats=None, r
         inputs["judge"] = _file(Path(judge) / "judged.jsonl")
     if regrade:
         inputs["regrade"] = _file(Path(regrade) / "judged.jsonl" if source == "judge" else regrade)
-    values = lambda block: block and {l: {k: r[k] for k in ("values", "unscored")} for l, r in block.items()}
-    report = build_report(metric, values(loaded), pairs, exploratory, values(second), values(regraded), rounds, seed, inputs)
+    if clustered and source != "retrieval" and questions:  # Other metrics take their families from the question file.
+        listed = {q["question_id"]: q.get("family_id") for q in json.loads(Path(questions).read_text(encoding="utf-8"))["questions"]}
+        for block in (loaded, second or {}, regraded or {}):
+            for r in block.values():
+                r["families"] = listed
+    values = lambda block: block and {l: {k: r[k] for k in ("values", "unscored", "families") if k in r} for l, r in block.items()}
+    report = build_report(metric, values(loaded), pairs, exploratory, values(second), values(regraded), rounds, seed, inputs, clustered)
+    if clustered and source != "retrieval" and not questions:
+        report["warnings"].append("--cluster-families without --questions: no family is known, every question is its own cluster")
     hashes = {r["info"]["questions_sha256"] for r in list(loaded.values()) + list((second or {}).values()) if "questions_sha256" in r["info"]}
     if len(hashes) > 1:
         report["warnings"].insert(0, "the runs were made from different question files (questions_sha256 differ)")

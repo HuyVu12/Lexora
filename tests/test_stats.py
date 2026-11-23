@@ -122,6 +122,72 @@ class ReportTests(unittest.TestCase):
         self.assertEqual(stats.parse_pairs(["DK3-q:DK2"]), [("DK3-q", "DK2")], "labels may hold hyphens")
 
 
+class ClusteredBootstrapTests(unittest.TestCase):
+    DIFFS = [0.5, 0.25, 0.75, -0.25, 0.5, 1.0, 0.0, -0.5]
+
+    def test_resamples_families_deterministically_and_collapses_to_one_cluster(self):
+        clusters = ["f1", "f1", "f1", "f2", "f2", "q:5", "q:6", "q:7"]
+        first = stats.paired_bootstrap(self.DIFFS, 2000, "seed-a", clusters)
+        self.assertEqual(first, stats.paired_bootstrap(self.DIFFS, 2000, "seed-a", clusters))
+        self.assertNotEqual(first, stats.paired_bootstrap(self.DIFFS, 2000, "seed-b", clusters))
+        self.assertEqual((first["clusters"], first["n"]), (5, 8))
+        self.assertAlmostEqual(first["difference"], sum(self.DIFFS) / 8, msg="the observed mean is the plain mean over questions")
+        one = stats.paired_bootstrap(self.DIFFS, 500, "s", ["same"] * 8)
+        self.assertEqual(one["clusters"], 1)
+        self.assertAlmostEqual(one["ci95"][0], one["ci95"][1])
+        self.assertAlmostEqual(one["ci95"][0], sum(self.DIFFS) / 8)
+
+    def test_all_singleton_clusters_equal_the_plain_bootstrap_and_families_widen_the_interval(self):
+        plain = stats.paired_bootstrap(self.DIFFS, 1000, "s")
+        single = stats.paired_bootstrap(self.DIFFS, 1000, "s", [f"q:{i}" for i in range(8)])
+        self.assertEqual((single.pop("clusters"), plain["ci95"]), (8, single["ci95"]))
+        self.assertEqual(plain["p_value"], single["p_value"])
+        paraphrases = [1.0, 1.0, 1.0, 1.0, -1.0, -1.0, -1.0, -1.0]
+        width = lambda r: r["ci95"][1] - r["ci95"][0]
+        self.assertGreater(width(stats.paired_bootstrap(paraphrases, 2000, "s", ["a"] * 4 + ["b"] * 4)),
+                           width(stats.paired_bootstrap(paraphrases, 2000, "s")), "four paraphrases of one question are not four independent questions")
+        with self.assertRaises(ValueError):
+            stats.paired_bootstrap([1.0, 2.0], 10, "s", ["a"])
+
+    def test_report_uses_family_ids_and_questions_without_one_are_their_own_cluster(self):
+        a = {"values": {"q1": 0.0, "q2": 0.0, "q3": 1.0}, "unscored": [], "families": {"q1": "F", "q2": "F", "q3": None}}
+        b = {"values": {"q1": 1.0, "q2": 1.0, "q3": 1.0}, "unscored": [], "families": {"q1": "F", "q2": "F", "q3": None}}
+        self.assertEqual(stats.cluster_keys(["q1", "q2", "q3"], a, b), ["family:F", "family:F", "question:q3"])
+        report = stats.build_report("retrieval.recall@1", {"A": a, "B": b}, [("A", "B")], rounds=200, seed="s", clustered=True)
+        self.assertEqual(report["comparisons"][0]["clusters"], 2)
+        self.assertIn("family-clustered", report["method"]["resampling"])
+        plain = stats.build_report("retrieval.recall@1", {"A": a, "B": b}, [("A", "B")], rounds=200, seed="s")
+        self.assertNotIn("clusters", plain["comparisons"][0])
+        self.assertEqual(plain["method"]["resampling"].split(";")[0], "paired bootstrap over questions")
+
+
+class EvidenceMetricsTests(unittest.TestCase):
+    def test_evidence_metrics_are_read_from_predictions_or_from_a_rescore(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            rows = [{"question_id": "q1", "family_id": "F", "evidence_coverage": {"leaf_recall_tau1.0": {"3000": 0.5}, "complete": {"3000": 0.0}}},
+                    {"question_id": "q2", "family_id": None, "evidence_coverage": {"leaf_recall_tau1.0": {"3000": None}, "complete": {"3000": None}}}]
+            old = [{"question_id": "q1", "family_id": "F"}, {"question_id": "q2", "family_id": None}]
+            for name, preds in (("new", rows), ("old", old)):
+                (root / name).mkdir()
+                (root / name / "predictions.jsonl").write_text("".join(json.dumps(r) + "\n" for r in preds), encoding="utf-8")
+                (root / name / "manifest.json").write_text(json.dumps({"condition": {"condition": "DK1"}, "inputs": {"questions": {"sha256": "x"}}}), encoding="utf-8")
+            (root / "old" / "metrics-evidence.json").write_text(json.dumps({"questions": {r["question_id"]: r["evidence_coverage"] for r in rows}}), encoding="utf-8")
+            loaded = stats.load_values("retrieval.leaf_recall_tau1.0_at_tokens@3000", {"N": root / "new", "O": root / "old"})
+            self.assertEqual(loaded["N"]["values"], {"q1": 0.5, "q2": None})
+            self.assertEqual(loaded["O"]["values"], loaded["N"]["values"])
+            self.assertEqual(loaded["N"]["families"], {"q1": "F", "q2": None})
+            complete = stats.load_values("retrieval.evidence_complete_at_tokens@3000", {"N": root / "new"})
+            self.assertEqual(complete["N"]["values"], {"q1": 0.0, "q2": None})
+            with self.assertRaisesRegex(ValueError, "not measured"):
+                stats.load_values("retrieval.evidence_complete_at_tokens@500", {"N": root / "new"})
+            with self.assertRaisesRegex(ValueError, "budget"):
+                stats.load_values("retrieval.evidence_complete_at_tokens", {"N": root / "new"})
+            (root / "old" / "metrics-evidence.json").unlink()
+            with self.assertRaisesRegex(ValueError, "retrieval-rescore"):
+                stats.load_values("retrieval.evidence_complete_at_tokens@3000", {"O": root / "old"})
+
+
 class RunsTests(unittest.TestCase):
     def setUp(self):
         temp = tempfile.TemporaryDirectory()
