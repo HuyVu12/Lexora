@@ -231,8 +231,12 @@ class AnswerRunTests(unittest.TestCase):
         second = Judge()
         counts = outcome_judge.judge(sheet, key, enriched, second, output, workers=2)
         self.assertEqual((counts["already_done"], counts["judged"]), (2, 4))
+        changed = json.loads(enriched.read_text(encoding="utf-8"))
+        changed["questions"][0]["issues"] = ["Khác"]
+        other = self.root / "questions-other.json"
+        other.write_text(json.dumps(changed, ensure_ascii=False), encoding="utf-8")
         with self.assertRaisesRegex(ValueError, "other inputs"):
-            outcome_judge.judge(sheet, key, self.questions, Judge(), output)
+            outcome_judge.judge(sheet, key, other, Judge(), output)
         report = outcome_judge.score(output, sheet, key)
         block = report["by_model"]["stand-in"]
         self.assertEqual(set(block["conditions"]), {"DK1", "DK2"})
@@ -240,6 +244,137 @@ class AnswerRunTests(unittest.TestCase):
         paired = block["paired"]["DK2-DK1"]["correctness"]
         self.assertEqual((paired["diff"], paired["n"]), (0.0, 3), "same grades per question: no difference")
         self.assertEqual(paired["ci95"], [0.0, 0.0])
+
+    def _judge_inputs(self):
+        for name in ("DK1", "DK2"):
+            run(self.retrieval[name], self.questions, self.config, StandIn(), self.root / f"answers-{name}")
+        sheet, key = self.root / "sheet.csv", self.root / "key.json"
+        answer_grading.make_sheet([self.root / "answers-DK1", self.root / "answers-DK2"], self.questions, sheet, key)
+        return sheet, key
+
+    def test_answer_judge_records_usage_and_cost_per_call_and_in_the_manifest(self):
+        sheet, _ = self._judge_inputs()
+
+        class Priced(StandIn):
+            def structured(self, system, prompt, schema, purpose="structured"):
+                if json.loads(prompt)["question"].startswith("Thuế") :
+                    raise ProviderError("timeout")
+                return super().structured(system, prompt, schema, purpose) | {
+                    "usage": {"input_tokens": 10, "output_tokens": 5}, "cost_usd": 0.25, "duration_ms": 1200}
+
+        judged = self.root / "judged.csv"
+        result = answer_grading.judge_sheet(sheet, Priced(), judged)
+        manifest = json.loads(judged.with_suffix(".manifest.json").read_text(encoding="utf-8"))
+        ledger = list(read_jsonl(judged.with_suffix(".ledger.jsonl")))
+        self.assertEqual(len(ledger), 6)
+        ok = [r for r in ledger if r["status"] == "ok"]
+        self.assertEqual({(r["cost_usd"], r["duration_ms"]) for r in ok}, {(0.25, 1200)})
+        failed = [r for r in ledger if r["status"] == "error"]
+        self.assertEqual([r["error"] for r in failed], ["timeout", "timeout"])
+        self.assertEqual(result["usage"], manifest["usage"])
+        self.assertEqual((manifest["usage"]["calls"], manifest["usage"]["ok"], manifest["usage"]["error"]), (6, 4, 2))
+        self.assertEqual((manifest["usage"]["cost_usd"], manifest["usage"]["input_tokens"], manifest["usage"]["output_tokens"]), (1.0, 40, 20))
+        self.assertEqual(manifest["usage"]["calls_without_cost"], 2)
+
+    def test_outcome_judge_records_usage_cost_and_a_ledger(self):
+        from legal_ai.evaluation import outcome_judge
+        sheet, key = self._judge_inputs()
+        questions = json.loads(self.questions.read_text(encoding="utf-8"))
+        for q in questions["questions"]:
+            q |= {"issues": ["Vấn đề"], "reference_outcome": "Tòa chấp nhận."}
+        enriched = self.root / "questions-outcome.json"
+        enriched.write_text(json.dumps(questions, ensure_ascii=False), encoding="utf-8")
+
+        class Judge:
+            model, effort = "judge-stand-in", "medium"
+
+            def structured(self, system, prompt, schema, purpose="structured"):
+                n = len(json.loads(prompt)["statements"])
+                return {"output": {"statements": [{"supported": 2, "citation_correct": True, "legal_error": False}] * n,
+                                   "issues": [{"addressed": 2}], "outcome": 2, "correctness": 2}, "model": "served",
+                        "usage": {"input_tokens": 7, "output_tokens": 3}, "cost_usd": 0.5, "duration_ms": 900}
+
+        output = self.root / "judge"
+        counts = outcome_judge.judge(sheet, key, enriched, Judge(), output)
+        self.assertEqual((counts["usage"]["calls"], counts["usage"]["cost_usd"], counts["usage"]["input_tokens"]), (6, 3.0, 42))
+        rows = list(read_jsonl(output / "judged.jsonl"))
+        self.assertTrue(all(r["status"] == "ok" and r["cost_usd"] == 0.5 and r["duration_ms"] == 900 for r in rows))
+        ledger = list(read_jsonl(output / "ledger.jsonl"))
+        self.assertEqual(len(ledger), 6)
+        self.assertNotIn("output", ledger[0], "the ledger holds accounting only")
+        self.assertEqual(ledger[0]["usage"], {"input_tokens": 7, "output_tokens": 3})
+        # A resumed session reports the cost of the whole directory, and scores do not change.
+        again = outcome_judge.judge(sheet, key, enriched, Judge(), output)
+        self.assertEqual((again["judged"], again["usage"]["calls"]), (0, 6))
+        self.assertEqual(outcome_judge.score(output, sheet, key)["items"], 6)
+
+
+    def test_dry_run_builds_the_requests_without_a_provider_and_leaves_the_directory_reusable(self):
+        output = self.root / "answers-dry"
+        plan = run(self.retrieval["DK2"], self.questions, self.config, None, output, dry_run=True, model="planned-model")
+        self.assertEqual((plan["calls"], plan["questions"], plan["model"]), (3, 3, "planned-model"))
+        self.assertTrue(all(p["estimated_input_tokens"] > p["context_tokens"] > 0 for p in plan["plan"][:2]))
+        self.assertEqual(plan["estimated_input_tokens"], sum(p["estimated_input_tokens"] for p in plan["plan"]))
+        self.assertEqual(sorted(p.name for p in output.iterdir()), ["plan.json"], "no manifest, no answers")
+        self.assertEqual(json.loads((output / "plan.json").read_text(encoding="utf-8"))["calls"], 3)
+        # The plan sees exactly the prompts a real run sends.
+        stand_in = StandIn()
+        self.assertEqual(run(self.retrieval["DK2"], self.questions, self.config, stand_in, output)["answered"], 3)
+        self.assertEqual(len(stand_in.prompts), plan["calls"])
+        again = run(self.retrieval["DK2"], self.questions, self.config, None, output, dry_run=True, model="planned-model")
+        self.assertEqual((again["calls"], again["already_done"]), (0, 3))
+        # A split plans only its questions.
+        self.assertEqual(run(self.retrieval["DK1"], self.questions, self.config, None, self.root / "d2", split="held_out", dry_run=True, model="m")["calls"], 1)
+
+    def test_cli_dry_run_needs_no_budget_or_approval_and_a_real_run_still_does(self):
+        import contextlib
+        import io
+        from legal_ai import cli
+        argv = ["answer-run", str(self.retrieval["DK2"]), "--questions", str(self.questions), "--config", str(self.config)]
+        config = self.root / "answer.json"
+        config.write_text(json.dumps({"prompt": "answer-v1.md", "top_k": 3, "context_token_budget": 200, "model": "claude-x", "effort": "medium"}), encoding="utf-8")
+        output = self.root / "cli-dry"
+        buffer = io.StringIO()
+        old = sys.argv
+        try:
+            sys.argv = ["lexora"] + argv + ["--output", str(output), "--dry-run"]
+            with contextlib.redirect_stdout(buffer):
+                self.assertEqual(cli.main(), 0)
+            self.assertEqual(json.loads(buffer.getvalue())["model"], "claude-x")
+            sys.argv = ["lexora"] + argv + ["--output", str(self.root / "cli-real"), "--max-calls", "5"]
+            with self.assertRaises(ProviderError) as refused:
+                with contextlib.redirect_stdout(io.StringIO()):
+                    cli.main()
+            self.assertEqual(refused.exception.code, "not_approved")
+        finally:
+            sys.argv = old
+        self.assertFalse((self.root / "cli-real").exists())
+
+
+    def test_outcome_judge_fails_early_listing_questions_without_issues_or_outcome(self):
+        from legal_ai.evaluation import outcome_judge
+        sheet, key = self._judge_inputs()
+        questions = json.loads(self.questions.read_text(encoding="utf-8"))
+        questions["questions"][0] |= {"issues": ["Vấn đề"], "reference_outcome": "Tòa chấp nhận."}
+        questions["questions"][1] |= {"issues": ["Vấn đề"]}  # no reference_outcome; q3 has neither
+        path = self.root / "partial.json"
+        path.write_text(json.dumps(questions, ensure_ascii=False), encoding="utf-8")
+
+        class Never:
+            model, effort = "never", "medium"
+
+            def structured(self, *args, **kwargs):
+                raise AssertionError("no call may be made")
+
+        output = self.root / "judge-early"
+        with self.assertRaises(ValueError) as caught:
+            outcome_judge.judge(sheet, key, path, Never(), output)
+        message = str(caught.exception)
+        self.assertIn("q2 (reference_outcome)", message)
+        self.assertIn("q3 (issues/reference_outcome)", message)
+        self.assertNotIn("q1 (", message)
+        self.assertIn("answer-judge", message)
+        self.assertFalse(output.exists(), "nothing is written")
 
 
 if __name__ == "__main__":

@@ -17,6 +17,7 @@ relations between the packed blocks ("E03 là chế tài đối với E01"), der
 cover the gold units. Grounding, citation support and correctness are graded by people (see `answer_sheet`).
 """
 
+import contextlib
 from datetime import datetime, timezone
 import json
 from pathlib import Path
@@ -24,12 +25,17 @@ from pathlib import Path
 from legal_ai.common.io import canonical, digest, read_jsonl, write_json
 from legal_ai.evaluation.retrieval_run import adaptive_budget, check_adaptive
 from legal_ai.indexing.packing import Packer, evidence_payload
+from legal_ai.indexing.records import token_spans
 from legal_ai.providers.pilot import ProviderError
 
 RUN_VERSION = "answer-run-v1"
 PROMPTS = Path(__file__).resolve().parents[3] / "prompts"
 ANSWERED, REFUSED = ("answered", "partial"), ("insufficient_evidence", "out_of_scope")
 MAX_STATEMENTS = 8
+
+
+def token_count(text):
+    return len(token_spans(text))
 
 
 def system_prompt(name):
@@ -120,8 +126,12 @@ def gate(output, blocks):
             "gate": {"uncited_removed": removed, "downgraded_to_insufficient": downgraded}}
 
 
-def run(retrieval_dir, questions_path, config_path, provider, output, *, split=None, log=None):
-    """Answer every question of the retrieval run (optionally one split) not yet in `output/answers.jsonl`."""
+def run(retrieval_dir, questions_path, config_path, provider, output, *, split=None, log=None, dry_run=False, model=None):
+    """Answer every question of the retrieval run (optionally one split) not yet in `output/answers.jsonl`.
+
+    `dry_run` builds every request exactly as a real run would (packing, relations, prompt, schema) with no provider
+    (`model` names the planned one) and returns the plan; it writes nothing into `output` except `plan.json`, which a
+    later real run ignores."""
     retrieval_dir, output = Path(retrieval_dir), Path(output)
     config = json.loads(Path(config_path).read_text(encoding="utf-8"))
     retrieval = json.loads((retrieval_dir / "manifest.json").read_text(encoding="utf-8"))
@@ -144,8 +154,8 @@ def run(retrieval_dir, questions_path, config_path, provider, output, *, split=N
         issues = load(retrieval["subqueries"]["path"])[0]
     manifest = {"run_version": RUN_VERSION, "condition": retrieval["condition"]["condition"], "retrieval_run": retrieval_dir.as_posix(),
                 "retrieval_records_sha256": retrieval["records_sha256"], "questions_sha256": digest(Path(questions_path).read_bytes()),
-                "split": split, "provider": getattr(provider, "provider", "claude-code"), "model": provider.model,
-                "effort": getattr(provider, "effort", None), "prompt": config["prompt"],
+                "split": split, "provider": getattr(provider, "provider", "claude-code"), "model": provider.model if provider else model,
+                "effort": getattr(provider, "effort", None) if provider else config.get("effort"), "prompt": config["prompt"],
                 "system_sha256": system_sha, "top_k": config["top_k"], "context_token_budget": config["context_token_budget"],
                 "token_counter": "lexora-syllable-v1",
                 **({"relations_in_context": retrieval["graph"]["version"]} if edges is not None else {}),
@@ -154,16 +164,17 @@ def run(retrieval_dir, questions_path, config_path, provider, output, *, split=N
     manifest_path = output / "manifest.json"
     if manifest_path.exists():
         earlier = json.loads(manifest_path.read_text(encoding="utf-8"))
-        if {k: v for k, v in earlier.items() if k != "created_at"} != manifest:
+        if {k: v for k, v in earlier.items() if k != "created_at"} != manifest and not dry_run:
             raise ValueError("this answer run used other inputs, model or settings; use a new directory")
-    else:
-        if output.exists() and any(output.iterdir()):
+    elif not dry_run:
+        if output.exists() and any(p.name != "plan.json" for p in output.iterdir()):
             raise ValueError("output must be empty or an earlier answer run with the same inputs")
         write_json(manifest_path, manifest | {"created_at": datetime.now(timezone.utc).isoformat(timespec="seconds")})
     path = output / "answers.jsonl"
     done = {row["question_id"] for row in read_jsonl(path) if row.get("error") is None} if path.exists() else set()
     counts = {"questions": len(questions), "already_done": 0, "answered": 0, "failed": 0}
-    with path.open("a", encoding="utf-8") as handle:
+    planned = []
+    with (contextlib.nullcontext() if dry_run else path.open("a", encoding="utf-8")) as handle:
         for number, question in enumerate(questions, 1):
             if question["question_id"] in done:
                 counts["already_done"] += 1
@@ -197,6 +208,10 @@ def run(retrieval_dir, questions_path, config_path, provider, output, *, split=N
                    **({"context_leads": [{"group": lead["group"], "lead_tokens": lead["tokens"]} for lead in packed["leads"]]} if "leads" in packed else {}),
                    "context_tokens": packed["tokens"], "context_token_budget": budget, "prompt_sha256": digest(prompt),
                    **({"relations": relations} if edges is not None else {})}
+            if dry_run:
+                planned.append({"question_id": question["question_id"], "blocks": len(blocks), "context_tokens": packed["tokens"],
+                                "context_token_budget": budget, "estimated_input_tokens": token_count(system) + token_count(prompt)})
+                continue
             try:
                 answer = provider.structured(system, prompt, schema(b["id"] for b in blocks), purpose="answer")
                 row |= gate(answer["output"], blocks) | {"usage": answer.get("usage"), "cost_usd": answer.get("cost_usd"),
@@ -215,6 +230,15 @@ def run(retrieval_dir, questions_path, config_path, provider, output, *, split=N
                 log(f"{number}/{len(questions)} {question['question_id']}: {row.get('status') or row['error']}")
             if row.get("error") == "budget_exhausted":
                 break
+    if dry_run:
+        plan = {"dry_run": True, "condition": manifest["condition"], "model": manifest["model"], "effort": manifest["effort"],
+                "prompt": config["prompt"], "split": split, "questions": counts["questions"], "already_done": counts["already_done"],
+                "calls": len(planned), "estimated_input_tokens": sum(p["estimated_input_tokens"] for p in planned),
+                "token_counter": manifest["token_counter"], "estimate_note": "system prompt plus request, counted with the packing tokenizer; the schema is not counted",
+                "plan": planned}
+        output.mkdir(parents=True, exist_ok=True)
+        write_json(output / "plan.json", plan)
+        return plan
     return counts
 
 
