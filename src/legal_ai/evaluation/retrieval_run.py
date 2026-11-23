@@ -501,6 +501,10 @@ def run(bundle, questions_path, condition_path, shared_path, output, embedder=No
             via = {i: v for i, _, v, _ in expanded if v is not None}
             roles = {i: r for i, _, v, r in expanded if v is not None}
             ranked = extend_tail([(i, s) for i, s, _, _ in expanded], ranked, depth)
+        elif graph and graph.get("expansion") == kb_graph.EXPANSION_V3:
+            expanded = kb_graph.expand_v3(ranked[:MIN_DEPTH], records, edges, MIN_DEPTH, graph["top_n"])
+            via = {i: v for i, _, v in expanded if v is not None}
+            ranked = extend_tail([(i, s) for i, s, _ in expanded], ranked, depth)
         elif graph:
             expanded = kb_graph.expand(ranked[:MIN_DEPTH], records, edges, MIN_DEPTH, graph.get("max_neighbors", 2), graph.get("require_match", False), concepts)
             via = {i: v for i, _, v in expanded if v is not None}
@@ -570,7 +574,7 @@ def run(bundle, questions_path, condition_path, shared_path, output, embedder=No
                              "aliases_sha256": digest(Path(query_filter["aliases"]).read_bytes())}} if query_filter else {}),
         "graph": ({"version": legal_chain.CHAIN_VERSION, **graph, "edge_count": sum(len(v) for v in edges.values()),
                    "relations_sha256": digest((Path(chain["relation_run"]) / "relations.jsonl").read_bytes())} if chain else
-                  {"version": kb_graph.GRAPH_VERSION, **graph, "edge_count": sum(len(v) for v in edges.values()),
+                  {"version": kb_graph.EXPANSION_V3 if graph.get("expansion") == kb_graph.EXPANSION_V3 else kb_graph.GRAPH_VERSION, **graph, "edge_count": sum(len(v) for v in edges.values()),
                    **({"relations_sha256": digest((Path(graph["relation_run"]) / "relations.jsonl").read_bytes())} if relations is not None else {}),
                    **({"amendment_relations": {"version": amendment_graph.AMENDMENT_GRAPH_VERSION, "edges_sha256": amend_sha,
                                                "date_check": amend_dated, **amend_report}} if amend_links is not None else {})}
