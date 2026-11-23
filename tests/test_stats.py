@@ -231,6 +231,21 @@ class RunsTests(unittest.TestCase):
         with self.assertRaises(SystemExit):
             self.cli("--metric", "retrieval.recall@3", *runs, "--output", str(self.root / "other.json"))  # default pairs need DK3, DK4
 
+    def test_cli_rescore_and_clustered_evidence_comparison(self):
+        runs = ["--runs", f"DK1={self.root / 'retrieval-DK1'}", f"DK2={self.root / 'retrieval-DK2'}"]
+        metric = "retrieval.leaf_recall_tau1.0_at_tokens@250"
+        plain, clustered = self.root / "plain.json", self.root / "clustered.json"
+        self.assertEqual(self.cli("--metric", metric, *runs, "--pairs", "DK1:DK2", "--rounds", "300", "--output", str(plain))[0], 0)
+        self.assertEqual(self.cli("--metric", metric, *runs, "--pairs", "DK1:DK2", "--rounds", "300", "--cluster-families", "--output", str(clustered))[0], 0)
+        first, second = (json.loads(p.read_text(encoding="utf-8"))["comparisons"][0] for p in (plain, clustered))
+        self.assertNotIn("clusters", first)
+        self.assertEqual((second["clusters"], second["n"], second["difference"]), (2, 2, first["difference"]))
+        out = io.StringIO()
+        with patch.object(sys, "argv", ["cli", "retrieval-rescore", str(self.root / "retrieval-DK1"), str(self.root / "retrieval-DK2")]), redirect_stdout(out):
+            self.assertEqual(cli.main(), 0)
+        self.assertEqual(out.getvalue().count("legacy mismatches 0"), 2)
+        self.assertTrue((self.root / "retrieval-DK2" / "metrics-evidence.json").exists())
+
     def test_answer_metrics_report_failed_answers_and_match_the_run_score(self):
         for name, provider in (("DK1", StandIn()), ("DK2", StandIn(fail=["Tiền lương"]))):
             answer_run(self.root / f"retrieval-{name}", self.questions, self.config, provider, self.root / f"answers-{name}")
