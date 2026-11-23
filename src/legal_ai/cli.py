@@ -301,6 +301,9 @@ def main():
     command.add_argument("--questions", default="tests/fixtures/pilot-questions.json")
     command.add_argument("--shared", default="configs/pilot.json")
     command.add_argument("--output", required=True, help="new, empty directory, e.g. experiments/runs/<run-id>")
+    command.add_argument("--embed-device", default="cpu", choices=["cpu", "openvino-gpu", "openvino-cpu"],
+                         help="where the pinned embedding model runs for dense/hybrid (openvino-* needs the openvino package); "
+                              "recorded in the manifest, vectors stay cache-compatible")
     command = commands.add_parser("graph-build", help="build a local knowledge graph and evidence viewer")
     command.add_argument("bundle")
     command.add_argument("--output", required=True)
@@ -622,7 +625,8 @@ def main():
             if shared["retrieval"].get("method") in ("dense", "hybrid"):
                 from legal_ai.retrieval.embeddings import LocalEmbedder
                 model = shared["embedding_model"]
-                embedder = LocalEmbedder(model["path"], model["name"], model["revision"], model.get("max_seq_length", 1024), cache=model.get("cache"))
+                embedder = LocalEmbedder(model["path"], model["name"], model["revision"], model.get("max_seq_length", 1024), cache=model.get("cache"),
+                                         device=args.embed_device)
             print(json.dumps(run(args.bundle, args.questions, args.condition, args.shared, args.output, embedder), ensure_ascii=False, indent=2))
         elif args.command == "graph-build":
             from legal_ai.kb.graph import GRAPH_VERSION, build_graph
