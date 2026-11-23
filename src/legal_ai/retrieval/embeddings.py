@@ -21,11 +21,13 @@ score(d) = sum over lists containing d of 1 / (c + rank), ranks from 1, ties bro
 from contextlib import closing
 from pathlib import Path
 import sqlite3
+import sys
 
 from legal_ai.common.io import canonical, digest
 
 DENSE_VERSION = "dense-v1"
 DEVICES = ("cpu", "openvino-gpu", "openvino-cpu")
+ENCODE_CHUNK = 256  # texts per encode-and-store step of a cached encode
 
 
 class LocalEmbedder:
@@ -80,12 +82,19 @@ class LocalEmbedder:
                 found.update((sha, numpy.frombuffer(blob, dtype="float32")) for sha, blob in rows)
         missing = list(dict.fromkeys(k for k in keys if k not in found))
         if missing:
+            # Encode and store chunk by chunk: an interrupted run keeps what it already encoded, and a long encode
+            # reports `PROGRESS <done>/<total> encode` lines on stderr (the run log), which Agent Watch shows.
             text_of = dict(zip(keys, texts))
-            fresh = self._encode([text_of[k] for k in missing])
-            with closing(sqlite3.connect(self.cache)) as db, db:
-                db.executemany("INSERT OR REPLACE INTO vectors VALUES (?, ?, ?)",
-                               [(self.cache_key, k, numpy.asarray(v, dtype="float32").tobytes()) for k, v in zip(missing, fresh)])
-            found.update((k, numpy.asarray(v, dtype="float32")) for k, v in zip(missing, fresh))
+            report = len(missing) > ENCODE_CHUNK
+            for at in range(0, len(missing), ENCODE_CHUNK):
+                part = missing[at:at + ENCODE_CHUNK]
+                fresh = self._encode([text_of[k] for k in part])
+                with closing(sqlite3.connect(self.cache)) as db, db:
+                    db.executemany("INSERT OR REPLACE INTO vectors VALUES (?, ?, ?)",
+                                   [(self.cache_key, k, numpy.asarray(v, dtype="float32").tobytes()) for k, v in zip(part, fresh)])
+                found.update((k, numpy.asarray(v, dtype="float32")) for k, v in zip(part, fresh))
+                if report:
+                    print(f"PROGRESS {at + len(part)}/{len(missing)} encode", file=sys.stderr, flush=True)
         return numpy.stack([found[k] for k in keys])
 
 

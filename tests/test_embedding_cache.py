@@ -42,6 +42,38 @@ class EmbeddingCacheTests(unittest.TestCase):
             other_model.encode(["ab"])
             self.assertEqual(other_model.seen, [["ab"]], "vectors of another model, revision or length are never reused")
 
+    def test_long_encode_is_stored_per_chunk_and_reports_progress(self):
+        import contextlib
+        import io
+        from legal_ai.retrieval import embeddings
+        with tempfile.TemporaryDirectory() as temp:
+            cache = Path(temp) / "vectors.sqlite"
+            first = self.embedder(cache)
+            texts = ["t" * n for n in range(1, 8)]
+            old, embeddings.ENCODE_CHUNK = embeddings.ENCODE_CHUNK, 3
+            stderr = io.StringIO()
+            try:
+                calls = {"n": 0}
+                encode = first._encode
+
+                def failing(batch):  # The third chunk fails: the first two must already be stored.
+                    calls["n"] += 1
+                    if calls["n"] == 3:
+                        raise RuntimeError("interrupted")
+                    return encode(batch)
+
+                first._encode = failing
+                with contextlib.redirect_stderr(stderr), self.assertRaises(RuntimeError):
+                    first.encode(texts)
+                self.assertEqual(stderr.getvalue().split(), ["PROGRESS", "3/7", "encode", "PROGRESS", "6/7", "encode"])
+                again = self.embedder(cache)
+                with contextlib.redirect_stderr(io.StringIO()):
+                    vectors = again.encode(texts)
+                self.assertEqual(again.seen, [["t" * 7]], "only the chunk lost to the interruption is encoded again")
+                self.assertEqual(vectors[:, 0].tolist(), [float(n) for n in range(1, 8)])
+            finally:
+                embeddings.ENCODE_CHUNK = old
+
 
 if __name__ == "__main__":
     unittest.main()
