@@ -47,7 +47,7 @@ from legal_ai.indexing import kb_keys
 from legal_ai.indexing.packing import PACKING_VERSION, Packer, condition_mode
 from legal_ai.kb.validity import DROP, STATUS_VERSION, VERSIONS as STATUS_VERSIONS, RecordFilter
 from legal_ai.indexing.records import RECORD_VERSION, TOKENIZER, check_records, claim_records, fixed_chunks, kb_unit_records, structural_records, token_spans
-from legal_ai.evaluation import decompose
+from legal_ai.evaluation import decompose, evidence_coverage
 from legal_ai.retrieval import amendment_graph
 from legal_ai.retrieval import graph as kb_graph
 from legal_ai.retrieval import legal_chain
@@ -228,11 +228,13 @@ def _overlaps(record_units, targets):
     return any(u == s or u.startswith(s + "/") or s.startswith(u + "/") for u in record_units for s in targets)
 
 
-def score_top(top, gold, ks, budgets, adaptive=None, packer=FLAT, stale=None, later=None):
+def score_top(top, gold, ks, budgets, adaptive=None, packer=FLAT, stale=None, later=None, tree=None):
     """Recall at every K and token budget, and context tokens at every K, of one question's ranked records; with
     `adaptive` (this question's adaptive budget) also the recall within it. Budgets pack records with `packer`.
     With `stale` (units outdated at the question's date) also whether the packed context holds one of them; with
-    `later` (units not yet in force at that date) whether it holds a unit of the wrong version, stale or later."""
+    `later` (units not yet in force at that date) whether it holds a unit of the wrong version, stale or later.
+    With `tree` (an `evidence_coverage.EvidenceTree`) also the leaf-complete evidence coverage of the same packed
+    context at every budget (`evidence_coverage`, `evidence-coverage-v1`); the legacy values are unchanged."""
     row = {"recall": {}, "context_tokens": {}, "recall_at_tokens": {}}
     if stale:
         row["stale_at_tokens"] = {str(b): any(_overlaps(r["unit_ids"], stale) for r in within_budget(top, b, packer)) for b in budgets}
@@ -243,8 +245,14 @@ def score_top(top, gold, ks, budgets, adaptive=None, packer=FLAT, stale=None, la
         covered = [g for g in gold if any(_covers(r["unit_ids"], g) for r in top[:k])]
         row["recall"][str(k)] = len(covered) / len(gold) if gold else None
         row["context_tokens"][str(k)] = sum(r["token_count"] for r in top[:k])
+    covered_at = {}
     for budget in budgets:
-        row["recall_at_tokens"][str(budget)] = _recall(within_budget(top, budget, packer), gold)
+        kept = within_budget(top, budget, packer)
+        row["recall_at_tokens"][str(budget)] = _recall(kept, gold)
+        if tree is not None:
+            covered_at[budget] = evidence_coverage.question_coverage(tree, gold, kept)
+    if tree is not None:
+        row["evidence_coverage"] = evidence_coverage.rows_by_budget(covered_at)
     if adaptive is not None:
         row["adaptive_budget"] = adaptive
         row["recall_at_adaptive"] = _recall(within_budget(top, adaptive, packer), gold)
@@ -272,6 +280,8 @@ def summarize(predictions, ks, budgets, records, condition, headline_k, steps=No
         **({"wrong_version_context_rate_at_tokens": {str(b): sum(r["wrong_version_at_tokens"][str(b)] for r in with_wrong) / len(with_wrong) for b in budgets},
             "questions_with_wrong_version_units": len(with_wrong)} if (with_wrong := [r for r in predictions if "wrong_version_at_tokens" in r]) else {}),
         "mean_context_tokens": {str(k): (sum(r["context_tokens"][str(k)] for r in predictions) / len(predictions) if predictions else None) for k in ks},
+        **({"evidence_coverage": evidence_coverage.means([r["evidence_coverage"] for r in scored], budgets)}
+           if scored and all("evidence_coverage" in r for r in scored) else {}),
         "record_count": len(records),
         "mean_record_tokens": sum(r["token_count"] for r in records) / len(records) if records else None,
     }
@@ -439,6 +449,7 @@ def run(bundle, questions_path, condition_path, shared_path, output, embedder=No
     # Deep enough for the largest token budget of the smallest records; predictions keep this depth.
     depth = rank_depth(records, ks, budgets)
     predictions, errors, steps = [], [], []
+    tree = evidence_coverage.EvidenceTree(units)
     # norm-query-v1: every condition ranks with the shared analysis' topic query; DK3-q/DK4-q also filter by its fields.
     analyses = norm_query.load(shared["query_slots"], questions_path)[0] if shared.get("query_slots") else None
     query_filter = condition.get("query")
@@ -529,7 +540,7 @@ def run(bundle, questions_path, condition_path, shared_path, output, embedder=No
                **({"amendment_neighbours": len(amended_via)} if amend_links is not None else {}),
                "recall": {}, "context_tokens": {}, "recall_at_tokens": {}}
         row.update(score_top(top, gold, ks, budgets, adaptive_budget(rule, len(issues or [])) if rule else None, question_packer,
-                             question.get("stale_unit_ids"), question.get("not_yet_effective_unit_ids")))
+                             question.get("stale_unit_ids"), question.get("not_yet_effective_unit_ids"), tree))
         steps.append(recall_steps(top, gold, question_packer))
         if not ranked:
             errors.append({"question_id": question["question_id"], "code": "no_match"})
@@ -543,7 +554,7 @@ def run(bundle, questions_path, condition_path, shared_path, output, embedder=No
     manifest = {
         "run_version": RUN_VERSION, "record_version": RECORD_VERSION, "created_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
         "condition": condition, "shared": shared, "tokenizer": TOKENIZER, "retrieval": retrieval, "recall_k": ks,
-        "token_budgets": budgets, "rank_depth": depth, "context_packing": {"version": PACKING_VERSION, "mode": packing},
+        "token_budgets": budgets, "evidence_coverage_version": evidence_coverage.VERSION, "rank_depth": depth, "context_packing": {"version": PACKING_VERSION, "mode": packing},
         "validity": ({"version": validity.version, **condition["validity"], "default_as_of": shared.get("validity_as_of"),
                       "edges_sha256": validity.edges_sha256, "undated_edges": validity.undated} if validity is not None else None),
         "inputs": {name: {"path": path.as_posix(), "sha256": digest(path.read_bytes())} for name, path in files.items()},
@@ -577,3 +588,47 @@ def run(bundle, questions_path, condition_path, shared_path, output, embedder=No
     write_json(output / "metrics.json", metrics)
     write_json(output / "manifest.json", manifest)
     return metrics
+
+
+def rescore_evidence(run_dir):
+    """Recompute the `evidence-coverage-v1` metrics of an existing run from its manifest, `records.jsonl` and
+    `predictions.jsonl`, without re-ranking: the stored ranking is packed again with the run's own packer (including
+    the validity admission of P2/P3 siblings at each question's date) and scored against the bundle named in the
+    manifest. Writes `metrics-evidence.json` (means plus every question's values) into the run directory. The packing
+    is checked against the run: `legacy_recall_mismatches` counts budgets where the legacy recall does not reproduce."""
+    run_dir = Path(run_dir)
+    manifest = json.loads((run_dir / "manifest.json").read_text(encoding="utf-8"))
+    records = read_jsonl(run_dir / "records.jsonl")
+    by_record = {r["record_id"]: r for r in records}
+    paths = {name: Path(manifest["inputs"][name]["path"]) for name in ("units", "documents")}
+    for name, path in paths.items():
+        if digest(path.read_bytes()) != manifest["inputs"][name]["sha256"]:
+            raise ValueError(f"the bundle {name} changed since the retrieval run")
+    units, documents = read_jsonl(paths["units"]), read_jsonl(paths["documents"])
+    budgets = manifest["token_budgets"]
+    packer = Packer(manifest["context_packing"]["mode"], records, units, documents)
+    rfilter = validity_of_run(manifest, records) if packer.adds_siblings else None
+    tree = evidence_coverage.EvidenceTree(units)
+    questions, rows, mismatched = {}, [], 0
+    for prediction in read_jsonl(run_dir / "predictions.jsonl"):
+        top = [by_record[x["record_id"]] | ({"status_note": x["status_note"]} if x.get("status_note") else {}) for x in prediction["ranked"]]
+        question_packer = packer
+        if rfilter is not None:
+            as_of = prediction["validity"]["as_of"]
+            question_packer = packer.bind(lambda record, day=as_of: rfilter.admit_record(record, day))
+        gold = prediction["gold_unit_ids"]
+        covered_at = {}
+        for budget in budgets:
+            kept = within_budget(top, budget, question_packer)
+            covered_at[budget] = evidence_coverage.question_coverage(tree, gold, kept) if gold else None
+            if gold and abs(_recall(kept, gold) - prediction["recall_at_tokens"][str(budget)]) > 1e-9:
+                mismatched += 1
+        row = evidence_coverage.rows_by_budget(covered_at)
+        rows.append(row if gold else None)
+        questions[prediction["question_id"]] = {"family_id": prediction.get("family_id"), **row}
+    result = {"run_version": RUN_VERSION, "evidence_coverage_version": evidence_coverage.VERSION, "run": run_dir.as_posix(),
+              "condition": manifest["condition"]["condition"], "context_packing": manifest["context_packing"]["mode"],
+              "legacy_recall_mismatches": mismatched, "metrics": evidence_coverage.means([r for r in rows if r], budgets),
+              "questions": questions}
+    write_json(run_dir / "metrics-evidence.json", result)
+    return result
