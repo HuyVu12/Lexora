@@ -23,8 +23,8 @@ from pathlib import Path
 import random
 import threading
 
-from legal_ai.common.io import canonical, digest, read_jsonl, write_json
-from legal_ai.evaluation.answer_grading import read_sheet
+from legal_ai.common.io import canonical, digest, read_jsonl, write_json, write_jsonl
+from legal_ai.evaluation.answer_grading import call_record, read_sheet, usage_totals
 from legal_ai.evaluation.answer_run import REFUSED, system_prompt
 from legal_ai.providers.pilot import ProviderError
 
@@ -94,9 +94,9 @@ def judge(sheet_path, key_path, questions_path, provider, output, prompt="judge-
         row = {"item_id": item["item_id"], "request_sha256": digest(item["request"])}
         try:
             answer = provider.structured(system, item["request"], schema(item["statements"], item["issues"]), purpose="judge")
-            row |= {"output": answer["output"], "usage": answer.get("usage"), "served_by": answer.get("model"), "error": None}
+            row |= {"output": answer["output"], "error": None} | call_record(answer)
         except ProviderError as exc:
-            row |= {"error": exc.code, "error_detail": str(getattr(exc, "detail", ""))[-300:]}
+            row |= {"error": exc.code, "error_detail": str(getattr(exc, "detail", ""))[-300:]} | call_record(None, exc.code)
             if exc.code == "budget_exhausted":
                 stop.set()
         with lock:
@@ -108,7 +108,12 @@ def judge(sheet_path, key_path, questions_path, provider, output, prompt="judge-
 
     with ThreadPoolExecutor(max_workers=max(1, workers)) as pool:
         list(pool.map(one, todo))
-    return counts
+    # Accounting over every call this directory has recorded (earlier sessions included); scores never read it.
+    calls = list(read_jsonl(path)) if path.exists() else []
+    calls = [r | {"status": r.get("status") or ("ok" if r.get("error") is None else "error")} for r in calls]  # Rows of older runs have no status.
+    write_jsonl(output / "ledger.jsonl", [{k: r.get(k) for k in ("item_id", "request_sha256", "error", "status", "usage", "cost_usd", "duration_ms", "served_by")}
+                                         for r in calls])
+    return counts | {"usage": usage_totals(calls)}
 
 
 def _latest(path):

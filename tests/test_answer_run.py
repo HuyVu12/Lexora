@@ -241,6 +241,69 @@ class AnswerRunTests(unittest.TestCase):
         self.assertEqual((paired["diff"], paired["n"]), (0.0, 3), "same grades per question: no difference")
         self.assertEqual(paired["ci95"], [0.0, 0.0])
 
+    def _judge_inputs(self):
+        for name in ("DK1", "DK2"):
+            run(self.retrieval[name], self.questions, self.config, StandIn(), self.root / f"answers-{name}")
+        sheet, key = self.root / "sheet.csv", self.root / "key.json"
+        answer_grading.make_sheet([self.root / "answers-DK1", self.root / "answers-DK2"], self.questions, sheet, key)
+        return sheet, key
+
+    def test_answer_judge_records_usage_and_cost_per_call_and_in_the_manifest(self):
+        sheet, _ = self._judge_inputs()
+
+        class Priced(StandIn):
+            def structured(self, system, prompt, schema, purpose="structured"):
+                if json.loads(prompt)["question"].startswith("Thuế") :
+                    raise ProviderError("timeout")
+                return super().structured(system, prompt, schema, purpose) | {
+                    "usage": {"input_tokens": 10, "output_tokens": 5}, "cost_usd": 0.25, "duration_ms": 1200}
+
+        judged = self.root / "judged.csv"
+        result = answer_grading.judge_sheet(sheet, Priced(), judged)
+        manifest = json.loads(judged.with_suffix(".manifest.json").read_text(encoding="utf-8"))
+        ledger = list(read_jsonl(judged.with_suffix(".ledger.jsonl")))
+        self.assertEqual(len(ledger), 6)
+        ok = [r for r in ledger if r["status"] == "ok"]
+        self.assertEqual({(r["cost_usd"], r["duration_ms"]) for r in ok}, {(0.25, 1200)})
+        failed = [r for r in ledger if r["status"] == "error"]
+        self.assertEqual([r["error"] for r in failed], ["timeout", "timeout"])
+        self.assertEqual(result["usage"], manifest["usage"])
+        self.assertEqual((manifest["usage"]["calls"], manifest["usage"]["ok"], manifest["usage"]["error"]), (6, 4, 2))
+        self.assertEqual((manifest["usage"]["cost_usd"], manifest["usage"]["input_tokens"], manifest["usage"]["output_tokens"]), (1.0, 40, 20))
+        self.assertEqual(manifest["usage"]["calls_without_cost"], 2)
+
+    def test_outcome_judge_records_usage_cost_and_a_ledger(self):
+        from legal_ai.evaluation import outcome_judge
+        sheet, key = self._judge_inputs()
+        questions = json.loads(self.questions.read_text(encoding="utf-8"))
+        for q in questions["questions"]:
+            q |= {"issues": ["Vấn đề"], "reference_outcome": "Tòa chấp nhận."}
+        enriched = self.root / "questions-outcome.json"
+        enriched.write_text(json.dumps(questions, ensure_ascii=False), encoding="utf-8")
+
+        class Judge:
+            model, effort = "judge-stand-in", "medium"
+
+            def structured(self, system, prompt, schema, purpose="structured"):
+                n = len(json.loads(prompt)["statements"])
+                return {"output": {"statements": [{"supported": 2, "citation_correct": True, "legal_error": False}] * n,
+                                   "issues": [{"addressed": 2}], "outcome": 2, "correctness": 2}, "model": "served",
+                        "usage": {"input_tokens": 7, "output_tokens": 3}, "cost_usd": 0.5, "duration_ms": 900}
+
+        output = self.root / "judge"
+        counts = outcome_judge.judge(sheet, key, enriched, Judge(), output)
+        self.assertEqual((counts["usage"]["calls"], counts["usage"]["cost_usd"], counts["usage"]["input_tokens"]), (6, 3.0, 42))
+        rows = list(read_jsonl(output / "judged.jsonl"))
+        self.assertTrue(all(r["status"] == "ok" and r["cost_usd"] == 0.5 and r["duration_ms"] == 900 for r in rows))
+        ledger = list(read_jsonl(output / "ledger.jsonl"))
+        self.assertEqual(len(ledger), 6)
+        self.assertNotIn("output", ledger[0], "the ledger holds accounting only")
+        self.assertEqual(ledger[0]["usage"], {"input_tokens": 7, "output_tokens": 3})
+        # A resumed session reports the cost of the whole directory, and scores do not change.
+        again = outcome_judge.judge(sheet, key, enriched, Judge(), output)
+        self.assertEqual((again["judged"], again["usage"]["calls"]), (0, 6))
+        self.assertEqual(outcome_judge.score(output, sheet, key)["items"], 6)
+
 
 if __name__ == "__main__":
     unittest.main()
