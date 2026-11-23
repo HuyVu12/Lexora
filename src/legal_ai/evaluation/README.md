@@ -26,6 +26,20 @@ Không câu nào bị bỏ âm thầm: `score` đếm câu trả lời lỗi (`e
 `preflight.py` kiểm thêm ĐK2-ĐK4 cùng `context_packing`, cùng `query_slots`, ĐK3/ĐK4 cùng khối `query`, `validity`, và các điều kiện có lọc hiệu lực cùng ngày mặc định, cùng cạnh sửa đổi và phiên bản trạng thái.
 `budget_report.py` (`cli budget-report`): bảng và hình SVG recall theo ngân sách từ `metrics.json` của các lượt đã chạy.
 
+`keys_run.py` (`kb-keys-gen-run-v1`, `cli kb-keys-gen`): khóa tìm kiếm do model soạn (`kb-model-keys-v1`, phần model của `kb-keys-v2`, kế hoạch 22/11 mục 4.2 bước 2).
+Mỗi đơn vị lá có quy phạm nhận 2-3 câu hỏi ngắn bằng lời thường mà đơn vị đó trả lời, soạn từ nguyên văn, câu dẫn của đơn vị cha và các ô quy phạm ĐK3 (prompt `prompts/kb-keys-v1.md`); mỗi lần gọi một Điều, tối đa `--batch-size` đơn vị, schema giới hạn `unit_id` trong đúng các đơn vị của lô.
+Câu hỏi chỉ vào phần chữ đánh chỉ mục (`index_keys` `kb-keys-v2`), không vào phần model đọc, không phải bằng chứng, không trình bày như nội dung pháp luật.
+Phạm vi: `--all` hoặc các Điều chạm tới gold của tệp câu hỏi và top-N (`--top-n`) của các lượt truy xuất (`--units-from`, lọc `--split`).
+`--dry-run` chỉ ghi `plan.json`, `system.md` (prompt đúng từng chữ) và `requests.jsonl` (mọi request kèm schema), không tạo provider; `--calibrate-from <lượt kb-extract>` khớp chi phí thật từng lô của lượt `norm-llm-v1` cùng bundle (hồi quy chi phí theo số ký tự prompt và token đầu ra) để ước tính USD theo ba kịch bản đầu ra.
+Lượt thật cần `--extract-claude-model`, `--max-calls`, `--approve-claude`: mỗi câu trả lời ghi ngay vào `raw.jsonl` (chạy tiếp không trả tiền hai lần), lỗi được ghi lại, không thử lại, dừng ở lỗi hết ngân sách; `ledger.jsonl` ghi mọi lượt gọi.
+`keys.jsonl` có `unit_id`, `claim_ids` đã dùng, `keys`, model, SHA-256 của prompt; `gaps.jsonl` ghi đơn vị không có khóa và lý do; khóa nêu số Điều, Khoản, số hiệu văn bản, quá dài hoặc trùng bị bỏ và đếm trong `manifest.json` (`usage`).
+`--reuse <lượt khóa trước>` chép các lô đã trả lời của lượt cùng model, effort, prompt, bundle và kho (ví dụ lượt thử), nên lượt toàn corpus chỉ trả tiền phần mới.
+
+```powershell
+$env:PYTHONPATH = 'src'
+python -m legal_ai.cli kb-keys-gen <kho dẫn xuất> --bundle <bundle> --output <moi> --all --dry-run --calibrate-from <lượt kb-extract>
+```
+
 `stats.py` (`paired-stats-v1`, `cli paired-stats`): so sánh ghép cặp theo câu hỏi giữa các lượt có nhãn cho bảng B6 và mức nhiễu cho bảng B7 (nguyên tắc 6 và 7 của kế hoạch nghiên cứu).
 Chênh lệch là lượt sau trừ lượt trước trên từng câu cả hai lượt đều có giá trị; bootstrap ghép cặp lấy mẫu lại các chênh lệch 10.000 lần (`--rounds`) với hạt giống dạng chuỗi (`--seed`, ghi vào báo cáo), khởi tạo lại cho từng so sánh.
 Báo cáo có chênh lệch trung bình, khoảng tin cậy 95% theo phân vị, số thắng/thua/hòa và p hai phía: tỉ lệ trung bình lấy mẫu lại, sau khi dời về giả thuyết không chênh lệch, cách 0 ít nhất bằng chênh lệch quan sát, tính bằng (1 + số lần) / (1 + số vòng).
