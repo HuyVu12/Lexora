@@ -1,5 +1,6 @@
 """Model-written retrieval keys (`kb-keys-gen`, `kb-keys-v2`): plan and prompts without any call, one stand-in model,
-budget stop, failures on record, reuse of earlier answers, calibrated estimate. Synthetic statute and stand-in model, not real law."""
+budget stop, failures on record, reuse of earlier answers, calibrated estimate, and the keys only in the index text
+(DK4 without the keys of units whose claims were all rejected). Synthetic statute and stand-in model, not real law."""
 
 import contextlib
 import io
@@ -21,6 +22,7 @@ from legal_ai.common.io import canonical, digest, read_jsonl, write_json, write_
 from legal_ai.evaluation import kb_run, keys_run
 from legal_ai.evaluation.retrieval_run import run
 from legal_ai.extraction.llm_norms import SCHEMA as EXTRACTION_SCHEMA, SYSTEM as EXTRACTION_SYSTEM
+from legal_ai.indexing.kb_keys import KbKeys, check_config, load_model_keys
 from legal_ai.providers.pilot import ProviderError
 
 A1C1, A1C2 = "syn/chapter-i/article-1/clause-1", "syn/chapter-i/article-1/clause-2"
@@ -258,6 +260,90 @@ class KeysRunTests(Fixture):
         with self.assertRaisesRegex(ValueError, "another corpus bundle"):
             keys_run.calibrate(calibration, self.bundle)
 
+
+class ModelKeysRetrievalTests(Fixture):
+    """`kb-keys-v2` in a retrieval run: the questions sit in the index text only, DK4 drops the questions of units
+    whose claims were all rejected, and kb-keys-v1 runs stay as before."""
+
+    def setUp(self):
+        super().setUp()
+        self.keys(self.root / "keys", batch_size=8)
+        self.questions = self.root / "q.json"
+        write_json(self.questions, {"questions": [{"question_id": "q1", "question": QUESTION, "split": "dev", "expected_status": "answer",
+                                                   "relevant_unit_ids": [A3C1]}]})
+        self.shared = self.root / "shared.json"
+        write_json(self.shared, {"top_k": 1, "token_budgets": [400],
+                                 "retrieval": {"method": "bm25", "tokenizer": "lexora-syllable-v1", "k1": 1.2, "b": 0.75, "recall_k": [1]}})
+
+    def condition(self, name, condition, **extra):
+        path = self.root / f"{name}.json"
+        write_json(path, {"condition": condition, "representation": {"DK3": "llm_kb_raw", "DK4": "llm_kb_validated"}[condition], "max_tokens": 384,
+                          "record": "unit_with_claims", "kb_run": self.kb.as_posix()} | extra)
+        return path
+
+    def v2(self):
+        return {"version": "kb-keys-v2", "aliases": self.aliases.as_posix(), "model_keys": (self.root / "keys").as_posix()}
+
+    def test_model_keys_are_in_the_index_text_only(self):
+        v1 = run(self.bundle, self.questions, self.condition("v1", "DK3", index_keys={"version": "kb-keys-v1", "aliases": self.aliases.as_posix()}),
+                 self.shared, self.root / "r1")
+        v2 = run(self.bundle, self.questions, self.condition("v2", "DK3", claims_view="thin", index_keys=self.v2()), self.shared, self.root / "r2")
+        self.assertEqual(v1["mean_recall"]["1"], 0.0, "the everyday wording is not in the statute")
+        self.assertEqual(v2["mean_recall"]["1"], 1.0, "the model question finds it")
+        thin = run(self.bundle, self.questions, self.condition("t", "DK3", claims_view="thin"), self.shared, self.root / "rt")
+        self.assertEqual(thin["mean_recall"]["1"], 0.0)
+        plain = {r["unit_ids"][0]: r for r in read_jsonl(self.root / "rt" / "records.jsonl")}
+        for row in read_jsonl(self.root / "r2" / "records.jsonl"):
+            unit_id = row["unit_ids"][0]
+            self.assertEqual(row["generator_text"], plain[unit_id]["generator_text"], "the generator reads the same text with or without keys")
+            self.assertEqual(row["token_count"], plain[unit_id]["token_count"])
+            self.assertEqual(row["text"], plain[unit_id]["text"])
+            if unit_id == A3C1:
+                self.assertIn(QUESTION, row["index_text"])
+                self.assertNotIn(QUESTION, row["generator_text"])
+                self.assertIn(QUESTION, row["index_keys"])
+        manifest = json.loads((self.root / "r2" / "manifest.json").read_text(encoding="utf-8"))
+        record = manifest["index_keys"]["model_keys"]
+        self.assertEqual(manifest["index_keys"]["version"], "kb-keys-v2")
+        self.assertEqual(record["keys_sha256"], digest((self.root / "keys" / "keys.jsonl").read_bytes()))
+        self.assertEqual(record["manifest_sha256"], digest((self.root / "keys" / "manifest.json").read_bytes()))
+        self.assertEqual((record["units_with_keys"], record["records_with_model_keys"]), (4, 4))
+        old = json.loads((self.root / "r1" / "manifest.json").read_text(encoding="utf-8"))["index_keys"]
+        self.assertEqual(list(old), ["version", "aliases", "aliases_sha256", "records_with_keys"], "kb-keys-v1 manifests keep their shape")
+
+    def test_dk4_drops_the_keys_of_units_whose_claims_were_all_rejected(self):
+        run(self.bundle, self.questions, self.condition("d3", "DK3", index_keys=self.v2()), self.shared, self.root / "r3")
+        run(self.bundle, self.questions, self.condition("d4", "DK4", index_keys=self.v2()), self.shared, self.root / "r4")
+        dk3 = {r["unit_ids"][0]: r for r in read_jsonl(self.root / "r3" / "records.jsonl")}
+        dk4 = {r["unit_ids"][0]: r for r in read_jsonl(self.root / "r4" / "records.jsonl")}
+        model = {r["unit_id"]: r["keys"] for r in read_jsonl(self.root / "keys" / "keys.jsonl")}
+        self.assertTrue(set(model[A2C1]) <= set(dk3[A2C1]["index_keys"]))
+        self.assertNotIn("index_keys", dk4[A2C1], "kb:2 was rejected: no v1 phrase and no model question in DK4")
+        for key in model[A2C1]:
+            self.assertNotIn(key, dk4[A2C1]["index_text"])
+        self.assertEqual(dk4[A3C1]["index_keys"], dk3[A3C1]["index_keys"])
+        builder = KbKeys(self.aliases, {A3C1: {"claim_ids": {"kb:3", "kb:9"}, "keys": ["Hỏi?"]}})
+        self.assertEqual(builder.unit_model_keys(A3C1, ["kb:9"]), ["Hỏi?"], "one surviving claim keeps the unit's questions")
+        self.assertEqual(builder.unit_model_keys(A3C1, ["kb:7"]), [])
+
+    def test_keys_run_must_match_bundle_and_claims_and_v1_is_unchanged(self):
+        for good in ({"version": "kb-keys-v1", "aliases": "a"}, {"version": "kb-keys-v2", "aliases": "a", "model_keys": "k"}):
+            self.assertEqual(check_config(good), good)
+        for bad in ({"version": "kb-keys-v1", "aliases": "a", "model_keys": "k"}, {"version": "kb-keys-v2", "aliases": "a"},
+                    {"version": "kb-keys-v2", "aliases": "a", "model_keys": 3}):
+            with self.assertRaisesRegex(ValueError, "index_keys"):
+                check_config(bad)
+        with self.assertRaisesRegex(ValueError, "other DK3 claims"):
+            load_model_keys(self.root / "keys", digest((self.bundle / "units.jsonl").read_bytes()), "0" * 64)
+        with self.assertRaisesRegex(ValueError, "another corpus bundle"):
+            load_model_keys(self.root / "keys", "0" * 64, digest((self.kb / "dk3.jsonl").read_bytes()))
+        v1 = {"version": "kb-keys-v1", "aliases": self.aliases.as_posix()}
+        run(self.bundle, self.questions, self.condition("a", "DK3", index_keys=v1), self.shared, self.root / "ra")
+        builder = KbKeys(self.aliases)
+        from legal_ai.indexing.records import kb_unit_records
+        self.assertEqual(read_jsonl(self.root / "ra" / "records.jsonl"),
+                         kb_unit_records("DK3", self.documents, self.units, self.texts, self.claims, index_keys=builder))
+        self.assertFalse(any(q in json.dumps(read_jsonl(self.root / "ra" / "records.jsonl"), ensure_ascii=False) for q in [QUESTION]))
 
 
 if __name__ == "__main__":

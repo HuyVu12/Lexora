@@ -26,7 +26,9 @@ is expanded over the knowledge base's cross-reference edges (`retrieval.graph`),
 edge is effective by that date, before its unit status filter. Neighbours carry their relation note as `status_note`.
 With `index_keys` ({"version": "kb-keys-v1", "aliases": <alias table>}, `record: unit_with_claims` only) every unit
 record with claims also gets deterministic key phrases (`indexing.kb_keys`) in its index text, never in what the
-generator reads; the manifest records the alias table's hash. Without it the records are those of earlier runs.
+generator reads; the manifest records the alias table's hash. `kb-keys-v2` ({..., "model_keys": <keys run>}) adds the
+model-written questions of a `kb-keys-gen` run on the same bundle and DK3 claims, under the same rules; the manifest
+records that run's hashes. Without `index_keys` the records are those of earlier runs.
 
 With `shared.subqueries` (a decomposition run, the same for every condition) each question is ranked once as
 written and once per issue query, and the rankings are merged round-robin, so every issue gets early records.
@@ -82,12 +84,34 @@ def kb_claims(condition, units_path):
     return read_jsonl(folder / KB_FILES[condition["representation"]])
 
 
-def index_keys(condition):
-    """The `kb_keys.KbKeys` of a condition with `index_keys` ({version: kb-keys-v1, aliases}), else None (the default)."""
+def index_keys(condition, units_path=None):
+    """The `kb_keys.KbKeys` of a condition with `index_keys` ({version: kb-keys-v1, aliases} or {version: kb-keys-v2,
+    aliases, model_keys}), else None (the default). For kb-keys-v2 the keys run must match the bundle's units and the
+    DK3 claims of the condition's knowledge-base run; its manifest record is kept on the builder as `model_record`."""
     spec = condition.get("index_keys")
     if spec is None:
         return None
-    return kb_keys.KbKeys(kb_keys.check_config(spec)["aliases"])
+    spec = kb_keys.check_config(spec)
+    if spec["version"] == kb_keys.KEYS_VERSION:
+        return kb_keys.KbKeys(spec["aliases"])
+    table, record = kb_keys.load_model_keys(spec["model_keys"], digest(Path(units_path).read_bytes()),
+                                            digest((Path(condition["kb_run"]) / "dk3.jsonl").read_bytes()))
+    keys = kb_keys.KbKeys(spec["aliases"], table)
+    keys.model_record = record
+    return keys
+
+
+def index_keys_record(condition, records, units_path):
+    """The manifest record of a condition's `index_keys`: version, alias table hash, records with keys and, for
+    kb-keys-v2, the keys run's hashes and the records that got model questions."""
+    spec = condition["index_keys"]
+    record = {"version": spec["version"], "aliases": Path(spec["aliases"]).as_posix(), "aliases_sha256": digest(Path(spec["aliases"]).read_bytes()),
+              "records_with_keys": sum(1 for r in records if r.get("index_keys"))}
+    if spec["version"] == kb_keys.MODEL_KEYS_VERSION:
+        keys = index_keys(condition, units_path)
+        record["model_keys"] = keys.model_record | {
+            "records_with_model_keys": sum(1 for r in records if r.get("index_keys") and keys.unit_model_keys(r["unit_ids"][0], r["claim_ids"]))}
+    return record
 
 
 def build_records(condition, documents, units, texts, units_path=None):
@@ -103,7 +127,7 @@ def build_records(condition, documents, units, texts, units_path=None):
         if mode not in RECORD_MODES:
             raise ValueError(f"record must be one of {RECORD_MODES}")
         claims = kb_claims(condition, units_path)
-        keys = index_keys(condition)
+        keys = index_keys(condition, units_path)
         if keys is not None and mode != "unit_with_claims":
             raise ValueError("index_keys needs record=unit_with_claims")
         if mode == "norm_lines":  # DK3-q/DK4-q: only units with claims, the generator reads one line per claim.
@@ -530,9 +554,7 @@ def run(bundle, questions_path, condition_path, shared_path, output, embedder=No
                         "sha256": digest((Path(shared["subqueries"]) / "subqueries.jsonl").read_bytes())} if shared.get("subqueries") else None),
         **({"query_slots": {"version": norm_query.QUERY_VERSION, "path": Path(shared["query_slots"]).as_posix(),
                             "sha256": digest((Path(shared["query_slots"]) / "query_slots.jsonl").read_bytes())}} if shared.get("query_slots") else {}),
-        **({"index_keys": {"version": kb_keys.KEYS_VERSION, "aliases": Path(condition["index_keys"]["aliases"]).as_posix(),
-                           "aliases_sha256": digest(Path(condition["index_keys"]["aliases"]).read_bytes()),
-                           "records_with_keys": sum(1 for r in records if r.get("index_keys"))}} if condition.get("index_keys") else {}),
+        **({"index_keys": index_keys_record(condition, records, files["units"])} if condition.get("index_keys") else {}),
         **({"query_filter": {"aliases": Path(query_filter["aliases"]).as_posix(),
                              "aliases_sha256": digest(Path(query_filter["aliases"]).read_bytes())}} if query_filter else {}),
         "graph": ({"version": legal_chain.CHAIN_VERSION, **graph, "edge_count": sum(len(v) for v in edges.values()),
