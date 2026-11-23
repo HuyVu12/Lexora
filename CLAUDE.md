@@ -35,9 +35,9 @@ python -m legal_ai.cli run-retrieval data/normalized/full-v1 --condition configs
 python -m legal_ai.cli corpus-scope --store <store.sqlite> --actor <user>            # experiment-scope corpus from pinned local snapshots
 python -m legal_ai.cli corpus-version-export --store <store> --version <id> --output <file.json>   # one frozen corpus version to a file; corpus-version-import <file> --store <other> --actor <user> --expect-version <id> adds it, same ID and bundle hash
 python -m legal_ai.cli kb-extract <bundle> --output experiments/runs/<new> --dry-run   # DK3/DK4 extraction plan; real run adds --max-calls N --approve-claude
-python -m legal_ai.cli kb-materialize <kb run>                                       # rebuild dk3/dk4/validation offline; kb-inject <kb run> --output <new> for RQ2
+python -m legal_ai.cli kb-materialize <kb run>                                       # rebuild dk3/dk4/validation offline; kb-inject <kb run> --output <new> for RQ2 (kb-inject/kb-plant take --validator kb-validator-v4 [--inherit claims-inherit-v1])
 python -m legal_ai.cli kb-materialize <kb run> --output <new> --validator kb-validator-v4 --inherit claims-inherit-v1   # derived KB in a new dir (lead-in inheritance, validator accepting lead-in values); the source run is untouched
-python -m legal_ai.cli gold-score <gold.jsonl> --bundle <bundle> --predictions rules   # RQ1 P/R/F1 (or a dk3.jsonl/dk4.jsonl)
+python -m legal_ai.cli gold-score <gold.jsonl> --bundle <bundle> --predictions rules   # RQ1 P/R/F1 (or a dk3.jsonl/dk4.jsonl); --inherited ignore (gold-inherited-v1) drops slots inherited from the lead-in
 python -m legal_ai.cli answer-run <retrieval run> --questions <q.json> --output <new> --max-calls N --approve-claude   # then answer-score, answer-sheet, answer-grades, answer-judge
 python -m legal_ai.cli answer-run <retrieval run> --questions <q.json> --output <new> --max-calls N --router-model MODEL_OSS_120B --approve-router   # same with a 9Router model (ChatStructured: schema in the prompt, JSON parsed, raw text kept)
 python -m legal_ai.cli budget-report --runs SET:DK1=<run> SET:DK2=<run> --output docs/results/<new>.md   # recall-by-token-budget tables + SVG (shared token_budgets, context_packing P0/P1/P2)

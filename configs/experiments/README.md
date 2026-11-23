@@ -25,6 +25,7 @@ Cách đóng gói ngữ cảnh (`context_packing`: P0, P1, P2, P3 của `pack-ar
 P3 (kế hoạch 22/11, mục 3.1) giữ xếp hạng và phần thêm anh em của P2, nhưng in câu dẫn của mỗi Khoản một lần trong khối Điều và dùng tên văn bản rút gọn tới số hiệu; mỗi Điểm vẫn có mã đoạn riêng.
 
 - `shared-rrf100.json`: ứng viên của kế hoạch 22/11, khác `shared.json` đúng hai trường (`rrf_candidates` 100 cho mọi điều kiện kể cả ĐK1, `context_packing` P3 cho ĐK2-ĐK4); chọn trên dev bằng quy tắc của WP3 trước mốc dừng biến thể.
+- `kb-keys/`: ĐK3/ĐK4 trên corpus v3 với kho dẫn xuất (`claims-inherit-v1` cộng `kb-validator-v4`), biến thể `claims_view` (`compact`, `thin`) và `index_keys` (`kb-keys-v1`: khóa tất định chỉ vào phần chữ đánh chỉ mục), không lọc hiệu lực; dùng cho lượt thăm dò `experiments/runs/kb-keys-2026-11-23`.
 - ĐK3/ĐK4 với kế thừa câu dẫn: tạo tệp điều kiện mới (không sửa tệp cũ) với `kb_run` trỏ vào thư mục dẫn xuất của `cli kb-materialize <run> --output <mới> --validator kb-validator-v4 --inherit claims-inherit-v1`; manifest dẫn xuất giữ `units_sha256` của lượt gốc nên `run-retrieval` dùng được ngay.
 
 ## Đóng băng từ 11/11/2026
