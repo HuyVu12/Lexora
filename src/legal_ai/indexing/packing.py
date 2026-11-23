@@ -15,6 +15,9 @@ and for the budget recall of the retrieval run.
   instead of repeating the Clause lead in every Point; a lead is counted in the budget once per group, when its first
   Point enters. The group header names the document by `short_title` (the title up to its number, e.g. "Nghị định số
   145/2020/NĐ-CP") instead of the full title. Every leaf keeps its own block ID, so citations still reach the Point.
+- `P4`: `P3`, except that the block of the top-ranked Article (its first group) takes the unranked leaves of that
+  Article in text order up to `TOP_ARTICLE_TOKENS` (1,000) tokens instead of `SIBLING_GROUP_TOKENS`; the other
+  Articles are packed as in P3 (declared 23/11/2026, `docs/decisions.md`).
 
 The budget counts every token the generator reads (headers once, Clause leads once in P3, bodies, claim lines).
 Records are taken in rank order until the next one does not fit; the first is always kept so a long record cannot
@@ -33,10 +36,12 @@ import re
 from legal_ai.indexing.records import token_spans, unit_path
 
 PACKING_VERSION = "pack-article-v1"
-MODES = ("P0", "P1", "P2", "P3")
-SIBLING_MODES = ("P2", "P3")  # Modes that add unranked sibling leaves (and pass them through `admit`).
+MODES = ("P0", "P1", "P2", "P3", "P4")
+SIBLING_MODES = ("P2", "P3", "P4")
+TREE_MODES = ("P3", "P4")  # Modes that add unranked sibling leaves (and pass them through `admit`).
 SIBLING_ARTICLES = 3
 SIBLING_GROUP_TOKENS = 400
+TOP_ARTICLE_TOKENS = 1000  # P4: cap of the block of the top-ranked Article.
 # The document number in a Vietnamese title: "số" followed by a token that starts with a digit ("số 145/2020/NĐ-CP").
 _NUMBER = re.compile(r"^(.*?\bsố\s+\d\S*)")
 
@@ -76,7 +81,7 @@ class Packer:
             return
         by_id = {u["unit_id"]: u for u in units}
         titles = {d["document_id"]: d["title"] for d in documents}
-        tree = self.mode == "P3"
+        tree = self.mode in TREE_MODES
         for record in records:
             self.layouts[record["record_id"]] = self._layout(record, by_id, titles, tree)
         for record in sorted(records, key=lambda r: (r["document_id"], r["source_start"], r["record_id"])):
@@ -185,10 +190,11 @@ class Packer:
                 break
             key = self.layouts[record["record_id"]]["group"]
             if self.adds_siblings and opened and len(order) <= SIBLING_ARTICLES:
+                cap = TOP_ARTICLE_TOKENS if self.mode == "P4" and len(order) == 1 else SIBLING_GROUP_TOKENS
                 for sibling in self.siblings.get(key, []):
                     if sibling["record_id"] in seen:
                         continue
-                    if groups[key]["tokens"] + cost_of(self.layouts[sibling["record_id"]]) > SIBLING_GROUP_TOKENS:
+                    if groups[key]["tokens"] + cost_of(self.layouts[sibling["record_id"]]) > cap:
                         break
                     shown = [sibling] if admit is None else list({r["record_id"]: r for r in admit(sibling) if r["record_id"] not in seen}.values())
                     if not all(add(record, True) for record in shown):
@@ -203,7 +209,7 @@ class Packer:
             for record, layout, sibling in sorted(group["items"], key=lambda item: (item[0]["source_start"], item[0]["record_id"])):
                 block = {"id": f"E{len(blocks) + 1:02d}", "record": record, "text": layout["body"], "token_count": layout["body_tokens"],
                          "group": number, "sibling": sibling}
-                if self.mode == "P3":
+                if self.mode in TREE_MODES:
                     lead = layout["lead"]
                     if lead and lead["key"] not in printed:
                         printed[lead["key"]] = len(leads)
@@ -211,7 +217,7 @@ class Packer:
                     block["lead"] = printed[lead["key"]] if lead else None
                 blocks.append(block)
         return {"groups": out_groups, "blocks": blocks, "tokens": used, "next_budget": blocked,
-                **({"leads": leads} if self.mode == "P3" else {})}
+                **({"leads": leads} if self.mode in TREE_MODES else {})}
 
     @staticmethod
     def _flat(ranked, budget):
