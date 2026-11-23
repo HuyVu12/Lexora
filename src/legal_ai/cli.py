@@ -102,7 +102,8 @@ def main():
     command.add_argument("--config", default="configs/experiments/answer.json")
     command.add_argument("--output", required=True, help="new directory, or an earlier answer run with the same inputs")
     command.add_argument("--split", choices=["dev", "held_out"], help="answer only this split")
-    command.add_argument("--max-calls", type=int, required=True, help="call budget of this session")
+    command.add_argument("--max-calls", type=int, default=0, help="call budget of this session (required unless --dry-run)")
+    command.add_argument("--dry-run", action="store_true", help="build every request as a real run would and write plan.json (questions, blocks, estimated input tokens, calls) into --output; no provider, no model call")
     command.add_argument("--approve-claude", action="store_true", help="explicit approval of the model calls")
     command.add_argument("--router-model", help="answer with one approved 9Router model instead of the config's Claude model (a MODEL_* alias or a name)")
     command.add_argument("--approve-router", action="store_true", help="explicit approval of the 9Router calls")
@@ -376,6 +377,17 @@ def main():
             log = lambda line: print(line, flush=True)
             if args.command == "answer-run":
                 from legal_ai.evaluation.answer_run import run as answer_run
+                if args.dry_run:
+                    planned_model = config["model"]
+                    if args.router_model:
+                        from legal_ai.providers.router import read_settings
+                        planned_model = (read_settings(Path.cwd() / ".env").get(args.router_model, args.router_model)
+                                         if args.router_model.startswith("MODEL_") else args.router_model)
+                    print(json.dumps(answer_run(args.retrieval_run, args.questions, args.config, None, args.output, split=args.split, log=log,
+                                                dry_run=True, model=planned_model), ensure_ascii=False, indent=2))
+                    return 0
+                if args.max_calls < 1:
+                    parser.error("answer-run needs --max-calls (and --approve-claude or --approve-router) unless --dry-run")
                 if args.router_model:
                     from legal_ai.providers.router import ChatStructured, RouterProvider, read_settings
                     settings = read_settings(Path.cwd() / ".env")

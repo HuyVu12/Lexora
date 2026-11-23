@@ -305,5 +305,47 @@ class AnswerRunTests(unittest.TestCase):
         self.assertEqual(outcome_judge.score(output, sheet, key)["items"], 6)
 
 
+    def test_dry_run_builds_the_requests_without_a_provider_and_leaves_the_directory_reusable(self):
+        output = self.root / "answers-dry"
+        plan = run(self.retrieval["DK2"], self.questions, self.config, None, output, dry_run=True, model="planned-model")
+        self.assertEqual((plan["calls"], plan["questions"], plan["model"]), (3, 3, "planned-model"))
+        self.assertTrue(all(p["estimated_input_tokens"] > p["context_tokens"] > 0 for p in plan["plan"][:2]))
+        self.assertEqual(plan["estimated_input_tokens"], sum(p["estimated_input_tokens"] for p in plan["plan"]))
+        self.assertEqual(sorted(p.name for p in output.iterdir()), ["plan.json"], "no manifest, no answers")
+        self.assertEqual(json.loads((output / "plan.json").read_text(encoding="utf-8"))["calls"], 3)
+        # The plan sees exactly the prompts a real run sends.
+        stand_in = StandIn()
+        self.assertEqual(run(self.retrieval["DK2"], self.questions, self.config, stand_in, output)["answered"], 3)
+        self.assertEqual(len(stand_in.prompts), plan["calls"])
+        again = run(self.retrieval["DK2"], self.questions, self.config, None, output, dry_run=True, model="planned-model")
+        self.assertEqual((again["calls"], again["already_done"]), (0, 3))
+        # A split plans only its questions.
+        self.assertEqual(run(self.retrieval["DK1"], self.questions, self.config, None, self.root / "d2", split="held_out", dry_run=True, model="m")["calls"], 1)
+
+    def test_cli_dry_run_needs_no_budget_or_approval_and_a_real_run_still_does(self):
+        import contextlib
+        import io
+        from legal_ai import cli
+        argv = ["answer-run", str(self.retrieval["DK2"]), "--questions", str(self.questions), "--config", str(self.config)]
+        config = self.root / "answer.json"
+        config.write_text(json.dumps({"prompt": "answer-v1.md", "top_k": 3, "context_token_budget": 200, "model": "claude-x", "effort": "medium"}), encoding="utf-8")
+        output = self.root / "cli-dry"
+        buffer = io.StringIO()
+        old = sys.argv
+        try:
+            sys.argv = ["lexora"] + argv + ["--output", str(output), "--dry-run"]
+            with contextlib.redirect_stdout(buffer):
+                self.assertEqual(cli.main(), 0)
+            self.assertEqual(json.loads(buffer.getvalue())["model"], "claude-x")
+            sys.argv = ["lexora"] + argv + ["--output", str(self.root / "cli-real"), "--max-calls", "5"]
+            with self.assertRaises(ProviderError) as refused:
+                with contextlib.redirect_stdout(io.StringIO()):
+                    cli.main()
+            self.assertEqual(refused.exception.code, "not_approved")
+        finally:
+            sys.argv = old
+        self.assertFalse((self.root / "cli-real").exists())
+
+
 if __name__ == "__main__":
     unittest.main()
