@@ -1,0 +1,28 @@
+{
+  "condition": "DK4",
+  "representation": "llm_kb_validated",
+  "automatic_validation": true,
+  "manual_review": false,
+  "status": "draft",
+  "kb_run": "experiments/runs/kb-inherit-2026-11-23/v3-sonnet-v4-inherit",
+  "kb_model_note": "Derived offline from experiments/runs/kb-scope-v3-sonnet (Claude Sonnet 5.5, norm-llm-v1, corpus scope v3 v48feefc6d53b) with kb-materialize --validator kb-validator-v4 --inherit claims-inherit-v1 (23/11/2026); no model call.",
+  "record": "unit_with_claims",
+  "max_tokens": 384,
+  "graph": {
+    "edges": [
+      "reference",
+      "referenced_by"
+    ],
+    "max_neighbors": 2,
+    "source_aliases": {
+      "Bộ luật Lao động": "45-2019-qh14"
+    },
+    "require_match": true
+  },
+  "claims_view": "thin",
+  "note": "DK4 (claims accepted by kb-validator-v4) with kb-keys-v1 and claims_view thin; keys of rejected claims are absent because they come from the DK4 claim set. No validity filter, like the DK3 variants.",
+  "index_keys": {
+    "version": "kb-keys-v1",
+    "aliases": "configs/experiments/actor-aliases.json"
+  }
+}
