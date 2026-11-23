@@ -26,6 +26,9 @@ GRAPH_VERSION = "reference-expansion-v5"
 EDGES = ("reference", "referenced_by", "same_article", "concept", "relation")
 CONCEPT_DF = (3, 150)
 RELATION_TYPES = ("exception", "procedure", "consequence", "condition", "detail")
+EXPANSION_V3 = "reference-expansion-v3"
+TOP_N = (5, 10)
+V3_MAX_NEIGHBORS = 2
 
 
 def check_config(graph):
@@ -35,6 +38,17 @@ def check_config(graph):
         raise ValueError("graph.max_neighbors must be an integer from 1 to 5")
     if not isinstance(graph.get("require_match", False), bool):
         raise ValueError("graph.require_match must be true or false")
+    if graph.get("expansion") not in (None, EXPANSION_V3):
+        raise ValueError(f"graph.expansion must be {EXPANSION_V3} when given")
+    if graph.get("expansion") == EXPANSION_V3:
+        if graph.get("top_n") not in TOP_N or type(graph.get("top_n")) is not int:
+            raise ValueError(f"graph.top_n must be one of {TOP_N} for {EXPANSION_V3}")
+        if set(graph["edges"]) - {"reference", "referenced_by"}:
+            raise ValueError(f"{EXPANSION_V3} follows reference and referenced_by edges only")
+        if graph.get("require_match") or graph.get("max_neighbors", V3_MAX_NEIGHBORS) != V3_MAX_NEIGHBORS:
+            raise ValueError(f"{EXPANSION_V3} fixes require_match=false and max_neighbors={V3_MAX_NEIGHBORS}")
+    elif "top_n" in graph:
+        raise ValueError("graph.top_n belongs to graph.expansion")
     return graph
 
 
@@ -157,3 +171,41 @@ def expand(ranked, records, edges, depth, max_neighbors=2, require_match=False, 
             result.append((neighbour, score.get(neighbour, 0.0), index))
             taken.add(neighbour)
     return result
+
+
+def expand_v3(ranked, records, edges, depth, top_n, max_neighbors=V3_MAX_NEIGHBORS):
+    """[(record index, score, via)] of length <= depth, `reference-expansion-v3` (declared 23/11/2026).
+
+    For each of the `top_n` best ranked records (the sources), the records of the units it cites or that cite it
+    (resolved reference edges, own and ancestors' edges as in `expand`) are inserted right after the source, at most
+    `max_neighbors` per source. A neighbour does NOT have to match the question or be ranked at all. Choice for the cap:
+    neighbours in a different document than the source come first (a Decree article detailing a Code article, the
+    case the plain ranking misses), then text order (record index, records are in document order). A record already
+    in the list ahead of the source (ranked earlier) is never moved or repeated; a neighbour ranked below the source
+    moves up next to it and is not listed again at its old place. A source that was itself pulled in as an earlier
+    source's neighbour still gets its own neighbours, inserted right after its current place. The list is cut at
+    `depth`, so neighbours push lower-ranked records out. `via` is the source record index for a neighbour, else None."""
+    score = dict(ranked)
+    under = {}
+    for i, row in enumerate(records):
+        for unit in row["unit_ids"]:
+            for prefix in _prefixes(unit):
+                under.setdefault(prefix, []).append(i)
+
+    def neighbours(index):
+        targets = {t for unit in records[index]["unit_ids"] for prefix in _prefixes(unit) for t in edges.get(prefix, [])}
+        found = {i for t in targets for i in under.get(t, []) if i != index}
+        document = records[index]["document_id"]
+        return sorted(found, key=lambda i: (records[i]["document_id"] == document, i))
+
+    result = [(index, None) for index, _ in ranked]
+    for source, _ in ranked[:top_n]:
+        place = next(n for n, (index, _) in enumerate(result) if index == source)
+        before = {index for index, _ in result[:place + 1]}
+        chosen = [i for i in neighbours(source) if i not in before][:max_neighbors]
+        if not chosen:
+            continue
+        result = [(index, via) for index, via in result if index not in chosen]
+        place = next(n for n, (index, _) in enumerate(result) if index == source)
+        result[place + 1:place + 1] = [(i, source) for i in chosen]
+    return [(index, score.get(index, 0.0), via) for index, via in result[:depth]]
