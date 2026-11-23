@@ -1,0 +1,13 @@
+{
+  "condition": "DK2",
+  "variant": "DK2-doc",
+  "representation": "structural_units",
+  "max_tokens": 384,
+  "automatic_validation": false,
+  "manual_review": false,
+  "status": "draft",
+  "validity": {
+    "level": "document"
+  },
+  "note": "Main design for the corpus-v3 sets, decided 23/11/2026 (docs/decisions.md 22/11 and 23/11). DK2 is structure plus source metadata, as validity-b/dk2.json: leaf-unit records with path and lead-in, packed P3 by shared-rrf100.json (tree layout, short document names); records of documents not in force at the question's date (as_of, else shared.validity_as_of) are dropped by the documents' vbpl.vn dates, as in DK1-hl; no amendment edges and no unit status (validity option B, 22/11/2026)."
+}

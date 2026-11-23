@@ -1,0 +1,14 @@
+{
+  "condition": "DK1",
+  "variant": "DK1-hl",
+  "representation": "fixed_chunks",
+  "chunk_tokens": 128,
+  "overlap_tokens": 21,
+  "automatic_validation": false,
+  "manual_review": false,
+  "status": "draft",
+  "validity": {
+    "level": "document"
+  },
+  "note": "Main design for the corpus-v3 sets (hard sets and validity set), decided 23/11/2026 (docs/decisions.md 22/11 and 23/11, plan docs/planning/dk2-dk4-improvement-2026-11-22.md). DK1 is the main 128-token chunking (128/21 as dk1-128.json, chosen 12/11/2026) with the document-level validity filter of DK1-hl (same parameters as validity/dk1-hl.json): under validity option B DK2 filters by the documents' vbpl.vn dates, so DK1 gets the same source metadata and the DK1-DK2 comparison isolates the chunking. Dates at the question's as_of, else shared.validity_as_of. Packing is always P0 for DK1."
+}
