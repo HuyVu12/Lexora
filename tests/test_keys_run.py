@@ -1,5 +1,5 @@
 """Model-written retrieval keys (`kb-keys-gen`, `kb-keys-v2`): plan and prompts without any call, one stand-in model,
-budget stop, failures on record, reuse of earlier answers. Synthetic statute and stand-in model, not real law."""
+budget stop, failures on record, reuse of earlier answers, calibrated estimate. Synthetic statute and stand-in model, not real law."""
 
 import contextlib
 import io
@@ -17,9 +17,10 @@ sys.path.insert(0, str(ROOT / "tests"))
 from test_kb_records_graph import LAW, claim
 from test_retrieval_run import bundle
 from legal_ai import cli
-from legal_ai.common.io import digest, read_jsonl, write_json, write_jsonl
-from legal_ai.evaluation import keys_run
+from legal_ai.common.io import canonical, digest, read_jsonl, write_json, write_jsonl
+from legal_ai.evaluation import kb_run, keys_run
 from legal_ai.evaluation.retrieval_run import run
+from legal_ai.extraction.llm_norms import SCHEMA as EXTRACTION_SCHEMA, SYSTEM as EXTRACTION_SYSTEM
 from legal_ai.providers.pilot import ProviderError
 
 A1C1, A1C2 = "syn/chapter-i/article-1/clause-1", "syn/chapter-i/article-1/clause-2"
@@ -225,6 +226,37 @@ class KeysRunTests(Fixture):
         keys_run.start(self.root / "other", head, "another-model", "medium")
         with self.assertRaisesRegex(ValueError, "cannot be reused"):
             keys_run.reuse(planned, self.root / "other", [self.root / "pilot"])
+
+    def test_calibrated_estimate_recovers_the_cost_model(self):
+        law = "".join(f"Điều {n}. Quy định giả định {n}\n" + "".join(f"{k}. Bên {k} phải làm việc {'rất ' * (n * k)}kỹ.\n" for k in range(1, 3))
+                      for n in range(1, 13))
+        folder = self.root / "big"
+        _, units, _ = bundle(folder, {"syn": law})
+        calibration = self.root / "cal"
+        write_json(calibration / "manifest.json", {"units_sha256": digest((folder / "units.jsonl").read_bytes()), "model": "m", "effort": "medium",
+                                                   "prompt": "norm-llm-v1", "system_sha256": digest(EXTRACTION_SYSTEM)})
+        fixed = len(EXTRACTION_SYSTEM) + len(canonical(EXTRACTION_SCHEMA))
+        rows = []
+        for n, (key, _, _, request) in enumerate(kb_run.batches(units)):
+            chars, out = len(request) + fixed, 50 + 7 * n
+            rows.append({"key": key, "status": "ok", "output": {"results": ["x" * (2 * out)]}, "cost_usd": 0.002 + 3e-6 * chars + 1.5e-5 * out,
+                         "usage": {"input_tokens": 2, "cache_creation_input_tokens": int(900 + 0.5 * chars), "cache_read_input_tokens": 0,
+                                   "output_tokens": out}})
+        write_jsonl(calibration / "raw.jsonl", rows + [{"key": "x", "status": "error", "code": "timeout"}])
+        fit = keys_run.calibrate(calibration, folder)
+        self.assertEqual(fit["calls"], 12)
+        self.assertAlmostEqual(fit["cost_per_call"]["intercept_usd"], 0.002, places=6)
+        self.assertAlmostEqual(fit["cost_per_call"]["per_prompt_char_usd"], 3e-6, places=9)
+        self.assertAlmostEqual(fit["cost_per_call"]["per_output_token_usd"], 1.5e-5, places=9)
+        self.assertAlmostEqual(fit["input_tokens_per_call"]["per_prompt_char"], 0.5, places=3)
+        head, summary, planned, system = self.plan()
+        estimate = keys_run.estimate(planned, system, summary["chars_per_word"], fit)
+        self.assertEqual(estimate["calls"], 3)
+        self.assertLess(estimate["scenarios"]["low"]["usd"], estimate["scenarios"]["high"]["usd"])
+        prompt_chars = sum(len(b["request"]) + len(system) + len(canonical(b["schema"])) for b in planned)
+        self.assertEqual(estimate["prompt_characters"], prompt_chars)
+        with self.assertRaisesRegex(ValueError, "another corpus bundle"):
+            keys_run.calibrate(calibration, self.bundle)
 
 
 

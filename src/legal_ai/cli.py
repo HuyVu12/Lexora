@@ -99,6 +99,7 @@ def main():
     command.add_argument("--effort", default="medium", choices=["low", "medium", "high", "xhigh", "max"])
     command.add_argument("--approve-claude", action="store_true", help="explicit approval of the model calls")
     command.add_argument("--dry-run", action="store_true", help="write the plan and the exact prompts; no model call")
+    command.add_argument("--calibrate-from", help="with --dry-run: an earlier norm-llm-v1 kb-extract run of the same bundle whose real usage and cost calibrate the USD estimate")
     command.add_argument("--reuse", nargs="+", metavar="RUN", help="earlier keys runs (same model, effort, prompt, bundle, knowledge base) whose answered batches are copied instead of paid again")
     command = commands.add_parser("amendment-build", help="amendment edges (amendment-rules-v2) of pinned vbpl.vn snapshots against a corpus bundle; offline, no model")
     command.add_argument("bundle", help="contract bundle whose units are the targets")
@@ -408,6 +409,8 @@ def main():
                     print(json.dumps({"calls": counts, "report": kb_run.materialize(units, args.output)}, ensure_ascii=False, indent=2))
         elif args.command == "kb-keys-gen":
             from legal_ai.evaluation import keys_run
+            if args.calibrate_from and not args.dry_run:
+                parser.error("--calibrate-from belongs to --dry-run")
             head, summary, planned, system = keys_run.plan(args.bundle, args.kb_run, sources=args.units_from, top_n=args.top_n, split=args.split,
                                                            batch_size=args.batch_size)
             if args.dry_run:  # No provider is built: nothing can reach a model.
@@ -419,8 +422,15 @@ def main():
                 expected = head | {"provider": "claude-code", "model": args.extract_claude_model, "effort": args.effort}
                 reused = {row["key"] for row in keys_run.reusable(planned, args.reuse, expected)}
                 summary["batches_reusable"] = len(reused)
-                body = keys_run.write_plan(output, expected | {"dry_run": True}, summary, planned, system)
-                print(json.dumps({"output": output.as_posix(), "scope": body["scope"], "summary": summary}, ensure_ascii=False, indent=2))
+                estimate = None
+                if args.calibrate_from:
+                    calibration = keys_run.calibrate(args.calibrate_from, args.bundle)
+                    remaining = [batch for batch in planned if batch["key"] not in reused]
+                    estimate = keys_run.estimate(remaining, system, summary["chars_per_word"], calibration) | {"calibration_fit": calibration}
+                body = keys_run.write_plan(output, expected | {"dry_run": True}, summary, planned, system, estimate)
+                print(json.dumps({"output": output.as_posix(), "scope": body["scope"], "summary": summary,
+                                  **({"estimate": {k: v for k, v in estimate.items() if k != "calibration_fit"}} if estimate else {})},
+                                 ensure_ascii=False, indent=2))
             else:
                 if args.max_calls < 1 or not args.extract_claude_model:
                     parser.error("kb-keys-gen needs --extract-claude-model, --max-calls and --approve-claude unless --dry-run")

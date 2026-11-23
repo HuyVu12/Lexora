@@ -19,7 +19,8 @@ pays only for the Articles the pilot did not cover.
 
 Scope: `--all` (every leaf unit with claims) or the units of the Articles touched by question sets' gold units or by
 retrieval runs' top-N records, so a pilot covers only the Articles the dev hard sets reach. `plan` (also `--dry-run`)
-writes the units, batches, exact prompts and character counts without calling anything.
+writes the units, batches, exact prompts and character counts without calling anything; `calibrate` reads the real
+usage and cost of an earlier `norm-llm-v1` run (`raw.jsonl`) and turns the plan into a token and USD estimate.
 """
 
 from datetime import datetime, timezone
@@ -430,3 +431,87 @@ def input_tokens(usage):
     usage = usage or {}
     return sum(usage.get(name) or 0 for name in ("input_tokens", "cache_creation_input_tokens", "cache_read_input_tokens"))
 
+
+# Output scenarios of the estimate: (keys per unit, words per key). The prompt asks for 2-3 keys of at most ~25 words.
+SCENARIOS = {"low": (2, 15), "mid": (3, 20), "high": (3, 25)}
+JSON_UNIT_OVERHEAD = 32  # {"unit_id":"","questions":[]} and a comma
+JSON_KEY_OVERHEAD = 3  # Quotes and a comma.
+
+
+def _solve(rows, values):
+    """Least-squares coefficients of `values` on the columns of `rows` (normal equations, Gauss-Jordan)."""
+    size = len(rows[0])
+    matrix = [[sum(r[i] * r[j] for r in rows) for j in range(size)] + [sum(r[i] * v for r, v in zip(rows, values))] for i in range(size)]
+    for col in range(size):
+        pivot = max(range(col, size), key=lambda r: abs(matrix[r][col]))
+        if abs(matrix[pivot][col]) < 1e-12:
+            raise ValueError("calibration data cannot separate the cost terms")
+        matrix[col], matrix[pivot] = matrix[pivot], matrix[col]
+        for other in range(size):
+            if other != col:
+                factor = matrix[other][col] / matrix[col][col]
+                matrix[other] = [x - factor * y for x, y in zip(matrix[other], matrix[col])]
+    return [matrix[i][size] / matrix[i][i] for i in range(size)]
+
+
+def _r2(rows, values, coefficients):
+    mean = sum(values) / len(values)
+    total = sum((v - mean) ** 2 for v in values)
+    fitted = [sum(c * x for c, x in zip(coefficients, r)) for r in rows]
+    return round(1 - sum((v - f) ** 2 for v, f in zip(values, fitted)) / total, 4) if total else None
+
+
+def calibrate(run_dir, bundle):
+    """A per-call token and cost model fitted on the real answers of an earlier `norm-llm-v1` run of the same bundle
+    (`kb-extract` through Claude Code): input tokens = a + b * prompt characters, cost = alpha + beta * prompt
+    characters + gamma * output tokens, and output tokens per output character. Prompt characters are the request
+    plus the system prompt and the schema, so a new prompt's own length counts; the intercepts hold Claude Code's
+    fixed per-call overhead and prompt caching as that run saw them."""
+    from legal_ai.evaluation import kb_run
+    from legal_ai.extraction.llm_norms import SCHEMA as EXTRACTION_SCHEMA, SYSTEM as EXTRACTION_SYSTEM
+    folder = Path(run_dir)
+    manifest = json.loads((folder / "manifest.json").read_text(encoding="utf-8"))
+    units_path = Path(bundle) / "units.jsonl"
+    if manifest.get("units_sha256") != digest(units_path.read_bytes()):
+        raise ValueError("the calibration run was extracted from another corpus bundle")
+    if manifest.get("system_sha256") != digest(EXTRACTION_SYSTEM):
+        raise ValueError("the calibration run used another extraction prompt than the one in this code")
+    requests = {key: request for key, _, _, request in kb_run.batches(read_jsonl(units_path))}
+    fixed = len(EXTRACTION_SYSTEM) + len(canonical(EXTRACTION_SCHEMA))
+    rows = [r for r in read_jsonl(folder / "raw.jsonl")
+            if r.get("status") == "ok" and r.get("key") in requests and r.get("usage") and r.get("cost_usd") is not None]
+    if len(rows) < 10:
+        raise ValueError("the calibration run has fewer than 10 answered calls with usage and cost")
+    chars = [len(requests[r["key"]]) + fixed for r in rows]
+    tokens_in = [input_tokens(r["usage"]) for r in rows]
+    tokens_out = [r["usage"].get("output_tokens") or 0 for r in rows]
+    out_chars = [len(json.dumps(r["output"], ensure_ascii=False, separators=(",", ":"))) for r in rows]
+    costs = [r["cost_usd"] for r in rows]
+    a, b = _solve([[1, c] for c in chars], tokens_in)
+    alpha, beta, gamma = _solve([[1, c, t] for c, t in zip(chars, tokens_out)], costs)
+    return {"run": folder.as_posix(), "model": manifest.get("model"), "effort": manifest.get("effort"), "prompt": manifest.get("prompt"),
+            "calls": len(rows), "cost_usd": round(sum(costs), 4), "input_tokens": sum(tokens_in), "output_tokens": sum(tokens_out),
+            "mean_cost_per_call_usd": round(sum(costs) / len(rows), 6),
+            "input_tokens_per_call": {"intercept": round(a, 3), "per_prompt_char": round(b, 6), "r2": _r2([[1, c] for c in chars], tokens_in, [a, b])},
+            "cost_per_call": {"intercept_usd": alpha, "per_prompt_char_usd": beta, "per_output_token_usd": gamma,
+                              "r2": _r2([[1, c, t] for c, t in zip(chars, tokens_out)], costs, [alpha, beta, gamma])},
+            "output_tokens_per_char": round(sum(tokens_out) / sum(out_chars), 6),
+            "thinking_tokens": sum(((r["usage"].get("output_tokens_details") or {}).get("thinking_tokens") or 0) for r in rows)}
+
+
+def estimate(planned, system, chars_per_word, calibration):
+    """Calibrated input and output tokens and USD of a plan, per output scenario (`SCENARIOS`)."""
+    a, b = calibration["input_tokens_per_call"]["intercept"], calibration["input_tokens_per_call"]["per_prompt_char"]
+    cost = calibration["cost_per_call"]
+    prompt_chars = [len(batch["request"]) + len(system) + len(canonical(batch["schema"])) for batch in planned]
+    result = {"calibration": {k: calibration[k] for k in ("run", "model", "effort", "calls", "cost_usd", "mean_cost_per_call_usd")},
+              "calls": len(planned), "prompt_characters": sum(prompt_chars), "input_tokens": round(sum(a + b * c for c in prompt_chars)),
+              "chars_per_word": round(chars_per_word, 3), "scenarios": {}}
+    input_usd = sum(cost["intercept_usd"] + cost["per_prompt_char_usd"] * c for c in prompt_chars)
+    for name, (count, words) in SCENARIOS.items():
+        out_chars = sum(sum(JSON_UNIT_OVERHEAD + len(u["unit_id"]) + count * (words * chars_per_word + JSON_KEY_OVERHEAD) for u in batch["units"]) + 12
+                        for batch in planned)
+        tokens_out = out_chars * calibration["output_tokens_per_char"]
+        result["scenarios"][name] = {"keys_per_unit": count, "words_per_key": words, "output_tokens": round(tokens_out),
+                                     "usd": round(input_usd + cost["per_output_token_usd"] * tokens_out, 2)}
+    return result
