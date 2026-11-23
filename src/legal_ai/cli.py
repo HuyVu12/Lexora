@@ -235,6 +235,8 @@ def main():
     command.add_argument("--judge", help="outcome judge run (judge.* metrics)")
     command.add_argument("--rounds", type=int, default=10000)
     command.add_argument("--seed", default="lexora-paired-v1")
+    command.add_argument("--cluster-families", action="store_true",
+                         help="resample paraphrase families (family_id) instead of single questions; a question without a family is its own cluster")
     command.add_argument("--output", required=True, help="new JSON report file")
     command = commands.add_parser("demo-build", help="new demo store: three accounts with printed random passwords and the frozen experiment-scope corpus; offline")
     command.add_argument("--store", required=True, help="new SQLite file")
@@ -321,6 +323,8 @@ def main():
     command.add_argument("--embed-device", default="cpu", choices=["cpu", "openvino-gpu", "openvino-cpu"],
                          help="where the pinned embedding model runs for dense/hybrid (openvino-* needs the openvino package); "
                               "recorded in the manifest, vectors stay cache-compatible")
+    command = commands.add_parser("retrieval-rescore", help="add the evidence-coverage-v1 metrics to an existing retrieval run (metrics-evidence.json), without re-ranking; offline")
+    command.add_argument("run_dir", nargs="+", help="retrieval run directories")
     command = commands.add_parser("graph-build", help="build a local knowledge graph and evidence viewer")
     command.add_argument("bundle")
     command.add_argument("--output", required=True)
@@ -578,7 +582,7 @@ def main():
             if Path(args.output).exists():
                 raise ValueError(f"{args.output} exists; write the report to a new file")
             report = stats.compare_runs(args.metric, stats.labelled(args.runs), stats.parse_pairs(args.pairs), stats.parse_pairs(args.exploratory),
-                                        stats.labelled(args.repeat), args.regrade, args.questions, args.sheet, args.key, args.judge, args.rounds, args.seed)
+                                        stats.labelled(args.repeat), args.regrade, args.questions, args.sheet, args.key, args.judge, args.rounds, args.seed, args.cluster_families)
             write_json(args.output, report)
             print(stats.table(report))
             print(f"\nreport: {Path(args.output).as_posix()}")
@@ -679,6 +683,11 @@ def main():
                 embedder = LocalEmbedder(model["path"], model["name"], model["revision"], model.get("max_seq_length", 1024), cache=model.get("cache"),
                                          device=args.embed_device)
             print(json.dumps(run(args.bundle, args.questions, args.condition, args.shared, args.output, embedder), ensure_ascii=False, indent=2))
+        elif args.command == "retrieval-rescore":
+            from legal_ai.evaluation.retrieval_run import rescore_evidence
+            for folder in args.run_dir:
+                result = rescore_evidence(folder)
+                print(f"{folder}: {result['condition']} {result['context_packing']} legacy mismatches {result['legacy_recall_mismatches']} -> {Path(folder, 'metrics-evidence.json').as_posix()}", flush=True)
         elif args.command == "graph-build":
             from legal_ai.kb.graph import GRAPH_VERSION, build_graph
             config = json.loads(Path(args.config).read_text(encoding="utf-8"))
