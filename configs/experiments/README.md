@@ -26,6 +26,7 @@ P3 (kế hoạch 22/11, mục 3.1) giữ xếp hạng và phần thêm anh em c�
 
 - `shared-rrf100.json`: ứng viên của kế hoạch 22/11, khác `shared.json` đúng hai trường (`rrf_candidates` 100 cho mọi điều kiện kể cả ĐK1, `context_packing` P3 cho ĐK2-ĐK4); chọn trên dev bằng quy tắc của WP3 trước mốc dừng biến thể.
 - `kb-keys/`: ĐK3/ĐK4 trên corpus v3 với kho dẫn xuất (`claims-inherit-v1` cộng `kb-validator-v4`), biến thể `claims_view` (`compact`, `thin`) và `index_keys` (`kb-keys-v1`: khóa tất định chỉ vào phần chữ đánh chỉ mục), không lọc hiệu lực; dùng cho lượt thăm dò `experiments/runs/kb-keys-2026-11-23`.
+  `kb-keys/dk3-mkeys-thin.json`, `dk4-mkeys-thin.json`: như `*-keys-thin` nhưng `index_keys` là `kb-keys-v2` (khóa tất định cộng câu hỏi do model soạn bằng `cli kb-keys-gen`, chỉ để tìm); cần lượt khóa đã được duyệt và chạy.
 - ĐK3/ĐK4 với kế thừa câu dẫn: tạo tệp điều kiện mới (không sửa tệp cũ) với `kb_run` trỏ vào thư mục dẫn xuất của `cli kb-materialize <run> --output <mới> --validator kb-validator-v4 --inherit claims-inherit-v1`; manifest dẫn xuất giữ `units_sha256` của lượt gốc nên `run-retrieval` dùng được ngay.
 
 ## Đóng băng từ 11/11/2026

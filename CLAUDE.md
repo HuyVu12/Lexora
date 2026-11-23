@@ -38,6 +38,7 @@ python -m legal_ai.cli kb-extract <bundle> --output experiments/runs/<new> --dry
 python -m legal_ai.cli kb-materialize <kb run>                                       # rebuild dk3/dk4/validation offline; kb-inject <kb run> --output <new> for RQ2 (kb-inject/kb-plant take --validator kb-validator-v4 [--inherit claims-inherit-v1])
 python -m legal_ai.cli kb-materialize <kb run> --output <new> --validator kb-validator-v4 --inherit claims-inherit-v1   # derived KB in a new dir (lead-in inheritance, validator accepting lead-in values); the source run is untouched
 python -m legal_ai.cli gold-score <gold.jsonl> --bundle <bundle> --predictions rules   # RQ1 P/R/F1 (or a dk3.jsonl/dk4.jsonl); --inherited ignore (gold-inherited-v1) drops slots inherited from the lead-in
+python -m legal_ai.cli kb-keys-gen <kb run> --bundle <bundle> --output <new> (--all | --units-from <runs/questions> --top-n 30 --split dev) --dry-run --calibrate-from <kb-extract run>   # kb-keys-v2 model-written retrieval keys (index only); real run: --extract-claude-model M --max-calls N --approve-claude [--reuse <pilot>]
 python -m legal_ai.cli answer-run <retrieval run> --questions <q.json> --output <new> --max-calls N --approve-claude   # then answer-score, answer-sheet, answer-grades, answer-judge
 python -m legal_ai.cli answer-run <retrieval run> --questions <q.json> --output <new> --max-calls N --router-model MODEL_OSS_120B --approve-router   # same with a 9Router model (ChatStructured: schema in the prompt, JSON parsed, raw text kept)
 python -m legal_ai.cli budget-report --runs SET:DK1=<run> SET:DK2=<run> --output docs/results/<new>.md   # recall-by-token-budget tables + SVG (shared token_budgets, context_packing P0/P1/P2)
@@ -58,6 +59,7 @@ Web app (FastAPI + SvelteKit; needs the project virtualenv):
 
 ```powershell
 python -m venv .venv; .venv\Scripts\python -m pip install -e ".[web,web-test,catalog,embeddings]"   # once; installs from PyPI (approved 2026-11-06, pypdf/pyarrow 2026-11-07, embeddings 2026-11-08; BGE-M3 weights go to models/bge-m3)
+.venv\Scripts\python -m pip install -e ".[openvino]"; .venv\Scripts\opt_in_out --opt_out   # optional (approved 2026-11-23): run-retrieval --embed-device openvino-gpu runs BGE-M3 on the Intel GPU (FP32, cache-compatible vectors, converted once to models/bge-m3-openvino); opt out of OpenVINO telemetry
 .venv\Scripts\python -m unittest discover -s tests -v                          # full suite incl. tests/test_web_api.py
 .venv\Scripts\python -m legal_ai.web --store data/kb/app-new.sqlite --seed data/kb/entity-relation-review/graph.json --port 8766  # --frontend <build dir>, --source-catalog, opt-in 9Router flags
 ```
