@@ -345,6 +345,15 @@ class ModelKeysRetrievalTests(Fixture):
                          kb_unit_records("DK3", self.documents, self.units, self.texts, self.claims, index_keys=builder))
         self.assertFalse(any(q in json.dumps(read_jsonl(self.root / "ra" / "records.jsonl"), ensure_ascii=False) for q in [QUESTION]))
 
+    def test_shipped_conditions_differ_from_kb_keys_v1_only_in_the_keys(self):
+        folder = ROOT / "configs" / "experiments" / "kb-keys"
+        for name in ("dk3", "dk4"):
+            v1 = json.loads((folder / f"{name}-keys-thin.json").read_text(encoding="utf-8"))
+            v2 = json.loads((folder / f"{name}-mkeys-thin.json").read_text(encoding="utf-8"))
+            self.assertEqual(check_config(v2["index_keys"])["version"], "kb-keys-v2")
+            self.assertEqual({k: v for k, v in v2.items() if k not in ("index_keys", "note")}, {k: v for k, v in v1.items() if k not in ("index_keys", "note")})
+            self.assertEqual(v2["index_keys"]["aliases"], v1["index_keys"]["aliases"])
+
 
 if __name__ == "__main__":
     unittest.main()
