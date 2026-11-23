@@ -231,8 +231,12 @@ class AnswerRunTests(unittest.TestCase):
         second = Judge()
         counts = outcome_judge.judge(sheet, key, enriched, second, output, workers=2)
         self.assertEqual((counts["already_done"], counts["judged"]), (2, 4))
+        changed = json.loads(enriched.read_text(encoding="utf-8"))
+        changed["questions"][0]["issues"] = ["Khác"]
+        other = self.root / "questions-other.json"
+        other.write_text(json.dumps(changed, ensure_ascii=False), encoding="utf-8")
         with self.assertRaisesRegex(ValueError, "other inputs"):
-            outcome_judge.judge(sheet, key, self.questions, Judge(), output)
+            outcome_judge.judge(sheet, key, other, Judge(), output)
         report = outcome_judge.score(output, sheet, key)
         block = report["by_model"]["stand-in"]
         self.assertEqual(set(block["conditions"]), {"DK1", "DK2"})
@@ -345,6 +349,32 @@ class AnswerRunTests(unittest.TestCase):
         finally:
             sys.argv = old
         self.assertFalse((self.root / "cli-real").exists())
+
+
+    def test_outcome_judge_fails_early_listing_questions_without_issues_or_outcome(self):
+        from legal_ai.evaluation import outcome_judge
+        sheet, key = self._judge_inputs()
+        questions = json.loads(self.questions.read_text(encoding="utf-8"))
+        questions["questions"][0] |= {"issues": ["Vấn đề"], "reference_outcome": "Tòa chấp nhận."}
+        questions["questions"][1] |= {"issues": ["Vấn đề"]}  # no reference_outcome; q3 has neither
+        path = self.root / "partial.json"
+        path.write_text(json.dumps(questions, ensure_ascii=False), encoding="utf-8")
+
+        class Never:
+            model, effort = "never", "medium"
+
+            def structured(self, *args, **kwargs):
+                raise AssertionError("no call may be made")
+
+        output = self.root / "judge-early"
+        with self.assertRaises(ValueError) as caught:
+            outcome_judge.judge(sheet, key, path, Never(), output)
+        message = str(caught.exception)
+        self.assertIn("q2 (reference_outcome)", message)
+        self.assertIn("q3 (issues/reference_outcome)", message)
+        self.assertNotIn("q1 (", message)
+        self.assertIn("answer-judge", message)
+        self.assertFalse(output.exists(), "nothing is written")
 
 
 if __name__ == "__main__":
