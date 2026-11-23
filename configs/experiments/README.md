@@ -3,6 +3,20 @@
 Cấu hình điều kiện truy xuất (`dk*.json`) và cấu hình dùng chung (`shared.json`, `answer*.json`) cho `cli run-retrieval` và `cli answer-run`.
 Một tệp cấu hình đã dùng cho một lượt chạy thì không sửa nữa, vì manifest của lượt chạy ghi SHA-256 của tệp; muốn đổi thì tạo tệp mới.
 
+## Thiết kế chính từ 23/11/2026
+
+Đây là bộ điều kiện chính, chốt theo các dòng ngày 22/11 và 23/11/2026 của `docs/decisions.md` (lựa chọn hiệu lực B, kế thừa câu dẫn và `kb-validator-v4`, dòng thu gọn, không dùng khóa tìm kiếm), dùng với `shared-rrf100.json` (hybrid, `rrf_candidates` 100, P3 cho ĐK2-ĐK4, ĐK1 luôn P0).
+
+- `main-v3/`: bộ khó (tình huống, xung đột, phức tạp) và bộ hiệu lực trên corpus v3.
+  - `dk1.json`: ĐK1-hl, đoạn 128 token gối 21, lọc hiệu lực mức văn bản như ĐK2.
+  - `dk2.json`: đơn vị lá, lọc hiệu lực mức văn bản (như `validity-b/dk2.json`).
+  - `dk3.json`: ĐK2 cộng kho chưa kiểm chứng `kb-inherit-2026-11-23/v3-sonnet-v4-inherit` (`dk3.jsonl`), `claims_view: thin`, không có `index_keys`, đồ thị dẫn chiếu như trước cộng cạnh sửa đổi (`graph.amendments`), lọc mức văn bản.
+  - `dk4.json`: cùng kho nhưng chỉ quy phạm qua `kb-validator-v4` (`dk4.jsonl`), cạnh sửa đổi chỉ dùng khi có hiệu lực tới ngày của câu hỏi, rồi lọc trạng thái đơn vị (`unit-status-v2`).
+- `main-v1/`: bộ tra cứu trên corpus v1 (94 Điều, quyết định 15/11/2026) với kho dẫn xuất `kb-inherit-2026-11-23/v1-gptoss-v4-inherit` của gpt-oss-120b; cùng thiết kế nhưng không có khối `validity` vì corpus v1 không có cạnh sửa đổi.
+
+Khóa do model soạn (`kb-keys-v2`) không qua cổng ngày 23/11 và khóa tất định (`kb-keys-v1`) không giúp, nên cả hai không thuộc thiết kế chính; `kb-keys/` chỉ để tái lập lượt thăm dò.
+Lượt chạy thử đầu tiên của thiết kế này: `experiments/runs/main-dryrun-2026-11-23`.
+
 ## Điều kiện chính và mở rộng (kế hoạch nghiên cứu 11/11)
 
 - `dk1-128.json`: ĐK1 chính từ 12/11/2026 (đoạn 128 token, gối 21), chọn theo recall của chính ĐK1 trên dev; `dk1.json` (384 token, gối 64) giữ để tái lập các lượt cũ và làm điểm độ nhạy.
