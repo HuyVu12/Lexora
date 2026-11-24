@@ -1,0 +1,8 @@
+{"task":"gold","title":"Gold quy phạm (mẫu minh họa)","instructions":"Đọc câu.\nSửa các ô cho đúng.","drafted_by":"mẫu thử","options":[],
+ "items":[
+  {"id":"a/article-1/clause-1@10-80","group":"Điều 1","heading":"Điều 1 > Khoản 1","sentence":"Người sử dụng lao động phải thông báo kết quả thử việc cho người lao động.","context":"Điều 1. Thử việc (dữ liệu minh họa)",
+   "draft":[{"modality":"obligation","cue":"phải","slots":{"actor":"Người sử dụng lao động","action":"thông báo kết quả thử việc","recipient":"người lao động"}}],"reason":"Có từ tình thái phải.","confidence":"cao"},
+  {"id":"a/article-1/clause-2@81-140","group":"Điều 1","heading":"Điều 1 > Khoản 2","sentence":"Người lao động có quyền chấm dứt thỏa thuận thử việc mà không cần báo trước.","context":null,
+   "draft":[{"modality":"entitlement","cue":"có quyền","slots":{"actor":"Người lao động","action":"chấm dứt thỏa thuận thử việc","conditions":"không cần báo trước đúng"}}],"reason":"Ô điều kiện có lỗi cố ý để thử kiểm tra nguyên văn.","confidence":"thấp"},
+  {"id":"a/article-2@0-50","group":"Điều 2","heading":"Điều 2","sentence":"Điều 2. Tiền lương thử việc","context":null,"draft":[],"reason":"Tiêu đề, không có quy phạm.","confidence":"cao"}
+ ]}

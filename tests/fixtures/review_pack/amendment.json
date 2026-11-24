@@ -1,0 +1,5 @@
+{"task":"amendment","title":"Cạnh sửa đổi","instructions":"Chọn.","drafted_by":"mẫu thử",
+ "options":[{"value":"dung","label":"Đúng"},{"value":"sai_dich","label":"Sai đích"},{"value":"sai_loai","label":"Sai loại"},{"value":"khac","label":"Khác"}],
+ "items":[{"id":"98375aaf99ff8c10ad7cdce5","group":"external","heading":"Điều 54","question":"Cạnh này đúng không?","fields":[{"label":"Chỉ dẫn","text":"Sửa đổi, bổ sung Điều 54 như sau:","highlight":["Điều 54"]}],
+  "suggestion":{"value":"dung","reason":"Khớp.","confidence":"vừa","quotes":[]},
+  "export":{"edge_key":"98375aaf99ff8c10ad7cdce5","status":"external","kind":"modify (sửa đổi, bổ sung)","effective_from":"2021-01-01","amending_unit":"a, b","instruction":"Sửa đổi, bổ sung Điều 54 như sau:","target_named":"Điều 54, 58-2014-qh13","target_unit":"(không có trong corpus)","target_text":"","new_wording_unit":"","new_wording_text":"","reason":"target_document_not_in_corpus","verdict":"","note":""}}]}
