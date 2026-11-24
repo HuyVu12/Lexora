@@ -1,0 +1,455 @@
+[
+ {
+  "text": "Người được thuê làm giám đốc ở doanh nghiệp mà Nhà nước chỉ nắm một nửa vốn hoặc ít hơn thì hợp đồng lao động của họ phải có những nội dung chủ yếu nào?",
+  "question_type": "synthesis",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-iii/section-1/article-21/clause-1/point-a",
+   "45-2019-qh14/chapter-iii/section-1/article-21/clause-1/point-b",
+   "45-2019-qh14/chapter-iii/section-1/article-21/clause-1/point-c",
+   "45-2019-qh14/chapter-iii/section-1/article-21/clause-1/point-d",
+   "45-2019-qh14/chapter-iii/section-1/article-21/clause-1/point-đ",
+   "45-2019-qh14/chapter-iii/section-1/article-21/clause-1/point-e",
+   "45-2019-qh14/chapter-iii/section-1/article-21/clause-1/point-g",
+   "45-2019-qh14/chapter-iii/section-1/article-21/clause-1/point-h",
+   "45-2019-qh14/chapter-iii/section-1/article-21/clause-1/point-i",
+   "45-2019-qh14/chapter-iii/section-1/article-21/clause-1/point-k",
+   "145-2020-nd-cp/chapter-iii/section-1/article-6"
+  ],
+  "rationale": "Đề xuất của model (agent Claude, nháp 23/11/2026), không phải nhãn người và không phải kết luận pháp lý đã kiểm chứng. Ngày áp dụng: 11/11/2026 (ngày khóa corpus v3, câu không ghi ngày); mọi đơn vị đề xuất còn hiệu lực ngày này. Loại a: luật dẫn nghị định hướng dẫn chi tiết. Đơn vị liên kết B (cần để trả lời đủ, phải có trong nhãn): 145-2020-nd-cp/chapter-iii/section-1/article-6. Đáp án tham chiếu của model: Nội dung hợp đồng lao động của người được thuê làm giám đốc trong trường hợp này \"thực hiện theo quy định tại khoản 1 Điều 21 của Bộ luật Lao động\". Khoản 1 Điều 21 nêu các nội dung chủ yếu, ví dụ \"Tên, địa chỉ của người sử dụng lao động\", \"Mức lương theo công việc hoặc chức danh\", \"Thời giờ làm việc, thời giờ nghỉ ngơi\", \"Bảo hiểm xã hội, bảo hiểm y tế và bảo hiểm thất nghiệp\".",
+  "paraphrase_of": null,
+  "source_question_id": "l00"
+ },
+ {
+  "text": "Nhân viên làm mất tài sản của công ty đúng lúc đang nghỉ ốm. Công ty có được xử lý bồi thường trong thời gian đó không, và nếu thời hiệu xử lý hết trong lúc nghỉ thì được kéo dài thêm tối đa bao lâu?",
+  "question_type": "synthesis",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-viii/section-1/article-122/clause-4/point-a",
+   "145-2020-nd-cp/chapter-viii/article-72/clause-2",
+   "145-2020-nd-cp/chapter-viii/article-72/clause-3"
+  ],
+  "rationale": "Đề xuất của model (agent Claude, nháp 23/11/2026), không phải nhãn người và không phải kết luận pháp lý đã kiểm chứng. Ngày áp dụng: 11/11/2026 (ngày khóa corpus v3, câu không ghi ngày); mọi đơn vị đề xuất còn hiệu lực ngày này. Loại a: luật dẫn nghị định hướng dẫn chi tiết. Đơn vị liên kết B (cần để trả lời đủ, phải có trong nhãn): 145-2020-nd-cp/chapter-viii/article-72/clause-3. Đáp án tham chiếu của model: \"Không xử lý bồi thường thiệt hại đối với người lao động đang trong thời gian quy định tại khoản 4 Điều 122 của Bộ luật Lao động\", trong đó có \"Nghỉ ốm đau, điều dưỡng\". Khi hết thời gian đó, nếu hết thời hiệu hoặc còn dưới 60 ngày thì \"được kéo dài thời hiệu xử lý bồi thường thiệt hại nhưng không quá 60 ngày kể từ ngày hết thời gian nêu trên\".",
+  "paraphrase_of": null,
+  "source_question_id": "l01"
+ },
+ {
+  "text": "Nhân viên ký hợp đồng có thời hạn, hết hạn thì ký tiếp hợp đồng mới rồi sau đó nghỉ việc. Lương dùng để tính trợ cấp thôi việc lấy theo hợp đồng nào?",
+  "question_type": "synthesis",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-iii/section-1/article-20/clause-2/point-a",
+   "45-2019-qh14/chapter-iii/section-1/article-20/clause-2/point-c",
+   "145-2020-nd-cp/chapter-iii/section-2/article-8/clause-5/point-b"
+  ],
+  "rationale": "Đề xuất của model (agent Claude, nháp 23/11/2026), không phải nhãn người và không phải kết luận pháp lý đã kiểm chứng. Ngày áp dụng: 11/11/2026 (ngày khóa corpus v3, câu không ghi ngày); mọi đơn vị đề xuất còn hiệu lực ngày này. Loại a: luật dẫn nghị định hướng dẫn chi tiết. Đơn vị liên kết B (cần để trả lời đủ, phải có trong nhãn): 145-2020-nd-cp/chapter-iii/section-2/article-8/clause-5/point-b. Đáp án tham chiếu của model: Hết hạn hợp đồng mà người lao động vẫn làm thì \"hai bên phải ký kết hợp đồng lao động mới\", hợp đồng xác định thời hạn mới \"cũng chỉ được ký thêm 01 lần\". Khi làm việc theo nhiều hợp đồng kế tiếp nhau thì \"tiền lương để tính trợ cấp thôi việc, trợ cấp mất việc làm là tiền lương bình quân của 06 tháng liền kề theo hợp đồng lao động trước khi chấm dứt hợp đồng lao động cuối cùng\".",
+  "paraphrase_of": null,
+  "source_question_id": "l02"
+ },
+ {
+  "text": "Công ty sa thải nhân viên trái quy định rồi không muốn nhận lại, nhân viên cũng đồng ý không quay lại. Công ty phải trả những khoản gì?",
+  "question_type": "synthesis",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-iii/section-3/article-41/clause-1",
+   "45-2019-qh14/chapter-iii/section-3/article-41/clause-3",
+   "145-2020-nd-cp/chapter-viii/article-73"
+  ],
+  "rationale": "Đề xuất của model (agent Claude, nháp 23/11/2026), không phải nhãn người và không phải kết luận pháp lý đã kiểm chứng. Ngày áp dụng: 11/11/2026 (ngày khóa corpus v3, câu không ghi ngày); mọi đơn vị đề xuất còn hiệu lực ngày này. Loại a: luật dẫn nghị định hướng dẫn chi tiết. Đơn vị liên kết B (cần để trả lời đủ, phải có trong nhãn): 145-2020-nd-cp/chapter-viii/article-73. Đáp án tham chiếu của model: Nếu sa thải \"trái quy định của pháp luật\" thì \"người sử dụng lao động có nghĩa vụ thực hiện quy định tại Điều 41 của Bộ luật Lao động\". Theo Điều 41, phải \"trả thêm cho người lao động một khoản tiền ít nhất bằng 02 tháng tiền lương theo hợp đồng lao động\", cộng \"trợ cấp thôi việc theo quy định tại Điều 46\", và hai bên \"thỏa thuận khoản tiền bồi thường thêm cho người lao động nhưng ít nhất bằng 02 tháng tiền lương theo hợp đồng lao động\".",
+  "paraphrase_of": null,
+  "source_question_id": "l03"
+ },
+ {
+  "text": "Người giúp việc gia đình làm hỏng hoặc làm mất đồ đạc của gia chủ thì phải bồi thường thế nào, và gia chủ cần thỏa thuận sẵn điều gì với người giúp việc?",
+  "question_type": "synthesis",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-viii/section-2/article-129/clause-2",
+   "145-2020-nd-cp/chapter-x/article-89/clause-6/point-a"
+  ],
+  "rationale": "Đề xuất của model (agent Claude, nháp 23/11/2026), không phải nhãn người và không phải kết luận pháp lý đã kiểm chứng. Ngày áp dụng: 11/11/2026 (ngày khóa corpus v3, câu không ghi ngày); mọi đơn vị đề xuất còn hiệu lực ngày này. Loại a: luật dẫn nghị định hướng dẫn chi tiết. Đơn vị liên kết B (cần để trả lời đủ, phải có trong nhãn): 145-2020-nd-cp/chapter-x/article-89/clause-6/point-a. Đáp án tham chiếu của model: Người lao động làm mất tài sản \"phải bồi thường thiệt hại một phần hoặc toàn bộ theo thời giá thị trường hoặc nội quy lao động\". Với người giúp việc, hai bên \"xác định cụ thể các hành vi, hình thức xử lý kỷ luật lao động, trách nhiệm vật chất\" và \"ghi trong hợp đồng lao động hoặc thể hiện bằng hình thức thỏa thuận khác\".",
+  "paraphrase_of": null,
+  "source_question_id": "l04"
+ },
+ {
+  "text": "Công ty có thể buộc nhân viên làm thêm giờ mà không cần hỏi ý kiến họ không?",
+  "question_type": "synthesis",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-vii/section-1/article-108/clause-1",
+   "45-2019-qh14/chapter-vii/section-1/article-108/clause-2",
+   "145-2020-nd-cp/chapter-vii/article-59/clause-1/point-a",
+   "145-2020-nd-cp/chapter-vii/article-59/clause-1/point-b",
+   "145-2020-nd-cp/chapter-vii/article-59/clause-1/point-c"
+  ],
+  "rationale": "Đề xuất của model (agent Claude, nháp 23/11/2026), không phải nhãn người và không phải kết luận pháp lý đã kiểm chứng. Ngày áp dụng: 11/11/2026 (ngày khóa corpus v3, câu không ghi ngày); mọi đơn vị đề xuất còn hiệu lực ngày này. Loại a: luật dẫn nghị định hướng dẫn chi tiết. Đơn vị liên kết B (cần để trả lời đủ, phải có trong nhãn): 145-2020-nd-cp/chapter-vii/article-59/clause-1/point-a, 145-2020-nd-cp/chapter-vii/article-59/clause-1/point-b, 145-2020-nd-cp/chapter-vii/article-59/clause-1/point-c. Đáp án tham chiếu của model: Chỉ trong các trường hợp đặc biệt như \"Thực hiện lệnh động viên\" hoặc bảo vệ tính mạng con người, tài sản trước thiên tai, hỏa hoạn, dịch bệnh thì người lao động \"không được từ chối\". Các trường hợp khác \"người sử dụng lao động phải được sự đồng ý của người lao động tham gia làm thêm về các nội dung sau đây\": \"Thời gian làm thêm\", \"Địa điểm làm thêm\", \"Công việc làm thêm\".",
+  "paraphrase_of": null,
+  "source_question_id": "l05"
+ },
+ {
+  "text": "Tiền thưởng cho nhân viên có phải ghi chung vào phần lương trong hợp đồng lao động không?",
+  "question_type": "synthesis",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-vi/article-104/clause-1",
+   "45-2019-qh14/chapter-vi/article-104/clause-2",
+   "10-2020-tt-bldtbxh/chapter-ii/article-3/clause-5/point-c"
+  ],
+  "rationale": "Đề xuất của model (agent Claude, nháp 23/11/2026), không phải nhãn người và không phải kết luận pháp lý đã kiểm chứng. Ngày áp dụng: 11/11/2026 (ngày khóa corpus v3, câu không ghi ngày); mọi đơn vị đề xuất còn hiệu lực ngày này. Loại a: luật dẫn nghị định hướng dẫn chi tiết. Đơn vị liên kết B (cần để trả lời đủ, phải có trong nhãn): 10-2020-tt-bldtbxh/chapter-ii/article-3/clause-5/point-c. Đáp án tham chiếu của model: \"Thưởng là số tiền hoặc tài sản hoặc bằng các hình thức khác mà người sử dụng lao động thưởng cho người lao động\", theo quy chế do người sử dụng lao động quyết định. Về hợp đồng, \"thưởng theo quy định tại Điều 104 của Bộ luật Lao động\" \"thì ghi thành mục riêng trong hợp đồng lao động\".",
+  "paraphrase_of": null,
+  "source_question_id": "l06"
+ },
+ {
+  "text": "Nhân viên bị tạm đình chỉ công việc để xác minh vi phạm, sau đó không bị kỷ luật và được nhận lại làm việc. Khi sau này nghỉ việc, thời gian bị đình chỉ có được tính vào thời gian để tính trợ cấp thôi việc không?",
+  "question_type": "synthesis",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-viii/section-1/article-128/clause-2",
+   "45-2019-qh14/chapter-viii/section-1/article-128/clause-4",
+   "145-2020-nd-cp/chapter-iii/section-2/article-8/clause-3/point-a"
+  ],
+  "rationale": "Đề xuất của model (agent Claude, nháp 23/11/2026), không phải nhãn người và không phải kết luận pháp lý đã kiểm chứng. Ngày áp dụng: 11/11/2026 (ngày khóa corpus v3, câu không ghi ngày); mọi đơn vị đề xuất còn hiệu lực ngày này. Loại a: luật dẫn nghị định hướng dẫn chi tiết. Đơn vị liên kết B (cần để trả lời đủ, phải có trong nhãn): 145-2020-nd-cp/chapter-iii/section-2/article-8/clause-3/point-a. Đáp án tham chiếu của model: \"Hết thời hạn tạm đình chỉ công việc, người sử dụng lao động phải nhận người lao động trở lại làm việc\", và nếu không bị kỷ luật thì \"được người sử dụng lao động trả đủ tiền lương cho thời gian bị tạm đình chỉ công việc\". Thời gian làm việc để tính trợ cấp thôi việc bao gồm \"thời gian bị tạm đình chỉ công việc theo Điều 128 của Bộ luật Lao động\".",
+  "paraphrase_of": null,
+  "source_question_id": "l07"
+ },
+ {
+  "text": "Người giúp việc gia đình báo trước 15 ngày xin nghỉ mà không nêu lý do thì có được trợ cấp thôi việc không, và mức tính thế nào?",
+  "question_type": "synthesis",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-iii/section-3/article-46/clause-1",
+   "45-2019-qh14/chapter-iii/section-3/article-46/clause-3",
+   "145-2020-nd-cp/chapter-x/article-89/clause-1/point-d",
+   "145-2020-nd-cp/chapter-x/article-89/clause-1/point-e"
+  ],
+  "rationale": "Đề xuất của model (agent Claude, nháp 23/11/2026), không phải nhãn người và không phải kết luận pháp lý đã kiểm chứng. Ngày áp dụng: 11/11/2026 (ngày khóa corpus v3, câu không ghi ngày); mọi đơn vị đề xuất còn hiệu lực ngày này. Loại a: luật dẫn nghị định hướng dẫn chi tiết. Đơn vị liên kết B (cần để trả lời đủ, phải có trong nhãn): 145-2020-nd-cp/chapter-x/article-89/clause-1/point-e. Đáp án tham chiếu của model: Mỗi bên \"có quyền đơn phương chấm dứt hợp đồng lao động mà không cần lý do nhưng phải báo trước ít nhất 15 ngày\". Theo điểm e, trong trường hợp này \"người sử dụng lao động có trách nhiệm trả trợ cấp thôi việc cho người lao động theo quy định tại Điều 46 của Bộ luật Lao động\". Mức là \"mỗi năm làm việc được trợ cấp một nửa tháng tiền lương\", tính trên \"tiền lương bình quân của 06 tháng liền kề theo hợp đồng lao động trước khi người lao động thôi việc\".",
+  "paraphrase_of": null,
+  "source_question_id": "l08"
+ },
+ {
+  "text": "Chủ nhà cho người giúp việc nghỉ ngay mà không báo trước và không có lý do hợp lệ thì phải bồi thường những gì?",
+  "question_type": "synthesis",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-iii/section-3/article-41/clause-1",
+   "145-2020-nd-cp/chapter-x/article-89/clause-1/point-đ"
+  ],
+  "rationale": "Đề xuất của model (agent Claude, nháp 23/11/2026), không phải nhãn người và không phải kết luận pháp lý đã kiểm chứng. Ngày áp dụng: 11/11/2026 (ngày khóa corpus v3, câu không ghi ngày); mọi đơn vị đề xuất còn hiệu lực ngày này. Loại a: luật dẫn nghị định hướng dẫn chi tiết. Đơn vị liên kết B (cần để trả lời đủ, phải có trong nhãn): 145-2020-nd-cp/chapter-x/article-89/clause-1/point-đ. Đáp án tham chiếu của model: \"Trường hợp người sử dụng lao động vi phạm thời hạn báo trước theo điểm d khoản này thì phải trả cho người lao động một khoản tiền tương ứng với tiền lương theo hợp đồng lao động trong những ngày không báo trước\", và chấm dứt trái pháp luật thì \"người sử dụng lao động có nghĩa vụ thực hiện quy định tại Điều 41\", gồm \"phải trả thêm cho người lao động một khoản tiền ít nhất bằng 02 tháng tiền lương theo hợp đồng lao động\".",
+  "paraphrase_of": null,
+  "source_question_id": "l09"
+ },
+ {
+  "text": "Nữ nhân viên nghỉ thai sản xong quay lại làm nhưng công ty không cho làm lại việc cũ, cũng không bố trí việc khác với mức lương tương đương. Công ty có bị phạt tiền không và mức phạt bao nhiêu?",
+  "question_type": "synthesis",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-x/article-140",
+   "283-2026-nd-cp/chapter-ii/section-2/article-26/clause-2/point-e"
+  ],
+  "rationale": "Đề xuất của model (agent Claude, nháp 23/11/2026), không phải nhãn người và không phải kết luận pháp lý đã kiểm chứng. Ngày áp dụng: 11/11/2026 (ngày khóa corpus v3, câu không ghi ngày); mọi đơn vị đề xuất còn hiệu lực ngày này. Loại b: chế tài và thẩm quyền xử phạt. Đơn vị liên kết B (cần để trả lời đủ, phải có trong nhãn): 283-2026-nd-cp/chapter-ii/section-2/article-26/clause-2/point-e. Đáp án tham chiếu của model: Lao động nghỉ thai sản được bảo đảm việc làm cũ, \"không bị cắt giảm tiền lương và quyền, lợi ích so với trước khi nghỉ thai sản\"; nếu việc cũ không còn thì phải \"bố trí việc làm khác cho họ với mức lương không thấp hơn mức lương trước khi nghỉ thai sản\". Hành vi \"Không bảo đảm việc làm cho người lao động theo quy định tại Điều 140 của Bộ luật Lao động\" bị \"Phạt tiền từ 10.000.000 đồng đến 20.000.000 đồng đối với người sử dụng lao động\".",
+  "paraphrase_of": null,
+  "source_question_id": "l10"
+ },
+ {
+  "text": "Công ty bắt nhân viên tăng ca mà không hỏi ý kiến họ và không thuộc trường hợp khẩn cấp thì bị phạt thế nào?",
+  "question_type": "synthesis",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-vii/section-1/article-108/clause-1",
+   "45-2019-qh14/chapter-vii/section-1/article-108/clause-2",
+   "283-2026-nd-cp/chapter-ii/section-2/article-24/clause-3/point-b"
+  ],
+  "rationale": "Đề xuất của model (agent Claude, nháp 23/11/2026), không phải nhãn người và không phải kết luận pháp lý đã kiểm chứng. Ngày áp dụng: 11/11/2026 (ngày khóa corpus v3, câu không ghi ngày); mọi đơn vị đề xuất còn hiệu lực ngày này. Loại b: chế tài và thẩm quyền xử phạt. Đơn vị liên kết B (cần để trả lời đủ, phải có trong nhãn): 283-2026-nd-cp/chapter-ii/section-2/article-24/clause-3/point-b. Đáp án tham chiếu của model: Hành vi \"Huy động người lao động làm thêm giờ mà không được sự đồng ý của người lao động, trừ trường hợp theo quy định tại Điều 108 của Bộ luật Lao động\" bị \"Phạt tiền từ 20.000.000 đồng đến 25.000.000 đồng đối với người sử dụng lao động\". Các trường hợp ngoại lệ ở Điều 108 gồm \"Thực hiện lệnh động viên\" và công việc bảo vệ tính mạng con người, tài sản trước thiên tai, hỏa hoạn, dịch bệnh.",
+  "paraphrase_of": null,
+  "source_question_id": "l11"
+ },
+ {
+  "text": "Công ty cho thuê lại lao động không phối hợp với bên thuê trong việc điều tra tai nạn làm một lao động thuê lại bị thương nặng. Ai có quyền xử phạt hành vi này?",
+  "question_type": "synthesis",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "283-2026-nd-cp/chapter-ii/section-2/article-19/clause-3/point-c",
+   "283-2026-nd-cp/chapter-v/section-1/article-63/clause-9"
+  ],
+  "rationale": "Đề xuất của model (agent Claude, nháp 23/11/2026), không phải nhãn người và không phải kết luận pháp lý đã kiểm chứng. Ngày áp dụng: 11/11/2026 (ngày khóa corpus v3, câu không ghi ngày); mọi đơn vị đề xuất còn hiệu lực ngày này. Loại b: chế tài và thẩm quyền xử phạt. Đơn vị liên kết B (cần để trả lời đủ, phải có trong nhãn): 283-2026-nd-cp/chapter-v/section-1/article-63/clause-9. Đáp án tham chiếu của model: Hành vi \"Không phối hợp với bên thuê lại lao động trong việc điều tra tai nạn lao động làm bị thương nặng một người lao động thuê lại\" bị \"Phạt tiền từ 1.000.000 đồng đến 3.000.000 đồng đối với doanh nghiệp cho thuê lại lao động\". \"Cục trưởng Cục Việc làm có thẩm quyền xử phạt vi phạm hành chính\" đối với \"các điểm c, d, đ, e khoản 3 Điều 19\".",
+  "paraphrase_of": null,
+  "source_question_id": "l12"
+ },
+ {
+  "text": "Doanh nghiệp đưa người lao động đi làm việc ở nước ngoài cho bên khác mượn giấy phép hoạt động dịch vụ của mình thì bị phạt thế nào, và bản quyết định xử phạt phải gửi cho cơ quan nào?",
+  "question_type": "synthesis",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "283-2026-nd-cp/chapter-iv/article-49/clause-10/point-b",
+   "283-2026-nd-cp/chapter-v/section-2/article-64/clause-2"
+  ],
+  "rationale": "Đề xuất của model (agent Claude, nháp 23/11/2026), không phải nhãn người và không phải kết luận pháp lý đã kiểm chứng. Ngày áp dụng: 11/11/2026 (ngày khóa corpus v3, câu không ghi ngày); mọi đơn vị đề xuất còn hiệu lực ngày này. Loại b: chế tài và thẩm quyền xử phạt. Đơn vị liên kết B (cần để trả lời đủ, phải có trong nhãn): 283-2026-nd-cp/chapter-v/section-2/article-64/clause-2. Đáp án tham chiếu của model: Hành vi \"Cho tổ chức, cá nhân khác sử dụng Giấy phép hoạt động dịch vụ đưa người lao động Việt Nam đi làm việc ở nước ngoài\" bị \"Phạt tiền từ 180.000.000 đồng đến 200.000.000 đồng\". Người ra quyết định xử phạt \"gửi 01 bản quyết định xử phạt đến Bộ trưởng Bộ Nội vụ\" đối với hành vi tại \"điểm a, b, c khoản 10 Điều 49\".",
+  "paraphrase_of": null,
+  "source_question_id": "l13"
+ },
+ {
+  "text": "Cục trưởng Cục Tiền lương và Bảo hiểm xã hội được phạt tiền tối đa bao nhiêu, và quyền xử phạt đó có hiệu lực từ khi nào?",
+  "question_type": "synthesis",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "283-2026-nd-cp/chapter-v/section-1/article-61/clause-2/point-b",
+   "283-2026-nd-cp/chapter-vi/article-66/clause-2"
+  ],
+  "rationale": "Đề xuất của model (agent Claude, nháp 23/11/2026), không phải nhãn người và không phải kết luận pháp lý đã kiểm chứng. Ngày áp dụng: 11/11/2026 (ngày khóa corpus v3, câu không ghi ngày); mọi đơn vị đề xuất còn hiệu lực ngày này. Loại b: chế tài và thẩm quyền xử phạt. Đơn vị liên kết B (cần để trả lời đủ, phải có trong nhãn): 283-2026-nd-cp/chapter-vi/article-66/clause-2. Đáp án tham chiếu của model: \"Cục trưởng Cục Việc làm, Cục trưởng Cục Tiền lương và Bảo hiểm xã hội có quyền\" \"Phạt tiền đến 75.000.000 đồng đối với hành vi vi phạm trong lĩnh vực lao động, bảo hiểm xã hội\". Riêng thẩm quyền của Cục trưởng Cục Tiền lương và Bảo hiểm xã hội \"có hiệu lực thi hành kể từ ngày Nghị định sửa đổi, bổ sung một số điều của Nghị định số 189/2025/NĐ-CP\" (xem nguyên văn đơn vị B về văn bản sửa đổi này).",
+  "paraphrase_of": null,
+  "source_question_id": "l14"
+ },
+ {
+  "text": "Doanh nghiệp trốn đóng bảo hiểm xã hội bắt buộc phải khắc phục hậu quả thế nào, và nếu đã bị xử phạt rồi mà vẫn tái phạm thì có thể bị xử lý ra sao?",
+  "question_type": "synthesis",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "283-2026-nd-cp/chapter-iii/article-44/clause-3/point-a",
+   "283-2026-nd-cp/chapter-iii/article-44/clause-3/point-b",
+   "283-2026-nd-cp/chapter-i/article-4/clause-2/point-l"
+  ],
+  "rationale": "Đề xuất của model (agent Claude, nháp 23/11/2026), không phải nhãn người và không phải kết luận pháp lý đã kiểm chứng. Ngày áp dụng: 11/11/2026 (ngày khóa corpus v3, câu không ghi ngày); mọi đơn vị đề xuất còn hiệu lực ngày này. Loại b: chế tài và thẩm quyền xử phạt. Đơn vị liên kết B (cần để trả lời đủ, phải có trong nhãn): 283-2026-nd-cp/chapter-i/article-4/clause-2/point-l. Đáp án tham chiếu của model: Phải \"đóng đủ số tiền bảo hiểm xã hội bắt buộc trốn đóng\" và nộp \"số tiền bằng 0,03%/ngày tính trên số tiền bảo hiểm xã hội bắt buộc trốn đóng và số ngày trốn đóng\". Với \"Hành vi tái phạm quy định về đóng bảo hiểm xã hội bắt buộc quy định tại Điều 44 của Nghị định này\", nếu có dấu hiệu tội phạm thì người có thẩm quyền \"phải chuyển hồ sơ liên quan đến hành vi có dấu hiệu tội phạm cho cơ quan có thẩm quyền tiến hành tố tụng hình sự\".",
+  "paraphrase_of": null,
+  "source_question_id": "l15"
+ },
+ {
+  "text": "Doanh nghiệp lợi dụng hoạt động đưa người lao động đi làm việc ở nước ngoài để tổ chức xuất cảnh trái phép thì lực lượng nào có thẩm quyền xử phạt?",
+  "question_type": "synthesis",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "283-2026-nd-cp/chapter-iv/article-49/clause-9/point-a",
+   "283-2026-nd-cp/chapter-v/section-1/article-63/clause-7"
+  ],
+  "rationale": "Đề xuất của model (agent Claude, nháp 23/11/2026), không phải nhãn người và không phải kết luận pháp lý đã kiểm chứng. Ngày áp dụng: 11/11/2026 (ngày khóa corpus v3, câu không ghi ngày); mọi đơn vị đề xuất còn hiệu lực ngày này. Loại b: chế tài và thẩm quyền xử phạt. Đơn vị liên kết B (cần để trả lời đủ, phải có trong nhãn): 283-2026-nd-cp/chapter-v/section-1/article-63/clause-7. Đáp án tham chiếu của model: Hành vi \"Lợi dụng hoạt động đưa người lao động Việt Nam đi làm việc ở nước ngoài để tổ chức xuất cảnh trái phép, bóc lột hoặc cưỡng bức lao động mà không bị truy cứu trách nhiệm hình sự\". \"Người có thẩm quyền xử phạt của Bộ đội Biên phòng có thẩm quyền xử phạt vi phạm hành chính\" đối với \"điểm a khoản 9 Điều 49\".",
+  "paraphrase_of": null,
+  "source_question_id": "l16"
+ },
+ {
+  "text": "Công ty cho thuê lại lao động phải thực hiện những nghĩa vụ nào, kể cả các nghĩa vụ chung của người sử dụng lao động?",
+  "question_type": "synthesis",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-iii/section-5/article-56/clause-1",
+   "45-2019-qh14/chapter-iii/section-5/article-56/clause-2",
+   "45-2019-qh14/chapter-iii/section-5/article-56/clause-3",
+   "45-2019-qh14/chapter-iii/section-5/article-56/clause-4",
+   "45-2019-qh14/chapter-iii/section-5/article-56/clause-5",
+   "45-2019-qh14/chapter-iii/section-5/article-56/clause-6",
+   "45-2019-qh14/chapter-i/article-6/clause-2/point-a",
+   "45-2019-qh14/chapter-i/article-6/clause-2/point-b",
+   "45-2019-qh14/chapter-i/article-6/clause-2/point-c",
+   "45-2019-qh14/chapter-i/article-6/clause-2/point-d",
+   "45-2019-qh14/chapter-i/article-6/clause-2/point-đ"
+  ],
+  "rationale": "Đề xuất của model (agent Claude, nháp 23/11/2026), không phải nhãn người và không phải kết luận pháp lý đã kiểm chứng. Ngày áp dụng: 11/11/2026 (ngày khóa corpus v3, câu không ghi ngày); mọi đơn vị đề xuất còn hiệu lực ngày này. Loại c: dẫn chiếu trong cùng văn bản. Đơn vị liên kết B (cần để trả lời đủ, phải có trong nhãn): 45-2019-qh14/chapter-i/article-6/clause-2/point-a, 45-2019-qh14/chapter-i/article-6/clause-2/point-b, 45-2019-qh14/chapter-i/article-6/clause-2/point-c, 45-2019-qh14/chapter-i/article-6/clause-2/point-d, 45-2019-qh14/chapter-i/article-6/clause-2/point-đ. Đáp án tham chiếu của model: \"Ngoài các quyền và nghĩa vụ quy định tại Điều 6 của Bộ luật này, doanh nghiệp cho thuê lại lao động có các quyền và nghĩa vụ sau đây\", như \"Thông báo cho người lao động biết nội dung của hợp đồng cho thuê lại lao động\". Nghĩa vụ chung ở Điều 6 gồm \"Thực hiện hợp đồng lao động, thỏa ước lao động tập thể và thỏa thuận hợp pháp khác\" và \"Đào tạo, đào tạo lại, bồi dưỡng nâng cao trình độ, kỹ năng nghề\".",
+  "paraphrase_of": null,
+  "source_question_id": "l17"
+ },
+ {
+  "text": "Công đoàn cơ sở tổ chức đình công mà không đúng trình tự, thủ tục thì Chủ tịch Ủy ban nhân dân cấp huyện phải làm gì và trong bao lâu, và trình tự đình công đúng gồm những bước nào?",
+  "question_type": "synthesis",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-xiv/section-5/article-211",
+   "45-2019-qh14/chapter-xiv/section-5/article-200/clause-1",
+   "45-2019-qh14/chapter-xiv/section-5/article-200/clause-2",
+   "45-2019-qh14/chapter-xiv/section-5/article-200/clause-3"
+  ],
+  "rationale": "Đề xuất của model (agent Claude, nháp 23/11/2026), không phải nhãn người và không phải kết luận pháp lý đã kiểm chứng. Ngày áp dụng: 11/11/2026 (ngày khóa corpus v3, câu không ghi ngày); mọi đơn vị đề xuất còn hiệu lực ngày này. Loại c: dẫn chiếu trong cùng văn bản. Đơn vị liên kết B (cần để trả lời đủ, phải có trong nhãn): 45-2019-qh14/chapter-xiv/section-5/article-200/clause-1, 45-2019-qh14/chapter-xiv/section-5/article-200/clause-2, 45-2019-qh14/chapter-xiv/section-5/article-200/clause-3. Đáp án tham chiếu của model: \"Trong thời hạn 12 giờ kể từ khi nhận được thông báo về cuộc đình công không tuân theo quy định tại các điều 200, 201 và 202 của Bộ luật này, Chủ tịch Ủy ban nhân dân cấp huyện chủ trì\" việc gặp gỡ các bên. Trình tự đình công gồm \"Lấy ý kiến về đình công\", \"Ra quyết định đình công và thông báo đình công\", \"Tiến hành đình công\".",
+  "paraphrase_of": null,
+  "source_question_id": "l18"
+ },
+ {
+  "text": "Người đang nhận trợ cấp hằng tháng từ bảo hiểm xã hội thì ai đóng bảo hiểm y tế cho họ?",
+  "question_type": "synthesis",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "41-2024-qh15/chapter-ii/section-1/article-10/clause-2/point-b",
+   "41-2024-qh15/chapter-iii/article-23/clause-6"
+  ],
+  "rationale": "Đề xuất của model (agent Claude, nháp 23/11/2026), không phải nhãn người và không phải kết luận pháp lý đã kiểm chứng. Ngày áp dụng: 11/11/2026 (ngày khóa corpus v3, câu không ghi ngày); mọi đơn vị đề xuất còn hiệu lực ngày này. Loại c: dẫn chiếu trong cùng văn bản. Đơn vị liên kết B (cần để trả lời đủ, phải có trong nhãn): 41-2024-qh15/chapter-iii/article-23/clause-6. Đáp án tham chiếu của model: Người lao động được \"Hưởng bảo hiểm y tế trong trường hợp\" \"đang hưởng chế độ quy định tại Điều 23 của Luật này\". Theo Điều 23, \"Người đang trong thời gian hưởng trợ cấp hằng tháng thì được ngân sách nhà nước đóng bảo hiểm y tế\".",
+  "paraphrase_of": null,
+  "source_question_id": "l19"
+ },
+ {
+  "text": "Lao động nữ bị sảy thai ở tuần thứ 8 thì được nghỉ tối đa bao nhiêu ngày và trợ cấp mỗi ngày tính thế nào?",
+  "question_type": "synthesis",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "41-2024-qh15/chapter-v/section-2/article-59/clause-1",
+   "41-2024-qh15/chapter-v/section-2/article-59/clause-3",
+   "41-2024-qh15/chapter-v/section-2/article-52/clause-1/point-b"
+  ],
+  "rationale": "Đề xuất của model (agent Claude, nháp 23/11/2026), không phải nhãn người và không phải kết luận pháp lý đã kiểm chứng. Ngày áp dụng: 11/11/2026 (ngày khóa corpus v3, câu không ghi ngày); mọi đơn vị đề xuất còn hiệu lực ngày này. Loại c: dẫn chiếu trong cùng văn bản. Đơn vị liên kết B (cần để trả lời đủ, phải có trong nhãn): 41-2024-qh15/chapter-v/section-2/article-52/clause-1/point-b. Đáp án tham chiếu của model: Thai \"từ đủ 05 tuần tuổi đến dưới 13 tuần tuổi\" được nghỉ tối đa \"20 ngày\". Trợ cấp thai sản một tháng \"bằng 100% mức bình quân tiền lương làm căn cứ đóng bảo hiểm xã hội bắt buộc của 06 tháng gần nhất trước khi nghỉ việc hưởng chế độ thai sản\", và với trường hợp Điều 52 \"mức trợ cấp mỗi ngày được tính bằng mức trợ cấp thai sản một tháng chia cho 30 ngày\".",
+  "paraphrase_of": null,
+  "source_question_id": "l20"
+ },
+ {
+  "text": "Nhân viên nghỉ việc khi chưa đủ điều kiện hưởng lương hưu thì thời gian đóng bảo hiểm xã hội có được bảo lưu không, và sau này cần điều kiện gì về số năm đóng và tuổi để hưởng lương hưu?",
+  "question_type": "synthesis",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "41-2024-qh15/chapter-v/section-3/article-71",
+   "41-2024-qh15/chapter-v/section-3/article-64/clause-1/point-a"
+  ],
+  "rationale": "Đề xuất của model (agent Claude, nháp 23/11/2026), không phải nhãn người và không phải kết luận pháp lý đã kiểm chứng. Ngày áp dụng: 11/11/2026 (ngày khóa corpus v3, câu không ghi ngày); mọi đơn vị đề xuất còn hiệu lực ngày này. Loại c: dẫn chiếu trong cùng văn bản. Đơn vị liên kết B (cần để trả lời đủ, phải có trong nhãn): 41-2024-qh15/chapter-v/section-3/article-64/clause-1/point-a. Đáp án tham chiếu của model: Người lao động nghỉ việc mà chưa đủ điều kiện hưởng lương hưu \"thì được bảo lưu thời gian đóng bảo hiểm xã hội\". Để hưởng lương hưu cần \"thời gian đóng bảo hiểm xã hội bắt buộc từ đủ 15 năm trở lên\" và \"Đủ tuổi nghỉ hưu theo quy định tại khoản 2 Điều 169 của Bộ luật Lao động\".",
+  "paraphrase_of": null,
+  "source_question_id": "l21"
+ },
+ {
+  "text": "Người lao động được cho thuê lại có những nghĩa vụ gì trong quá trình làm việc?",
+  "question_type": "synthesis",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-iii/section-5/article-58/clause-1",
+   "45-2019-qh14/chapter-iii/section-5/article-58/clause-2",
+   "45-2019-qh14/chapter-i/article-5/clause-2/point-a",
+   "45-2019-qh14/chapter-i/article-5/clause-2/point-b",
+   "45-2019-qh14/chapter-i/article-5/clause-2/point-c"
+  ],
+  "rationale": "Đề xuất của model (agent Claude, nháp 23/11/2026), không phải nhãn người và không phải kết luận pháp lý đã kiểm chứng. Ngày áp dụng: 11/11/2026 (ngày khóa corpus v3, câu không ghi ngày); mọi đơn vị đề xuất còn hiệu lực ngày này. Loại c: dẫn chiếu trong cùng văn bản. Đơn vị liên kết B (cần để trả lời đủ, phải có trong nhãn): 45-2019-qh14/chapter-i/article-5/clause-2/point-a, 45-2019-qh14/chapter-i/article-5/clause-2/point-b, 45-2019-qh14/chapter-i/article-5/clause-2/point-c. Đáp án tham chiếu của model: Ngoài nghĩa vụ chung, người lao động thuê lại phải \"Thực hiện công việc theo hợp đồng lao động đã ký với doanh nghiệp hoạt động cho thuê lại lao động\" và \"tuân theo sự quản lý, điều hành, giám sát hợp pháp của bên thuê lại lao động\". Nghĩa vụ chung gồm \"Thực hiện hợp đồng lao động, thỏa ước lao động tập thể và thỏa thuận hợp pháp khác\" và \"Thực hiện quy định của pháp luật về lao động, việc làm, giáo dục nghề nghiệp, bảo hiểm xã hội\".",
+  "paraphrase_of": null,
+  "source_question_id": "l22"
+ },
+ {
+  "text": "Đại diện người lao động tham gia các phiên họp thương lượng tập thể có được tính lương không, và thời gian đó có bị trừ vào thời gian làm công việc đại diện mà công ty dành cho ban lãnh đạo tổ chức đại diện không?",
+  "question_type": "synthesis",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-v/section-2/article-70/clause-2",
+   "45-2019-qh14/chapter-xiii/article-176/clause-2"
+  ],
+  "rationale": "Đề xuất của model (agent Claude, nháp 23/11/2026), không phải nhãn người và không phải kết luận pháp lý đã kiểm chứng. Ngày áp dụng: 11/11/2026 (ngày khóa corpus v3, câu không ghi ngày); mọi đơn vị đề xuất còn hiệu lực ngày này. Loại c: dẫn chiếu trong cùng văn bản. Đơn vị liên kết B (cần để trả lời đủ, phải có trong nhãn): 45-2019-qh14/chapter-xiii/article-176/clause-2. Đáp án tham chiếu của model: \"Thời gian tham gia các phiên họp thương lượng tập thể của đại diện bên người lao động được tính là thời gian làm việc có hưởng lương\", và với thành viên của tổ chức đại diện \"thì thời gian tham gia các phiên họp không tính vào thời gian quy định tại khoản 2 Điều 176 của Bộ luật này\". Thời gian đó là thời gian tối thiểu mà \"Chính phủ quy định thời gian tối thiểu mà người sử dụng lao động dành cho toàn bộ thành viên ban lãnh đạo của tổ chức đại diện người lao động tại cơ sở\".",
+  "paraphrase_of": null,
+  "source_question_id": "l23"
+ },
+ {
+  "text": "Hòa giải viên lao động có bao lâu để hòa giải một tranh chấp lao động tập thể về quyền, và nếu quá hạn mà không hòa giải thì các bên làm gì?",
+  "question_type": "synthesis",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-xiv/section-3/article-192/clause-2/point-a",
+   "45-2019-qh14/chapter-xiv/section-3/article-192/clause-2/point-b",
+   "45-2019-qh14/chapter-xiv/section-2/article-188/clause-2"
+  ],
+  "rationale": "Đề xuất của model (agent Claude, nháp 23/11/2026), không phải nhãn người và không phải kết luận pháp lý đã kiểm chứng. Ngày áp dụng: 11/11/2026 (ngày khóa corpus v3, câu không ghi ngày); mọi đơn vị đề xuất còn hiệu lực ngày này. Loại c: dẫn chiếu trong cùng văn bản. Đơn vị liên kết B (cần để trả lời đủ, phải có trong nhãn): 45-2019-qh14/chapter-xiv/section-2/article-188/clause-2. Đáp án tham chiếu của model: Theo Điều 188, \"Trong thời hạn 05 ngày làm việc\" từ khi nhận được yêu cầu \"hòa giải viên lao động phải kết thúc việc hòa giải\". Nếu \"hết thời hạn hòa giải quy định tại khoản 2 Điều 188 của Bộ luật này mà hòa giải viên lao động không tiến hành hòa giải\" thì các bên có quyền \"Yêu cầu Hội đồng trọng tài lao động giải quyết\" hoặc \"Yêu cầu Tòa án giải quyết\".",
+  "paraphrase_of": null,
+  "source_question_id": "l24"
+ },
+ {
+  "text": "Nhân viên bị tai nạn trên đường từ nhà đến chỗ làm và phải đi khám giám định thương tật. Phí giám định có được quỹ bảo hiểm tai nạn lao động trả không, cần đủ điều kiện gì?",
+  "question_type": "synthesis",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "84-2015-qh13/chapter-iii/section-3/article-42/clause-1",
+   "84-2015-qh13/chapter-iii/section-3/article-45/clause-1/point-c",
+   "84-2015-qh13/chapter-iii/section-3/article-45/clause-2"
+  ],
+  "rationale": "Đề xuất của model (agent Claude, nháp 23/11/2026), không phải nhãn người và không phải kết luận pháp lý đã kiểm chứng. Ngày áp dụng: 11/11/2026 (ngày khóa corpus v3, câu không ghi ngày); mọi đơn vị đề xuất còn hiệu lực ngày này. Loại c: dẫn chiếu trong cùng văn bản. Đơn vị liên kết B (cần để trả lời đủ, phải có trong nhãn): 84-2015-qh13/chapter-iii/section-3/article-45/clause-1/point-c, 84-2015-qh13/chapter-iii/section-3/article-45/clause-2. Đáp án tham chiếu của model: Quỹ \"Trả phí khám giám định thương tật, bệnh tật do tai nạn lao động, bệnh nghề nghiệp đối với các trường hợp đủ điều kiện hưởng theo quy định tại Điều 45 và Điều 46 của Luật này\". Điều 45 gồm tai nạn \"Trên tuyến đường đi từ nơi ở đến nơi làm việc hoặc từ nơi làm việc về nơi ở trong khoảng thời gian và tuyến đường hợp lý\" và \"Suy giảm khả năng lao động từ 5% trở lên do bị tai nạn quy định tại khoản 1 Điều này\".",
+  "paraphrase_of": null,
+  "source_question_id": "l25"
+ },
+ {
+  "text": "Nhà thầu muốn tuyển người lao động nước ngoài cho gói thầu thì trước đó phải kê khai và đề nghị tuyển lao động Việt Nam với cơ quan nào?",
+  "question_type": "synthesis",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "152-2020-nd-cp/chapter-ii/section-1/article-5/clause-1",
+   "70-2023-nd-cp/article-1/clause-13/point-a"
+  ],
+  "rationale": "Đề xuất của model (agent Claude, nháp 23/11/2026), không phải nhãn người và không phải kết luận pháp lý đã kiểm chứng. Ngày áp dụng: 11/11/2026 (ngày khóa corpus v3, câu không ghi ngày); mọi đơn vị đề xuất còn hiệu lực ngày này. Loại d: sửa đổi, bổ sung (chọn đơn vị sửa đổi cộng phần còn hiệu lực của đơn vị gốc). Đơn vị liên kết B (cần để trả lời đủ, phải có trong nhãn): 70-2023-nd-cp/article-1/clause-13/point-a. Lưu ý hiệu lực: Điều 5 khoản 1 Nghị định 152/2020 còn cụm \"Chủ tịch Ủy ban nhân dân cấp tỉnh\" đã bị thay; đáp án hiện hành là cơ quan thay thế ở đơn vị B. Đáp án tham chiếu của model: Nhà thầu \"đề nghị tuyển người lao động Việt Nam vào các vị trí công việc dự kiến tuyển người lao động nước ngoài\" theo Điều 5 khoản 1. Nghị định 70/2023 \"Thay thế cụm từ\" \"Chủ tịch Ủy ban nhân dân cấp tỉnh\" tại khoản 1 Điều 5 bằng cụm từ \"Sở Lao động - Thương binh và Xã hội\", nên cơ quan hiện hành là Sở Lao động - Thương binh và Xã hội.",
+  "paraphrase_of": null,
+  "source_question_id": "l26"
+ },
+ {
+  "text": "Người lao động nước ngoài làm việc cho cùng một công ty ở nhiều tỉnh thì công ty phải báo cáo việc sử dụng người lao động đó như thế nào?",
+  "question_type": "synthesis",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "152-2020-nd-cp/chapter-ii/section-1/article-6/clause-1",
+   "70-2023-nd-cp/article-1/clause-3"
+  ],
+  "rationale": "Đề xuất của model (agent Claude, nháp 23/11/2026), không phải nhãn người và không phải kết luận pháp lý đã kiểm chứng. Ngày áp dụng: 11/11/2026 (ngày khóa corpus v3, câu không ghi ngày); mọi đơn vị đề xuất còn hiệu lực ngày này. Loại d: sửa đổi, bổ sung (chọn đơn vị sửa đổi cộng phần còn hiệu lực của đơn vị gốc). Đơn vị liên kết B (cần để trả lời đủ, phải có trong nhãn): 70-2023-nd-cp/article-1/clause-3. Đáp án tham chiếu của model: Báo cáo định kỳ: \"người sử dụng lao động nước ngoài báo cáo 6 tháng đầu năm và hằng năm về tình hình sử dụng người lao động nước ngoài\". Nghị định 70/2023 bổ sung: \"trong vòng 3 ngày làm việc kể từ ngày người lao động nước ngoài bắt đầu làm việc, người sử dụng lao động phải báo cáo qua môi trường điện tử về Bộ Lao động - Thương binh và Xã hội và Sở Lao động - Thương binh và Xã hội nơi người lao động nước ngoài đến làm việc\".",
+  "paraphrase_of": null,
+  "source_question_id": "l27"
+ },
+ {
+  "text": "Giấy tờ do nước ngoài cấp trong hồ sơ đề nghị xác nhận người lao động nước ngoài không thuộc diện cấp giấy phép lao động thì phải làm thủ tục gì về dịch thuật và chứng thực?",
+  "question_type": "synthesis",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "152-2020-nd-cp/chapter-ii/section-2/article-8/clause-3/point-e",
+   "70-2023-nd-cp/article-1/clause-13/point-c"
+  ],
+  "rationale": "Đề xuất của model (agent Claude, nháp 23/11/2026), không phải nhãn người và không phải kết luận pháp lý đã kiểm chứng. Ngày áp dụng: 11/11/2026 (ngày khóa corpus v3, câu không ghi ngày); mọi đơn vị đề xuất còn hiệu lực ngày này. Loại d: sửa đổi, bổ sung (chọn đơn vị sửa đổi cộng phần còn hiệu lực của đơn vị gốc). Đơn vị liên kết B (cần để trả lời đủ, phải có trong nhãn): 70-2023-nd-cp/article-1/clause-13/point-c. Lưu ý hiệu lực: Điểm e khoản 3 Điều 8 Nghị định 152/2020 còn cụm \"dịch ra tiếng Việt và có chứng thực\" đã bị thay; đáp án hiện hành theo đơn vị B. Đáp án tham chiếu của model: Giấy tờ của nước ngoài \"phải hợp pháp hóa lãnh sự, dịch ra tiếng Việt và có chứng thực\" theo bản gốc, nhưng Nghị định 70/2023 thay bằng cụm từ \"dịch ra tiếng Việt và công chứng hoặc chứng thực\" tại điểm e khoản 3 Điều 8.",
+  "paraphrase_of": null,
+  "source_question_id": "l28"
+ },
+ {
+  "text": "Khi nộp hồ sơ cấp giấy phép lao động cho người nước ngoài, giấy tờ của nước ngoài phải được hợp pháp hóa và dịch ra tiếng Việt kèm thủ tục gì?",
+  "question_type": "synthesis",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "152-2020-nd-cp/chapter-ii/section-3/article-9/clause-10",
+   "70-2023-nd-cp/article-1/clause-13/point-d"
+  ],
+  "rationale": "Đề xuất của model (agent Claude, nháp 23/11/2026), không phải nhãn người và không phải kết luận pháp lý đã kiểm chứng. Ngày áp dụng: 11/11/2026 (ngày khóa corpus v3, câu không ghi ngày); mọi đơn vị đề xuất còn hiệu lực ngày này. Loại d: sửa đổi, bổ sung (chọn đơn vị sửa đổi cộng phần còn hiệu lực của đơn vị gốc). Đơn vị liên kết B (cần để trả lời đủ, phải có trong nhãn): 70-2023-nd-cp/article-1/clause-13/point-d. Lưu ý hiệu lực: Khoản 10 Điều 9 Nghị định 152/2020 còn cụm \"dịch ra tiếng Việt và chứng thực\" đã bị thay; đáp án hiện hành theo đơn vị B. Đáp án tham chiếu của model: Giấy tờ của nước ngoài \"phải được hợp pháp hóa lãnh sự\" và \"dịch ra tiếng Việt và chứng thực theo quy định của pháp luật Việt Nam\" theo bản gốc, nhưng Nghị định 70/2023 thay bằng cụm từ \"dịch ra tiếng Việt và công chứng hoặc chứng thực\" tại khoản 10 Điều 9.",
+  "paraphrase_of": null,
+  "source_question_id": "l29"
+ },
+ {
+  "text": "Lương trong thời gian thử việc phải đạt tối thiểu bao nhiêu phần trăm mức lương của công việc đó?",
+  "question_type": "lookup",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-iii/section-1/article-26"
+  ],
+  "rationale": "Đề xuất của model (agent Claude, nháp 23/11/2026), không phải nhãn người và không phải kết luận pháp lý đã kiểm chứng. Ngày áp dụng: 11/11/2026 (ngày khóa corpus v3, câu không ghi ngày); mọi đơn vị đề xuất còn hiệu lực ngày này. Câu đối chứng: chỉ cần một đơn vị lá, không có đơn vị liên kết. Đáp án tham chiếu của model: \"Tiền lương của người lao động trong thời gian thử việc do hai bên thỏa thuận nhưng ít nhất phải bằng 85% mức lương của công việc đó\".",
+  "paraphrase_of": null,
+  "source_question_id": "l30"
+ },
+ {
+  "text": "Thử việc cho vị trí cần trình độ cao đẳng trở lên được kéo dài tối đa bao nhiêu ngày?",
+  "question_type": "lookup",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-iii/section-1/article-25/clause-2"
+  ],
+  "rationale": "Đề xuất của model (agent Claude, nháp 23/11/2026), không phải nhãn người và không phải kết luận pháp lý đã kiểm chứng. Ngày áp dụng: 11/11/2026 (ngày khóa corpus v3, câu không ghi ngày); mọi đơn vị đề xuất còn hiệu lực ngày này. Câu đối chứng: chỉ cần một đơn vị lá, không có đơn vị liên kết. Đáp án tham chiếu của model: \"Không quá 60 ngày đối với công việc có chức danh nghề nghiệp cần trình độ chuyên môn, kỹ thuật từ cao đẳng trở lên\".",
+  "paraphrase_of": null,
+  "source_question_id": "l31"
+ },
+ {
+  "text": "Nhân viên làm theo hợp đồng không xác định thời hạn muốn nghỉ việc thì phải báo trước cho công ty ít nhất bao nhiêu ngày?",
+  "question_type": "lookup",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-iii/section-3/article-35/clause-1/point-a"
+  ],
+  "rationale": "Đề xuất của model (agent Claude, nháp 23/11/2026), không phải nhãn người và không phải kết luận pháp lý đã kiểm chứng. Ngày áp dụng: 11/11/2026 (ngày khóa corpus v3, câu không ghi ngày); mọi đơn vị đề xuất còn hiệu lực ngày này. Câu đối chứng: chỉ cần một đơn vị lá, không có đơn vị liên kết. Đáp án tham chiếu của model: \"Ít nhất 45 ngày nếu làm việc theo hợp đồng lao động không xác định thời hạn\".",
+  "paraphrase_of": null,
+  "source_question_id": "l32"
+ },
+ {
+  "text": "Người lao động được nghỉ Tết Âm lịch mấy ngày mà vẫn hưởng nguyên lương?",
+  "question_type": "lookup",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-vii/section-2/article-112/clause-1/point-b"
+  ],
+  "rationale": "Đề xuất của model (agent Claude, nháp 23/11/2026), không phải nhãn người và không phải kết luận pháp lý đã kiểm chứng. Ngày áp dụng: 11/11/2026 (ngày khóa corpus v3, câu không ghi ngày); mọi đơn vị đề xuất còn hiệu lực ngày này. Câu đối chứng: chỉ cần một đơn vị lá, không có đơn vị liên kết. Đáp án tham chiếu của model: \"Tết Âm lịch: 05 ngày\" trong các ngày lễ, tết mà người lao động \"được nghỉ làm việc, hưởng nguyên lương\".",
+  "paraphrase_of": null,
+  "source_question_id": "l33"
+ },
+ {
+  "text": "Thời giờ làm việc bình thường tối đa là bao nhiêu giờ mỗi ngày và mỗi tuần?",
+  "question_type": "lookup",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-vii/section-1/article-105/clause-1"
+  ],
+  "rationale": "Đề xuất của model (agent Claude, nháp 23/11/2026), không phải nhãn người và không phải kết luận pháp lý đã kiểm chứng. Ngày áp dụng: 11/11/2026 (ngày khóa corpus v3, câu không ghi ngày); mọi đơn vị đề xuất còn hiệu lực ngày này. Câu đối chứng: chỉ cần một đơn vị lá, không có đơn vị liên kết. Đáp án tham chiếu của model: \"Thời giờ làm việc bình thường không quá 08 giờ trong 01 ngày và không quá 48 giờ trong 01 tuần\".",
+  "paraphrase_of": null,
+  "source_question_id": "l34"
+ }
+]

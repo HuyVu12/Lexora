@@ -1,0 +1,5 @@
+{"task":"link","title":"Liên kết A/B của câu hỏi","instructions":"Chọn.","drafted_by":"mẫu thử",
+ "options":[{"value":"khong_can_B_gold_dung","label":"Không cần B, gold đúng","csv":{"needs_B (co/khong)":"khong","gold_ok (co/khong)":"co"}},{"value":"can_B","label":"Cần B","csv":{"needs_B (co/khong)":"co","gold_ok (co/khong)":"co"}},{"value":"gold_sai","label":"Gold sai","csv":{"needs_B (co/khong)":"khong","gold_ok (co/khong)":"khong"}}],
+ "items":[{"id":"l00","group":"l","heading":"l00","question":"Người được thuê làm giám đốc?","fields":[{"label":"A","text":"Điều 21 khoản 1 điểm a","highlight":[]}],
+  "suggestion":{"value":"khong_can_B_gold_dung","reason":"Đủ.","confidence":"cao","quotes":[]},
+  "export":{"question_id":"l00","question":"Q","A_label":"al","A_text":"at","B_label":"","B_text":"","reference_answer":"ra","needs_B (co/khong)":"","gold_ok (co/khong)":"","note":""}}]}

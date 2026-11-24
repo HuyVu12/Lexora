@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<title>Duyệt nhãn Lexora 24/11/2026</title>
+<style>
+:root{--bg:#f6f5f1;--panel:#fff;--ink:#1d2330;--muted:#5b6475;--line:#d9d6cc;--accent:#1f5fae;--accent-ink:#fff;--ok:#1b7a43;--okbg:#e4f3ea;--warn:#8a5a00;--warnbg:#fbf0d4;--bad:#b3261e;--badbg:#fbe7e5;--mark:#fff1a8;--suggest:#e8f0fb;--focus:#1f5fae}
+:root[data-theme=dark]{--bg:#12151c;--panel:#1b2029;--ink:#e8ebf2;--muted:#a0a8b8;--line:#343b49;--accent:#6aa5ee;--accent-ink:#0c1119;--ok:#6fd49a;--okbg:#17301f;--warn:#f0c15a;--warnbg:#38300f;--bad:#ff8f86;--badbg:#3c1b19;--mark:#5a4d12;--suggest:#1d2c43;--focus:#8fbaf5}
+@media (prefers-color-scheme:dark){:root:not([data-theme=light]){--bg:#12151c;--panel:#1b2029;--ink:#e8ebf2;--muted:#a0a8b8;--line:#343b49;--accent:#6aa5ee;--accent-ink:#0c1119;--ok:#6fd49a;--okbg:#17301f;--warn:#f0c15a;--warnbg:#38300f;--bad:#ff8f86;--badbg:#3c1b19;--mark:#5a4d12;--suggest:#1d2c43;--focus:#8fbaf5}}
+*{box-sizing:border-box}
+html{font-size:17px}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:'Be Vietnam Pro',system-ui,sans-serif;line-height:1.55}
+button,input,select,textarea{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--focus);outline-offset:2px}
+.top{background:var(--panel);border-bottom:1px solid var(--line);padding:.6rem 1rem;display:flex;flex-wrap:wrap;gap:.6rem 1rem;align-items:center}
+.top h1{font-size:1.05rem;margin:0;font-weight:650}
+.badge{display:inline-block;font-size:.78rem;padding:.1rem .55rem;border-radius:99px;border:1px solid var(--line);color:var(--muted);overflow-wrap:anywhere}
+.badge.blind{background:var(--warnbg);color:var(--warn);border-color:transparent}
+.badge.cao{background:var(--okbg);color:var(--ok);border-color:transparent}
+.badge.vua{background:var(--suggest);color:var(--accent);border-color:transparent}
+.badge.thap{background:var(--badbg);color:var(--bad);border-color:transparent}
+.spacer{flex:1}
+label.inline{display:flex;align-items:center;gap:.4rem;font-size:.9rem}
+input[type=text],textarea,select{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:.35rem .55rem;min-width:0}
+textarea{width:100%;resize:vertical;min-height:3.2rem}
+button{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:.4rem .8rem;cursor:pointer}
+button:hover{border-color:var(--accent)}
+button.primary{background:var(--accent);color:var(--accent-ink);border-color:var(--accent);font-weight:600}
+button.danger{color:var(--bad)}
+nav[role=tablist]{display:flex;gap:.25rem;padding:.6rem 1rem 0;flex-wrap:wrap;border-bottom:1px solid var(--line);background:var(--bg)}
+nav[role=tablist] button{border-bottom-left-radius:0;border-bottom-right-radius:0;margin-bottom:-1px;padding:.5rem .9rem}
+nav[role=tablist] button[aria-selected=true]{background:var(--panel);border-bottom-color:var(--panel);color:var(--accent);font-weight:650}
+nav .cnt{font-size:.8rem;color:var(--muted);margin-left:.4rem;font-weight:400}
+.bar{padding:.7rem 1rem;display:flex;flex-wrap:wrap;gap:.6rem 1.2rem;align-items:center}
+.progress{flex:1;min-width:14rem;max-width:30rem}
+.progress .track{height:.6rem;background:var(--line);border-radius:99px;overflow:hidden}
+.progress .fill{height:100%;background:var(--ok);width:0}
+@media (prefers-reduced-motion:no-preference){.progress .fill{transition:width .25s ease}.card{animation:fade .15s ease}@keyframes fade{from{opacity:.4}to{opacity:1}}}
+.progress small{color:var(--muted)}
+.chips{padding:0 1rem .6rem;display:flex;flex-wrap:wrap;gap:.25rem}
+.chips button{min-width:2.1rem;padding:.1rem .35rem;font-size:.8rem;border-radius:5px}
+.chips button.done{background:var(--okbg);border-color:var(--ok);color:var(--ok)}
+.chips button.low{box-shadow:inset 0 -3px 0 var(--bad)}
+.chips button.cur{outline:2px solid var(--accent);outline-offset:1px;font-weight:700}
+main{padding:0 1rem 1rem;max-width:62rem}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:1rem 1.2rem}
+.card h2{font-size:1.15rem;margin:.1rem 0 .5rem;overflow-wrap:anywhere}
+.meta{display:flex;flex-wrap:wrap;gap:.4rem;align-items:center;margin-bottom:.4rem;color:var(--muted);font-size:.85rem}
+.question{font-size:1.08rem;font-weight:600;padding:.6rem .8rem;border-left:4px solid var(--accent);background:var(--suggest);border-radius:0 6px 6px 0;margin:.5rem 0 .8rem;overflow-wrap:anywhere;white-space:pre-wrap}
+.field{margin:.6rem 0}
+.fl{font-size:.82rem;font-weight:650;color:var(--muted);margin-bottom:.15rem;display:block}
+.ft{white-space:pre-wrap;overflow-wrap:anywhere;max-width:75ch;border:1px solid var(--line);border-radius:6px;padding:.5rem .7rem;max-height:22rem;overflow:auto}
+mark{background:var(--mark);color:inherit;border-radius:3px;padding:0 .1em}
+.sugg{border:1px solid var(--accent);background:var(--suggest);border-radius:8px;padding:.6rem .8rem;margin:.8rem 0}
+.sugg h3{font-size:.95rem;margin:0 0 .3rem;display:flex;flex-wrap:wrap;gap:.5rem;align-items:center}
+.sugg p{margin:.2rem 0;overflow-wrap:anywhere}
+blockquote{margin:.4rem 0;padding:.3rem .7rem;border-left:3px solid var(--muted);white-space:pre-wrap;overflow-wrap:anywhere;max-width:75ch;font-size:.95rem}
+blockquote cite{display:block;font-style:normal;font-size:.8rem;color:var(--muted);font-weight:650}
+fieldset{border:none;padding:0;margin:.8rem 0}
+legend{font-weight:650;margin-bottom:.3rem;padding:0}
+.opt{display:flex;gap:.6rem;align-items:flex-start;padding:.45rem .7rem;border:1px solid var(--line);border-radius:8px;margin:.3rem 0;cursor:pointer}
+.opt:hover{border-color:var(--accent)}
+.opt.sel{border-color:var(--accent);background:var(--suggest);box-shadow:inset 0 0 0 1px var(--accent)}
+.opt input{margin-top:.35rem}
+.opt .k{font-variant-numeric:tabular-nums;font-weight:700;color:var(--accent);min-width:1.1rem}
+.opt .hint{display:block;font-size:.85rem;color:var(--muted);overflow-wrap:anywhere}
+.actions{display:flex;flex-wrap:wrap;gap:.5rem;align-items:center;margin-top:.8rem}
+.status{font-size:.85rem;padding:.1rem .5rem;border-radius:99px}
+.status.done{background:var(--okbg);color:var(--ok)}
+.status.todo{background:var(--warnbg);color:var(--warn)}
+.help{font-size:.85rem;color:var(--muted);margin:.8rem 0 0}
+kbd{border:1px solid var(--line);border-bottom-width:2px;border-radius:4px;padding:0 .35rem;font-size:.8rem;background:var(--bg)}
+.sentence{font-size:1.1rem;white-space:pre-wrap;overflow-wrap:anywhere;max-width:75ch;border:1px solid var(--line);border-radius:6px;padding:.6rem .8rem}
+.ctx{font-size:.9rem;color:var(--muted);white-space:pre-wrap;overflow-wrap:anywhere;max-width:75ch;margin-bottom:.4rem}
+.norm{border:1px solid var(--line);border-radius:8px;padding:.7rem .8rem;margin:.7rem 0}
+.norm.invalid{border-color:var(--bad)}
+.normhead{display:flex;align-items:center;gap:.5rem;padding-bottom:.4rem}
+.slots{display:grid;grid-template-columns:repeat(auto-fit,minmax(15rem,1fr));gap:.5rem .8rem}
+.slots label{display:block;font-size:.82rem;font-weight:650;color:var(--muted)}
+.slots input,.slots select{width:100%;font-weight:400;color:var(--ink)}
+input.bad{border-color:var(--bad);background:var(--badbg)}
+.err{color:var(--bad);font-size:.82rem;font-weight:500;margin-top:.1rem;overflow-wrap:anywhere}
+.live{min-height:1.4rem;font-size:.9rem;color:var(--warn);padding:.4rem 1rem 2rem}
+.saved{font-size:.8rem;color:var(--muted)}
+.empty{padding:2rem;text-align:center;color:var(--muted)}
+@media (max-width:640px){html{font-size:16px}.card{padding:.8rem}}
+</style>
+</head>
+<body>
+<div class="top">
+  <h1>Duyệt nhãn Lexora 24/11/2026</h1>
+  <span id="modebadge" class="badge"></span>
+  <span class="spacer"></span>
+  <label class="inline">Người duyệt <input id="reviewer" type="text" autocomplete="off" placeholder="Tên của bạn" size="16"></label>
+  <button id="theme" type="button" aria-label="Đổi giao diện sáng hoặc tối">Sáng/Tối</button>
+  <span class="saved" id="saved" aria-live="polite"></span>
+</div>
+<nav role="tablist" id="tabs" aria-label="Các việc cần duyệt"></nav>
+<div class="bar" id="bar">
+  <div class="progress"><div class="track" role="progressbar" id="pbar" aria-label="Tiến độ" aria-valuemin="0"><div class="fill" id="pfill"></div></div><small id="ptext"></small></div>
+  <label class="inline">Lọc <select id="filter" aria-label="Lọc mục"></select></label>
+  <button id="export" type="button">Xuất tệp kết quả</button>
+  <button id="import" type="button">Nhập tệp đã lưu</button>
+  <input id="file" type="file" accept="application/json,.json" hidden>
+</div>
+<div class="chips" id="chips" role="group" aria-label="Danh sách mục"></div>
+<main id="main" tabindex="-1"></main>
+<div class="live" id="live" role="status" aria-live="polite"></div>
+<script type="application/json" id="pack-data">{"pack":"review-pack-2026-11-24","mode":"blind","order":["gold","validity","link","amendment","audit"],"tasks":{"gold":{"task":"gold","title":"Gold quy phạm (mẫu minh họa)","instructions":"Đọc câu.\nSửa các ô cho đúng.","options":[],"items":[{"id":"a/article-1/clause-1@10-80","group":"Điều 1","heading":"Điều 1 \u003e Khoản 1","sentence":"Người sử dụng lao động phải thông báo kết quả thử việc cho người lao động.","context":"Điều 1. Thử việc (dữ liệu minh họa)","draft":[]},{"id":"a/article-1/clause-2@81-140","group":"Điều 1","heading":"Điều 1 \u003e Khoản 2","sentence":"Người lao động có quyền chấm dứt thỏa thuận thử việc mà không cần báo trước.","context":null,"draft":[]},{"id":"a/article-2@0-50","group":"Điều 2","heading":"Điều 2","sentence":"Điều 2. Tiền lương thử việc","context":null,"draft":[]}],"short":"Gold quy phạm"},"validity":{"task":"validity","title":"Hiệu lực của đơn vị tại ngày hỏi","instructions":"Đọc câu hỏi và đơn vị.\nChọn Đồng ý nếu tình trạng hiệu lực đúng.","options":[{"value":"dong_y","label":"Đồng ý","hint":"Tình trạng hiệu lực đúng","csv":{"annotator_agrees":"co"}},{"value":"khong_dong_y","label":"Không đồng ý","hint":"Tình trạng sai hoặc thiếu","csv":{"annotator_agrees":"khong"}},{"value":"khong_ro","label":"Không rõ","hint":"Cần hỏi lại"}],"items":[{"id":"hl-a01|dap-an|u1","group":"hl-a01","heading":"điểm b khoản 1 Điều 15 Nghị định 283/2026/NĐ-CP","question":"Tại ngày 2026-11-11, quy định này còn hiệu lực không?","fields":[{"label":"Nguyên văn đơn vị","text":"giao kết hợp đồng lao động không bằng văn bản với người lao động làm công việc có thời hạn từ đủ 01 tháng trở lên","highlight":["không bằng văn bản"]},{"label":"Văn bản gốc rất dài không có khoảng trắng","text":"Điều_15_Vi_phạm_quy_định_về_giao_kết_hợp_đồng_lao_động_Điều_15_Vi_phạm_quy_định_về_giao_kết_hợp_đồng_lao_động_Điều_15_Vi_phạm_quy_định_về_giao_kết_hợp_đồng_lao_động","highlight":[]}]},{"id":"hl-a02|dap-an|u2","group":"hl-a02","heading":"khoản 2 Điều 3","question":"Câu hỏi 2?","fields":[{"label":"Nguyên văn","text":"Nội dung.","highlight":[]}]}],"short":"Hiệu lực"},"link":{"task":"link","title":"Liên kết A/B của câu hỏi","instructions":"Chọn.","options":[{"value":"khong_can_B_gold_dung","label":"Không cần B, gold đúng","csv":{"needs_B (co/khong)":"khong","gold_ok (co/khong)":"co"}},{"value":"can_B","label":"Cần B","csv":{"needs_B (co/khong)":"co","gold_ok (co/khong)":"co"}},{"value":"gold_sai","label":"Gold sai","csv":{"needs_B (co/khong)":"khong","gold_ok (co/khong)":"khong"}}],"items":[{"id":"l00","group":"l","heading":"l00","question":"Người được thuê làm giám đốc?","fields":[{"label":"A","text":"Điều 21 khoản 1 điểm a","highlight":[]}]}],"short":"Liên kết"},"amendment":{"task":"amendment","title":"Cạnh sửa đổi","instructions":"Chọn.","options":[{"value":"dung","label":"Đúng"},{"value":"sai_dich","label":"Sai đích"},{"value":"sai_loai","label":"Sai loại"},{"value":"khac","label":"Khác"}],"items":[{"id":"98375aaf99ff8c10ad7cdce5","group":"external","heading":"Điều 54","question":"Cạnh này đúng không?","fields":[{"label":"Chỉ dẫn","text":"Sửa đổi, bổ sung Điều 54 như sau:","highlight":["Điều 54"]}]}],"short":"Sửa đổi"},"audit":{"task":"audit","title":"Quy phạm bị loại: đúng hay sai?","instructions":"Chọn nhãn.","options":[{"value":"sai","label":"Sai"},{"value":"dien_dat","label":"Diễn đạt"},{"value":"dung_ngu_canh","label":"Đúng ngữ cảnh"},{"value":"dung","label":"Đúng"},{"value":"khong_ro","label":"Không rõ"}],"items":[{"id":"aud-001","group":"audit","heading":"aud-001","question":"Quy phạm này có đúng không?","fields":[{"label":"Câu","text":"Bên A phải trả tiền.","highlight":["phải"]}]},{"id":"aud-002","group":"audit","heading":"aud-002","question":"Quy phạm này có đúng không?","fields":[{"label":"Câu","text":"Bên B có quyền nghỉ \u003c/script\u003e\u003cb\u003ex\u003c/b\u003e \u0026 \u2028 y.","highlight":[]}]}],"short":"Kiểm tra loại bỏ"}},"modalities":["obligation","prohibition","entitlement","permission","unknown"],"slots":["actor","action","object","beneficiary","recipient","conditions","exceptions","deadlines","quantities","outcome"],"slot_names":{"actor":"Chủ thể","action":"Hành vi","object":"Đối tượng","beneficiary":"Bên thụ hưởng","recipient":"Bên nhận","conditions":"Điều kiện","exceptions":"Ngoại lệ","deadlines":"Thời hạn","quantities":"Định lượng","outcome":"Kết quả"}}</script>
+<script>
+"use strict";
+const PACK = JSON.parse(document.getElementById('pack-data').textContent);
+const BLIND = PACK.mode === 'blind';
+const $ = id => document.getElementById(id);
+const CONTENT = ['action', 'object', 'conditions', 'exceptions', 'quantities', 'deadlines', 'outcome'];
+const MAX_NORMS = 8;
+const MOD_VI = {obligation: 'Nghĩa vụ (phải)', prohibition: 'Cấm (không được)', entitlement: 'Quyền (có quyền)', permission: 'Cho phép (được)', unknown: 'Chưa rõ'};
+const state = {tab: null, reviewer: '', filter: 'all', data: {}};
+const tasks = PACK.order.map(k => PACK.tasks[k]);
+
+function el(tag, attrs, ...kids) {
+  const e = document.createElement(tag);
+  for (const [k, v] of Object.entries(attrs || {})) {
+    if (v === false || v == null) continue;
+    if (k === 'class') e.className = v; else if (k === 'text') e.textContent = v;
+    else if (k.startsWith('on')) e.addEventListener(k.slice(2), v); else e.setAttribute(k, v === true ? '' : v);
+  }
+  for (const kid of kids.flat()) if (kid != null) e.append(kid);
+  return e;
+}
+function marked(text, phrases) {
+  const out = document.createDocumentFragment();
+  const ranges = [];
+  for (const p of phrases || []) {
+    if (!p) continue;
+    let i = text.indexOf(p);
+    while (i >= 0) { ranges.push([i, i + p.length]); i = text.indexOf(p, i + p.length); }
+  }
+  ranges.sort((a, b) => a[0] - b[0]);
+  const merged = [];
+  for (const r of ranges) { const l = merged[merged.length - 1]; if (l && r[0] <= l[1]) l[1] = Math.max(l[1], r[1]); else merged.push(r.slice()); }
+  let pos = 0;
+  for (const [s, e] of merged) { if (s > pos) out.append(text.slice(pos, s)); out.append(el('mark', {text: text.slice(s, e)})); pos = e; }
+  out.append(text.slice(pos));
+  return out;
+}
+const clone = v => JSON.parse(JSON.stringify(v));
+const taskOf = key => PACK.tasks[key];
+const itemsOf = key => taskOf(key).items;
+
+// ---- state and storage ----
+function storeKey(task) { return `rp:v1:${PACK.pack}:${task}:${state.reviewer.trim()}`; }
+function load(task) {
+  let d = null;
+  try { d = JSON.parse(localStorage.getItem(storeKey(task)) || 'null'); } catch (e) { d = null; }
+  state.data[task] = d && d.items ? d : {items: {}, pos: null};
+}
+function save() {
+  try { localStorage.setItem(storeKey(state.tab), JSON.stringify(state.data[state.tab])); $('saved').textContent = 'Đã lưu trong trình duyệt ' + new Date().toLocaleTimeString('vi-VN'); }
+  catch (e) { $('saved').textContent = 'Không lưu được: hãy xuất tệp kết quả'; }
+}
+function stOf(task, id) {
+  const d = state.data[task];
+  return d.items[id] || (d.items[id] = {note: '', done: false});
+}
+function peek(task, id) { return state.data[task].items[id]; }
+
+// ---- gold helpers ----
+function goldNorms(it) {
+  const draft = BLIND ? [] : (it.draft || []);
+  return clone(draft).map(n => ({modality: n.modality || 'unknown', cue: n.cue || n.modality_cue || '', slots: n.slots || {}}));
+}
+function goldStateNorms(task, it) {
+  const st = stOf(task, it.id);
+  if (!st.norms) st.norms = goldNorms(it);
+  return st.norms;
+}
+function validateNorm(n, sentence) {
+  const errors = {}; let any = false;
+  if (!PACK.modalities.includes(n.modality)) errors.modality = 'Chọn tính quy phạm.';
+  if (n.cue && !sentence.includes(n.cue)) errors.cue = 'Từ tình thái phải là cụm chép nguyên văn từ câu này.';
+  for (const s of PACK.slots) {
+    const v = (n.slots[s] || '').trim();
+    if (!v) continue;
+    if (!sentence.includes(v)) errors[s] = 'Không phải cụm nguyên văn của câu này.';
+    if (CONTENT.includes(s)) any = true;
+  }
+  if (!any) errors.content = 'Điền ít nhất một ô nội dung (hành vi, đối tượng, điều kiện, ngoại lệ, định lượng, thời hạn hoặc kết quả).';
+  return errors;
+}
+function goldProblems(task, it) {
+  const norms = goldStateNorms(task, it);
+  if (norms.length > MAX_NORMS) return [`Tối đa ${MAX_NORMS} quy phạm mỗi câu.`];
+  const out = [];
+  norms.forEach((n, i) => { const e = validateNorm(n, it.sentence); if (Object.keys(e).length) out.push(`Quy phạm ${i + 1}: ` + Object.values(e)[0]); });
+  return out;
+}
+function cleanNorm(n) {
+  const slots = {};
+  for (const s of PACK.slots) { const v = (n.slots[s] || '').trim(); if (v) slots[s] = v; }
+  return {modality: n.modality, cue: (n.cue || '').trim(), slots};
+}
+function normSig(list) { return JSON.stringify(list.map(cleanNorm).map(n => [n.modality, n.cue, Object.entries(n.slots).sort()]).sort()); }
+function goldChanged(task, it) {
+  if (BLIND) return null;
+  const st = peek(task, it.id);
+  if (!st || !st.norms) return false;
+  return normSig(st.norms) !== normSig(goldNorms(it));
+}
+
+// ---- generic helpers ----
+function isDone(task, it) { const st = state.data[task] && state.data[task].items[it.id]; return !!(st && st.done); }
+function lowConf(task, it) { const c = task === 'gold' ? it.confidence : (it.suggestion && it.suggestion.confidence); return !BLIND && c === 'thấp'; }
+function changed(task, it) {
+  if (BLIND) return null;
+  const st = peek(task, it.id);
+  if (!st || !st.done) return false;
+  if (task === 'gold') return goldChanged(task, it);
+  return !it.suggestion || st.value !== it.suggestion.value;
+}
+function visibleIds() {
+  const task = state.tab;
+  return itemsOf(task).filter(it => {
+    if (state.filter === 'todo') return !isDone(task, it);
+    if (state.filter === 'low') return lowConf(task, it);
+    if (state.filter === 'changed') return !!changed(task, it);
+    return true;
+  }).map(it => it.id);
+}
+function currentId() {
+  const d = state.data[state.tab], items = itemsOf(state.tab);
+  if (d.pos && items.some(i => i.id === d.pos)) return d.pos;
+  const first = items.find(i => !isDone(state.tab, i)) || items[0];
+  return first ? first.id : null;
+}
+function go(id) { state.data[state.tab].pos = id; save(); renderAll(); $('main').scrollIntoView({block: 'start'}); }
+function step(dir) {
+  const items = itemsOf(state.tab), ids = visibleIds(), cur = currentId();
+  const order = id => items.findIndex(i => i.id === id);
+  const co = order(cur);
+  const cands = ids.filter(id => dir > 0 ? order(id) > co : order(id) < co);
+  const pick = dir > 0 ? cands[0] : cands[cands.length - 1];
+  if (pick) go(pick); else { renderAll(); say(dir > 0 ? 'Đã đến mục cuối của bộ lọc này.' : 'Đây là mục đầu tiên của bộ lọc này.'); }
+}
+function say(msg) { $('live').textContent = msg; }
+
+// ---- rendering ----
+function renderTabs() {
+  const tabs = $('tabs'); tabs.replaceChildren();
+  tasks.forEach(t => {
+    const done = t.items.filter(i => isDone(t.task, i)).length;
+    tabs.append(el('button', {type: 'button', role: 'tab', id: 'tab-' + t.task, 'aria-selected': String(t.task === state.tab), tabindex: t.task === state.tab ? '0' : '-1',
+      onclick: () => switchTab(t.task)}, t.short || t.title, el('span', {class: 'cnt', text: `${done}/${t.items.length}`})));
+  });
+}
+function renderProgress() {
+  const t = taskOf(state.tab);
+  const done = t.items.filter(i => isDone(state.tab, i)).length, total = t.items.length;
+  const pct = total ? Math.round(100 * done / total) : 0;
+  $('pfill').style.width = pct + '%';
+  $('pbar').setAttribute('aria-valuemax', total); $('pbar').setAttribute('aria-valuenow', done);
+  $('ptext').textContent = `Đã xong ${done}/${total} (${pct}%)`;
+  const sel = $('filter');
+  const opts = [['all', 'Tất cả'], ['todo', 'Chưa xong']].concat(BLIND ? [] : [['low', 'Độ tin cậy thấp'], ['changed', 'Đã sửa so với gợi ý']]);
+  if (sel.options.length !== opts.length) sel.replaceChildren(...opts.map(([v, l]) => el('option', {value: v, text: l})));
+  sel.value = state.filter;
+}
+function renderChips() {
+  const chips = $('chips'); chips.replaceChildren();
+  const items = itemsOf(state.tab), cur = currentId(), vis = new Set(visibleIds());
+  items.forEach((it, i) => {
+    if (!vis.has(it.id) && it.id !== cur) return;
+    chips.append(el('button', {type: 'button', class: [isDone(state.tab, it) ? 'done' : '', lowConf(state.tab, it) ? 'low' : '', it.id === cur ? 'cur' : ''].join(' ').trim(),
+      'aria-label': `Mục ${i + 1}: ${it.heading || it.id}${isDone(state.tab, it) ? ', đã xong' : ''}`, 'aria-current': it.id === cur ? 'true' : false,
+      onclick: () => go(it.id), text: String(i + 1)}));
+  });
+}
+function renderAll() {
+  renderTabs(); renderProgress(); renderChips();
+  const main = $('main'); main.replaceChildren();
+  const id = currentId();
+  if (!id) { main.append(el('div', {class: 'empty', text: 'Việc này chưa có mục nào.'})); return; }
+  const it = itemsOf(state.tab).find(i => i.id === id);
+  main.append(state.tab === 'gold' ? renderGold(it) : renderChoice(it));
+}
+function confClass(c) { return c === 'cao' ? 'cao' : c === 'thấp' ? 'thap' : 'vua'; }
+function head(task, it) {
+  const items = itemsOf(task), n = items.findIndex(i => i.id === it.id) + 1, done = isDone(task, it);
+  const conf = task === 'gold' ? it.confidence : (it.suggestion && it.suggestion.confidence);
+  return [el('div', {class: 'meta'}, `Mục ${n}/${items.length}`, it.group ? el('span', {class: 'badge', text: it.group}) : null,
+      el('span', {class: 'status ' + (done ? 'done' : 'todo'), text: done ? 'Đã xong' : 'Chưa xong'}),
+      !BLIND && conf ? el('span', {class: 'badge ' + confClass(conf), text: 'Độ tin cậy: ' + conf}) : null),
+    el('h2', {text: it.heading || it.id})];
+}
+
+function renderChoice(it) {
+  const task = state.tab, T = taskOf(task), st = stOf(task, it.id);
+  const sugg = BLIND ? null : it.suggestion;
+  const sel = st.value !== undefined ? st.value : (sugg ? sugg.value : undefined);
+  const card = el('section', {class: 'card', 'aria-label': 'Mục đang duyệt'}, head(task, it));
+  if (it.question) card.append(el('div', {class: 'question', text: it.question}));
+  for (const f of it.fields || []) card.append(el('div', {class: 'field'}, el('span', {class: 'fl', text: f.label}), el('div', {class: 'ft'}, marked(f.text || '', f.highlight))));
+  if (sugg) {
+    const opt = T.options.find(o => o.value === sugg.value);
+    const box = el('div', {class: 'sugg', role: 'group', 'aria-label': 'Gợi ý của model'},
+      el('h3', {}, 'Gợi ý của model: ', el('strong', {text: opt ? opt.label : sugg.value}), el('span', {class: 'badge ' + confClass(sugg.confidence), text: 'Độ tin cậy: ' + sugg.confidence})));
+    if (sugg.reason) box.append(el('p', {text: sugg.reason}));
+    for (const q of sugg.quotes || []) box.append(el('blockquote', {}, el('cite', {text: q.label}), q.text));
+    box.append(el('p', {class: 'help', text: 'Gợi ý chỉ là của model, không phải kết luận pháp lý; bạn là người quyết định.'}));
+    card.append(box);
+  }
+  const fs = el('fieldset', {}, el('legend', {text: 'Lựa chọn của bạn'}));
+  T.options.forEach((o, i) => {
+    const input = el('input', {type: 'radio', name: 'opt', value: o.value, id: 'opt' + i, checked: sel === o.value, onchange: () => pick(it, o.value)});
+    fs.append(el('label', {class: 'opt' + (sel === o.value ? ' sel' : ''), for: 'opt' + i}, input,
+      el('span', {class: 'k', text: i < 9 ? String(i + 1) : ''}),
+      el('span', {}, el('strong', {text: o.label}), sugg && sugg.value === o.value ? el('span', {class: 'badge', text: 'gợi ý', style: 'margin-left:.4rem'}) : null, o.hint ? el('span', {class: 'hint', text: o.hint}) : null)));
+  });
+  card.append(fs);
+  const note = el('textarea', {id: 'note', placeholder: 'Ghi chú (không bắt buộc)', oninput: e => { st.note = e.target.value; save(); }});
+  note.value = st.note || '';
+  card.append(el('label', {for: 'note', class: 'fl', text: 'Ghi chú'}), note);
+  card.append(el('div', {class: 'actions'},
+    el('button', {type: 'button', onclick: () => step(-1), text: 'Trước (k)'}),
+    el('button', {type: 'button', class: 'primary', id: 'accept', onclick: () => accept(it), text: BLIND ? 'Xác nhận và tiếp (Enter)' : 'Đồng ý và tiếp (Enter)'}),
+    el('button', {type: 'button', onclick: () => step(1), text: 'Bỏ qua, tiếp (j)'})));
+  card.append(el('p', {class: 'help'}, el('kbd', {text: '1-9'}), ' chọn phương án, ', el('kbd', {text: 'Enter'}), BLIND ? ' xác nhận lựa chọn và sang mục sau, ' : ' nhận gợi ý (hoặc lựa chọn hiện tại) và sang mục sau, ', el('kbd', {text: 'j'}), ' / ', el('kbd', {text: 'k'}), ' mục sau / trước.'));
+  return card;
+}
+function pick(it, value) { const st = stOf(state.tab, it.id); st.value = value; st.done = true; save(); renderAll(); say('Đã chọn. Bấm Enter để sang mục sau.'); }
+function accept(it) {
+  const st = stOf(state.tab, it.id), sugg = BLIND ? null : it.suggestion;
+  const v = st.value !== undefined ? st.value : (sugg ? sugg.value : undefined);
+  if (v === undefined) { say('Hãy chọn một phương án trước.'); return; }
+  st.value = v; st.done = true; save(); step(1);
+}
+
+// ---- gold ----
+function renderGold(it) {
+  const task = 'gold', st = stOf(task, it.id), norms = goldStateNorms(task, it);
+  const card = el('section', {class: 'card', 'aria-label': 'Câu đang duyệt'}, head(task, it));
+  if (it.context) card.append(el('div', {class: 'ctx'}, el('strong', {text: 'Câu dẫn: '}), it.context));
+  const sent = el('div', {class: 'sentence', 'aria-label': 'Nguyên văn câu'});
+  card.append(sent);
+  const paint = () => { const vals = []; norms.forEach(n => { if (n.cue) vals.push(n.cue); PACK.slots.forEach(s => { if ((n.slots[s] || '').trim()) vals.push(n.slots[s].trim()); }); }); sent.replaceChildren(marked(it.sentence, vals)); };
+  paint();
+  if (!BLIND && (it.reason || (it.draft || []).length)) {
+    const box = el('div', {class: 'sugg', role: 'group', 'aria-label': 'Bản nháp của model'},
+      el('h3', {}, 'Bản nháp của model: ', el('strong', {text: (it.draft || []).length ? `${it.draft.length} quy phạm` : 'không có quy phạm'})));
+    if (it.reason) box.append(el('p', {text: it.reason}));
+    card.append(box);
+  }
+  const list = el('div', {id: 'norms'});
+  const status = el('span', {class: 'status'});
+  const msgs = el('div', {class: 'err', role: 'alert'});
+  const refresh = () => {
+    const problems = goldProblems(task, it);
+    if (problems.length && st.done) st.done = false;
+    status.className = 'status ' + (st.done ? 'done' : 'todo'); status.textContent = st.done ? 'Đã xong' : 'Chưa xong';
+    msgs.textContent = problems.length ? problems.join(' ') : '';
+    renderProgress(); renderChips(); renderTabs();
+  };
+  const draw = () => {
+    list.replaceChildren();
+    if (!norms.length) list.append(el('p', {class: 'help', text: 'Chưa có quy phạm nào. Bấm "Thêm quy phạm", hoặc "Không có quy phạm" nếu câu không nêu quy phạm.'}));
+    norms.forEach((n, i) => list.append(normEditor(n, i, it, norms, paint, refresh, draw, st)));
+    refresh();
+  };
+  card.append(el('h3', {text: 'Quy phạm trong câu', style: 'font-size:1rem;margin:.9rem 0 0'}), list);
+  card.append(el('div', {class: 'actions'},
+    el('button', {type: 'button', class: 'primary', id: 'accept', onclick: () => goldAccept(it, st), text: (!BLIND ? 'Chấp nhận bản nháp' : 'Xác nhận') + ' (Enter)'}),
+    el('button', {type: 'button', id: 'nonorm', onclick: () => noNorm(it), text: 'Không có quy phạm (n)'}),
+    el('button', {type: 'button', id: 'addnorm', onclick: () => { if (norms.length >= MAX_NORMS) { say(`Tối đa ${MAX_NORMS} quy phạm.`); return; } norms.push({modality: 'obligation', cue: '', slots: {}}); st.done = false; save(); draw(); paint(); const f = list.querySelector('.norm:last-child select'); if (f) f.focus(); }, text: 'Thêm quy phạm (+)'}),
+    el('button', {type: 'button', onclick: () => { st.norms = goldNorms(it); st.done = false; save(); renderAll(); }, text: BLIND ? 'Làm lại từ đầu' : 'Khôi phục bản nháp'}),
+    status), msgs);
+  const note = el('textarea', {id: 'note', placeholder: 'Ghi chú (không bắt buộc)', oninput: e => { st.note = e.target.value; save(); }});
+  note.value = st.note || '';
+  card.append(el('label', {for: 'note', class: 'fl', text: 'Ghi chú', style: 'margin-top:.8rem'}), note);
+  card.append(el('div', {class: 'actions'}, el('button', {type: 'button', onclick: () => step(-1), text: 'Trước (k)'}), el('button', {type: 'button', onclick: () => step(1), text: 'Bỏ qua, tiếp (j)'})));
+  card.append(el('p', {class: 'help'}, 'Mọi ô phải là cụm chép nguyên văn từ câu trên; ô sai sẽ đỏ và mục chưa thể đánh dấu xong. ', el('kbd', {text: 'Enter'}), ' chấp nhận (khi không đang gõ), ', el('kbd', {text: 'n'}), ' không có quy phạm, ', el('kbd', {text: 'j'}), ' / ', el('kbd', {text: 'k'}), ' mục sau / trước.'));
+  draw();
+  return card;
+}
+function noNorm(it) { const st = stOf('gold', it.id); st.norms = []; st.done = true; save(); step(1); }
+function goldAccept(it, st) {
+  const problems = goldProblems('gold', it);
+  if (problems.length) { say('Chưa thể xong: ' + problems[0]); return; }
+  if (BLIND && !goldStateNorms('gold', it).length) { say('Hãy thêm quy phạm, hoặc bấm "Không có quy phạm" nếu câu không nêu quy phạm.'); return; }
+  st.done = true; save(); step(1);
+}
+function normEditor(n, i, it, norms, paint, refresh, draw, st) {
+  const box = el('div', {class: 'norm'});
+  const errBox = {};
+  const cmsg = el('div', {class: 'err'});
+  const check = () => {
+    const errs = validateNorm(n, it.sentence);
+    box.classList.toggle('invalid', Object.keys(errs).length > 0);
+    for (const [k, e] of Object.entries(errBox)) { const msg = errs[k] || ''; e.input.classList.toggle('bad', !!msg); e.msg.textContent = msg; if (msg) e.input.setAttribute('aria-invalid', 'true'); else e.input.removeAttribute('aria-invalid'); }
+    cmsg.textContent = errs.content || '';
+  };
+  const touch = () => { st.done = false; save(); paint(); check(); refresh(); };
+  const mod = el('select', {id: `m${i}`, onchange: e => { n.modality = e.target.value; touch(); }}, PACK.modalities.map(m => el('option', {value: m, text: MOD_VI[m] || m})));
+  mod.value = n.modality;
+  const cue = el('input', {type: 'text', id: `c${i}`, value: n.cue || '', autocomplete: 'off', oninput: e => { n.cue = e.target.value; touch(); }});
+  const cueMsg = el('div', {class: 'err'}), modMsg = el('div', {class: 'err'});
+  errBox.cue = {input: cue, msg: cueMsg}; errBox.modality = {input: mod, msg: modMsg};
+  box.append(el('div', {class: 'normhead'}, el('strong', {text: `Quy phạm ${i + 1}`}), el('span', {class: 'spacer'}),
+    el('button', {type: 'button', class: 'danger', 'aria-label': `Xóa quy phạm ${i + 1}`, onclick: () => { norms.splice(i, 1); st.done = false; save(); draw(); paint(); }, text: 'Xóa quy phạm'})));
+  const grid = el('div', {class: 'slots'},
+    el('div', {}, el('label', {for: `m${i}`, text: 'Tính quy phạm'}), mod, modMsg),
+    el('div', {}, el('label', {for: `c${i}`, text: 'Từ tình thái (cue)'}), cue, cueMsg));
+  for (const s of PACK.slots) {
+    const input = el('input', {type: 'text', id: `s${i}${s}`, value: n.slots[s] || '', autocomplete: 'off', oninput: e => { n.slots[s] = e.target.value; touch(); }});
+    const msg = el('div', {class: 'err'});
+    errBox[s] = {input, msg};
+    grid.append(el('div', {}, el('label', {for: `s${i}${s}`, text: PACK.slot_names[s] || s}), input, msg));
+  }
+  box.append(grid, cmsg);
+  check();
+  return box;
+}
+
+// ---- actions ----
+function switchTab(task) {
+  state.tab = task; state.filter = 'all'; renderAll();
+  try { sessionStorage.setItem('rp:tab', task); } catch (e) {}
+}
+function exportResult() {
+  const task = state.tab;
+  if (!state.reviewer.trim()) { say('Nhập tên người duyệt ở đầu trang trước khi xuất.'); $('reviewer').focus(); return; }
+  const items = [];
+  for (const it of itemsOf(task)) {
+    const st = peek(task, it.id);
+    if (!st || !st.done) continue;
+    const row = {id: it.id, value: st.value === undefined ? null : st.value, note: st.note || ''};
+    if (task === 'gold') {
+      const norms = (st.norms || []).map(cleanNorm);
+      row.value = norms.length ? 'norms' : 'no_norm';
+      row.edited_norms = norms;
+      row.changed_from_suggestion = BLIND ? null : goldChanged(task, it);
+    } else {
+      row.changed_from_suggestion = BLIND ? null : (!it.suggestion || st.value !== it.suggestion.value);
+    }
+    items.push(row);
+  }
+  const body = {task, reviewer: state.reviewer.trim(), mode: BLIND ? 'blind' : 'suggestions', exported_at: new Date().toISOString(), items};
+  const slug = state.reviewer.trim().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/đ/g, 'd').replace(/Đ/g, 'D').replace(/[^A-Za-z0-9]+/g, '-').replace(/^-|-$/g, '').toLowerCase() || 'nguoi-duyet';
+  const blob = new Blob([JSON.stringify(body, null, 2)], {type: 'application/json'});
+  const a = el('a', {href: URL.createObjectURL(blob), download: `review-${task}-${slug}.json`});
+  document.body.append(a); a.click(); a.remove();
+  say(`Đã xuất ${items.length}/${itemsOf(task).length} mục xong của việc này.`);
+}
+function importResult(file) {
+  const reader = new FileReader();
+  reader.onload = () => {
+    let data;
+    try { data = JSON.parse(reader.result); } catch (e) { say('Tệp không phải JSON hợp lệ.'); return; }
+    if (!data || !PACK.tasks[data.task] || !Array.isArray(data.items)) { say('Tệp không phải kết quả duyệt của gói này.'); return; }
+    if (data.mode && data.mode !== (BLIND ? 'blind' : 'suggestions')) { say('Tệp này thuộc chế độ khác (có gợi ý hoặc độc lập); không nhập.'); return; }
+    if (!state.reviewer.trim() && data.reviewer) { state.reviewer = data.reviewer; $('reviewer').value = data.reviewer; loadAll(); }
+    if (state.tab !== data.task) switchTab(data.task);
+    const known = new Set(itemsOf(data.task).map(i => i.id));
+    let n = 0;
+    for (const r of data.items) {
+      if (!known.has(r.id)) continue;
+      const st = stOf(data.task, r.id);
+      st.note = r.note || ''; st.done = true;
+      if (data.task === 'gold') st.norms = (r.edited_norms || []).map(x => ({modality: x.modality, cue: x.cue || x.modality_cue || '', slots: x.slots || {}}));
+      else st.value = r.value;
+      n++;
+    }
+    save(); renderAll(); say(`Đã nhập ${n} mục.`);
+  };
+  reader.readAsText(file);
+}
+function loadAll() { for (const t of tasks) load(t.task); }
+
+// ---- keyboard ----
+document.addEventListener('keydown', e => {
+  if (e.ctrlKey || e.metaKey || e.altKey) return;
+  const t = e.target, tag = t && t.tagName;
+  if ((tag === 'INPUT' && t.type !== 'radio') || tag === 'TEXTAREA' || tag === 'SELECT') return;
+  if (tag === 'BUTTON' && (e.key === 'Enter' || e.key === ' ')) return;
+  const task = state.tab; if (!task) return;
+  const it = itemsOf(task).find(i => i.id === currentId()); if (!it) return;
+  if (e.key === 'j') { step(1); e.preventDefault(); }
+  else if (e.key === 'k') { step(-1); e.preventDefault(); }
+  else if (e.key === 'Enter') { if (task === 'gold') goldAccept(it, stOf(task, it.id)); else accept(it); e.preventDefault(); }
+  else if (task === 'gold' && e.key === 'n') { noNorm(it); e.preventDefault(); }
+  else if (task === 'gold' && e.key === '+') { const b = $('addnorm'); if (b) b.click(); e.preventDefault(); }
+  else if (task !== 'gold' && /^[1-9]$/.test(e.key)) { const o = taskOf(task).options[Number(e.key) - 1]; if (o) { pick(it, o.value); e.preventDefault(); } }
+});
+$('tabs').addEventListener('keydown', e => {
+  if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return;
+  const i = tasks.findIndex(t => t.task === state.tab), j = (i + (e.key === 'ArrowRight' ? 1 : tasks.length - 1)) % tasks.length;
+  switchTab(tasks[j].task); $('tab-' + tasks[j].task).focus(); e.preventDefault();
+});
+$('filter').addEventListener('change', e => { state.filter = e.target.value; const ids = visibleIds(); if (ids.length && !ids.includes(currentId())) state.data[state.tab].pos = ids[0]; renderAll(); });
+$('export').addEventListener('click', exportResult);
+$('import').addEventListener('click', () => $('file').click());
+$('file').addEventListener('change', e => { if (e.target.files[0]) importResult(e.target.files[0]); e.target.value = ''; });
+$('reviewer').addEventListener('change', e => { state.reviewer = e.target.value; try { localStorage.setItem('rp:reviewer', state.reviewer); } catch (x) {} loadAll(); renderAll(); say(`Đang lưu cho "${state.reviewer.trim() || 'chưa đặt tên'}".`); });
+$('theme').addEventListener('click', () => {
+  const root = document.documentElement;
+  const dark = root.dataset.theme === 'dark' || (!root.dataset.theme && matchMedia('(prefers-color-scheme: dark)').matches);
+  root.dataset.theme = dark ? 'light' : 'dark';
+  try { localStorage.setItem('rp:theme', root.dataset.theme); } catch (x) {}
+});
+
+// ---- start ----
+(function init() {
+  const hash = new URLSearchParams(location.hash.slice(1));
+  try { const th = hash.get('theme') || localStorage.getItem('rp:theme'); if (th) document.documentElement.dataset.theme = th; } catch (x) {}
+  const mb = $('modebadge');
+  mb.textContent = BLIND ? 'Chế độ độc lập: không có gợi ý' : 'Có gợi ý của model'; mb.className = 'badge' + (BLIND ? ' blind' : '');
+  try { state.reviewer = localStorage.getItem('rp:reviewer') || ''; } catch (x) {}
+  if (hash.get('reviewer')) state.reviewer = hash.get('reviewer');
+  $('reviewer').value = state.reviewer;
+  loadAll();
+  let start = hash.get('tab');
+  if (!start) { try { start = sessionStorage.getItem('rp:tab'); } catch (x) {} }
+  state.tab = PACK.tasks[start] ? start : tasks[0].task;
+  if (hash.get('item')) state.data[state.tab].pos = hash.get('item');
+  renderAll();
+  if (!state.reviewer) say('Nhập tên người duyệt ở đầu trang; tiến độ được lưu riêng cho từng tên.');
+})();
+</script>
+</body>
+</html>

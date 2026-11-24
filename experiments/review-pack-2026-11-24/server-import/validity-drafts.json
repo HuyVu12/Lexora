@@ -1,0 +1,349 @@
+[
+ {
+  "text": "Công ty chúng tôi đang dùng 15 công nhân làm việc theo thỏa thuận miệng, mỗi người làm từ 3 đến 6 tháng, chưa ký hợp đồng lao động bằng văn bản. Nếu bị thanh tra phát hiện vào thời điểm hiện nay thì công ty có thể bị phạt tiền ở mức nào?",
+  "question_type": "temporal",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "283-2026-nd-cp/chapter-ii/section-2/article-15/clause-1/point-b",
+   "283-2026-nd-cp/chapter-i/article-7/clause-1"
+  ],
+  "rationale": "Đề xuất của model (Claude Opus 5.5, nháp 15/11/2026, dựng lại với amendment-rules-v2 ngày 16/11), không phải nhãn người và không phải kết luận pháp lý đã kiểm chứng. Ngày áp dụng: 11/11/2026 (ngày khóa corpus v3, câu không ghi ngày). Văn bản cũ (NĐ 12/2022) hết hiệu lực từ 10/09/2026 theo vbpl.vn; đơn vị tương ứng của NĐ 283/2026 là căn cứ hiện hành. Đơn vị lỗi thời ở ngày áp dụng, KHÔNG chọn làm đáp án: 12-2022-nd-cp/chapter-ii/article-9/clause-1/point-b, 12-2022-nd-cp/chapter-i/article-6/clause-1. Căn cứ của model: Cùng hành vi giao kết hợp đồng lao động không bằng văn bản, cùng khung 11-50 người ở cả hai nghị định; mức phạt trong nghị định là mức đối với cá nhân, tổ chức bị phạt gấp đôi. Từ 10/09/2026 căn cứ là NĐ 283/2026, NĐ 12/2022 đã hết hiệu lực.",
+  "paraphrase_of": null,
+  "source_question_id": "hl-a01"
+ },
+ {
+  "text": "Doanh nghiệp trả lương thử việc cho nhân viên mới bằng 80% mức lương của công việc đó. Theo quy định xử phạt đang có hiệu lực, hành vi này bị phạt bao nhiêu tiền?",
+  "question_type": "temporal",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "283-2026-nd-cp/chapter-ii/section-2/article-16/clause-2/point-c",
+   "283-2026-nd-cp/chapter-i/article-7/clause-1"
+  ],
+  "rationale": "Đề xuất của model (Claude Opus 5.5, nháp 15/11/2026, dựng lại với amendment-rules-v2 ngày 16/11), không phải nhãn người và không phải kết luận pháp lý đã kiểm chứng. Ngày áp dụng: 11/11/2026 (ngày khóa corpus v3, câu không ghi ngày). Văn bản cũ (NĐ 12/2022) hết hiệu lực từ 10/09/2026 theo vbpl.vn; đơn vị tương ứng của NĐ 283/2026 là căn cứ hiện hành. Đơn vị lỗi thời ở ngày áp dụng, KHÔNG chọn làm đáp án: 12-2022-nd-cp/chapter-ii/article-10/clause-2/point-c, 12-2022-nd-cp/chapter-i/article-6/clause-1. Căn cứ của model: Hai điểm cùng mô tả việc trả lương thử việc thấp hơn 85% mức lương của công việc; NĐ 283/2026 viết thêm \"thấp hơn thỏa thuận\". Cặp này không có trong pairs-expired.jsonl (độ giống chữ dưới 0,85) nên được ghép tay, kèm cụm chữ chung.",
+  "paraphrase_of": null,
+  "source_question_id": "hl-a02"
+ },
+ {
+  "text": "Công ty có 8 lao động đang được trả lương thấp hơn mức lương tối thiểu vùng. Hiện nay công ty có thể bị phạt tiền bao nhiêu?",
+  "question_type": "temporal",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "283-2026-nd-cp/chapter-ii/section-2/article-23/clause-3/point-a",
+   "283-2026-nd-cp/chapter-i/article-7/clause-1"
+  ],
+  "rationale": "Đề xuất của model (Claude Opus 5.5, nháp 15/11/2026, dựng lại với amendment-rules-v2 ngày 16/11), không phải nhãn người và không phải kết luận pháp lý đã kiểm chứng. Ngày áp dụng: 11/11/2026 (ngày khóa corpus v3, câu không ghi ngày). Văn bản cũ (NĐ 12/2022) hết hiệu lực từ 10/09/2026 theo vbpl.vn; đơn vị tương ứng của NĐ 283/2026 là căn cứ hiện hành. Đơn vị lỗi thời ở ngày áp dụng, KHÔNG chọn làm đáp án: 12-2022-nd-cp/chapter-ii/article-17/clause-3/point-a, 12-2022-nd-cp/chapter-i/article-6/clause-1. Căn cứ của model: Cùng hành vi trả lương thấp hơn mức lương tối thiểu, cùng khung 01-10 người.",
+  "paraphrase_of": null,
+  "source_question_id": "hl-a03"
+ },
+ {
+  "text": "Tháng này nhà máy huy động 60 công nhân làm thêm giờ vượt quá số giờ tối đa pháp luật cho phép. Theo quy định hiện hành, công ty có thể bị phạt ở khung nào?",
+  "question_type": "temporal",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "283-2026-nd-cp/chapter-ii/section-2/article-24/clause-4/point-c",
+   "283-2026-nd-cp/chapter-i/article-7/clause-1"
+  ],
+  "rationale": "Đề xuất của model (Claude Opus 5.5, nháp 15/11/2026, dựng lại với amendment-rules-v2 ngày 16/11), không phải nhãn người và không phải kết luận pháp lý đã kiểm chứng. Ngày áp dụng: 11/11/2026 (ngày khóa corpus v3, câu không ghi ngày). Văn bản cũ (NĐ 12/2022) hết hiệu lực từ 10/09/2026 theo vbpl.vn; đơn vị tương ứng của NĐ 283/2026 là căn cứ hiện hành. Đơn vị lỗi thời ở ngày áp dụng, KHÔNG chọn làm đáp án: 12-2022-nd-cp/chapter-ii/article-18/clause-4/point-c, 12-2022-nd-cp/chapter-i/article-6/clause-1. Căn cứ của model: Cùng hành vi huy động làm thêm giờ vượt quá số giờ quy định, cùng khung 51-100 người.",
+  "paraphrase_of": null,
+  "source_question_id": "hl-a04"
+ },
+ {
+  "text": "Công ty chậm đóng bảo hiểm xã hội bắt buộc cho người lao động đã mấy tháng nay. Theo quy định hiện hành, mức phạt tiền được tính như thế nào và tối đa là bao nhiêu?",
+  "question_type": "temporal",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "283-2026-nd-cp/chapter-iii/article-43/clause-3",
+   "283-2026-nd-cp/chapter-i/article-7/clause-1"
+  ],
+  "rationale": "Đề xuất của model (Claude Opus 5.5, nháp 15/11/2026, dựng lại với amendment-rules-v2 ngày 16/11), không phải nhãn người và không phải kết luận pháp lý đã kiểm chứng. Ngày áp dụng: 11/11/2026 (ngày khóa corpus v3, câu không ghi ngày). Văn bản cũ (NĐ 12/2022) hết hiệu lực từ 10/09/2026 theo vbpl.vn; đơn vị tương ứng của NĐ 283/2026 là căn cứ hiện hành. Đơn vị lỗi thời ở ngày áp dụng, KHÔNG chọn làm đáp án: 12-2022-nd-cp/chapter-iii/article-39/clause-5/point-a, 12-2022-nd-cp/chapter-i/article-6/clause-1. Căn cứ của model: NĐ 12/2022 phạt hành vi chậm đóng theo phần trăm \"tổng số tiền phải đóng\"; NĐ 283/2026 tách chậm đóng bảo hiểm xã hội bắt buộc thành Điều 43 và tính theo \"tổng số tiền chậm đóng\". Ghép tay theo cụm chữ chung (so không phân biệt hoa thường) vì hai đơn vị nằm ở hai Điều có tên khác nhau.",
+  "paraphrase_of": null,
+  "source_question_id": "hl-a05"
+ },
+ {
+  "text": "Phòng nhân sự giữ bản gốc bằng đại học của nhân viên mới trong suốt thời gian làm việc để ràng buộc họ không nghỉ ngang. Việc này hiện nay bị xử phạt thế nào?",
+  "question_type": "temporal",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "283-2026-nd-cp/chapter-ii/section-2/article-15/clause-2/point-a",
+   "283-2026-nd-cp/chapter-i/article-7/clause-1"
+  ],
+  "rationale": "Đề xuất của model (Claude Opus 5.5, nháp 15/11/2026, dựng lại với amendment-rules-v2 ngày 16/11), không phải nhãn người và không phải kết luận pháp lý đã kiểm chứng. Ngày áp dụng: 11/11/2026 (ngày khóa corpus v3, câu không ghi ngày). Văn bản cũ (NĐ 12/2022) hết hiệu lực từ 10/09/2026 theo vbpl.vn; đơn vị tương ứng của NĐ 283/2026 là căn cứ hiện hành. Đơn vị lỗi thời ở ngày áp dụng, KHÔNG chọn làm đáp án: 12-2022-nd-cp/chapter-ii/article-9/clause-2/point-a, 12-2022-nd-cp/chapter-i/article-6/clause-1. Căn cứ của model: Cùng hành vi giữ bản chính văn bằng của người lao động, cùng khung phạt.",
+  "paraphrase_of": null,
+  "source_question_id": "hl-a06"
+ },
+ {
+  "text": "Quản lý xưởng trừ 500.000 đồng tiền lương của công nhân đi làm muộn thay cho việc xử lý kỷ luật lao động. Theo nghị định xử phạt hiện hành, công ty có thể bị phạt bao nhiêu?",
+  "question_type": "temporal",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "283-2026-nd-cp/chapter-ii/section-2/article-25/clause-3/point-c",
+   "283-2026-nd-cp/chapter-i/article-7/clause-1"
+  ],
+  "rationale": "Đề xuất của model (Claude Opus 5.5, nháp 15/11/2026, dựng lại với amendment-rules-v2 ngày 16/11), không phải nhãn người và không phải kết luận pháp lý đã kiểm chứng. Ngày áp dụng: 11/11/2026 (ngày khóa corpus v3, câu không ghi ngày). Văn bản cũ (NĐ 12/2022) hết hiệu lực từ 10/09/2026 theo vbpl.vn; đơn vị tương ứng của NĐ 283/2026 là căn cứ hiện hành. Đơn vị lỗi thời ở ngày áp dụng, KHÔNG chọn làm đáp án: 12-2022-nd-cp/chapter-ii/article-19/clause-3/point-b, 12-2022-nd-cp/chapter-i/article-6/clause-1. Căn cứ của model: Cùng hành vi phạt tiền hoặc cắt lương thay cho xử lý kỷ luật; ký hiệu điểm đổi từ b (NĐ 12/2022) sang c (NĐ 283/2026).",
+  "paraphrase_of": null,
+  "source_question_id": "hl-a07"
+ },
+ {
+  "text": "Công ty có 25 nhân viên nhưng chưa có nội quy lao động bằng văn bản. Hiện nay công ty có bị phạt không và mức phạt là bao nhiêu?",
+  "question_type": "temporal",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "283-2026-nd-cp/chapter-ii/section-2/article-25/clause-2/point-a",
+   "283-2026-nd-cp/chapter-i/article-7/clause-1"
+  ],
+  "rationale": "Đề xuất của model (Claude Opus 5.5, nháp 15/11/2026, dựng lại với amendment-rules-v2 ngày 16/11), không phải nhãn người và không phải kết luận pháp lý đã kiểm chứng. Ngày áp dụng: 11/11/2026 (ngày khóa corpus v3, câu không ghi ngày). Văn bản cũ (NĐ 12/2022) hết hiệu lực từ 10/09/2026 theo vbpl.vn; đơn vị tương ứng của NĐ 283/2026 là căn cứ hiện hành. Đơn vị lỗi thời ở ngày áp dụng, KHÔNG chọn làm đáp án: 12-2022-nd-cp/chapter-ii/article-19/clause-2/point-a, 12-2022-nd-cp/chapter-i/article-6/clause-1. Căn cứ của model: Cùng hành vi không có nội quy lao động bằng văn bản khi sử dụng từ 10 lao động trở lên.",
+  "paraphrase_of": null,
+  "source_question_id": "hl-a08"
+ },
+ {
+  "text": "Nhân viên nữ đang nuôi con 8 tháng tuổi xin nghỉ 60 phút mỗi ngày nhưng công ty không đồng ý, hai bên cũng không có thỏa thuận nào khác. Theo quy định hiện hành, công ty bị xử phạt thế nào?",
+  "question_type": "temporal",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "283-2026-nd-cp/chapter-ii/section-2/article-26/clause-2/point-đ",
+   "283-2026-nd-cp/chapter-i/article-7/clause-1"
+  ],
+  "rationale": "Đề xuất của model (Claude Opus 5.5, nháp 15/11/2026, dựng lại với amendment-rules-v2 ngày 16/11), không phải nhãn người và không phải kết luận pháp lý đã kiểm chứng. Ngày áp dụng: 11/11/2026 (ngày khóa corpus v3, câu không ghi ngày). Văn bản cũ (NĐ 12/2022) hết hiệu lực từ 10/09/2026 theo vbpl.vn; đơn vị tương ứng của NĐ 283/2026 là căn cứ hiện hành. Đơn vị lỗi thời ở ngày áp dụng, KHÔNG chọn làm đáp án: 12-2022-nd-cp/chapter-ii/article-28/clause-2/point-đ, 12-2022-nd-cp/chapter-i/article-6/clause-1. Căn cứ của model: Cùng hành vi không cho lao động nữ nuôi con dưới 12 tháng tuổi nghỉ 60 phút mỗi ngày.",
+  "paraphrase_of": null,
+  "source_question_id": "hl-a09"
+ },
+ {
+  "text": "Năm nay công ty không bố trí cho nhân viên nghỉ hằng năm theo quy định. Hành vi này hiện bị phạt bao nhiêu tiền?",
+  "question_type": "temporal",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "283-2026-nd-cp/chapter-ii/section-2/article-24/clause-2",
+   "283-2026-nd-cp/chapter-i/article-7/clause-1"
+  ],
+  "rationale": "Đề xuất của model (Claude Opus 5.5, nháp 15/11/2026, dựng lại với amendment-rules-v2 ngày 16/11), không phải nhãn người và không phải kết luận pháp lý đã kiểm chứng. Ngày áp dụng: 11/11/2026 (ngày khóa corpus v3, câu không ghi ngày). Văn bản cũ (NĐ 12/2022) hết hiệu lực từ 10/09/2026 theo vbpl.vn; đơn vị tương ứng của NĐ 283/2026 là căn cứ hiện hành. Đơn vị lỗi thời ở ngày áp dụng, KHÔNG chọn làm đáp án: 12-2022-nd-cp/chapter-ii/article-18/clause-2, 12-2022-nd-cp/chapter-i/article-6/clause-1. Căn cứ của model: Hai khoản giống hệt nhau về chữ; chỉ văn bản chứa khoản là khác.",
+  "paraphrase_of": null,
+  "source_question_id": "hl-a10"
+ },
+ {
+  "text": "Theo Luật An toàn, vệ sinh lao động hiện hành, những người lao động nào thuộc đối tượng áp dụng chế độ bảo hiểm tai nạn lao động, bệnh nghề nghiệp?",
+  "question_type": "temporal",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "41-2024-qh15-sua-doi/chapter-xi/article-139/clause-1/point-b",
+   "41-2024-qh15/chapter-i/article-2/clause-1"
+  ],
+  "rationale": "Đề xuất của model (Claude Opus 5.5, nháp 15/11/2026, dựng lại với amendment-rules-v2 ngày 16/11), không phải nhãn người và không phải kết luận pháp lý đã kiểm chứng. Ngày áp dụng: 11/11/2026 (ngày khóa corpus v3, câu không ghi ngày). Đơn vị gốc đã bị sửa đổi hoặc thay cụm từ; đáp án là đơn vị chứa lời văn mới, đơn vị bị sửa là lỗi thời ở ngày áp dụng (nếu ngày áp dụng sau ngày sửa có hiệu lực). Đơn vị lỗi thời ở ngày áp dụng, KHÔNG chọn làm đáp án: 84-2015-qh13/chapter-iii/section-3/article-43/clause-1. Căn cứ của model: Luật BHXH 2024 sửa khoản 1 Điều 43 Luật ATVSLĐ: danh sách điểm dẫn chiếu tới khoản 1 Điều 2 Luật BHXH đổi từ \"a, b, c, d, đ, e và h\" thành \"a, b, c, d, đ, e, i và l\". Khoản 1 Điều 2 Luật BHXH 2024 là nơi các điểm đó được liệt kê.",
+  "paraphrase_of": null,
+  "source_question_id": "hl-b01"
+ },
+ {
+  "text": "Người lao động đang hưởng trợ cấp tai nạn lao động hằng tháng chuẩn bị ra nước ngoài định cư. Hiện nay họ được giải quyết trợ cấp thế nào và hồ sơ làm theo quy định nào?",
+  "question_type": "temporal",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "41-2024-qh15-sua-doi/chapter-xi/article-139/clause-1/point-đ"
+  ],
+  "rationale": "Đề xuất của model (Claude Opus 5.5, nháp 15/11/2026, dựng lại với amendment-rules-v2 ngày 16/11), không phải nhãn người và không phải kết luận pháp lý đã kiểm chứng. Ngày áp dụng: 11/11/2026 (ngày khóa corpus v3, câu không ghi ngày). Đơn vị gốc đã bị sửa đổi hoặc thay cụm từ; đáp án là đơn vị chứa lời văn mới, đơn vị bị sửa là lỗi thời ở ngày áp dụng (nếu ngày áp dụng sau ngày sửa có hiệu lực). Đơn vị lỗi thời ở ngày áp dụng, KHÔNG chọn làm đáp án: 84-2015-qh13/chapter-iii/section-3/article-49/clause-5. Căn cứ của model: Mức trợ cấp một lần (03 tháng mức đang hưởng) giữ nguyên; phần dẫn chiếu hồ sơ đổi từ các điều cụ thể của luật cũ sang \"theo quy định của Luật Bảo hiểm xã hội\".",
+  "paraphrase_of": null,
+  "source_question_id": "hl-b02"
+ },
+ {
+  "text": "Việc tạm dừng và hưởng tiếp trợ cấp tai nạn lao động, bệnh nghề nghiệp hằng tháng hiện nay được thực hiện theo điều nào của Luật Bảo hiểm xã hội?",
+  "question_type": "temporal",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "41-2024-qh15-sua-doi/chapter-xi/article-139/clause-1/point-d"
+  ],
+  "rationale": "Đề xuất của model (Claude Opus 5.5, nháp 15/11/2026, dựng lại với amendment-rules-v2 ngày 16/11), không phải nhãn người và không phải kết luận pháp lý đã kiểm chứng. Ngày áp dụng: 11/11/2026 (ngày khóa corpus v3, câu không ghi ngày). Đơn vị gốc đã bị sửa đổi hoặc thay cụm từ; đáp án là đơn vị chứa lời văn mới, đơn vị bị sửa là lỗi thời ở ngày áp dụng (nếu ngày áp dụng sau ngày sửa có hiệu lực). Đơn vị lỗi thời ở ngày áp dụng, KHÔNG chọn làm đáp án: 84-2015-qh13/chapter-iii/section-3/article-49/clause-3. Căn cứ của model: Dẫn chiếu đổi từ Điều 64 (luật cũ) sang Điều 75 Luật BHXH; hồ sơ hưởng tiếp đổi từ Điều 113, 114 sang Điều 80, 81.",
+  "paraphrase_of": null,
+  "source_question_id": "hl-b03"
+ },
+ {
+  "text": "Người lao động bị tai nạn lao động và chết trong thời gian điều trị, khi chưa kịp giám định mức suy giảm khả năng lao động. Hồ sơ hưởng chế độ tử tuất cho thân nhân hiện nay làm theo quy định nào?",
+  "question_type": "temporal",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "41-2024-qh15-sua-doi/chapter-xi/article-139/clause-1/point-e"
+  ],
+  "rationale": "Đề xuất của model (Claude Opus 5.5, nháp 15/11/2026, dựng lại với amendment-rules-v2 ngày 16/11), không phải nhãn người và không phải kết luận pháp lý đã kiểm chứng. Ngày áp dụng: 11/11/2026 (ngày khóa corpus v3, câu không ghi ngày). Đơn vị gốc đã bị sửa đổi hoặc thay cụm từ; đáp án là đơn vị chứa lời văn mới, đơn vị bị sửa là lỗi thời ở ngày áp dụng (nếu ngày áp dụng sau ngày sửa có hiệu lực). Đơn vị lỗi thời ở ngày áp dụng, KHÔNG chọn làm đáp án: 84-2015-qh13/chapter-iii/section-3/article-53/clause-3. Căn cứ của model: Dẫn chiếu hồ sơ tử tuất đổi từ khoản 1 Điều 111 sang khoản 1 Điều 90 Luật BHXH.",
+  "paraphrase_of": null,
+  "source_question_id": "hl-b04"
+ },
+ {
+  "text": "Quỹ bảo hiểm tai nạn lao động, bệnh nghề nghiệp hiện nay được hình thành từ những nguồn nào?",
+  "question_type": "temporal",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "84-2015-qh13/chapter-iii/section-3/article-44/clause-2/point-a",
+   "41-2024-qh15-sua-doi/chapter-xi/article-139/clause-1/point-c",
+   "84-2015-qh13/chapter-iii/section-3/article-44/clause-2/point-c"
+  ],
+  "rationale": "Đề xuất của model (Claude Opus 5.5, nháp 15/11/2026, dựng lại với amendment-rules-v2 ngày 16/11), không phải nhãn người và không phải kết luận pháp lý đã kiểm chứng. Ngày áp dụng: 11/11/2026 (ngày khóa corpus v3, câu không ghi ngày). Đơn vị gốc đã bị sửa đổi hoặc thay cụm từ; đáp án là đơn vị chứa lời văn mới, đơn vị bị sửa là lỗi thời ở ngày áp dụng (nếu ngày áp dụng sau ngày sửa có hiệu lực). Đơn vị lỗi thời ở ngày áp dụng, KHÔNG chọn làm đáp án: 84-2015-qh13/chapter-iii/section-3/article-44/clause-2/point-b. Căn cứ của model: Ba nguồn của khoản 2 Điều 44; chỉ điểm b (tiền sinh lời đầu tư) bị sửa dẫn chiếu, điểm a và c không có cạnh sửa đổi nên còn hiệu lực. Câu dẫn của khoản 2 không được đưa vào vì theo unit-status-v1 một khoản có điểm con bị sửa cũng mang trạng thái đã sửa đổi.",
+  "paraphrase_of": null,
+  "source_question_id": "hl-b05"
+ },
+ {
+  "text": "Chi phí cho việc tổ chức và hoạt động bảo hiểm tai nạn lao động, bệnh nghề nghiệp hiện nay thực hiện theo quy định nào?",
+  "question_type": "temporal",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "41-2024-qh15-sua-doi/chapter-xi/article-139/clause-1/point-a"
+  ],
+  "rationale": "Đề xuất của model (Claude Opus 5.5, nháp 15/11/2026, dựng lại với amendment-rules-v2 ngày 16/11), không phải nhãn người và không phải kết luận pháp lý đã kiểm chứng. Ngày áp dụng: 11/11/2026 (ngày khóa corpus v3, câu không ghi ngày). Đơn vị gốc đã bị sửa đổi hoặc thay cụm từ; đáp án là đơn vị chứa lời văn mới, đơn vị bị sửa là lỗi thời ở ngày áp dụng (nếu ngày áp dụng sau ngày sửa có hiệu lực). Đơn vị lỗi thời ở ngày áp dụng, KHÔNG chọn làm đáp án: 84-2015-qh13/chapter-iii/section-3/article-42/clause-7. Căn cứ của model: \"Chi phí quản lý\" đổi thành \"Chi tổ chức và hoạt động\"; cả hai vẫn dẫn chiếu Luật BHXH.",
+  "paraphrase_of": null,
+  "source_question_id": "hl-b06"
+ },
+ {
+  "text": "Một tổ chức nước ngoài tại Việt Nam muốn tuyển người lao động Việt Nam thông qua tổ chức có thẩm quyền. Hiện nay những tổ chức nào có thẩm quyền tuyển dụng, quản lý người lao động Việt Nam làm việc cho tổ chức, cá nhân nước ngoài?",
+  "question_type": "temporal",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "152-2020-nd-cp/chapter-iii/article-22/clause-1/point-a",
+   "70-2023-nd-cp/article-1/clause-9"
+  ],
+  "rationale": "Đề xuất của model (Claude Opus 5.5, nháp 15/11/2026, dựng lại với amendment-rules-v2 ngày 16/11), không phải nhãn người và không phải kết luận pháp lý đã kiểm chứng. Ngày áp dụng: 11/11/2026 (ngày khóa corpus v3, câu không ghi ngày). Đơn vị gốc đã bị sửa đổi hoặc thay cụm từ; đáp án là đơn vị chứa lời văn mới, đơn vị bị sửa là lỗi thời ở ngày áp dụng (nếu ngày áp dụng sau ngày sửa có hiệu lực). Đơn vị lỗi thời ở ngày áp dụng, KHÔNG chọn làm đáp án: 152-2020-nd-cp/chapter-iii/article-22/clause-1/point-b. Căn cứ của model: Điểm b khoản 1 Điều 22 NĐ 152/2020 đổi cơ quan giao nhiệm vụ từ Sở LĐTBXH sang UBND cấp tỉnh (NĐ 70/2023, hiệu lực 18/09/2023). Chương III NĐ 152/2020 (người lao động Việt Nam) không thuộc phần NĐ 219/2025 tuyên bố hết hiệu lực; vbpl.vn báo NĐ 152/2020 hết hiệu lực từ 15/11/2026, sau ngày áp dụng của câu.",
+  "paraphrase_of": null,
+  "source_question_id": "hl-b07"
+ },
+ {
+  "text": "Tổ chức ở địa phương được giao tuyển dụng, quản lý người lao động Việt Nam làm việc cho tổ chức, cá nhân nước ngoài thì hiện nay phải báo cáo tình hình cho cơ quan nào?",
+  "question_type": "temporal",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "70-2023-nd-cp/article-1/clause-10"
+  ],
+  "rationale": "Đề xuất của model (Claude Opus 5.5, nháp 15/11/2026, dựng lại với amendment-rules-v2 ngày 16/11), không phải nhãn người và không phải kết luận pháp lý đã kiểm chứng. Ngày áp dụng: 11/11/2026 (ngày khóa corpus v3, câu không ghi ngày). Đơn vị gốc đã bị sửa đổi hoặc thay cụm từ; đáp án là đơn vị chứa lời văn mới, đơn vị bị sửa là lỗi thời ở ngày áp dụng (nếu ngày áp dụng sau ngày sửa có hiệu lực). Đơn vị lỗi thời ở ngày áp dụng, KHÔNG chọn làm đáp án: 152-2020-nd-cp/chapter-iii/article-27/clause-4/point-b. Căn cứ của model: Nơi nhận báo cáo vẫn là Sở LĐTBXH; điểm sửa đổi đổi chủ thể giao nhiệm vụ cho tổ chức báo cáo. Câu hỏi tránh nêu thời hạn báo cáo vì thời hạn nằm ở câu dẫn của khoản 4, mà khoản 4 mang trạng thái đã sửa đổi.",
+  "paraphrase_of": null,
+  "source_question_id": "hl-b08"
+ },
+ {
+  "text": "Tháng 3/2024, công ty dự định bổ nhiệm một người nước ngoài làm người đứng đầu chi nhánh tại Đà Nẵng và cần xác định người này có thuộc diện “giám đốc điều hành” khi làm hồ sơ giấy phép lao động hay không. Theo quy định áp dụng tại thời điểm đó, giám đốc điều hành được hiểu là ai?",
+  "question_type": "temporal",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "70-2023-nd-cp/article-1/clause-1/point-b"
+  ],
+  "rationale": "Đề xuất của model (Claude Opus 5.5, nháp 15/11/2026, dựng lại với amendment-rules-v2 ngày 16/11), không phải nhãn người và không phải kết luận pháp lý đã kiểm chứng. Ngày áp dụng: 15/03/2024 (ngày nêu trong câu). Đơn vị gốc đã bị sửa đổi hoặc thay cụm từ; đáp án là đơn vị chứa lời văn mới, đơn vị bị sửa là lỗi thời ở ngày áp dụng (nếu ngày áp dụng sau ngày sửa có hiệu lực). Đơn vị lỗi thời ở ngày áp dụng, KHÔNG chọn làm đáp án: 152-2020-nd-cp/chapter-i/article-3/clause-5. Căn cứ của model: Khái niệm giám đốc điều hành được NĐ 70/2023 viết lại (hiệu lực 18/09/2023). Ngày áp dụng đặt trong năm 2024, trước 07/08/2025, vì khoản 2 Điều 35 NĐ 219/2025 tuyên bố phần lao động nước ngoài của NĐ 152/2020 (đã sửa bởi NĐ 70/2023) hết hiệu lực từ ngày NĐ 219/2025 có hiệu lực, điều mà unit-status-v1 không thấy.",
+  "paraphrase_of": null,
+  "source_question_id": "hl-b09"
+ },
+ {
+  "text": "Tháng 10/2024, công ty đổi tên nhưng giữ nguyên mã số doanh nghiệp, trong khi giấy phép lao động của các chuyên gia nước ngoài vẫn còn thời hạn. Theo quy định lúc đó, đây có phải là trường hợp được cấp lại giấy phép lao động không?",
+  "question_type": "temporal",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "70-2023-nd-cp/article-1/clause-7"
+  ],
+  "rationale": "Đề xuất của model (Claude Opus 5.5, nháp 15/11/2026, dựng lại với amendment-rules-v2 ngày 16/11), không phải nhãn người và không phải kết luận pháp lý đã kiểm chứng. Ngày áp dụng: 01/10/2024 (ngày nêu trong câu). Đơn vị gốc đã bị sửa đổi hoặc thay cụm từ; đáp án là đơn vị chứa lời văn mới, đơn vị bị sửa là lỗi thời ở ngày áp dụng (nếu ngày áp dụng sau ngày sửa có hiệu lực). Đơn vị lỗi thời ở ngày áp dụng, KHÔNG chọn làm đáp án: 152-2020-nd-cp/chapter-ii/section-4/article-12/clause-3. Căn cứ của model: NĐ 70/2023 thêm trường hợp đổi tên doanh nghiệp mà không đổi mã số vào khoản 3 Điều 12. Ngày áp dụng trong năm 2024 vì cùng lý do với hl-b09.",
+  "paraphrase_of": null,
+  "source_question_id": "hl-b10"
+ },
+ {
+  "text": "Doanh nghiệp chậm đóng bảo hiểm xã hội bắt buộc và bị thanh tra lập biên bản vi phạm ngày 20/5/2025. Theo quy định xử phạt có hiệu lực vào thời điểm đó, mức phạt tiền được tính thế nào?",
+  "question_type": "temporal",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "12-2022-nd-cp/chapter-iii/article-39/clause-5/point-a",
+   "12-2022-nd-cp/chapter-i/article-6/clause-1"
+  ],
+  "rationale": "Đề xuất của model (Claude Opus 5.5, nháp 15/11/2026, dựng lại với amendment-rules-v2 ngày 16/11), không phải nhãn người và không phải kết luận pháp lý đã kiểm chứng. Ngày áp dụng: 20/05/2025 (ngày nêu trong câu). Câu ghi rõ ngày xảy ra việc; đáp án là quy định có hiệu lực ở ngày đó, không phải quy định hiện hành. Đơn vị chưa có hiệu lực ở ngày áp dụng, KHÔNG chọn làm đáp án: 283-2026-nd-cp/chapter-iii/article-43/clause-3, 283-2026-nd-cp/chapter-i/article-7/clause-1. Căn cứ của model: Cùng cặp đơn vị với hl-a05 nhưng ngày áp dụng là ngày lập biên bản 20/5/2025: NĐ 12/2022 đang có hiệu lực, NĐ 283/2026 chưa có hiệu lực. Theo unit-status-v1, đơn vị chưa có hiệu lực không phải đơn vị lỗi thời nên tập lỗi thời rỗng; đơn vị của NĐ 283/2026 được ghi riêng ở not_yet_effective_unit_ids.",
+  "paraphrase_of": null,
+  "source_question_id": "hl-c01"
+ },
+ {
+  "text": "Tháng 8/2024, công ty huy động 30 công nhân làm thêm giờ vượt quá số giờ tối đa và bị xử phạt ngay trong tháng đó (ngày 15/8/2024). Mức phạt tiền áp dụng khi đó là bao nhiêu?",
+  "question_type": "temporal",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "12-2022-nd-cp/chapter-ii/article-18/clause-4/point-b",
+   "12-2022-nd-cp/chapter-i/article-6/clause-1"
+  ],
+  "rationale": "Đề xuất của model (Claude Opus 5.5, nháp 15/11/2026, dựng lại với amendment-rules-v2 ngày 16/11), không phải nhãn người và không phải kết luận pháp lý đã kiểm chứng. Ngày áp dụng: 15/08/2024 (ngày nêu trong câu). Câu ghi rõ ngày xảy ra việc; đáp án là quy định có hiệu lực ở ngày đó, không phải quy định hiện hành. Đơn vị chưa có hiệu lực ở ngày áp dụng, KHÔNG chọn làm đáp án: 283-2026-nd-cp/chapter-ii/section-2/article-24/clause-4/point-b, 283-2026-nd-cp/chapter-i/article-7/clause-1. Căn cứ của model: Sự việc và ngày xử phạt đều trong năm 2024, khi NĐ 12/2022 còn hiệu lực; khung 11-50 người.",
+  "paraphrase_of": null,
+  "source_question_id": "hl-c02"
+ },
+ {
+  "text": "Năm 2022, công ty làm hồ sơ đề nghị cấp giấy phép lao động cho một kỹ sư nước ngoài với tư cách chuyên gia (hồ sơ nộp ngày 01/6/2022). Theo quy định lúc đó, người có bằng đại học phải có kinh nghiệm làm việc như thế nào thì được coi là chuyên gia?",
+  "question_type": "temporal",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "152-2020-nd-cp/chapter-i/article-3/clause-3/point-a"
+  ],
+  "rationale": "Đề xuất của model (Claude Opus 5.5, nháp 15/11/2026, dựng lại với amendment-rules-v2 ngày 16/11), không phải nhãn người và không phải kết luận pháp lý đã kiểm chứng. Ngày áp dụng: 01/06/2022 (ngày nêu trong câu). Câu ghi rõ ngày xảy ra việc; đáp án là quy định có hiệu lực ở ngày đó, không phải quy định hiện hành. Đơn vị chưa có hiệu lực ở ngày áp dụng, KHÔNG chọn làm đáp án: 70-2023-nd-cp/article-1/clause-1/point-a. Căn cứ của model: Trước 18/09/2023, điểm a khoản 3 Điều 3 NĐ 152/2020 còn đòi kinh nghiệm \"trong chuyên ngành được đào tạo\"; lời văn mới của NĐ 70/2023 bỏ yêu cầu này nhưng chưa có hiệu lực ở ngày áp dụng.",
+  "paraphrase_of": null,
+  "source_question_id": "hl-c03"
+ },
+ {
+  "text": "Hồ sơ đề nghị cấp giấy phép lao động của công ty được nộp đủ ngày 10/5/2024. Theo quy định lúc đó, cơ quan có thẩm quyền phải cấp giấy phép trong bao lâu và giấy phép lao động có hình thức như thế nào?",
+  "question_type": "temporal",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "70-2023-nd-cp/article-1/clause-6"
+  ],
+  "rationale": "Đề xuất của model (Claude Opus 5.5, nháp 15/11/2026, dựng lại với amendment-rules-v2 ngày 16/11), không phải nhãn người và không phải kết luận pháp lý đã kiểm chứng. Ngày áp dụng: 10/05/2024 (ngày nêu trong câu). Câu ghi rõ ngày xảy ra việc; đáp án là quy định có hiệu lực ở ngày đó, không phải quy định hiện hành. Đơn vị lỗi thời ở ngày áp dụng, KHÔNG chọn làm đáp án: 152-2020-nd-cp/chapter-ii/section-3/article-11/clause-2. Căn cứ của model: Thời hạn 05 ngày làm việc giữ nguyên; phần mô tả mẫu giấy phép đổi hẳn (khổ A4, mã số, bản điện tử). Ngày áp dụng trong năm 2024 vì cùng lý do với hl-b09.",
+  "paraphrase_of": null,
+  "source_question_id": "hl-c04"
+ },
+ {
+  "text": "Tháng 3/2025, một người đang hưởng trợ cấp tai nạn lao động hằng tháng ra nước ngoài định cư (đề nghị giải quyết ngày 01/3/2025). Khi đó họ được trợ cấp một lần bao nhiêu và hồ sơ giải quyết theo những điều khoản nào?",
+  "question_type": "temporal",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "84-2015-qh13/chapter-iii/section-3/article-49/clause-5"
+  ],
+  "rationale": "Đề xuất của model (Claude Opus 5.5, nháp 15/11/2026, dựng lại với amendment-rules-v2 ngày 16/11), không phải nhãn người và không phải kết luận pháp lý đã kiểm chứng. Ngày áp dụng: 01/03/2025 (ngày nêu trong câu). Câu ghi rõ ngày xảy ra việc; đáp án là quy định có hiệu lực ở ngày đó, không phải quy định hiện hành. Đơn vị chưa có hiệu lực ở ngày áp dụng, KHÔNG chọn làm đáp án: 41-2024-qh15-sua-doi/chapter-xi/article-139/clause-1/point-đ. Căn cứ của model: Cùng khoản với hl-b02 nhưng trước 01/07/2025, khi Luật BHXH 2024 (và lệnh sửa Luật ATVSLĐ của nó) chưa có hiệu lực: căn cứ là lời văn gốc của khoản 5 Điều 49 Luật ATVSLĐ.",
+  "paraphrase_of": null,
+  "source_question_id": "hl-c05"
+ },
+ {
+  "text": "Nhân viên văn phòng làm việc đủ 12 tháng trong điều kiện bình thường thì được nghỉ hằng năm bao nhiêu ngày?",
+  "question_type": "lookup",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-vii/section-2/article-113/clause-1/point-a"
+  ],
+  "rationale": "Đề xuất của model (Claude Opus 5.5, nháp 15/11/2026, dựng lại với amendment-rules-v2 ngày 16/11), không phải nhãn người và không phải kết luận pháp lý đã kiểm chứng. Ngày áp dụng: 11/11/2026 (ngày khóa corpus v3, câu không ghi ngày). Câu đối chứng, không liên quan tới thay đổi hiệu lực. Căn cứ của model: Bộ luật Lao động 2019, không có cạnh sửa đổi nào trong corpus nhắm tới đơn vị này.",
+  "paraphrase_of": null,
+  "source_question_id": "hl-d01"
+ },
+ {
+  "text": "Nhân viên ký hợp đồng lao động không xác định thời hạn muốn nghỉ việc thì phải báo trước cho công ty ít nhất bao nhiêu ngày?",
+  "question_type": "lookup",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-iii/section-3/article-35/clause-1/point-a"
+  ],
+  "rationale": "Đề xuất của model (Claude Opus 5.5, nháp 15/11/2026, dựng lại với amendment-rules-v2 ngày 16/11), không phải nhãn người và không phải kết luận pháp lý đã kiểm chứng. Ngày áp dụng: 11/11/2026 (ngày khóa corpus v3, câu không ghi ngày). Câu đối chứng, không liên quan tới thay đổi hiệu lực. Căn cứ của model: Bộ luật Lao động 2019, không có cạnh sửa đổi nào trong corpus nhắm tới đơn vị này.",
+  "paraphrase_of": null,
+  "source_question_id": "hl-d02"
+ },
+ {
+  "text": "Lao động nữ sinh một con được nghỉ thai sản tổng cộng bao lâu và được nghỉ trước khi sinh tối đa bao nhiêu tháng?",
+  "question_type": "lookup",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-x/article-139/clause-1"
+  ],
+  "rationale": "Đề xuất của model (Claude Opus 5.5, nháp 15/11/2026, dựng lại với amendment-rules-v2 ngày 16/11), không phải nhãn người và không phải kết luận pháp lý đã kiểm chứng. Ngày áp dụng: 11/11/2026 (ngày khóa corpus v3, câu không ghi ngày). Câu đối chứng, không liên quan tới thay đổi hiệu lực. Căn cứ của model: Bộ luật Lao động 2019, không có cạnh sửa đổi nào trong corpus nhắm tới đơn vị này.",
+  "paraphrase_of": null,
+  "source_question_id": "hl-d03"
+ },
+ {
+  "text": "Công ty tuyển kỹ sư có bằng đại học vào vị trí cần trình độ chuyên môn từ cao đẳng trở lên thì được thỏa thuận thử việc tối đa bao nhiêu ngày?",
+  "question_type": "lookup",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-iii/section-1/article-25/clause-2"
+  ],
+  "rationale": "Đề xuất của model (Claude Opus 5.5, nháp 15/11/2026, dựng lại với amendment-rules-v2 ngày 16/11), không phải nhãn người và không phải kết luận pháp lý đã kiểm chứng. Ngày áp dụng: 11/11/2026 (ngày khóa corpus v3, câu không ghi ngày). Câu đối chứng, không liên quan tới thay đổi hiệu lực. Căn cứ của model: Bộ luật Lao động 2019, không có cạnh sửa đổi nào trong corpus nhắm tới đơn vị này.",
+  "paraphrase_of": null,
+  "source_question_id": "hl-d04"
+ },
+ {
+  "text": "Người lao động và công ty thỏa thuận chấm dứt hợp đồng sau 5 năm làm việc thường xuyên. Công ty có phải trả trợ cấp thôi việc không, và mỗi năm làm việc được tính bao nhiêu?",
+  "question_type": "lookup",
+  "expected_status": "answer",
+  "relevant_unit_ids": [
+   "45-2019-qh14/chapter-iii/section-3/article-34/clause-3",
+   "45-2019-qh14/chapter-iii/section-3/article-46/clause-1"
+  ],
+  "rationale": "Đề xuất của model (Claude Opus 5.5, nháp 15/11/2026, dựng lại với amendment-rules-v2 ngày 16/11), không phải nhãn người và không phải kết luận pháp lý đã kiểm chứng. Ngày áp dụng: 11/11/2026 (ngày khóa corpus v3, câu không ghi ngày). Câu đối chứng, không liên quan tới thay đổi hiệu lực. Căn cứ của model: Khoản 3 Điều 34 nằm trong các khoản mà khoản 1 Điều 46 dẫn chiếu; không có cạnh sửa đổi nào nhắm tới hai đơn vị này.",
+  "paraphrase_of": null,
+  "source_question_id": "hl-d05"
+ }
+]

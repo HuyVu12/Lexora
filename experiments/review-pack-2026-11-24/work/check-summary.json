@@ -1,0 +1,99 @@
+{
+ "drafted_by": "claude-opus-5-5 (agent trong phiên, 24/11/2026)",
+ "sets": {
+  "validity": {
+   "items": 84,
+   "suggested": {
+    "co": 84
+   },
+   "confidence": {
+    "cao": 81,
+    "vừa": 3
+   },
+   "low_confidence_ids": [],
+   "medium_confidence_ids": [
+    "hl-a05|dap-an|283-2026-nd-cp/chapter-iii/article-43/clause-3",
+    "hl-b01|dap-an|41-2024-qh15/chapter-i/article-2/clause-1",
+    "hl-d05|dap-an|45-2019-qh14/chapter-iii/section-3/article-46/clause-1"
+   ],
+   "not_default_ids": [],
+   "problems": {
+    "hl-a05|dap-an|283-2026-nd-cp/chapter-iii/article-43/clause-3": "Tập đáp án có thể thiếu khoản 1 Điều 43 NĐ 283/2026 (cảnh cáo khi số tiền dưới 400.000 đồng).",
+    "hl-b01|dap-an|41-2024-qh15/chapter-i/article-2/clause-1": "Đơn vị là câu dẫn; chỉ số mở thành mọi điểm a-n, rộng hơn danh sách a, b, c, d, đ, e, i, l.",
+    "hl-d05|dap-an|45-2019-qh14/chapter-iii/section-3/article-46/clause-1": "Theo quy ước 15/11 (2) có thể cần thêm khoản 1 Điều 8 NĐ 145/2020."
+   }
+  },
+  "link": {
+   "items": 35,
+   "suggested": {
+    "can_B_gold_dung": 19,
+    "can_B_gold_sai": 9,
+    "khong_can_B_gold_dung": 5,
+    "khong_can_B_gold_sai": 2
+   },
+   "confidence": {
+    "cao": 14,
+    "thấp": 1,
+    "vừa": 20
+   },
+   "low_confidence_ids": [
+    "l14"
+   ],
+   "medium_confidence_ids": [
+    "l00",
+    "l02",
+    "l03",
+    "l04",
+    "l05",
+    "l06",
+    "l08",
+    "l09",
+    "l12",
+    "l15",
+    "l16",
+    "l19",
+    "l21",
+    "l23",
+    "l25",
+    "l26",
+    "l27",
+    "l28",
+    "l29",
+    "l34"
+   ],
+   "not_default_ids": [
+    "l04",
+    "l05",
+    "l09",
+    "l12",
+    "l16",
+    "l23",
+    "l25",
+    "l26",
+    "l27",
+    "l28",
+    "l29",
+    "l30",
+    "l31",
+    "l32",
+    "l33",
+    "l34"
+   ],
+   "problems": {
+    "l04": "Thiếu khoản 1 Điều 129 BLLĐ (làm hư hỏng).",
+    "l05": "B không cần; thiếu điểm a khoản 2 Điều 107 BLLĐ.",
+    "l09": "Thiếu điểm d khoản 1 Điều 89 NĐ 145/2020 (thời hạn báo trước); có thể thêm khoản 2, 3 Điều 41 BLLĐ.",
+    "l12": "Thiếu các khoản 2, 8, 10, 13 Điều 63 NĐ 283/2026, hoặc sửa câu hỏi thành \"Cục trưởng cục nào\".",
+    "l14": "Phụ thuộc nghị định sửa đổi NĐ 189/2025 không có trong corpus.",
+    "l16": "Ít nhất thiếu khoản 5 Điều 63 NĐ 283/2026 (Công an nhân dân).",
+    "l23": "A tự trả lời đủ; câu không đo được việc cần liên kết.",
+    "l25": "Thiếu khoản 3 Điều 45 Luật ATVSLĐ 84/2015.",
+    "l26": "A và B lỗi thời từ 2025-08-07 theo khoản 2 Điều 35 NĐ 219/2025.",
+    "l27": "A và B lỗi thời từ 2025-08-07; quy định hiện hành khác (khoản 5 Điều 22 NĐ 219/2025).",
+    "l28": "A và B lỗi thời từ 2025-08-07; khoản 2 Điều 5 NĐ 219/2025 ghi \"dịch ra tiếng Việt và chứng thực\".",
+    "l29": "A và B lỗi thời từ 2025-08-07; khoản 2 Điều 5 NĐ 219/2025 ghi \"dịch ra tiếng Việt và chứng thực\".",
+    "l34": "Có thể thiếu khoản 2 Điều 105 BLLĐ (10 giờ/ngày khi quy định theo tuần)."
+   }
+  }
+ }
+}

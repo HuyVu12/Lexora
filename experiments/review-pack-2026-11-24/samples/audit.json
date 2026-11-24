@@ -1,0 +1,6 @@
+{"task":"audit","title":"Quy phạm bị loại: đúng hay sai?","instructions":"Chọn nhãn.","drafted_by":"mẫu thử",
+ "options":[{"value":"sai","label":"Sai"},{"value":"dien_dat","label":"Diễn đạt"},{"value":"dung_ngu_canh","label":"Đúng ngữ cảnh"},{"value":"dung","label":"Đúng"},{"value":"khong_ro","label":"Không rõ"}],
+ "items":[{"id":"aud-001","group":"audit","heading":"aud-001","question":"Quy phạm này có đúng không?","fields":[{"label":"Câu","text":"Bên A phải trả tiền.","highlight":["phải"]}],
+  "suggestion":{"value":"dung","reason":"Khớp câu.","confidence":"cao","quotes":[]}},
+  {"id":"aud-002","group":"audit","heading":"aud-002","question":"Quy phạm này có đúng không?","fields":[{"label":"Câu","text":"Bên B có quyền nghỉ </script><b>x</b> &   y.","highlight":[]}],
+  "suggestion":{"value":"sai","reason":"Sai </script>.","confidence":"thấp","quotes":[]}}]}

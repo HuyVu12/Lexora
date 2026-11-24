@@ -1,0 +1,5 @@
+# Copies of the server store (accounts, password hashes, labels) must never be committed.
+*.sqlite
+*.sqlite-journal
+work/*.sqlite*
+server-import/work/

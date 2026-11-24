@@ -1,0 +1,114 @@
+{
+ "created": "2026-11-24",
+ "drafted_by": "claude-opus-5-5 (agent trong phiên)",
+ "amendment": {
+  "items": 100,
+  "suggested": {
+   "dung": 95,
+   "sai_loai": 3,
+   "khac": 2
+  },
+  "confidence": {
+   "cao": 91,
+   "thấp": 1,
+   "vừa": 8
+  },
+  "low_confidence_ids": [
+   "da230111c8d8dc2dc3f2b25e"
+  ],
+  "not_dung": [
+   {
+    "id": "da230111c8d8dc2dc3f2b25e",
+    "row": 3,
+    "value": "sai_loai",
+    "target": "Điều 32, 92-2015-qh13"
+   },
+   {
+    "id": "5ff594f0f73fbfa2a95b6bc8",
+    "row": 53,
+    "value": "khac",
+    "target": "(không đọc được đích), Nghị định số 152/2020/NĐ-CP"
+   },
+   {
+    "id": "6219cbcb5ad30346be3e954a",
+    "row": 79,
+    "value": "sai_loai",
+    "target": "điểm đ khoản 2 Điều 68, 35-2022-nd-cp"
+   },
+   {
+    "id": "d350958df0b8bfb9d90495fb",
+    "row": 80,
+    "value": "sai_loai",
+    "target": "điểm c khoản 3 Điều 68, 35-2022-nd-cp"
+   },
+   {
+    "id": "358d86466fc511d6570088c6",
+    "row": 90,
+    "value": "khac",
+    "target": "(không đọc được đích), ?"
+   }
+  ],
+  "missing_edges": [
+   "145/2020 Điều 114 k2 điểm b: NĐ 05/2015, NĐ 148/2018",
+   "145/2020 Điều 114 k2 điểm đ: NĐ 121/2018",
+   "152/2020 Điều 29 k2: NĐ 75/2014",
+   "41/2024 Điều 140 k2: NQ 93/2015",
+   "84/2015 Điều 92 k2: Mục 3 Chương III, các điều 104-107, 116, 117 Luật BHXH 58/2014",
+   "45/2019 Điều 219 k2 điểm a (tên điều, khoản 1, khoản 1a-1c BLTTDS)"
+  ],
+  "unresolved_in_source_but_not_in_corpus": "10 cạnh nhắm Điều 30 NĐ 152/2020 (bị chặn khi trích corpus v3); khoản 5 Điều 30 có hai điểm 'd)', không có 'đ)'; khoản 6a không có trong bản chụp",
+  "effective_from_mismatches": 0
+ },
+ "audit": {
+  "items": 104,
+  "suggested": {
+   "dung": 35,
+   "dung_ngu_canh": 37,
+   "dien_dat": 17,
+   "sai": 15
+  },
+  "confidence": {
+   "thấp": 26,
+   "vừa": 28,
+   "cao": 50
+  },
+  "low_confidence_ids": [
+   "R9606202419",
+   "Rfa363b1fd2",
+   "R4cfd08a228",
+   "R490c8fc442",
+   "Rdcd23705cd",
+   "R73aff9f2fb",
+   "R9f53f93d23",
+   "Rea3104a0e3",
+   "R35f7edb547",
+   "Rb15d3f93e1",
+   "R9fce0a0763",
+   "Reb16e0ddb8",
+   "Rf02f93aa06",
+   "Rd257b33c36",
+   "R3a7da3f055",
+   "R3409a466ff",
+   "R7a0260bd8f",
+   "R7cb4004ddb",
+   "Rb606b20a37",
+   "Rcda5a9af44",
+   "R78b016e6f0",
+   "R9517cd6b2e",
+   "R2b4a1e0bf0",
+   "Rd51e8684a5",
+   "R9a09f93083",
+   "R0d83c36a50"
+  ],
+  "set_id": "a18ba17ef7635",
+  "item_id_format": "R + 10 hex (item_id của sheet.csv = items của bộ trên app)",
+  "labels": [
+   "sai",
+   "dien_dat",
+   "dung_ngu_canh",
+   "dung",
+   "khong_ro"
+  ],
+  "key_read": false
+ }
+}
