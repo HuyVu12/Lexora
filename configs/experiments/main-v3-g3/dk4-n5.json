@@ -1,0 +1,34 @@
+{
+  "condition": "DK4",
+  "representation": "llm_kb_validated",
+  "automatic_validation": true,
+  "manual_review": false,
+  "status": "draft",
+  "kb_run": "experiments/runs/kb-inherit-2026-11-23/v3-sonnet-v4-inherit",
+  "kb_model_note": "Derived offline from experiments/runs/kb-scope-v3-sonnet (Claude Sonnet 5.5, effort medium, norm-llm-v1, 863 batches, 12-13/11/2026, corpus scope v3 v48feefc6d53b) with kb-materialize --validator kb-validator-v4 --inherit claims-inherit-v1 (23/11/2026); no model call. DK4 reads dk4.jsonl of that derivation: the inherited claims accepted by kb-validator-v4.",
+  "record": "unit_with_claims",
+  "max_tokens": 384,
+  "graph": {
+    "edges": [
+      "reference",
+      "referenced_by"
+    ],
+    "max_neighbors": 2,
+    "source_aliases": {
+      "Bộ luật Lao động": "45-2019-qh14"
+    },
+    "require_match": false,
+    "amendments": {
+      "run": "data/kb/amendments-scope-v3-v48feefc6d53b-v2",
+      "max_neighbors": 2
+    },
+    "expansion": "reference-expansion-v3",
+    "top_n": 5
+  },
+  "claims_view": "thin",
+  "validity": {
+    "level": "unit",
+    "amendments": "data/kb/amendments-scope-v3-v48feefc6d53b-v2"
+  },
+  "note": "reference-expansion-v3 (decisions 23/11/2026), N=5: copy of main-v3/dk4.json with the reference graph replaced by the top-N expansion (both directions, no match requirement, 2 neighbours per source); everything else equal. Original note: Main design for the corpus-v3 sets, decided 23/11/2026 (docs/decisions.md 22/11 and 23/11). DK4 is DK3 plus validation: the same derived KB and record shape (claims_view thin, no index_keys, same reference graph and amendment edges), but only the claims kb-validator-v4 accepted; amendment relations are followed only when the edge is dated and effective at the question's date (as_of, else shared.validity_as_of), then unit status (unit-status-v2) over the same edges, as validity-b/dk4.json: units expired, repealed or not yet in force are dropped, amended units are replaced by their amending unit or annotated, and the claims of removed records are counted as unused (validity option B, 22/11/2026)."
+}

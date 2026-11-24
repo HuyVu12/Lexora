@@ -1,0 +1,33 @@
+{
+  "condition": "DK3",
+  "representation": "llm_kb_raw",
+  "automatic_validation": false,
+  "manual_review": false,
+  "status": "draft",
+  "kb_run": "experiments/runs/kb-inherit-2026-11-23/v3-sonnet-v4-inherit",
+  "kb_model_note": "Derived offline from experiments/runs/kb-scope-v3-sonnet (Claude Sonnet 5.5, effort medium, norm-llm-v1, 863 batches, 12-13/11/2026, corpus scope v3 v48feefc6d53b) with kb-materialize --validator kb-validator-v4 --inherit claims-inherit-v1 (23/11/2026); no model call. DK3 reads dk3.jsonl of that derivation: every claim, unvalidated, with empty actor, action and result slots filled from the parent's lead-in.",
+  "record": "unit_with_claims",
+  "max_tokens": 384,
+  "graph": {
+    "edges": [
+      "reference",
+      "referenced_by"
+    ],
+    "max_neighbors": 2,
+    "source_aliases": {
+      "Bộ luật Lao động": "45-2019-qh14"
+    },
+    "require_match": false,
+    "amendments": {
+      "run": "data/kb/amendments-scope-v3-v48feefc6d53b-v2",
+      "max_neighbors": 2
+    },
+    "expansion": "reference-expansion-v3",
+    "top_n": 5
+  },
+  "claims_view": "thin",
+  "validity": {
+    "level": "document"
+  },
+  "note": "reference-expansion-v3 (decisions 23/11/2026), N=5: copy of main-v3/dk3.json with the reference graph replaced by the top-N expansion (both directions, no match requirement, 2 neighbours per source); everything else equal. Original note: Main design for the corpus-v3 sets, decided 23/11/2026 (docs/decisions.md 22/11 and 23/11). DK3 is DK2 plus the unvalidated knowledge base: the DK2 record of every unit with its claims from the lead-in-inherited KB (kb_model_note); claims_view thin (the generator sees only the part of a claim line not already in the source text, chosen over compact on 23/11); no index_keys (deterministic kb-keys-v1 did not help and the model-written kb-keys-v2 pilot missed its declared gate, 23/11); the reference graph as in validity-b/dk3.json and kb-keys/dk3-thin.json; plus the amendment edges (amendment-rules-v2, rules, need human review) as relations of the KB (amendment-expansion-v1, resolved edges only), with no status check, so outdated units can stay in context. Same document-level filter as DK2 (validity option B, 22/11/2026)."
+}

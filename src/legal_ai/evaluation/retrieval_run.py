@@ -10,7 +10,7 @@ without gold units (expected refusals) are excluded from the mean and counted. B
 span several units, every K also reports the mean number of index tokens behind the top-K records, so a
 higher recall bought with more context stays visible, and Recall at fixed token budgets (`token_budgets`, default
 250 to 6000) packs ranked records with the answer run's own packing function (`indexing.packing`, `context_packing`
-P0/P1/P2 in the shared settings; DK1 always P0) while the tokens the generator would read fit the budget, so conditions
+P0-P3 in the shared settings; DK1 always P0) while the tokens the generator would read fit the budget, so conditions
 are compared on equal context too. `tokens_to_reach` gives, per recall target (`recall_targets`, default 0.4 and 0.8),
 the smallest budget at which the mean recall reaches it, computed exactly from every question's packing breakpoints.
 
@@ -20,7 +20,15 @@ the remaining records in the order of RRF over the full lists, so the head of th
 
 DK3/DK4 records are either one serialized claim each (`record: claims`, the first design, kept as an ablation) or
 the DK2 record of each unit with its claims attached (`record: unit_with_claims`). With a `graph` block the ranking
-is expanded over the knowledge base's cross-reference edges (`retrieval.graph`), keeping the list length.
+is expanded over the knowledge base's cross-reference edges (`retrieval.graph`), keeping the list length; with
+`graph.amendments` it is then expanded over amendment edges (`retrieval.amendment_graph`, validity option B of
+22/11/2026): DK3 follows them whatever the question's date, a condition with unit-level validity (DK4) only when the
+edge is effective by that date, before its unit status filter. Neighbours carry their relation note as `status_note`.
+With `index_keys` ({"version": "kb-keys-v1", "aliases": <alias table>}, `record: unit_with_claims` only) every unit
+record with claims also gets deterministic key phrases (`indexing.kb_keys`) in its index text, never in what the
+generator reads; the manifest records the alias table's hash. `kb-keys-v2` ({..., "model_keys": <keys run>}) adds the
+model-written questions of a `kb-keys-gen` run on the same bundle and DK3 claims, under the same rules; the manifest
+records that run's hashes. Without `index_keys` the records are those of earlier runs.
 
 With `shared.subqueries` (a decomposition run, the same for every condition) each question is ranked once as
 written and once per issue query, and the rankings are merged round-robin, so every issue gets early records.
@@ -35,10 +43,12 @@ import platform
 import subprocess
 
 from legal_ai.common.io import canonical, digest, read_jsonl, write_json, write_jsonl
+from legal_ai.indexing import kb_keys
 from legal_ai.indexing.packing import PACKING_VERSION, Packer, condition_mode
 from legal_ai.kb.validity import DROP, STATUS_VERSION, VERSIONS as STATUS_VERSIONS, RecordFilter
 from legal_ai.indexing.records import RECORD_VERSION, TOKENIZER, check_records, claim_records, fixed_chunks, kb_unit_records, structural_records, token_spans
-from legal_ai.evaluation import decompose
+from legal_ai.evaluation import decompose, evidence_coverage
+from legal_ai.retrieval import amendment_graph
 from legal_ai.retrieval import graph as kb_graph
 from legal_ai.retrieval import legal_chain
 from legal_ai.retrieval import norm_query
@@ -74,6 +84,36 @@ def kb_claims(condition, units_path):
     return read_jsonl(folder / KB_FILES[condition["representation"]])
 
 
+def index_keys(condition, units_path=None):
+    """The `kb_keys.KbKeys` of a condition with `index_keys` ({version: kb-keys-v1, aliases} or {version: kb-keys-v2,
+    aliases, model_keys}), else None (the default). For kb-keys-v2 the keys run must match the bundle's units and the
+    DK3 claims of the condition's knowledge-base run; its manifest record is kept on the builder as `model_record`."""
+    spec = condition.get("index_keys")
+    if spec is None:
+        return None
+    spec = kb_keys.check_config(spec)
+    if spec["version"] == kb_keys.KEYS_VERSION:
+        return kb_keys.KbKeys(spec["aliases"])
+    table, record = kb_keys.load_model_keys(spec["model_keys"], digest(Path(units_path).read_bytes()),
+                                            digest((Path(condition["kb_run"]) / "dk3.jsonl").read_bytes()))
+    keys = kb_keys.KbKeys(spec["aliases"], table)
+    keys.model_record = record
+    return keys
+
+
+def index_keys_record(condition, records, units_path):
+    """The manifest record of a condition's `index_keys`: version, alias table hash, records with keys and, for
+    kb-keys-v2, the keys run's hashes and the records that got model questions."""
+    spec = condition["index_keys"]
+    record = {"version": spec["version"], "aliases": Path(spec["aliases"]).as_posix(), "aliases_sha256": digest(Path(spec["aliases"]).read_bytes()),
+              "records_with_keys": sum(1 for r in records if r.get("index_keys"))}
+    if spec["version"] == kb_keys.MODEL_KEYS_VERSION:
+        keys = index_keys(condition, units_path)
+        record["model_keys"] = keys.model_record | {
+            "records_with_model_keys": sum(1 for r in records if r.get("index_keys") and keys.unit_model_keys(r["unit_ids"][0], r["claim_ids"]))}
+    return record
+
+
 def build_records(condition, documents, units, texts, units_path=None):
     representation = condition["representation"]
     if BUILDERS.get(representation) != condition["condition"]:
@@ -87,13 +127,18 @@ def build_records(condition, documents, units, texts, units_path=None):
         if mode not in RECORD_MODES:
             raise ValueError(f"record must be one of {RECORD_MODES}")
         claims = kb_claims(condition, units_path)
+        keys = index_keys(condition, units_path)
+        if keys is not None and mode != "unit_with_claims":
+            raise ValueError("index_keys needs record=unit_with_claims")
         if mode == "norm_lines":  # DK3-q/DK4-q: only units with claims, the generator reads one line per claim.
             from legal_ai.retrieval.norm_query import norm_records
             records = norm_records(condition["condition"], documents, units, texts, claims, condition.get("max_tokens", 384))
         else:
             records = (claim_records(condition["condition"], documents, units, texts, claims) if mode == "claims" else
                        kb_unit_records(condition["condition"], documents, units, texts, claims, condition.get("max_tokens", 384),
-                                       condition.get("claims_view", "full")))
+                                       condition.get("claims_view", "full"), keys))
+    if condition.get("index_keys") is not None and representation not in KB_FILES:
+        raise ValueError("index_keys come from the knowledge base and apply to DK3/DK4 only")
     if condition.get("graph") and representation not in KB_FILES:
         raise ValueError("graph expansion uses the knowledge base and applies to DK3/DK4 only")
     return check_records(records, texts)
@@ -183,11 +228,13 @@ def _overlaps(record_units, targets):
     return any(u == s or u.startswith(s + "/") or s.startswith(u + "/") for u in record_units for s in targets)
 
 
-def score_top(top, gold, ks, budgets, adaptive=None, packer=FLAT, stale=None, later=None):
+def score_top(top, gold, ks, budgets, adaptive=None, packer=FLAT, stale=None, later=None, tree=None):
     """Recall at every K and token budget, and context tokens at every K, of one question's ranked records; with
     `adaptive` (this question's adaptive budget) also the recall within it. Budgets pack records with `packer`.
     With `stale` (units outdated at the question's date) also whether the packed context holds one of them; with
-    `later` (units not yet in force at that date) whether it holds a unit of the wrong version, stale or later."""
+    `later` (units not yet in force at that date) whether it holds a unit of the wrong version, stale or later.
+    With `tree` (an `evidence_coverage.EvidenceTree`) also the leaf-complete evidence coverage of the same packed
+    context at every budget (`evidence_coverage`, `evidence-coverage-v1`); the legacy values are unchanged."""
     row = {"recall": {}, "context_tokens": {}, "recall_at_tokens": {}}
     if stale:
         row["stale_at_tokens"] = {str(b): any(_overlaps(r["unit_ids"], stale) for r in within_budget(top, b, packer)) for b in budgets}
@@ -198,8 +245,14 @@ def score_top(top, gold, ks, budgets, adaptive=None, packer=FLAT, stale=None, la
         covered = [g for g in gold if any(_covers(r["unit_ids"], g) for r in top[:k])]
         row["recall"][str(k)] = len(covered) / len(gold) if gold else None
         row["context_tokens"][str(k)] = sum(r["token_count"] for r in top[:k])
+    covered_at = {}
     for budget in budgets:
-        row["recall_at_tokens"][str(budget)] = _recall(within_budget(top, budget, packer), gold)
+        kept = within_budget(top, budget, packer)
+        row["recall_at_tokens"][str(budget)] = _recall(kept, gold)
+        if tree is not None:
+            covered_at[budget] = evidence_coverage.question_coverage(tree, gold, kept)
+    if tree is not None:
+        row["evidence_coverage"] = evidence_coverage.rows_by_budget(covered_at)
     if adaptive is not None:
         row["adaptive_budget"] = adaptive
         row["recall_at_adaptive"] = _recall(within_budget(top, adaptive, packer), gold)
@@ -227,6 +280,8 @@ def summarize(predictions, ks, budgets, records, condition, headline_k, steps=No
         **({"wrong_version_context_rate_at_tokens": {str(b): sum(r["wrong_version_at_tokens"][str(b)] for r in with_wrong) / len(with_wrong) for b in budgets},
             "questions_with_wrong_version_units": len(with_wrong)} if (with_wrong := [r for r in predictions if "wrong_version_at_tokens" in r]) else {}),
         "mean_context_tokens": {str(k): (sum(r["context_tokens"][str(k)] for r in predictions) / len(predictions) if predictions else None) for k in ks},
+        **({"evidence_coverage": evidence_coverage.means([r["evidence_coverage"] for r in scored], budgets)}
+           if scored and all("evidence_coverage" in r for r in scored) else {}),
         "record_count": len(records),
         "mean_record_tokens": sum(r["token_count"] for r in records) / len(records) if records else None,
     }
@@ -246,8 +301,9 @@ METHODS = ("bm25", "dense", "hybrid")
 
 def load_validity(condition, shared, documents, units, bundle):
     """The `Validity` of a condition with a `validity` block ({level: unit|document, amendments: edge run}), or None.
-    Unit level (DK2-DK4) drops units that are expired, repealed or not yet effective at the question's date and notes
-    amended ones; document level (the DK1-hl control) drops chunks of documents that do not apply on that date."""
+    Unit level drops units that are expired, repealed or not yet effective at the question's date and replaces or notes
+    amended ones (DK4 under option B of 22/11/2026; DK2-DK4 in the 16/11 `validity/` configs); document level drops
+    records of documents that do not apply on that date (DK1-hl, and DK2/DK3 under option B)."""
     spec = condition.get("validity")
     if not spec:
         return None
@@ -274,7 +330,7 @@ def load_validity(condition, shared, documents, units, bundle):
 
 def validity_of_run(manifest, records):
     """The `RecordFilter` a retrieval run used (None without a validity block), rebuilt from its manifest so the answer
-    run packs P2 siblings exactly as the retrieval run scored them; the bundle and the edges must hash as recorded."""
+    run packs P2/P3 siblings exactly as the retrieval run scored them; the bundle and the edges must hash as recorded."""
     spec = manifest["condition"].get("validity")
     if not spec:
         return None
@@ -299,7 +355,7 @@ def filter_valid(ranked, records, validity, level, as_of):
     Unit level: a unit whose whole new wording is a unit of the corpus (an amending unit of scope v3, linked by
     `amending_unit_id`) is replaced at its rank by that unit's records; other amended units keep their record with a
     status note, and their amending units follow right after. Amending units obey their own document dates. The rule
-    itself is `kb.validity.RecordFilter.admit`, which the packer also applies to P2 siblings."""
+    itself is `kb.validity.RecordFilter.admit`, which the packer also applies to P2/P3 siblings."""
     rfilter = getattr(validity, "record_filter", None)
     if rfilter is None or rfilter.level != level or getattr(rfilter, "source", None) is not records:
         rfilter = validity.record_filter = RecordFilter(validity, level, records)
@@ -375,6 +431,17 @@ def run(bundle, questions_path, condition_path, shared_path, output, embedder=No
             raise ValueError("the relation run was made from another corpus bundle")
         relations = read_jsonl(folder / "relations.jsonl")
         edges = legal_chain.typed_edges(units, relations, documents, graph.get("source_aliases"), chain.get("references", True))
+    # Validity option B (22/11/2026): amendment edges as knowledge-base relations of DK3/DK4. They are followed after the
+    # reference expansion; only a condition with unit-level validity (DK4) checks the edge dates per question.
+    amend_links, amend_report, amend_sha = None, None, None
+    if graph and graph.get("amendments"):
+        if chain:
+            raise ValueError("graph.amendments is not available with graph.chain")
+        spec = amendment_graph.check_config(graph["amendments"])
+        amend_edges, amend_sha = amendment_graph.load(spec, Path(bundle) / "units.jsonl")
+        amend_links, amend_report = amendment_graph.relations(amend_edges, units)
+    amend_dated = (condition.get("validity") or {}).get("level") == "unit"
+    units_by_id, documents_by_id = {u["unit_id"]: u for u in units}, {d["document_id"]: d for d in documents}
     concepts = None
     if graph and not chain and "concept" in graph["edges"]:
         concepts = kb_graph.record_concepts(records, kb_graph.concept_keys(kb_claims(condition, Path(bundle) / "units.jsonl")))
@@ -382,6 +449,7 @@ def run(bundle, questions_path, condition_path, shared_path, output, embedder=No
     # Deep enough for the largest token budget of the smallest records; predictions keep this depth.
     depth = rank_depth(records, ks, budgets)
     predictions, errors, steps = [], [], []
+    tree = evidence_coverage.EvidenceTree(units)
     # norm-query-v1: every condition ranks with the shared analysis' topic query; DK3-q/DK4-q also filter by its fields.
     analyses = norm_query.load(shared["query_slots"], questions_path)[0] if shared.get("query_slots") else None
     query_filter = condition.get("query")
@@ -433,17 +501,33 @@ def run(bundle, questions_path, condition_path, shared_path, output, embedder=No
             via = {i: v for i, _, v, _ in expanded if v is not None}
             roles = {i: r for i, _, v, r in expanded if v is not None}
             ranked = extend_tail([(i, s) for i, s, _, _ in expanded], ranked, depth)
+        elif graph and graph.get("expansion") == kb_graph.EXPANSION_V3:
+            expanded = kb_graph.expand_v3(ranked[:MIN_DEPTH], records, edges, MIN_DEPTH, graph["top_n"])
+            via = {i: v for i, _, v in expanded if v is not None}
+            ranked = extend_tail([(i, s) for i, s, _ in expanded], ranked, depth)
         elif graph:
             expanded = kb_graph.expand(ranked[:MIN_DEPTH], records, edges, MIN_DEPTH, graph.get("max_neighbors", 2), graph.get("require_match", False), concepts)
             via = {i: v for i, _, v in expanded if v is not None}
             ranked = extend_tail([(i, s) for i, s, _ in expanded], ranked, depth)
         as_of = question.get("as_of") or shared.get("validity_as_of")
-        dropped, question_packer = 0, packer
+        amended_via = {}
+        if amend_links is not None:
+            expanded = amendment_graph.expand(ranked[:MIN_DEPTH], records, amend_links, MIN_DEPTH, graph["amendments"].get("max_neighbors", 2),
+                                              as_of if amend_dated else None, units_by_id, documents_by_id)
+            amended_via = {i: v for i, _, v in expanded if v is not None}
+            ranked = extend_tail([(i, s) for i, s, _ in expanded], ranked, depth)
+        notes = {i: v["note"] for i, v in amended_via.items()}  # Relation notes; validity notes are added below.
+        dropped, unused_claims, question_packer = 0, None, packer
         if validity is not None:
-            ranked, notes, dropped = filter_valid(ranked, records, validity, condition["validity"]["level"], as_of)
-            if packing == "P2":  # Siblings pass the same validity rule as ranked records.
+            before = ranked
+            ranked, status_notes, dropped = filter_valid(ranked, records, validity, condition["validity"]["level"], as_of)
+            kept = {i for i, _ in ranked}
+            if condition["representation"] in KB_FILES:  # Claims of records the status filter removed are not used.
+                unused_claims = len({c for i, _ in before if i not in kept for c in records[i].get("claim_ids", [])})
+            notes = {i: "\n".join(n for n in (notes.get(i), status_notes.get(i)) if n) for i in kept if notes.get(i) or status_notes.get(i)}
+            if packer.adds_siblings:  # P2/P3 siblings pass the same validity rule as ranked records.
                 question_packer = packer.bind(lambda record, day=as_of: validity.record_filter.admit_record(record, day))
-        top = [records[i] if i not in (notes if validity is not None else {}) else records[i] | {"status_note": notes[i]} for i, _ in ranked]
+        top = [records[i] | {"status_note": notes[i]} if i in notes else records[i] for i, _ in ranked]
         gold = question["relevant_unit_ids"]
         row = {"question_id": question["question_id"], "family_id": question.get("family_id"), "split": question.get("split"),
                "expected_status": question.get("expected_status"), "gold_unit_ids": gold,
@@ -451,12 +535,16 @@ def run(bundle, questions_path, condition_path, shared_path, output, embedder=No
                            "token_count": records[i]["token_count"],
                            **({"via_reference_from": records[via[i]]["record_id"]} if i in via else {}),
                            **({"via_role": roles[i]} if i in roles else {}),
-                           **({"status_note": notes[i]} if validity is not None and i in notes else {})} for n, (i, score) in enumerate(ranked, 1)],
-               **({"validity": {"as_of": as_of, "as_of_source": "question" if question.get("as_of") else "default", "dropped": dropped}}
+                           **({"via_amendment": {"from": records[amended_via[i]["from"]]["record_id"], "edge_id": amended_via[i]["edge_id"],
+                                                 "role": amended_via[i]["role"]}} if i in amended_via else {}),
+                           **({"status_note": notes[i]} if i in notes else {})} for n, (i, score) in enumerate(ranked, 1)],
+               **({"validity": {"as_of": as_of, "as_of_source": "question" if question.get("as_of") else "default", "dropped": dropped,
+                                **({"unused_claims": unused_claims} if unused_claims is not None else {})}}
                   if validity is not None else {}),
+               **({"amendment_neighbours": len(amended_via)} if amend_links is not None else {}),
                "recall": {}, "context_tokens": {}, "recall_at_tokens": {}}
         row.update(score_top(top, gold, ks, budgets, adaptive_budget(rule, len(issues or [])) if rule else None, question_packer,
-                             question.get("stale_unit_ids"), question.get("not_yet_effective_unit_ids")))
+                             question.get("stale_unit_ids"), question.get("not_yet_effective_unit_ids"), tree))
         steps.append(recall_steps(top, gold, question_packer))
         if not ranked:
             errors.append({"question_id": question["question_id"], "code": "no_match"})
@@ -470,7 +558,7 @@ def run(bundle, questions_path, condition_path, shared_path, output, embedder=No
     manifest = {
         "run_version": RUN_VERSION, "record_version": RECORD_VERSION, "created_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
         "condition": condition, "shared": shared, "tokenizer": TOKENIZER, "retrieval": retrieval, "recall_k": ks,
-        "token_budgets": budgets, "rank_depth": depth, "context_packing": {"version": PACKING_VERSION, "mode": packing},
+        "token_budgets": budgets, "evidence_coverage_version": evidence_coverage.VERSION, "rank_depth": depth, "context_packing": {"version": PACKING_VERSION, "mode": packing},
         "validity": ({"version": validity.version, **condition["validity"], "default_as_of": shared.get("validity_as_of"),
                       "edges_sha256": validity.edges_sha256, "undated_edges": validity.undated} if validity is not None else None),
         "inputs": {name: {"path": path.as_posix(), "sha256": digest(path.read_bytes())} for name, path in files.items()},
@@ -481,12 +569,15 @@ def run(bundle, questions_path, condition_path, shared_path, output, embedder=No
                         "sha256": digest((Path(shared["subqueries"]) / "subqueries.jsonl").read_bytes())} if shared.get("subqueries") else None),
         **({"query_slots": {"version": norm_query.QUERY_VERSION, "path": Path(shared["query_slots"]).as_posix(),
                             "sha256": digest((Path(shared["query_slots"]) / "query_slots.jsonl").read_bytes())}} if shared.get("query_slots") else {}),
+        **({"index_keys": index_keys_record(condition, records, files["units"])} if condition.get("index_keys") else {}),
         **({"query_filter": {"aliases": Path(query_filter["aliases"]).as_posix(),
                              "aliases_sha256": digest(Path(query_filter["aliases"]).read_bytes())}} if query_filter else {}),
         "graph": ({"version": legal_chain.CHAIN_VERSION, **graph, "edge_count": sum(len(v) for v in edges.values()),
                    "relations_sha256": digest((Path(chain["relation_run"]) / "relations.jsonl").read_bytes())} if chain else
-                  {"version": kb_graph.GRAPH_VERSION, **graph, "edge_count": sum(len(v) for v in edges.values()),
-                   **({"relations_sha256": digest((Path(graph["relation_run"]) / "relations.jsonl").read_bytes())} if relations is not None else {})}
+                  {"version": kb_graph.EXPANSION_V3 if graph.get("expansion") == kb_graph.EXPANSION_V3 else kb_graph.GRAPH_VERSION, **graph, "edge_count": sum(len(v) for v in edges.values()),
+                   **({"relations_sha256": digest((Path(graph["relation_run"]) / "relations.jsonl").read_bytes())} if relations is not None else {}),
+                   **({"amendment_relations": {"version": amendment_graph.AMENDMENT_GRAPH_VERSION, "edges_sha256": amend_sha,
+                                               "date_check": amend_dated, **amend_report}} if amend_links is not None else {})}
                   if graph else None),
         "method": method, "dense": ({**embedder.describe(), "texts_sha256": dense.texts_sha256} if dense else None),
         "network": False, "model_calls": 0,
@@ -501,3 +592,47 @@ def run(bundle, questions_path, condition_path, shared_path, output, embedder=No
     write_json(output / "metrics.json", metrics)
     write_json(output / "manifest.json", manifest)
     return metrics
+
+
+def rescore_evidence(run_dir):
+    """Recompute the `evidence-coverage-v1` metrics of an existing run from its manifest, `records.jsonl` and
+    `predictions.jsonl`, without re-ranking: the stored ranking is packed again with the run's own packer (including
+    the validity admission of P2/P3 siblings at each question's date) and scored against the bundle named in the
+    manifest. Writes `metrics-evidence.json` (means plus every question's values) into the run directory. The packing
+    is checked against the run: `legacy_recall_mismatches` counts budgets where the legacy recall does not reproduce."""
+    run_dir = Path(run_dir)
+    manifest = json.loads((run_dir / "manifest.json").read_text(encoding="utf-8"))
+    records = read_jsonl(run_dir / "records.jsonl")
+    by_record = {r["record_id"]: r for r in records}
+    paths = {name: Path(manifest["inputs"][name]["path"]) for name in ("units", "documents")}
+    for name, path in paths.items():
+        if digest(path.read_bytes()) != manifest["inputs"][name]["sha256"]:
+            raise ValueError(f"the bundle {name} changed since the retrieval run")
+    units, documents = read_jsonl(paths["units"]), read_jsonl(paths["documents"])
+    budgets = manifest["token_budgets"]
+    packer = Packer(manifest["context_packing"]["mode"], records, units, documents)
+    rfilter = validity_of_run(manifest, records) if packer.adds_siblings else None
+    tree = evidence_coverage.EvidenceTree(units)
+    questions, rows, mismatched = {}, [], 0
+    for prediction in read_jsonl(run_dir / "predictions.jsonl"):
+        top = [by_record[x["record_id"]] | ({"status_note": x["status_note"]} if x.get("status_note") else {}) for x in prediction["ranked"]]
+        question_packer = packer
+        if rfilter is not None:
+            as_of = prediction["validity"]["as_of"]
+            question_packer = packer.bind(lambda record, day=as_of: rfilter.admit_record(record, day))
+        gold = prediction["gold_unit_ids"]
+        covered_at = {}
+        for budget in budgets:
+            kept = within_budget(top, budget, question_packer)
+            covered_at[budget] = evidence_coverage.question_coverage(tree, gold, kept) if gold else None
+            if gold and abs(_recall(kept, gold) - prediction["recall_at_tokens"][str(budget)]) > 1e-9:
+                mismatched += 1
+        row = evidence_coverage.rows_by_budget(covered_at)
+        rows.append(row if gold else None)
+        questions[prediction["question_id"]] = {"family_id": prediction.get("family_id"), **row}
+    result = {"run_version": RUN_VERSION, "evidence_coverage_version": evidence_coverage.VERSION, "run": run_dir.as_posix(),
+              "condition": manifest["condition"]["condition"], "context_packing": manifest["context_packing"]["mode"],
+              "legacy_recall_mismatches": mismatched, "metrics": evidence_coverage.means([r for r in rows if r], budgets),
+              "questions": questions}
+    write_json(run_dir / "metrics-evidence.json", result)
+    return result

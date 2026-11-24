@@ -21,7 +21,7 @@ import json
 from pathlib import Path
 import random
 
-from legal_ai.common.io import canonical, digest, read_jsonl, write_json
+from legal_ai.common.io import canonical, digest, read_jsonl, write_json, write_jsonl
 from legal_ai.evaluation.answer_run import REFUSED, latest_answers, system_prompt
 from legal_ai.providers.pilot import ProviderError
 from legal_ai.research.questions import kappa
@@ -214,6 +214,24 @@ JUDGE_SCHEMA = {"type": "object", "additionalProperties": False, "required": ["s
     "refusal_appropriate": {"type": ["boolean", "null"]}}}
 
 
+def usage_totals(rows):
+    """Calls, ok/error counts, cost and token totals of ledger rows (`usage`, `cost_usd`, `duration_ms`, `status` per call);
+    a missing cost counts as zero and is listed in `calls_without_cost`."""
+    totals = {"calls": len(rows), "ok": sum(r.get("status") == "ok" for r in rows), "error": sum(r.get("status") != "ok" for r in rows),
+              "cost_usd": round(sum(r.get("cost_usd") or 0 for r in rows), 6), "calls_without_cost": sum(r.get("cost_usd") is None for r in rows),
+              "duration_ms": sum(r.get("duration_ms") or 0 for r in rows)}
+    for name in ("input_tokens", "output_tokens", "cache_creation_input_tokens", "cache_read_input_tokens"):
+        totals[name] = sum((r.get("usage") or {}).get(name) or 0 for r in rows)
+    return totals
+
+
+def call_record(answer, error=None):
+    """The accounting fields of one provider answer (or of a failed call): status, usage, cost, duration, serving model."""
+    answer = answer or {}
+    return {"status": "ok" if error is None else "error", "usage": answer.get("usage"), "cost_usd": answer.get("cost_usd"),
+            "duration_ms": answer.get("duration_ms"), "served_by": answer.get("model")}
+
+
 def judge_sheet(sheet_path, provider, output_path, prompt="judge-v1.md", log=None):
     """Fill a copy of a grading sheet with a model's grades (one call per item); rows keep the sheet's order."""
     system, system_sha = system_prompt(prompt)
@@ -226,9 +244,10 @@ def judge_sheet(sheet_path, provider, output_path, prompt="judge-v1.md", log=Non
         answer, statements = group[0], group[1:]
         request = json.dumps({"question": answer["question"], "gold_units": answer["gold_units"], "status": answer["status"],
                               "statements": [{"text": s["statement"], "cited_units": s["cited_units"]} for s in statements]}, ensure_ascii=False)
-        judged = None
+        judged, reply = None, None
         try:
-            judged = provider.structured(system, request, JUDGE_SCHEMA, purpose="judge")["output"]
+            reply = provider.structured(system, request, JUDGE_SCHEMA, purpose="judge")
+            judged = reply["output"]
             if len(judged["statements"]) != len(statements):
                 judged, error = None, "statement_count_mismatch"
             else:
@@ -236,7 +255,8 @@ def judge_sheet(sheet_path, provider, output_path, prompt="judge-v1.md", log=Non
         except ProviderError as exc:
             error = exc.code
         failures += judged is None
-        ledger.append({"item_id": item_id, "error": error, "request_sha256": digest(request)})
+        ledger.append({"item_id": item_id, "error": error, "request_sha256": digest(request)}
+                      | call_record(reply, error))
         answer = dict(answer)
         if judged:
             answer.update(correctness=str(judged["correctness"]),
@@ -256,5 +276,6 @@ def judge_sheet(sheet_path, provider, output_path, prompt="judge-v1.md", log=Non
     write_json(Path(output_path).with_suffix(".manifest.json"), {"grading_version": GRADING_VERSION, "judge_model": provider.model,
                                                                  "effort": getattr(provider, "effort", None), "prompt": prompt,
                                                                  "system_sha256": system_sha, "sheet_sha256": digest(Path(sheet_path).read_bytes()),
-                                                                 "items": len(by_item), "failures": failures, "calls": ledger})
-    return {"items": len(by_item), "failures": failures}
+                                                                 "items": len(by_item), "failures": failures, "usage": usage_totals(ledger), "calls": ledger})
+    write_jsonl(Path(output_path).with_suffix(".ledger.jsonl"), ledger)
+    return {"items": len(by_item), "failures": failures, "usage": usage_totals(ledger)}

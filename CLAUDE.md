@@ -35,9 +35,11 @@ python -m legal_ai.cli run-retrieval data/normalized/full-v1 --condition configs
 python -m legal_ai.cli corpus-scope --store <store.sqlite> --actor <user>            # experiment-scope corpus from pinned local snapshots
 python -m legal_ai.cli corpus-version-export --store <store> --version <id> --output <file.json>   # one frozen corpus version to a file; corpus-version-import <file> --store <other> --actor <user> --expect-version <id> adds it, same ID and bundle hash
 python -m legal_ai.cli kb-extract <bundle> --output experiments/runs/<new> --dry-run   # DK3/DK4 extraction plan; real run adds --max-calls N --approve-claude
-python -m legal_ai.cli kb-materialize <kb run>                                       # rebuild dk3/dk4/validation offline; kb-inject <kb run> --output <new> for RQ2
-python -m legal_ai.cli gold-score <gold.jsonl> --bundle <bundle> --predictions rules   # RQ1 P/R/F1 (or a dk3.jsonl/dk4.jsonl)
-python -m legal_ai.cli answer-run <retrieval run> --questions <q.json> --output <new> --max-calls N --approve-claude   # then answer-score, answer-sheet, answer-grades, answer-judge
+python -m legal_ai.cli kb-materialize <kb run>                                       # rebuild dk3/dk4/validation offline; kb-inject <kb run> --output <new> for RQ2 (kb-inject/kb-plant take --validator kb-validator-v4 [--inherit claims-inherit-v1])
+python -m legal_ai.cli kb-materialize <kb run> --output <new> --validator kb-validator-v4 --inherit claims-inherit-v1   # derived KB in a new dir (lead-in inheritance, validator accepting lead-in values); the source run is untouched
+python -m legal_ai.cli gold-score <gold.jsonl> --bundle <bundle> --predictions rules   # RQ1 P/R/F1 (or a dk3.jsonl/dk4.jsonl); --inherited ignore (gold-inherited-v1) drops slots inherited from the lead-in
+python -m legal_ai.cli kb-keys-gen <kb run> --bundle <bundle> --output <new> (--all | --units-from <runs/questions> --top-n 30 --split dev) --dry-run --calibrate-from <kb-extract run>   # kb-keys-v2 model-written retrieval keys (index only); real run: --extract-claude-model M --max-calls N --approve-claude [--reuse <pilot>]
+python -m legal_ai.cli answer-run <retrieval run> --questions <q.json> --output <new> --max-calls N --approve-claude   # then answer-score, answer-sheet, answer-grades, answer-judge; --dry-run writes plan.json (calls, blocks, estimated input tokens) without a provider; judges write per-call usage and cost (ledger.jsonl); answer-outcome-judge needs questions with issues and reference_outcome (cases set), use answer-judge otherwise
 python -m legal_ai.cli answer-run <retrieval run> --questions <q.json> --output <new> --max-calls N --router-model MODEL_OSS_120B --approve-router   # same with a 9Router model (ChatStructured: schema in the prompt, JSON parsed, raw text kept)
 python -m legal_ai.cli budget-report --runs SET:DK1=<run> SET:DK2=<run> --output docs/results/<new>.md   # recall-by-token-budget tables + SVG (shared token_budgets, context_packing P0/P1/P2)
 python -m legal_ai.cli amendment-build <bundle> --output data/kb/<new>                # amendment-rules-v2 edges from pinned snapshots (configs/amendments-v1.json); feeds configs/experiments/validity/
@@ -45,7 +47,8 @@ python -m legal_ai.cli amendment-sheet <edges dir> --sheet <new csv>            
 python -m legal_ai.cli enum-drafts <gold.jsonl> --bundle <bundle> --output <q.json>    # enumeration drafts + check sheet from the adjudicated gold; enum-gate <q.json> --kb-run <kb run> for extraction coverage
 python -m legal_ai.cli query-slots <q.json> --output <new> --max-calls N --router-model MODEL_OSS_120B --approve-router   # norm-query-v1 analysis shared by every condition (shared.query_slots)
 python -m legal_ai.cli preflight --retrieval <DK1..DK4 runs> --answers <answer runs>   # fairness checks before reporting RQ3; exits 1 on failure
-python -m legal_ai.cli paired-stats --metric judge.correctness --runs DK1=<answers> DK2=<answers> DK3=<answers> DK4=<answers> --sheet <sheet.csv> --key <key.json> --judge <judge run> --output <new>.json   # B6/B7: paired bootstrap 10,000 rounds + Holm over the four main pairs; --repeat/--regrade for generation/judge noise; also retrieval.*, answer.*, grades.*
+python -m legal_ai.cli retrieval-rescore <run dir>...                                # evidence-coverage-v1 (leaf-complete recall, primary since 23/11) for runs made before it; new runs compute it themselves
+python -m legal_ai.cli paired-stats --metric judge.correctness --runs DK1=<answers> DK2=<answers> DK3=<answers> DK4=<answers> --sheet <sheet.csv> --key <key.json> --judge <judge run> --output <new>.json   # B6/B7: paired bootstrap 10,000 rounds + Holm over the four main pairs; --cluster-families resamples paraphrase families; --repeat/--regrade for generation/judge noise; also retrieval.*, answer.*, grades.*
 python -m legal_ai.cli kb-compare                                                    # extraction-model comparison -> docs/results/extraction-models.{md,json}
 python -m legal_ai.cli kb-audit-sheet <kb runs> --sheet <csv> --key <json>            # blinded sample of rejected/accepted claims to label; kb-audit-score <csv> --key <json> [--compare <csv>]
 python -m legal_ai.cli demo-build --store data/kb/demo-<date>.sqlite                  # fresh demo store (admin, reviewer, reader and dev accounts with printed passwords, frozen scope corpus); see docs/demo-runbook.md
@@ -57,6 +60,7 @@ Web app (FastAPI + SvelteKit; needs the project virtualenv):
 
 ```powershell
 python -m venv .venv; .venv\Scripts\python -m pip install -e ".[web,web-test,catalog,embeddings]"   # once; installs from PyPI (approved 2026-11-06, pypdf/pyarrow 2026-11-07, embeddings 2026-11-08; BGE-M3 weights go to models/bge-m3)
+.venv\Scripts\python -m pip install -e ".[openvino]"; .venv\Scripts\opt_in_out --opt_out   # optional (approved 2026-11-23): run-retrieval --embed-device openvino-gpu runs BGE-M3 on the Intel GPU (FP32, cache-compatible vectors, converted once to models/bge-m3-openvino); opt out of OpenVINO telemetry
 .venv\Scripts\python -m unittest discover -s tests -v                          # full suite incl. tests/test_web_api.py
 .venv\Scripts\python -m legal_ai.web --store data/kb/app-new.sqlite --seed data/kb/entity-relation-review/graph.json --port 8766  # --frontend <build dir>, --source-catalog, opt-in 9Router flags
 ```

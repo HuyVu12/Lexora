@@ -19,6 +19,8 @@ catalog = ["pyarrow==26.0.1"]
 web-test = ["httpx2==2.16.0"]
 # Local dense retrieval for DK1-DK4 with BAAI/bge-m3 on CPU (approved 2026-11-08); weights go to models/, outside Git.
 embeddings = ["sentence-transformers==6.2.0", "torch==2.15.0"]
+# The same BGE-M3 weights on an Intel GPU through OpenVINO, `run-retrieval --embed-device openvino-gpu` (approved 2026-11-23).
+openvino = ["openvino==2026.4.1"]
 
 [project.scripts]
 lexora = "legal_ai.cli:main"

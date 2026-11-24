@@ -2,7 +2,7 @@
 
 For every question of a retrieval run, the top-K records (the same `top_k` for DK1-DK4) are packed into evidence
 blocks E01.. within a token budget, in rank order, by the retrieval run's `context_packing` (`indexing.packing`: flat
-P0, or grouped per Article P1/P2 with the shared header printed once); a block shows what the condition retrieved
+P0, or grouped per Article P1-P3 with the shared header printed once); a block shows what the condition retrieved
 (fixed chunk, structural unit with its path, or the unit with its claims). One structured model call
 per question returns a status and statements that each cite block IDs; the schema lists only this question's IDs.
 
@@ -17,6 +17,7 @@ relations between the packed blocks ("E03 là chế tài đối với E01"), der
 cover the gold units. Grounding, citation support and correctness are graded by people (see `answer_sheet`).
 """
 
+import contextlib
 from datetime import datetime, timezone
 import json
 from pathlib import Path
@@ -24,12 +25,17 @@ from pathlib import Path
 from legal_ai.common.io import canonical, digest, read_jsonl, write_json
 from legal_ai.evaluation.retrieval_run import adaptive_budget, check_adaptive
 from legal_ai.indexing.packing import Packer, evidence_payload
+from legal_ai.indexing.records import token_spans
 from legal_ai.providers.pilot import ProviderError
 
 RUN_VERSION = "answer-run-v1"
 PROMPTS = Path(__file__).resolve().parents[3] / "prompts"
 ANSWERED, REFUSED = ("answered", "partial"), ("insufficient_evidence", "out_of_scope")
 MAX_STATEMENTS = 8
+
+
+def token_count(text):
+    return len(token_spans(text))
 
 
 def system_prompt(name):
@@ -62,7 +68,8 @@ def pack_with_groups(ranked, records, top_k, budget, packer=None):
     shown = [records[item["record_id"]] | ({"status_note": item["status_note"]} if item.get("status_note") else {}) for item in ranked]
     packed = (packer or Packer("P0")).pack(shown, budget, top_k)
     blocks = [{"id": b["id"], "record_id": b["record"]["record_id"], "unit_ids": b["record"]["unit_ids"], "token_count": b["token_count"],
-               "text": b["text"], "group": b["group"], **({"sibling": True} if b["sibling"] else {})} for b in packed["blocks"]]
+               "text": b["text"], "group": b["group"], **({"sibling": True} if b["sibling"] else {}),
+               **({"lead": b["lead"]} if b.get("lead") is not None else {})} for b in packed["blocks"]]
     return blocks, packed
 
 
@@ -119,8 +126,12 @@ def gate(output, blocks):
             "gate": {"uncited_removed": removed, "downgraded_to_insufficient": downgraded}}
 
 
-def run(retrieval_dir, questions_path, config_path, provider, output, *, split=None, log=None):
-    """Answer every question of the retrieval run (optionally one split) not yet in `output/answers.jsonl`."""
+def run(retrieval_dir, questions_path, config_path, provider, output, *, split=None, log=None, dry_run=False, model=None):
+    """Answer every question of the retrieval run (optionally one split) not yet in `output/answers.jsonl`.
+
+    `dry_run` builds every request exactly as a real run would (packing, relations, prompt, schema) with no provider
+    (`model` names the planned one) and returns the plan; it writes nothing into `output` except `plan.json`, which a
+    later real run ignores."""
     retrieval_dir, output = Path(retrieval_dir), Path(output)
     config = json.loads(Path(config_path).read_text(encoding="utf-8"))
     retrieval = json.loads((retrieval_dir / "manifest.json").read_text(encoding="utf-8"))
@@ -134,17 +145,17 @@ def run(retrieval_dir, questions_path, config_path, provider, output, *, split=N
     edges = chain_edges(retrieval) if config.get("relations_in_context") else None
     record_list = list(records.values())
     packer = packer_for(retrieval, record_list)
-    # P2 siblings pass the validity rule of the retrieval run at each question's date (`kb.validity.RecordFilter`).
+    # P2/P3 siblings pass the validity rule of the retrieval run at each question's date (`kb.validity.RecordFilter`).
     from legal_ai.evaluation.retrieval_run import validity_of_run
-    rfilter = validity_of_run(retrieval, record_list) if packer.mode == "P2" else None
+    rfilter = validity_of_run(retrieval, record_list) if packer.adds_siblings else None
     issues = {}
     if retrieval.get("subqueries"):
         from legal_ai.evaluation.decompose import load
         issues = load(retrieval["subqueries"]["path"])[0]
     manifest = {"run_version": RUN_VERSION, "condition": retrieval["condition"]["condition"], "retrieval_run": retrieval_dir.as_posix(),
                 "retrieval_records_sha256": retrieval["records_sha256"], "questions_sha256": digest(Path(questions_path).read_bytes()),
-                "split": split, "provider": getattr(provider, "provider", "claude-code"), "model": provider.model,
-                "effort": getattr(provider, "effort", None), "prompt": config["prompt"],
+                "split": split, "provider": getattr(provider, "provider", "claude-code"), "model": provider.model if provider else model,
+                "effort": getattr(provider, "effort", None) if provider else config.get("effort"), "prompt": config["prompt"],
                 "system_sha256": system_sha, "top_k": config["top_k"], "context_token_budget": config["context_token_budget"],
                 "token_counter": "lexora-syllable-v1",
                 **({"relations_in_context": retrieval["graph"]["version"]} if edges is not None else {}),
@@ -153,16 +164,17 @@ def run(retrieval_dir, questions_path, config_path, provider, output, *, split=N
     manifest_path = output / "manifest.json"
     if manifest_path.exists():
         earlier = json.loads(manifest_path.read_text(encoding="utf-8"))
-        if {k: v for k, v in earlier.items() if k != "created_at"} != manifest:
+        if {k: v for k, v in earlier.items() if k != "created_at"} != manifest and not dry_run:
             raise ValueError("this answer run used other inputs, model or settings; use a new directory")
-    else:
-        if output.exists() and any(output.iterdir()):
+    elif not dry_run:
+        if output.exists() and any(p.name != "plan.json" for p in output.iterdir()):
             raise ValueError("output must be empty or an earlier answer run with the same inputs")
         write_json(manifest_path, manifest | {"created_at": datetime.now(timezone.utc).isoformat(timespec="seconds")})
     path = output / "answers.jsonl"
     done = {row["question_id"] for row in read_jsonl(path) if row.get("error") is None} if path.exists() else set()
     counts = {"questions": len(questions), "already_done": 0, "answered": 0, "failed": 0}
-    with path.open("a", encoding="utf-8") as handle:
+    planned = []
+    with (contextlib.nullcontext() if dry_run else path.open("a", encoding="utf-8")) as handle:
         for number, question in enumerate(questions, 1):
             if question["question_id"] in done:
                 counts["already_done"] += 1
@@ -189,11 +201,17 @@ def run(retrieval_dir, questions_path, config_path, provider, output, *, split=N
             prompt = json.dumps(request | {"evidence": evidence_payload(packed)}, ensure_ascii=False)
             grouped = packer.mode != "P0"
             row = {"question_id": question["question_id"], "condition": manifest["condition"],
-                   "context": [{k: b[k] for k in ("id", "record_id", "unit_ids", "token_count", *(("group", "sibling") if grouped else ())) if k in b}
+                   "context": [{k: b[k] for k in ("id", "record_id", "unit_ids", "token_count", *(("group", "sibling", "lead") if grouped else ())) if k in b}
                                for b in blocks],
                    **({"context_groups": [{"header_tokens": g["header_tokens"]} for g in packed["groups"]]} if grouped else {}),
+                   # P3: the Clause leads printed once per group (`lead` of a context block indexes them).
+                   **({"context_leads": [{"group": lead["group"], "lead_tokens": lead["tokens"]} for lead in packed["leads"]]} if "leads" in packed else {}),
                    "context_tokens": packed["tokens"], "context_token_budget": budget, "prompt_sha256": digest(prompt),
                    **({"relations": relations} if edges is not None else {})}
+            if dry_run:
+                planned.append({"question_id": question["question_id"], "blocks": len(blocks), "context_tokens": packed["tokens"],
+                                "context_token_budget": budget, "estimated_input_tokens": token_count(system) + token_count(prompt)})
+                continue
             try:
                 answer = provider.structured(system, prompt, schema(b["id"] for b in blocks), purpose="answer")
                 row |= gate(answer["output"], blocks) | {"usage": answer.get("usage"), "cost_usd": answer.get("cost_usd"),
@@ -212,6 +230,15 @@ def run(retrieval_dir, questions_path, config_path, provider, output, *, split=N
                 log(f"{number}/{len(questions)} {question['question_id']}: {row.get('status') or row['error']}")
             if row.get("error") == "budget_exhausted":
                 break
+    if dry_run:
+        plan = {"dry_run": True, "condition": manifest["condition"], "model": manifest["model"], "effort": manifest["effort"],
+                "prompt": config["prompt"], "split": split, "questions": counts["questions"], "already_done": counts["already_done"],
+                "calls": len(planned), "estimated_input_tokens": sum(p["estimated_input_tokens"] for p in planned),
+                "token_counter": manifest["token_counter"], "estimate_note": "system prompt plus request, counted with the packing tokenizer; the schema is not counted",
+                "plan": planned}
+        output.mkdir(parents=True, exist_ok=True)
+        write_json(output / "plan.json", plan)
+        return plan
     return counts
 
 
@@ -271,12 +298,15 @@ def verification_load(answers, records, units):
             continue
         blocks = {b["id"]: b for b in answer.get("context", [])}
         headers = answer.get("context_groups")
+        leads = answer.get("context_leads")
         for statement in answer.get("statements", []):
             cited = [blocks[e] for e in statement["evidence_ids"] if e in blocks]
             statements += 1
             cited_tokens += sum(b["token_count"] for b in cited)
             if headers:
                 cited_tokens += sum(headers[g]["header_tokens"] for g in {b["group"] for b in cited})
+            if leads:  # P3: a cited Point is read with its Clause lead, counted once per statement.
+                cited_tokens += sum(leads[n]["lead_tokens"] for n in {b["lead"] for b in cited if b.get("lead") is not None})
             for block in cited:
                 citations += 1
                 record_units = (records.get(block["record_id"]) or {}).get("unit_ids", block["unit_ids"])

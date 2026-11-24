@@ -51,6 +51,15 @@ Phần này ghi các điểm đã chốt sau bản giao thức đầu; chi tiế
 - Bộ tình huống chỉ giữ đơn vị mà bản án dựa vào; 9 câu tin cậy thấp bị loại khỏi bộ khóa (còn 35 câu).
 - Cách chấm recall coi đơn vị cha được phủ khi tìm thấy bất kỳ đơn vị con nào của nó; nhãn model rà soát vì thế bỏ đơn vị cha khi đã có đơn vị con trong cùng danh sách.
 
+### Chỉ số chính của tầng truy xuất (từ 23/11/2026)
+
+- Recall theo đơn vị lá trọn vẹn (`evidence-coverage-v1`, `leaf_recall_tau1.0`): mỗi đơn vị đáp án được tách thành các đơn vị lá cộng câu dẫn của các nút trên đường đi; một mảnh chỉ được tính khi toàn bộ chữ của nó nằm trong ngữ cảnh đã đóng gói (cho phép thiếu tối đa 2 ký tự ở biên).
+- Ngữ cảnh chỉ được tính phần chữ thật sự in ra: khoảng nguyên văn của bản ghi, cộng câu dẫn Điều, Khoản mà bản ghi đơn vị in kèm; đoạn ĐK1 chỉ được tính khoảng của chính nó.
+- Báo cáo kèm: tỉ lệ câu có đủ mọi căn cứ (`complete`), độ nhạy ở ngưỡng 50% và 80% chữ, tỉ lệ chữ trung bình (`chars_recall`), và recall cũ (`recall_at_tokens`).
+- Recall cũ tính một đơn vị là đã có khi bất kỳ bản ghi nào mang mã của nó; một đoạn ĐK1 mang mã của mọi đơn vị nó chạm dù chỉ một ký tự, nên recall cũ đo "có mảnh nào lọt vào" chứ không đo "có đủ căn cứ". Đây là thay đổi sau chạy thử, ghi trong `decisions.md` ngày 23/11/2026.
+- Lượt cũ được tính bổ sung bằng `cli retrieval-rescore <run dir>` (ghi `metrics-evidence.json`), không cần xếp hạng lại.
+- Phân tích bổ sung: kết quả theo số Điều mà câu hỏi cần dùng (1-2, 3-4, từ 5).
+
 ### Chỉ số bổ sung
 
 - Recall theo ngân sách token (250 đến 6.000) dùng đúng hàm đóng gói của lượt sinh câu trả lời; kèm ngân sách nhỏ nhất để đạt ngưỡng recall nêu trước (0,8 cho bộ tra cứu, 0,4 cho bộ khó).
@@ -62,7 +71,8 @@ Phần này ghi các điểm đã chốt sau bản giao thức đầu; chi tiế
 
 ### Kiểm định và mức nhiễu
 
-- Bốn so sánh chính (ĐK1-ĐK2, ĐK2-ĐK3, ĐK3-ĐK4, ĐK1-ĐK4) dùng bootstrap ghép cặp theo câu hỏi, 10.000 lần, hạt giống cố định, hiệu chỉnh Holm; mọi so sánh khác ghi là thăm dò.
+- Bốn so sánh chính (ĐK1-ĐK2, ĐK2-ĐK3, ĐK3-ĐK4, ĐK1-ĐK4) dùng bootstrap ghép cặp, 10.000 lần, hạt giống cố định, hiệu chỉnh Holm; mọi so sánh khác ghi là thăm dò.
+- Từ 23/11/2026, bootstrap lấy mẫu lại theo nhóm diễn đạt lại (`paired-stats --cluster-families`), vì các câu diễn đạt lại của cùng một bài toán không độc lập.
 - Mỗi câu của bộ khó được sinh hai lần; chênh lệch giữa hai lần sinh của cùng điều kiện là mức nhiễu sinh.
 - Giám khảo chấm lại 50 câu trả lời lần hai để có mức nhiễu giám khảo.
 - Mọi chênh lệch giữa các điều kiện được trình bày cạnh hai mức nhiễu này.
@@ -71,5 +81,6 @@ Phần này ghi các điểm đã chốt sau bản giao thức đầu; chi tiế
 ### Chọn cấu hình
 
 - Mọi lựa chọn (cỡ đoạn ĐK1, biến thể đóng gói, prompt, ngân sách) chọn trên dev theo chỉ số của một điều kiện đã nêu trước, không theo độ chênh giữa các điều kiện, rồi khóa.
-- ĐK1 chính dùng đoạn 128 token, gối 21; ĐK2-ĐK4 dùng đóng gói P2 (`pack-article-v1`), được áp lại một lần nếu nhãn người sau khi khóa đổi thứ tự P0, P1, P2.
-- Dừng thêm biến thể từ 25/11/2026; held-out chạy đúng một lần.
+- ĐK1 chính dùng đoạn 128 token, gối 21; ĐK2-ĐK4 dùng đóng gói P3 (`pack-article-v1`, chọn ngày 23/11/2026 theo quy tắc của WP3), được áp lại một lần nếu nhãn người sau khi khóa đổi thứ tự các biến thể.
+- Thiết kế chính ở `configs/experiments/main-v3/` và `main-v1/` (quyết định 23/11/2026).
+- Dừng thêm biến thể từ khoảng 02/12/2026 (lùi từ 25/11 theo quyết định 22/11); held-out chạy đúng một lần.

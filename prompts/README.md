@@ -14,5 +14,6 @@ Sửa nội dung thì tạo tệp phiên bản mới (`-v2`), không sửa tệp
 - `neighbor-select-v2.md`: như `neighbor-select-v1.md`, ứng viên theo từng vấn đề đã tách, tối đa 2 đoạn mỗi vấn đề (`--grouping issue`).
 - `judge-v1.md`: giám khảo bổ sung chấm câu trả lời theo cùng rubric với người chấm (`src/legal_ai/evaluation/answer_grading.py`).
 - `judge-v2.md`: giám khảo bổ sung cho câu hỏi tình huống và xung đột: như `judge-v1.md`, thêm lỗi luật theo phát biểu, điểm theo từng vấn đề pháp lý và độ khớp với kết luận chuẩn (`src/legal_ai/evaluation/outcome_judge.py`).
+- `kb-keys-v1.md`: soạn 2-3 câu hỏi bằng lời thường mà mỗi đơn vị có quy phạm trả lời, từ nguyên văn, câu dẫn và các ô quy phạm; chỉ làm khóa tìm kiếm trong chỉ mục `kb-keys-v2`, không phải căn cứ (`src/legal_ai/evaluation/keys_run.py`, `cli kb-keys-gen`).
 
 Trích xuất cho ĐK3/ĐK4 dùng prompt `norm-llm-v1` trong `src/legal_ai/extraction/llm_norms.py` (đã chạy thật với Opus 5.5 ngày 07/11).

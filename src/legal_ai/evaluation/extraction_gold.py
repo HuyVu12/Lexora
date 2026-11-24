@@ -19,6 +19,16 @@ Partial double annotation: when a gold set declares an agreement sample (`agreem
 labelled by both annotators; each exported row then carries `annotation` = {"mode": "double" | "single",
 "annotators", "decided_by", "in_sample"}, and `score` adds the same P/R/F1 on the double-annotated rows alone.
 Rows without `annotation` (older gold files) are scored as before.
+
+Inherited slots (`gold-inherited-v1`, declared before any comparison): `claims-inherit-v1` fills an empty actor,
+action or outcome of a claim from the parent's lead-in, while the gold guideline tells annotators to leave a value
+empty when it lives only in the lead-in, so an inherited value scores as a wrong guess. `inherited="score"` (the
+default, the earlier behaviour) scores claims as they are; `inherited="ignore"` scores each claim with the slots
+named in its `inheritance` provenance removed, so a derived knowledge base is scored on what the model extracted
+from the sentence. Either way, when claims carry inheritance (or the mode is `ignore`), `score_claims` adds an
+`inherited` block that counts the inherited values on the gold sentences and, where the gold left that slot empty
+for the sentence, how many of them are verbatim at their recorded span inside the parent's lead-in of the bundle:
+a sanity count of what the guideline expects, not a score.
 """
 
 from fractions import Fraction
@@ -27,6 +37,7 @@ import random
 import re
 
 from legal_ai.common.io import digest
+from legal_ai.extraction.inherit import lead_in
 from legal_ai.extraction.llm_norms import LLM_SLOTS, locate
 from legal_ai.extraction.norms import leaf_units, match_sentence, sentences
 from legal_ai.research.questions import kappa
@@ -36,6 +47,8 @@ SAMPLE_METHOD = "document-largest-remainder-v1"
 SAMPLE_SEED = "lexora-gold-agreement-v1"
 SAMPLE_SHARE = "0.3"
 QUALIFIERS = ("conditions", "exceptions", "deadlines", "quantities")
+INHERITED_SCORING = "gold-inherited-v1"
+INHERITED_MODES = ("score", "ignore")
 _TOKEN = re.compile(r"[^\W_]+|%", re.UNICODE)
 
 
@@ -171,14 +184,74 @@ def rule_predictions(units, gold_rows):
     return rows
 
 
-def claim_predictions(claims, gold_rows):
-    """DK3/DK4 claims on the gold sentences, in gold format (claims on other sentences are ignored)."""
+def _inherited_slots(claim):
+    """Names of the slots `claims-inherit-v1` filled in this claim (empty for a claim without provenance)."""
+    return set(((claim.get("inheritance") or {}).get("slots") or {}))
+
+
+def claim_predictions(claims, gold_rows, inherited="score"):
+    """DK3/DK4 claims on the gold sentences, in gold format (claims on other sentences are ignored). With
+    `inherited="ignore"` the slots a claim inherited from the lead-in are left out (`gold-inherited-v1`)."""
+    if inherited not in INHERITED_MODES:
+        raise ValueError(f"inherited must be one of {list(INHERITED_MODES)}")
     grouped = {}
     for claim in claims:
+        dropped = _inherited_slots(claim) if inherited == "ignore" else set()
         grouped.setdefault((claim["unit_id"], claim["sentence"]["start"], claim["sentence"]["end"]), []).append(
             {"modality": claim.get("modality"), "modality_cue": claim.get("modality_cue"),
-             "slots": {k: v for k, v in (claim.get("slots") or {}).items() if isinstance(v, str) and v.strip()}})
+             "slots": {k: v for k, v in (claim.get("slots") or {}).items() if isinstance(v, str) and v.strip() and k not in dropped}})
     return [row | {"norms": grouped.get(_key(row), [])} for row in gold_rows]
+
+
+def inherited_report(claims, gold_rows, units, inherited="score"):
+    """Counts of inherited values on the gold sentences (`gold-inherited-v1`), not a score: per slot, how many
+    values were inherited, how many sit where the gold left that slot empty in every norm of the sentence (and of
+    those, how many are verbatim at their recorded span inside the parent's lead-in in the bundle, and how many are
+    on a sentence the gold gives no norm at all), and how many
+    sit where the gold filled the slot (and of those, how many match a gold value leniently)."""
+    by_version = {unit["unit_version_id"]: unit for unit in units}
+    by_id = {unit["unit_id"]: unit for unit in units}
+    gold = {_key(row): row for row in gold_rows}
+    counts = {}
+    claims_with = 0
+    for claim in claims:
+        row = gold.get((claim["unit_id"], claim["sentence"]["start"], claim["sentence"]["end"]))
+        names = _inherited_slots(claim)
+        if row is None or not names:
+            continue
+        claims_with += 1
+        place = lead_in(by_version.get(claim.get("unit_version_id")), by_id)
+        for name in sorted(names):
+            entry = counts.setdefault(name, {"values": 0, "gold_slot_empty": 0, "gold_slot_empty_lead_in_verbatim": 0,
+                                             "gold_sentence_without_norm": 0, "gold_slot_filled": 0, "gold_slot_filled_lenient_match": 0})
+            value = (claim.get("slots") or {}).get(name)
+            entry["values"] += 1
+            golds = [n["slots"][name] for n in row.get("norms") or [] if (n.get("slots") or {}).get(name)]
+            if golds:
+                entry["gold_slot_filled"] += 1
+                entry["gold_slot_filled_lenient_match"] += any(lenient_match(g, value) for g in golds)
+                continue
+            entry["gold_slot_empty"] += 1
+            entry["gold_sentence_without_norm"] += not row.get("norms")
+            span = (claim["inheritance"]["slots"][name] or {}).get("span")
+            if place is not None and isinstance(span, list) and len(span) == 2:
+                parent, lead_start, lead_end = place
+                start, end = span[0] - parent["source_start"], span[1] - parent["source_start"]
+                entry["gold_slot_empty_lead_in_verbatim"] += lead_start <= start < end <= lead_end and parent["text"][start:end] == value
+    total = {key: sum(entry[key] for entry in counts.values()) for key in
+             ("values", "gold_slot_empty", "gold_slot_empty_lead_in_verbatim", "gold_sentence_without_norm", "gold_slot_filled",
+              "gold_slot_filled_lenient_match")}
+    return {"scoring": INHERITED_SCORING, "mode": inherited, "claims_with_inherited_slots": claims_with,
+            "total": total, "per_slot": dict(sorted(counts.items()))}
+
+
+def score_claims(gold_rows, claims, units, inherited="score"):
+    """`score` of knowledge-base claims under the chosen inherited-slot mode; the `inherited` block is added when
+    any claim carries inheritance or the mode is `ignore`, so scores of runs without inheritance stay as before."""
+    report = score(gold_rows, claim_predictions(claims, gold_rows, inherited))
+    if inherited == "ignore" or any(_inherited_slots(claim) for claim in claims):
+        report["inherited"] = inherited_report(claims, gold_rows, units, inherited)
+    return report
 
 
 def normalize(value):

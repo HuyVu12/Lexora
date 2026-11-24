@@ -23,8 +23,8 @@ from pathlib import Path
 import random
 import threading
 
-from legal_ai.common.io import canonical, digest, read_jsonl, write_json
-from legal_ai.evaluation.answer_grading import read_sheet
+from legal_ai.common.io import canonical, digest, read_jsonl, write_json, write_jsonl
+from legal_ai.evaluation.answer_grading import call_record, read_sheet, usage_totals
 from legal_ai.evaluation.answer_run import REFUSED, system_prompt
 from legal_ai.providers.pilot import ProviderError
 
@@ -50,8 +50,6 @@ def _items(sheet_path, key, questions):
     items = []
     for item_id, rows in groups.items():
         question = questions[key[item_id]["question_id"]]
-        if not question.get("issues") or not question.get("reference_outcome"):
-            raise ValueError(f"question without issues or reference_outcome: {question['question_id']}")
         answer, statements = rows[0], rows[1:]
         request = {"question": answer["question"], "issues": question["issues"], "reference_outcome": question["reference_outcome"],
                    "gold_units": answer["gold_units"], "status": answer["status"],
@@ -61,11 +59,30 @@ def _items(sheet_path, key, questions):
     return items
 
 
+def missing_fields(sheet_path, key, questions):
+    """{question_id: [missing field names]} for the questions of the sheet's answers that lack `issues` or `reference_outcome`."""
+    missing = {}
+    for item_id in {row["item_id"] for row in read_sheet(sheet_path)}:
+        qid = key[item_id]["question_id"]
+        question = questions.get(qid)
+        absent = ["question"] if question is None else [f for f in ("issues", "reference_outcome") if not question.get(f)]
+        if absent:
+            missing[qid] = absent
+    return dict(sorted(missing.items()))
+
+
 def judge(sheet_path, key_path, questions_path, provider, output, prompt="judge-v2.md", workers=1, log=None):
+    """Judge every item of the sheet. Fails before any call (and before touching `output`) when a question lacks `issues`
+    or `reference_outcome`; such sets (e.g. complex) are graded with `answer-judge`, which needs only the gold units."""
     output = Path(output)
     key_file = json.loads(Path(key_path).read_text(encoding="utf-8"))
     key = key_file["items"]
     questions = {q["question_id"]: q for q in json.loads(Path(questions_path).read_text(encoding="utf-8"))["questions"]}
+    missing = missing_fields(sheet_path, key, questions)
+    if missing:
+        listed = ", ".join(f"{q} ({'/'.join(f)})" for q, f in missing.items())
+        raise ValueError(f"answer-outcome-judge needs issues and reference_outcome on every graded question; missing on {len(missing)}: {listed}. "
+                         "For question sets without them (e.g. complex) use answer-judge instead; nothing was called and nothing was written")
     system, system_sha = system_prompt(prompt)
     manifest = {"judge_version": JUDGE_VERSION, "judge_model": provider.model, "effort": getattr(provider, "effort", None), "prompt": prompt,
                 "system_sha256": system_sha, "sheet_sha256": digest(Path(sheet_path).read_bytes()),
@@ -94,9 +111,9 @@ def judge(sheet_path, key_path, questions_path, provider, output, prompt="judge-
         row = {"item_id": item["item_id"], "request_sha256": digest(item["request"])}
         try:
             answer = provider.structured(system, item["request"], schema(item["statements"], item["issues"]), purpose="judge")
-            row |= {"output": answer["output"], "usage": answer.get("usage"), "served_by": answer.get("model"), "error": None}
+            row |= {"output": answer["output"], "error": None} | call_record(answer)
         except ProviderError as exc:
-            row |= {"error": exc.code, "error_detail": str(getattr(exc, "detail", ""))[-300:]}
+            row |= {"error": exc.code, "error_detail": str(getattr(exc, "detail", ""))[-300:]} | call_record(None, exc.code)
             if exc.code == "budget_exhausted":
                 stop.set()
         with lock:
@@ -108,7 +125,12 @@ def judge(sheet_path, key_path, questions_path, provider, output, prompt="judge-
 
     with ThreadPoolExecutor(max_workers=max(1, workers)) as pool:
         list(pool.map(one, todo))
-    return counts
+    # Accounting over every call this directory has recorded (earlier sessions included); scores never read it.
+    calls = list(read_jsonl(path)) if path.exists() else []
+    calls = [r | {"status": r.get("status") or ("ok" if r.get("error") is None else "error")} for r in calls]  # Rows of older runs have no status.
+    write_jsonl(output / "ledger.jsonl", [{k: r.get(k) for k in ("item_id", "request_sha256", "error", "status", "usage", "cost_usd", "duration_ms", "served_by")}
+                                         for r in calls])
+    return counts | {"usage": usage_totals(calls)}
 
 
 def _latest(path):

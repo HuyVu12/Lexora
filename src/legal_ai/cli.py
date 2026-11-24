@@ -80,6 +80,27 @@ def main():
     command = commands.add_parser("kb-materialize", help="rebuild dk3/dk4 and the validation report of a knowledge-base run from raw.jsonl; offline")
     command.add_argument("run", help="knowledge-base run directory")
     command.add_argument("--bundle", help="contract bundle (default: the one recorded in the run manifest)")
+    command.add_argument("--output", help="new directory for a derived knowledge base (the run itself is not touched); needed for a non-default --validator or --inherit")
+    command.add_argument("--validator", default="kb-validator-v3", choices=["kb-validator-v3", "kb-validator-v4"],
+                         help="kb-validator-v4 also accepts values quoted from the parent unit's lead-in")
+    command.add_argument("--inherit", choices=["claims-inherit-v1"], help="fill an empty actor, action or outcome from the parent's lead-in before validation (needs kb-validator-v4)")
+    command = commands.add_parser("kb-keys-gen", help="kb-keys-v2 model keys: 2-3 everyday questions per unit with claims, written by one Claude Code model; retrieval index only; resumes")
+    command.add_argument("kb_run", help="knowledge-base run (normally a derived one: claims-inherit-v1 + kb-validator-v4)")
+    command.add_argument("--bundle", required=True, help="contract bundle the knowledge base was extracted from")
+    command.add_argument("--output", required=True, help="new directory, or an earlier keys run with the same inputs to resume")
+    scope = command.add_mutually_exclusive_group(required=True)
+    scope.add_argument("--units-from", nargs="+", metavar="PATH", help="retrieval run directories (top-N records) or question files (gold units): keys for the units of the Articles they touch")
+    scope.add_argument("--all", action="store_true", help="keys for every leaf unit with claims")
+    command.add_argument("--top-n", type=int, default=30, help="ranked records per question taken from a retrieval run")
+    command.add_argument("--split", help="only questions of this split (for example dev)")
+    command.add_argument("--batch-size", type=int, default=8, help="units per call (one Article per call)")
+    command.add_argument("--max-calls", type=int, default=0, help="call budget of this session (required unless --dry-run)")
+    command.add_argument("--extract-claude-model", help="Claude Code model, e.g. claude-sonnet-5-5 (required unless --dry-run)")
+    command.add_argument("--effort", default="medium", choices=["low", "medium", "high", "xhigh", "max"])
+    command.add_argument("--approve-claude", action="store_true", help="explicit approval of the model calls")
+    command.add_argument("--dry-run", action="store_true", help="write the plan and the exact prompts; no model call")
+    command.add_argument("--calibrate-from", help="with --dry-run: an earlier norm-llm-v1 kb-extract run of the same bundle whose real usage and cost calibrate the USD estimate")
+    command.add_argument("--reuse", nargs="+", metavar="RUN", help="earlier keys runs (same model, effort, prompt, bundle, knowledge base) whose answered batches are copied instead of paid again")
     command = commands.add_parser("amendment-build", help="amendment edges (amendment-rules-v2) of pinned vbpl.vn snapshots against a corpus bundle; offline, no model")
     command.add_argument("bundle", help="contract bundle whose units are the targets")
     command.add_argument("--config", default="configs/amendments-v1.json", help="amending sources (pinned snapshots)")
@@ -102,7 +123,8 @@ def main():
     command.add_argument("--config", default="configs/experiments/answer.json")
     command.add_argument("--output", required=True, help="new directory, or an earlier answer run with the same inputs")
     command.add_argument("--split", choices=["dev", "held_out"], help="answer only this split")
-    command.add_argument("--max-calls", type=int, required=True, help="call budget of this session")
+    command.add_argument("--max-calls", type=int, default=0, help="call budget of this session (required unless --dry-run)")
+    command.add_argument("--dry-run", action="store_true", help="build every request as a real run would and write plan.json (questions, blocks, estimated input tokens, calls) into --output; no provider, no model call")
     command.add_argument("--approve-claude", action="store_true", help="explicit approval of the model calls")
     command.add_argument("--router-model", help="answer with one approved 9Router model instead of the config's Claude model (a MODEL_* alias or a name)")
     command.add_argument("--approve-router", action="store_true", help="explicit approval of the 9Router calls")
@@ -187,10 +209,10 @@ def main():
     command.add_argument("--config", default="configs/experiments/answer.json")
     command.add_argument("--max-calls", type=int, required=True)
     command.add_argument("--approve-claude", action="store_true")
-    command = commands.add_parser("answer-outcome-judge", help="Claude Code judge of case answers against the real outcome and issues (supplement to people); resumes")
+    command = commands.add_parser("answer-outcome-judge", help="Claude Code judge of case answers against the real outcome and issues (supplement to people); resumes. Only for sets whose questions carry issues and reference_outcome (cases); it fails before any call and lists the questions lacking them, for the complex set use answer-judge")
     command.add_argument("sheet", help="blinded sheet from answer-sheet")
     command.add_argument("--key", required=True)
-    command.add_argument("--questions", required=True, help="question file whose questions carry issues and reference_outcome")
+    command.add_argument("--questions", required=True, help="question file whose graded questions all carry issues and reference_outcome (else the command fails early; use answer-judge)")
     command.add_argument("--output", required=True, help="new directory, or an earlier judge run of the same inputs")
     command.add_argument("--model", required=True, help="judge model, e.g. claude-sonnet-5-5")
     command.add_argument("--effort", default="medium")
@@ -214,6 +236,8 @@ def main():
     command.add_argument("--judge", help="outcome judge run (judge.* metrics)")
     command.add_argument("--rounds", type=int, default=10000)
     command.add_argument("--seed", default="lexora-paired-v1")
+    command.add_argument("--cluster-families", action="store_true",
+                         help="resample paraphrase families (family_id) instead of single questions; a question without a family is its own cluster")
     command.add_argument("--output", required=True, help="new JSON report file")
     command = commands.add_parser("demo-build", help="new demo store: three accounts with printed random passwords and the frozen experiment-scope corpus; offline")
     command.add_argument("--store", required=True, help="new SQLite file")
@@ -231,11 +255,19 @@ def main():
     command.add_argument("--output", required=True, help="new, empty directory")
     command.add_argument("--per-type", type=int, default=30)
     command.add_argument("--seed", default="lexora-inject-v1")
+    command.add_argument("--validator", default="kb-validator-v3", choices=["kb-validator-v3", "kb-validator-v4"],
+                         help="validator applied to the corrupted and clean claims; kb-validator-v4 also accepts values quoted from the parent's lead-in")
+    command.add_argument("--inherit", choices=["claims-inherit-v1"],
+                         help="after putting the errors in, fill empty actor, action or outcome slots from the lead-in, then validate (needs kb-validator-v4)")
     command = commands.add_parser("kb-plant", help="stress test: a copy of a knowledge-base run with visible errors planted in the claims of the questions' gold units; DK4 re-validated; offline")
     command.add_argument("run", help="knowledge-base run directory")
     command.add_argument("--questions", required=True, help="question file; its relevant_unit_ids are the targets")
     command.add_argument("--output", required=True, help="new, empty directory")
     command.add_argument("--seed", default="lexora-plant-v1")
+    command.add_argument("--validator", default="kb-validator-v3", choices=["kb-validator-v3", "kb-validator-v4"],
+                         help="validator applied to the corrupted and clean claims; kb-validator-v4 also accepts values quoted from the parent's lead-in")
+    command.add_argument("--inherit", choices=["claims-inherit-v1"],
+                         help="after putting the errors in, fill empty actor, action or outcome slots from the lead-in, then validate (needs kb-validator-v4)")
     command = commands.add_parser("question-drafts", help="add model-drafted questions with proposed labels to a question set (new or existing); offline")
     command.add_argument("drafts", nargs="+", help="JSON files, each a list of drafted questions")
     command.add_argument("--store", required=True)
@@ -280,12 +312,20 @@ def main():
     command.add_argument("gold")
     command.add_argument("--bundle", required=True)
     command.add_argument("--predictions", required=True, help="'rules', or a dk3.jsonl / dk4.jsonl of a knowledge-base run")
+    command.add_argument("--inherited", default="score", choices=["score", "ignore"],
+                         help="gold-inherited-v1: 'score' (default) scores slots inherited from the lead-in as they are, "
+                              "'ignore' leaves them out (the gold guideline leaves lead-in values empty)")
     command = commands.add_parser("run-retrieval", help="DK1/DK2 retrieval run with Recall@K into a new run directory; no network")
     command.add_argument("bundle")
     command.add_argument("--condition", required=True, help="configs/experiments/dk1.json or dk2.json")
     command.add_argument("--questions", default="tests/fixtures/pilot-questions.json")
     command.add_argument("--shared", default="configs/pilot.json")
     command.add_argument("--output", required=True, help="new, empty directory, e.g. experiments/runs/<run-id>")
+    command.add_argument("--embed-device", default="cpu", choices=["cpu", "openvino-gpu", "openvino-cpu"],
+                         help="where the pinned embedding model runs for dense/hybrid (openvino-* needs the openvino package); "
+                              "recorded in the manifest, vectors stay cache-compatible")
+    command = commands.add_parser("retrieval-rescore", help="add the evidence-coverage-v1 metrics to an existing retrieval run (metrics-evidence.json), without re-ranking; offline")
+    command.add_argument("run_dir", nargs="+", help="retrieval run directories")
     command = commands.add_parser("graph-build", help="build a local knowledge graph and evidence viewer")
     command.add_argument("bundle")
     command.add_argument("--output", required=True)
@@ -350,7 +390,12 @@ def main():
             from legal_ai.evaluation import kb_run
             if args.command == "kb-materialize":
                 bundle = args.bundle or json.loads((Path(args.run) / "manifest.json").read_text(encoding="utf-8"))["bundle"]
-                print(json.dumps(kb_run.materialize(read_jsonl(Path(bundle) / "units.jsonl"), args.run), ensure_ascii=False, indent=2))
+                units = read_jsonl(Path(bundle) / "units.jsonl")
+                if args.output:
+                    report = kb_run.materialize(units, args.output, source=args.run, validator=args.validator, inheritance=args.inherit)
+                else:
+                    report = kb_run.materialize(units, args.run, validator=args.validator, inheritance=args.inherit)
+                print(json.dumps(report, ensure_ascii=False, indent=2))
             else:
                 units = read_jsonl(Path(args.bundle) / "units.jsonl")
                 if args.dry_run:
@@ -370,12 +415,57 @@ def main():
                         kb_run.start(args.bundle, args.output, args.model, args.effort)
                     counts = kb_run.extract(units, provider, args.output, log=lambda line: print(line, flush=True), max_tokens=args.max_tokens)
                     print(json.dumps({"calls": counts, "report": kb_run.materialize(units, args.output)}, ensure_ascii=False, indent=2))
+        elif args.command == "kb-keys-gen":
+            from legal_ai.evaluation import keys_run
+            if args.calibrate_from and not args.dry_run:
+                parser.error("--calibrate-from belongs to --dry-run")
+            head, summary, planned, system = keys_run.plan(args.bundle, args.kb_run, sources=args.units_from, top_n=args.top_n, split=args.split,
+                                                           batch_size=args.batch_size)
+            if args.dry_run:  # No provider is built: nothing can reach a model.
+                output = Path(args.output)
+                if output.exists() and any(output.iterdir()):
+                    raise ValueError("output must be a new, empty directory")
+                if args.reuse and not args.extract_claude_model:
+                    parser.error("--reuse needs --extract-claude-model to check the earlier runs' model")
+                expected = head | {"provider": "claude-code", "model": args.extract_claude_model, "effort": args.effort}
+                reused = {row["key"] for row in keys_run.reusable(planned, args.reuse, expected)}
+                summary["batches_reusable"] = len(reused)
+                estimate = None
+                if args.calibrate_from:
+                    calibration = keys_run.calibrate(args.calibrate_from, args.bundle)
+                    remaining = [batch for batch in planned if batch["key"] not in reused]
+                    estimate = keys_run.estimate(remaining, system, summary["chars_per_word"], calibration) | {"calibration_fit": calibration}
+                body = keys_run.write_plan(output, expected | {"dry_run": True}, summary, planned, system, estimate)
+                print(json.dumps({"output": output.as_posix(), "scope": body["scope"], "summary": summary,
+                                  **({"estimate": {k: v for k, v in estimate.items() if k != "calibration_fit"}} if estimate else {})},
+                                 ensure_ascii=False, indent=2))
+            else:
+                if args.max_calls < 1 or not args.extract_claude_model:
+                    parser.error("kb-keys-gen needs --extract-claude-model, --max-calls and --approve-claude unless --dry-run")
+                from legal_ai.providers.claude_code import ClaudeCodeProvider
+                provider = ClaudeCodeProvider(args.extract_claude_model, args.effort, args.max_calls, approved=args.approve_claude)
+                keys_run.start(args.output, head, args.extract_claude_model, args.effort)
+                keys_run.write_plan(args.output, head, summary, planned, system)
+                copied = keys_run.reuse(planned, args.output, args.reuse)
+                counts = keys_run.generate(planned, system, provider, args.output, log=lambda line: print(line, flush=True))
+                print(json.dumps({"reused": copied, "calls": counts, "usage": keys_run.materialize(args.output)}, ensure_ascii=False, indent=2))
         elif args.command in ("answer-run", "answer-judge"):
             from legal_ai.providers.claude_code import ClaudeCodeProvider
             config = json.loads(Path(args.config).read_text(encoding="utf-8"))
             log = lambda line: print(line, flush=True)
             if args.command == "answer-run":
                 from legal_ai.evaluation.answer_run import run as answer_run
+                if args.dry_run:
+                    planned_model = config["model"]
+                    if args.router_model:
+                        from legal_ai.providers.router import read_settings
+                        planned_model = (read_settings(Path.cwd() / ".env").get(args.router_model, args.router_model)
+                                         if args.router_model.startswith("MODEL_") else args.router_model)
+                    print(json.dumps(answer_run(args.retrieval_run, args.questions, args.config, None, args.output, split=args.split, log=log,
+                                                dry_run=True, model=planned_model), ensure_ascii=False, indent=2))
+                    return 0
+                if args.max_calls < 1:
+                    parser.error("answer-run needs --max-calls (and --approve-claude or --approve-router) unless --dry-run")
                 if args.router_model:
                     from legal_ai.providers.router import ChatStructured, RouterProvider, read_settings
                     settings = read_settings(Path.cwd() / ".env")
@@ -504,7 +594,7 @@ def main():
             if Path(args.output).exists():
                 raise ValueError(f"{args.output} exists; write the report to a new file")
             report = stats.compare_runs(args.metric, stats.labelled(args.runs), stats.parse_pairs(args.pairs), stats.parse_pairs(args.exploratory),
-                                        stats.labelled(args.repeat), args.regrade, args.questions, args.sheet, args.key, args.judge, args.rounds, args.seed)
+                                        stats.labelled(args.repeat), args.regrade, args.questions, args.sheet, args.key, args.judge, args.rounds, args.seed, args.cluster_families)
             write_json(args.output, report)
             print(stats.table(report))
             print(f"\nreport: {Path(args.output).as_posix()}")
@@ -533,13 +623,15 @@ def main():
         elif args.command == "kb-inject":
             from legal_ai.evaluation.error_injection import run as inject_run
             bundle = json.loads((Path(args.run) / "manifest.json").read_text(encoding="utf-8"))["bundle"]
-            print(json.dumps(inject_run(args.run, read_jsonl(Path(bundle) / "units.jsonl"), args.output, args.per_type, args.seed), ensure_ascii=False, indent=2))
+            print(json.dumps(inject_run(args.run, read_jsonl(Path(bundle) / "units.jsonl"), args.output, args.per_type, args.seed,
+                                        validator=args.validator, inheritance=args.inherit), ensure_ascii=False, indent=2))
         elif args.command == "kb-plant":
             from legal_ai.evaluation.error_injection import plant
             bundle = json.loads((Path(args.run) / "manifest.json").read_text(encoding="utf-8"))["bundle"]
             questions = json.loads(Path(args.questions).read_text(encoding="utf-8"))["questions"]
             targets = {u for q in questions for u in q.get("relevant_unit_ids") or []}
-            print(json.dumps(plant(args.run, read_jsonl(Path(bundle) / "units.jsonl"), args.output, targets, args.seed), ensure_ascii=False, indent=2))
+            print(json.dumps(plant(args.run, read_jsonl(Path(bundle) / "units.jsonl"), args.output, targets, args.seed,
+                                   validator=args.validator, inheritance=args.inherit), ensure_ascii=False, indent=2))
         elif args.command == "question-drafts":
             from legal_ai.research.corpus import CorpusStore
             from legal_ai.research.questions import QuestionStore
@@ -588,8 +680,11 @@ def main():
                         if problems:
                             raise ValueError(f"{len(problems)} problems in the gold file")
                     else:
-                        predicted = gold.rule_predictions(units, rows) if args.predictions == "rules" else gold.claim_predictions(read_jsonl(args.predictions), rows)
-                        print(json.dumps(gold.score(rows, predicted), ensure_ascii=False, indent=2))
+                        if args.predictions == "rules":
+                            report = gold.score(rows, gold.rule_predictions(units, rows))
+                        else:
+                            report = gold.score_claims(rows, read_jsonl(args.predictions), units, args.inherited)
+                        print(json.dumps(report, ensure_ascii=False, indent=2))
         elif args.command == "run-retrieval":
             from legal_ai.evaluation.retrieval_run import run
             shared = json.loads(Path(args.shared).read_text(encoding="utf-8"))
@@ -597,8 +692,14 @@ def main():
             if shared["retrieval"].get("method") in ("dense", "hybrid"):
                 from legal_ai.retrieval.embeddings import LocalEmbedder
                 model = shared["embedding_model"]
-                embedder = LocalEmbedder(model["path"], model["name"], model["revision"], model.get("max_seq_length", 1024), cache=model.get("cache"))
+                embedder = LocalEmbedder(model["path"], model["name"], model["revision"], model.get("max_seq_length", 1024), cache=model.get("cache"),
+                                         device=args.embed_device)
             print(json.dumps(run(args.bundle, args.questions, args.condition, args.shared, args.output, embedder), ensure_ascii=False, indent=2))
+        elif args.command == "retrieval-rescore":
+            from legal_ai.evaluation.retrieval_run import rescore_evidence
+            for folder in args.run_dir:
+                result = rescore_evidence(folder)
+                print(f"{folder}: {result['condition']} {result['context_packing']} legacy mismatches {result['legacy_recall_mismatches']} -> {Path(folder, 'metrics-evidence.json').as_posix()}", flush=True)
         elif args.command == "graph-build":
             from legal_ai.kb.graph import GRAPH_VERSION, build_graph
             config = json.loads(Path(args.config).read_text(encoding="utf-8"))

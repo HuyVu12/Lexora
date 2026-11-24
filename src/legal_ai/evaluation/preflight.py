@@ -8,7 +8,11 @@ only in their representation:
 - each condition appears once, and DK1-DK4 are all present (a missing condition is a warning);
 - index isolation: every record of a run belongs to its own condition, maps only to units of the bundle, and no
   record ID is shared across runs;
-- DK3 and DK4 come from the same knowledge-base run and every DK4 claim is a DK3 claim;
+- DK3 and DK4 come from the same knowledge-base run and every DK4 claim is a DK3 claim, with the same record shape
+  and graph;
+- when DK3 and DK4 differ in their validity block, the validity option B ladder of 22/11/2026 (`option_b_ladder`):
+  DK2 and DK3 filter by document dates only, DK3 and DK4 follow the same amendment edges, DK4 checks unit status over
+  those edges, and DK4's validation steps strictly contain DK3's;
 - DK2-DK4 pack their context the same way (`context_packing`; DK1 is always flat);
 - validity conditions (DK1-hl, DK2-DK4 with a validity block) use one default date for questions without `as_of`, and
   the unit-level ones the same amendment edges and unit-status version;
@@ -35,6 +39,56 @@ def _load(folder):
 
 def _same(values):
     return len({json.dumps(v, sort_keys=True, ensure_ascii=False) for v in values}) <= 1
+
+
+def validation_steps(manifest):
+    """What a run checks before its context reaches the generator, read from its manifest: `document_dates` (validity
+    at document level or finer), `unit_status` (unit-level validity, `unit-status-v2`), `edge_resolution` (amendment
+    relations follow resolved edges only), `edge_dates` (a relation counts only when effective at the question's date)
+    and `claim_validation` (the DK4 claims of the knowledge-base validator)."""
+    validity = manifest.get("validity") or {}
+    relations = (manifest.get("graph") or {}).get("amendment_relations")
+    steps = set()
+    if validity.get("level") in ("document", "unit"):
+        steps.add("document_dates")
+    if validity.get("level") == "unit":
+        steps.add("unit_status")
+    if relations:
+        steps.add("edge_resolution")
+        if relations.get("date_check"):
+            steps.add("edge_dates")
+    if manifest["condition"].get("representation") == "llm_kb_validated":
+        steps.add("claim_validation")
+    return steps
+
+
+def option_b_ladder(by):
+    """Problems of a DK3/DK4 pair whose validity blocks differ, judged against validity option B (22/11/2026): DK2 and
+    DK3 filter by document dates only and share that block, DK3 and DK4 follow the same amendment edges, DK4 filters by
+    unit status over those same edges, and DK4's validation steps strictly contain DK3's (DK1-hl stays document level)."""
+    problems = []
+    validity = lambda c: by[c].get("validity") or {}
+    relations = lambda c: (by[c].get("graph") or {}).get("amendment_relations") or {}
+    if validity("DK4").get("level") != "unit":
+        problems.append("DK4 must check unit status (validity level unit)")
+    if validity("DK3").get("level") != "document":
+        problems.append("DK3 must filter by document dates only (validity level document)")
+    if "DK2" in by:
+        if validity("DK2").get("level") != "document":
+            problems.append("DK2 must filter by document dates only (validity level document)")
+        if not _same([by["DK2"]["condition"].get("validity"), by["DK3"]["condition"].get("validity")]):
+            problems.append("DK2 and DK3 must use the same validity block (DK3 differs from DK2 only by knowledge-base content)")
+    if "DK1" in by and by["DK1"].get("validity") and validity("DK1").get("level") != "document":
+        problems.append("DK1-hl must filter by document dates")
+    edges = relations("DK3").get("edges_sha256"), relations("DK4").get("edges_sha256")
+    if not edges[0] or edges[0] != edges[1]:
+        problems.append("DK3 and DK4 must follow the same amendment edges (graph.amendments)")
+    elif validity("DK4").get("edges_sha256") != edges[1]:
+        problems.append("DK4's unit status must read the amendment edges DK3 and DK4 follow")
+    steps = {c: validation_steps(by[c]) for c in ("DK1", "DK2", "DK3", "DK4") if c in by}
+    if not steps["DK4"] > steps["DK3"]:
+        problems.append(f"DK4's validation steps must strictly contain DK3's: DK3={sorted(steps['DK3'])}, DK4={sorted(steps['DK4'])}")
+    return problems, steps
 
 
 def check(retrieval_dirs, answer_dirs=()):
@@ -97,9 +151,13 @@ def check(retrieval_dirs, answer_dirs=()):
             dk4 = {c["claim_id"] for c in read_jsonl(Path(kb["DK4"]) / "dk4.jsonl")}
             extra = sorted(dk4 - dk3)
             add("DK4 is a subset of DK3", "fail" if extra else "pass", f"{len(extra)} DK4 claims not in DK3" if extra else f"{len(dk4)} of {len(dk3)} kept")
-        # DK3 and DK4 may differ only in which claims survived validation.
-        shape = {c: {k: m["condition"].get(k) for k in ("record", "max_tokens", "graph", "claims_view", "query", "validity")} for (_, m), c in zip(runs, conditions) if c in ("DK3", "DK4")}
+        # DK3 and DK4 may differ only in which claims survived validation (and, under option B, in the validity block).
+        shape = {c: {k: m["condition"].get(k) for k in ("record", "max_tokens", "graph", "claims_view", "query", "index_keys")} for (_, m), c in zip(runs, conditions) if c in ("DK3", "DK4")}
         add("DK3 and DK4 use the same record shape and graph", "pass" if _same(list(shape.values())) else "fail", "" if _same(list(shape.values())) else shape)
+        by = {c: m for (_, m), c in zip(runs, conditions)}
+        if not _same([by["DK3"]["condition"].get("validity"), by["DK4"]["condition"].get("validity")]):
+            problems, steps = option_b_ladder(by)
+            add("validity option B ladder", "fail" if problems else "pass", problems or ", ".join(f"{c}={sorted(s)}" for c, s in steps.items()))
 
     held = []
     for (_, manifest), condition in zip(runs, conditions):
