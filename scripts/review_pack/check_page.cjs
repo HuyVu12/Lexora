@@ -79,8 +79,8 @@ async function main() {
   }
   if (tasks.includes('gold')) {
     await open('#reviewer=Test&theme=light&tab=gold');
-    await ev(`(() => { const i = document.querySelector('.norm .slots input[id^="s0action"]'); if (!i) return; i.focus(); i.value = 'không có trong câu'; i.dispatchEvent(new Event('input', {bubbles: true})); })()`);
-    const bad = await ev(`document.querySelectorAll('input.bad').length`);
+    await ev(`(() => { const i = document.querySelector('.norm .slots [id^="s0action"]'); if (!i) return; i.focus(); i.value = 'không có trong câu'; i.dispatchEvent(new Event('input', {bubbles: true})); })()`);
+    const bad = await ev(`document.querySelectorAll('.slots .bad').length`);
     const done = await ev(`Object.values(state.data.gold.items).filter(s => s.done).length`);
     console.log('gold invalid inputs flagged:', bad, 'done:', done);
     if (!(await ev('BLIND'))) assert.ok(bad >= 1, 'a value that is not in the sentence is flagged');

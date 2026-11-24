@@ -51,12 +51,12 @@ main{padding:0 1rem 1rem;max-width:62rem}
 .question{font-size:1.08rem;font-weight:600;padding:.6rem .8rem;border-left:4px solid var(--accent);background:var(--suggest);border-radius:0 6px 6px 0;margin:.5rem 0 .8rem;overflow-wrap:anywhere;white-space:pre-wrap}
 .field{margin:.6rem 0}
 .fl{font-size:.82rem;font-weight:650;color:var(--muted);margin-bottom:.15rem;display:block}
-.ft{white-space:pre-wrap;overflow-wrap:anywhere;max-width:75ch;border:1px solid var(--line);border-radius:6px;padding:.5rem .7rem;max-height:22rem;overflow:auto}
+.ft{white-space:pre-wrap;overflow-wrap:anywhere;border:1px solid var(--line);border-radius:6px;padding:.5rem .7rem;max-height:22rem;overflow:auto}
 mark{background:var(--mark);color:inherit;border-radius:3px;padding:0 .1em}
 .sugg{border:1px solid var(--accent);background:var(--suggest);border-radius:8px;padding:.6rem .8rem;margin:.8rem 0}
 .sugg h3{font-size:.95rem;margin:0 0 .3rem;display:flex;flex-wrap:wrap;gap:.5rem;align-items:center}
 .sugg p{margin:.2rem 0;overflow-wrap:anywhere}
-blockquote{margin:.4rem 0;padding:.3rem .7rem;border-left:3px solid var(--muted);white-space:pre-wrap;overflow-wrap:anywhere;max-width:75ch;font-size:.95rem}
+blockquote{margin:.4rem 0;padding:.3rem .7rem;border-left:3px solid var(--muted);white-space:pre-wrap;overflow-wrap:anywhere;font-size:.95rem}
 blockquote cite{display:block;font-style:normal;font-size:.8rem;color:var(--muted);font-weight:650}
 fieldset{border:none;padding:0;margin:.8rem 0}
 legend{font-weight:650;margin-bottom:.3rem;padding:0}
@@ -72,14 +72,15 @@ legend{font-weight:650;margin-bottom:.3rem;padding:0}
 .status.todo{background:var(--warnbg);color:var(--warn)}
 .help{font-size:.85rem;color:var(--muted);margin:.8rem 0 0}
 kbd{border:1px solid var(--line);border-bottom-width:2px;border-radius:4px;padding:0 .35rem;font-size:.8rem;background:var(--bg)}
-.sentence{font-size:1.1rem;white-space:pre-wrap;overflow-wrap:anywhere;max-width:75ch;border:1px solid var(--line);border-radius:6px;padding:.6rem .8rem}
-.ctx{font-size:.9rem;color:var(--muted);white-space:pre-wrap;overflow-wrap:anywhere;max-width:75ch;margin-bottom:.4rem}
+.sentence{font-size:1.1rem;white-space:pre-wrap;overflow-wrap:anywhere;border:1px solid var(--line);border-radius:6px;padding:.6rem .8rem}
+.ctx{font-size:.9rem;color:var(--muted);white-space:pre-wrap;overflow-wrap:anywhere;margin-bottom:.4rem}
 .norm{border:1px solid var(--line);border-radius:8px;padding:.7rem .8rem;margin:.7rem 0}
 .norm.invalid{border-color:var(--bad)}
 .normhead{display:flex;align-items:center;gap:.5rem;padding-bottom:.4rem}
 .slots{display:grid;grid-template-columns:repeat(auto-fit,minmax(15rem,1fr));gap:.5rem .8rem}
 .slots label{display:block;font-size:.82rem;font-weight:650;color:var(--muted)}
 .slots input,.slots select{width:100%;font-weight:400;color:var(--ink)}
+.slots textarea.slotv{width:100%;min-height:0;resize:none;overflow:hidden;line-height:1.4;font-weight:400;color:var(--ink);display:block}
 input.bad{border-color:var(--bad);background:var(--badbg)}
 .err{color:var(--bad);font-size:.82rem;font-weight:500;margin-top:.1rem;overflow-wrap:anywhere}
 .live{min-height:1.4rem;font-size:.9rem;color:var(--warn);padding:.4rem 1rem 2rem}
@@ -403,7 +404,7 @@ function normEditor(n, i, it, norms, paint, refresh, draw, st) {
   const touch = () => { st.done = false; save(); paint(); check(); refresh(); };
   const mod = el('select', {id: `m${i}`, onchange: e => { n.modality = e.target.value; touch(); }}, PACK.modalities.map(m => el('option', {value: m, text: MOD_VI[m] || m})));
   mod.value = n.modality;
-  const cue = el('input', {type: 'text', id: `c${i}`, value: n.cue || '', autocomplete: 'off', oninput: e => { n.cue = e.target.value; touch(); }});
+  const cue = slotBox(`c${i}`, n.cue || '', v => { n.cue = v; touch(); });
   const cueMsg = el('div', {class: 'err'}), modMsg = el('div', {class: 'err'});
   errBox.cue = {input: cue, msg: cueMsg}; errBox.modality = {input: mod, msg: modMsg};
   box.append(el('div', {class: 'normhead'}, el('strong', {text: `Quy phạm ${i + 1}`}), el('span', {class: 'spacer'}),
@@ -412,7 +413,7 @@ function normEditor(n, i, it, norms, paint, refresh, draw, st) {
     el('div', {}, el('label', {for: `m${i}`, text: 'Tính quy phạm'}), mod, modMsg),
     el('div', {}, el('label', {for: `c${i}`, text: 'Từ tình thái (cue)'}), cue, cueMsg));
   for (const s of PACK.slots) {
-    const input = el('input', {type: 'text', id: `s${i}${s}`, value: n.slots[s] || '', autocomplete: 'off', oninput: e => { n.slots[s] = e.target.value; touch(); }});
+    const input = slotBox(`s${i}${s}`, n.slots[s] || '', v => { n.slots[s] = v; touch(); });
     const msg = el('div', {class: 'err'});
     errBox[s] = {input, msg};
     grid.append(el('div', {}, el('label', {for: `s${i}${s}`, text: PACK.slot_names[s] || s}), input, msg));
@@ -420,6 +421,17 @@ function normEditor(n, i, it, norms, paint, refresh, draw, st) {
   box.append(grid, cmsg);
   check();
   return box;
+}
+
+// A one-line value box that wraps and grows with its text, so long verbatim values stay readable; Enter never adds a line.
+function growBox(t) { t.style.height = 'auto'; t.style.height = t.scrollHeight + 'px'; }
+function slotBox(id, value, onValue) {
+  const t = el('textarea', {class: 'slotv', id, rows: 1, autocomplete: 'off', spellcheck: 'false',
+    oninput: e => { growBox(e.target); onValue(e.target.value.replace(/[\r\n]+/g, ' ')); },
+    onkeydown: e => { if (e.key === 'Enter') e.preventDefault(); }});
+  t.value = value;
+  requestAnimationFrame(() => growBox(t));
+  return t;
 }
 
 // ---- actions ----
